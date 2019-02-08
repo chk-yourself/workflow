@@ -8,6 +8,7 @@ import { currentSelectors } from '../../ducks/current';
 import { BoardGridContainer } from '../BoardGrid';
 import { BoardComposer } from '../Board';
 import { BoardContainer } from '../Board';
+import './Home.scss';
 
 class HomePage extends Component {
   constructor(props) {
@@ -48,7 +49,7 @@ class HomePage extends Component {
             exact
             path={ROUTES.HOME}
             render={() => (
-              <main>
+              <main className="main">
                 <h1>Home</h1>
                 {userId && (
                   <BoardGridContainer

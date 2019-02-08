@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import BoardGrid from './BoardGrid';
 import BoardTile from './BoardTile';
-import { connect } from 'react-redux';
+import './BoardGrid.scss';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
@@ -51,8 +52,12 @@ class BoardGridContainer extends Component {
       <section>
         <BoardGrid>
           {boardTiles}
-          <button type="button" onClick={this.props.openBoardComposer}>
-            Add Board
+          <button
+            type="button"
+            className="board-grid__tile board-grid__btn--add"
+            onClick={this.props.openBoardComposer}
+          >
+            Create new board...
           </button>
         </BoardGrid>
       </section>

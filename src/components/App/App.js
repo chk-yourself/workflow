@@ -13,14 +13,13 @@ import { AccountPage } from '../Account';
 import { AdminPage } from '../Admin';
 import { withAuthentication } from '../Session';
 import { Board } from '../Board';
+import {Header} from '../Header';
 
 class App extends Component {
   render() {
     return (
       <div className="app">
-        <header className="app__header">
-          <Navigation classes="navbar" />
-        </header>
+        <Header />
         <Switch>
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />

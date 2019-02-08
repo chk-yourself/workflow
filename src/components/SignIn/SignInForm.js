@@ -21,7 +21,7 @@ class SignInForm extends Component {
   onSubmit = e => {
     const { email, password } = this.state;
     this.props.firebase
-      .doSignInWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.HOME);

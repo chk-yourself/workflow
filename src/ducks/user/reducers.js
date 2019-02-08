@@ -3,10 +3,9 @@ import * as types from './types';
 const user = (state = {}, action) => {
   switch (action.type) {
     case types.UPDATE_USER_BOARDS:
-      const { boardIds } = action;
       return {
         ...state,
-        boardIds: [...boardIds]
+        boardIds: [...action.boardIds]
       };
     case types.LOAD_USER_DATA:
       return {
@@ -18,4 +17,4 @@ const user = (state = {}, action) => {
   }
 };
 
-export { user };
+export default user;

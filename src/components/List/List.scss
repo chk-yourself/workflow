@@ -1,3 +1,6 @@
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
+
 .list,
 .list-composer {
   width: 272px;
@@ -6,12 +9,23 @@
   height: 100%;
 }
 
+.list {
+  background-color: $grey-300;
+  border-radius: 4px;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+}
+
 .list__header {
-  padding: 8px;
+  padding: 0 8px;
+  height: 50px;
 }
 
 .list__title {
   font-size: 18px;
+  margin: 0;
+  padding: 16px 8px;
 }
 
 .list-composer {

@@ -1,3 +1,5 @@
+// Screen sizes
+
 $screen-xs-min: 425px; // Tiny phones
 $screen-sm-min: 576px; // Small tablets and large smartphones (landscape view)
 $screen-md-min: 768px; // Small tablets (portrait view)
@@ -5,6 +7,7 @@ $screen-lg-min: 992px; // Tablets and small desktops
 $screen-xl-min: 1200px; // Large tablets and desktops
 $screen-xx-min: 1440px;
 
+// Colors
 $grey-000: #f8f9fa;
 $grey-100: #f1f3f5;
 $grey-200: #e9ecef;
@@ -22,3 +25,7 @@ $black: #000;
 $primary: #845ef7;
 $primary-lt: #d0bfff;
 $primary-dk: #6741d9;
+
+// Fonts
+$heading-font: 'Quicksand', Helvetica, Arial, sans-serif;
+$body-font: 'Open Sans', Arial, sans-serif;

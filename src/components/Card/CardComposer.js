@@ -7,6 +7,7 @@ import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Textarea } from '../Textarea';
+import './CardComposer.scss';
 
 class CardComposer extends Component {
   constructor(props) {
@@ -64,6 +65,7 @@ class CardComposer extends Component {
             placeholder={isActive ? 'Enter card title...' : 'Add a card'}
             isRequired={true}
             name="cardTitle"
+            style="card"
           />
           {isActive && (
             <>

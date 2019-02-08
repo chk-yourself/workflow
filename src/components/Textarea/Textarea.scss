@@ -1,0 +1,11 @@
+@import '../../styles/_variables';
+
+.textarea {
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  padding: 8px 12px;
+  &:focus {
+    border-color: $primary;
+    outline: none;
+  }
+}

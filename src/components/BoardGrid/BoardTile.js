@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 
 const BoardTile = props => {
   return (
-    <li className="board-tile">
+    <li className="board-grid__tile">
       <Link
-        className="board-tile__link"
+        className="board-grid__link"
         to={`/home/board/${props.boardId}`}
         onClick={props.onClick}
       >
-        {props.title}
+        <span className="board-grid__title">{props.title}</span>
       </Link>
     </li>
   );

@@ -4,7 +4,7 @@ import './Textarea.scss';
 const Textarea = props => {
   return (
     <textarea
-      className="textarea"
+      className={`textarea ${props.style}`}
       id={props.name}
       name={props.name}
       value={props.value}
