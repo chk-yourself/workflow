@@ -2,7 +2,7 @@
   "name": "workflow",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://chk-yourself.github.io/workflow/",
+  "homepage": "https://chk-yourself.github.io/workflow",
   "dependencies": {
     "firebase": "^5.8.2",
     "firebase-admin": "^7.0.0",
@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b master -d build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
