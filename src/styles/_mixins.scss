@@ -1,0 +1,49 @@
+@import './_variables.scss';
+
+// Media queries
+@mixin xs {
+  @media (min-width: #{$screen-xs-min}) {
+    @content;
+  }
+} // 425px Tiny devices
+@mixin sm {
+  @media (min-width: #{$screen-sm-min}) {
+    @content;
+  }
+} // 576px Small devices
+@mixin md {
+  @media (min-width: #{$screen-md-min}) {
+    @content;
+  }
+} // 768px Medium devices
+@mixin lg {
+  @media (min-width: #{$screen-lg-min}) {
+    @content;
+  }
+} // 992px Large devices
+@mixin xl {
+  @media (min-width: #{$screen-xl-min}) {
+    @content;
+  }
+} // 1200px Extra large devices
+@mixin xx {
+  @media (min-width: #{$screen-xx-min}) {
+    @content;
+  }
+} // 1440px Extra large devices
+
+// Box shadows
+
+@mixin box-shadow($level) {
+  @if $level == 1 {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  } @else if $level == 2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  } @else if $level == 3 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  } @else if $level == 4 {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  } @else if $level == 5 {
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+  }
+}

@@ -1,0 +1,30 @@
+@import '../../styles/_variables.scss';
+
+.input {
+  box-sizing: border-box;
+  border: 2px solid $grey-300;
+  padding: 16px 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 100%;
+  color: $black;
+  outline: none;
+  height: 50px;
+  &::placeholder {
+    color: rgba($grey-700, 0.6);
+  }
+  &:active,
+  &:focus {
+    border-color: $primary;
+  }
+}
+
+.input__label {
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input__group {
+  margin-bottom: 24px;
+}

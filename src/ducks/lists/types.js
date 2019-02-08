@@ -1,0 +1,3 @@
+export const LOAD_LISTS_BY_ID = 'LOAD_LISTS_BY_ID';
+export const FETCH_LISTS_BY_ID = 'FETCH_LISTS_BY_ID';
+export const UPDATE_LISTS_BY_ID = 'UPDATE_LISTS_BY_ID';

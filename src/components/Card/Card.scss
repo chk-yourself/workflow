@@ -1,0 +1,29 @@
+@import '../../styles/_mixins.scss';
+@import '../../styles/_variables.scss';
+
+.card {
+  border: 1px solid $grey-400;
+  box-sizing: border-box;
+  height: 80px;
+  border-radius: 4px;
+  margin: 8px;
+  padding: 0 12px 12px;
+}
+
+.card__title {
+  font-size: 16px;
+}
+
+.card__header {
+  position: relative;
+}
+
+.card__btn--more-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  .feather {
+    width: 18px;
+    height: 18px;
+  }
+}
