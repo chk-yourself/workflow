@@ -38,11 +38,11 @@ class BoardGridContainer extends Component {
     const { boardIds, userId } = this.props.user;
     const { boardsArray, selectBoard } = this.props;
     const boardTiles = boardsArray.map(board => {
-      const { title, boardId } = board;
+      const { boardTitle, boardId } = board;
       return (
         <BoardTile
           key={boardId}
-          title={title}
+          boardTitle={boardTitle}
           boardId={boardId}
           onClick={() => selectBoard(boardId)}
         />

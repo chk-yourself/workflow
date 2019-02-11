@@ -30,7 +30,16 @@ class Firebase {
   passwordUpdate = newPassword =>
     this.auth.currentUser.updatePassword(newPassword);
 
+  // Utility API
+
+  getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
+
+  addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
+  removeFromArray = value => firebase.firestore.FieldValue.arrayRemove(value);
+
   // User API
+
+  getUserDoc = userId => this.db.collection('users').doc(userId);
 
   addUser = ({ userId, name, username, email, boardIds = [] }) =>
     this.db
@@ -44,42 +53,26 @@ class Firebase {
       .doc(userId)
       .update(newValue);
 
-  updateBoard = (boardId, newValue = {}) =>
-    this.db
-      .collection('boards')
-      .doc(boardId)
-      .update(newValue);
-
-  updateList = (listId, newValue = {}) =>
-    this.db
-      .collection('lists')
-      .doc(listId)
-      .update(newValue);
-
-  updateCard = (cardId, newValue = {}) =>
-    this.db
-      .collection('cards')
-      .doc(cardId)
-      .update(newValue);
-
-  getUserDoc = userId => this.db.collection('users').doc(userId);
+  // Board API
 
   getBoardDoc = boardId => this.db.collection('boards').doc(boardId);
 
-  getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
-
-  addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
+  updateBoard = (boardId, newValue = {}) =>
+    this.getBoardDoc(boardId).update({
+      lastModifiedAt: this.getTimestamp(),
+      ...newValue
+    });
 
   addBoard = ({ userId, boardTitle }) => {
     this.db
       .collection('boards')
       .add({
-        title: boardTitle,
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
         listIds: [],
         authorId: userId,
-        memberIds: [userId]
+        memberIds: [userId],
+        boardTitle
       })
       .then(ref => {
         this.updateUser(userId, {
@@ -88,15 +81,25 @@ class Firebase {
       });
   };
 
+  // List API
+
+  getListDoc = listId => this.db.collection('lists').doc(listId);
+
+  updateList = (listId, newValue = {}) =>
+    this.getListDoc(listId).update({
+      lastModifiedAt: this.getTimestamp(),
+      ...newValue
+    });
+
   addList = ({ boardId, listTitle }) => {
     this.db
       .collection('lists')
       .add({
-        title: listTitle,
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
         cardIds: [],
-        boardId
+        boardId,
+        listTitle
       })
       .then(ref => {
         this.updateBoard(boardId, {
@@ -106,21 +109,58 @@ class Firebase {
       });
   };
 
+  // Card API
+
+  getCardDoc = cardId => this.db.collection('cards').doc(cardId);
+
   addCard = ({ boardId, listId, cardTitle }) => {
     this.db
       .collection('cards')
       .add({
-        title: cardTitle,
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
         listId,
-        boardId
+        boardId,
+        cardTitle
       })
       .then(ref => {
         this.updateList(listId, {
           cardIds: this.addToArray(ref.id),
           lastModifiedAt: this.getTimestamp()
         });
+      });
+  };
+
+  updateCard = (cardId, newValue = {}) =>
+    this.getCardDoc(cardId).update({
+      lastModifiedAt: this.getTimestamp(),
+      ...newValue
+    });
+
+  moveCardToList = ({ cardId, origListId, newListId, updatedCardIds }) => {
+    const batch = this.db.batch();
+    const cardRef = this.getCardDoc(cardId);
+    const origListRef = this.getListDoc(origListId);
+    const newListRef = this.getListDoc(newListId);
+    batch.update(cardRef, {
+      listId: newListId,
+      lastModifiedAt: this.getTimestamp()
+    });
+    batch.update(origListRef, {
+      cardIds: this.removeFromArray(cardId),
+      lastModifiedAt: this.getTimestamp()
+    });
+    batch.update(newListRef, {
+      cardIds: updatedCardIds,
+      lastModifiedAt: this.getTimestamp()
+    });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('card moved');
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 }

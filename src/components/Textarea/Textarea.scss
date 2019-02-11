@@ -4,6 +4,7 @@
   box-sizing: border-box;
   border: 2px solid transparent;
   padding: 8px 12px;
+  font-family: $body-font;
   &:focus {
     border-color: $primary;
     outline: none;

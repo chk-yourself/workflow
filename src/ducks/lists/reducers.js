@@ -2,16 +2,20 @@ import * as types from './types';
 
 const listsById = (state = {}, action) => {
   switch (action.type) {
-    case types.LOAD_LISTS_BY_ID:
+    case types.LOAD_LISTS_BY_ID: {
+      const { listsById } = action;
       return {
         ...state,
-        ...action.listsById
+        ...listsById
       };
-    case types.UPDATE_LISTS_BY_ID:
+    }
+    case types.UPDATE_LISTS_BY_ID: {
+      const { list } = action;
       return {
         ...state,
-        ...action.list
+        ...list
       };
+    }
     default:
       return state;
   }
