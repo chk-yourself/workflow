@@ -1,3 +1,4 @@
 export const LOAD_BOARDS_BY_ID = 'LOAD_BOARDS_BY_ID';
 export const UPDATE_BOARDS_BY_ID = 'UPDATE_BOARDS_BY_ID';
 export const REORDER_LISTS = 'REORDER_LISTS';
+export const UPDATE_LIST_IDS = 'UPDATE_LIST_IDS';

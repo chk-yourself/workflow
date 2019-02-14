@@ -5,6 +5,10 @@ import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { CardComposer } from '../Card';
+import { Icon } from '../Icon';
+import { Menu, MenuItem } from '../Menu';
+import { PopoverWrapper } from '../Popover';
+import { Input } from '../Input';
 import Cards from './Cards';
 import './List.scss';
 
@@ -12,14 +16,41 @@ class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDragging: this.props.isDragging
+      isDragging: this.props.isDragging,
+      listTitle: this.props.listTitle
     };
   }
 
   handleCardDelete = cardId => {
     const { listId, firebase } = this.props;
-    console.log({ cardId, listId });
     firebase.deleteCard({ cardId, listId });
+  };
+
+  handleListDelete = e => {
+    e.preventDefault();
+
+    const { listId, boardId, firebase } = this.props;
+    firebase.deleteList({ listId, boardId });
+  };
+
+  onChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  onBlur = e => {
+    const { listTitle, listId, firebase } = this.props;
+    const { listTitle: newListTitle } = this.state;
+
+    // When field loses focus, update list title if change is detected
+
+    if (newListTitle !== listTitle) {
+      firebase.updateList(listId, {
+        listTitle: newListTitle
+      });
+      console.log('updated!');
+    }
   };
 
   render() {
@@ -27,11 +58,12 @@ class List extends Component {
       cards,
       onCardClick,
       listId,
-      listTitle,
       listIndex,
       isFetchingCards
     } = this.props;
     if (isFetchingCards) return null;
+
+    const { listTitle } = this.state;
 
     return (
       <Draggable draggableId={listId} index={listIndex}>
@@ -44,7 +76,35 @@ class List extends Component {
               {...provided.dragHandleProps}
             >
               <header className="list__header">
-                <h2 className="list__title">{listTitle}</h2>
+                <Input
+                  className="list__input--title"
+                  name="listTitle"
+                  type="text"
+                  value={listTitle}
+                  onChange={this.onChange}
+                  required
+                  hideLabel
+                  onBlur={this.onBlur}
+                />
+                <PopoverWrapper
+                  wrapperClass="list__popover-wrapper"
+                  popoverClass="list__popover"
+                  align="left"
+                  buttonProps={{
+                    size: 'medium',
+                    iconOnly: true,
+                    className: 'list__btn--more-actions',
+                    children: <Icon name="more-vertical" />
+                  }}
+                >
+                  <Menu>
+                    <MenuItem>
+                      <a href="" onClick={this.handleListDelete}>
+                        Delete
+                      </a>
+                    </MenuItem>
+                  </Menu>
+                </PopoverWrapper>
               </header>
               <Cards
                 cards={cards}

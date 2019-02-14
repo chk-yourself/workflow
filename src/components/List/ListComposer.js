@@ -10,7 +10,7 @@ import { Button } from '../Button';
 import './ListComposer.scss';
 
 const INITIAL_STATE = {
-  cardTitle: '',
+  listTitle: '',
   isActive: false
 };
 

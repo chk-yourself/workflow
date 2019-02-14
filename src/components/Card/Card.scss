@@ -1,11 +1,11 @@
-@import '../../styles/_mixins.scss';
 @import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
 
 .card {
   box-sizing: border-box;
   height: 80px;
   border-radius: 4px;
-  margin: 8px;
+  margin: 0 8px 8px;
   background-color: $white;
   box-shadow: 0 1px 3px 0 rgba(21, 27, 38, 0.15);
   .card__popover-wrapper {

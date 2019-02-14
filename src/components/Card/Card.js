@@ -27,6 +27,7 @@ export default class Card extends Component {
         onCardDelete(cardId);
         break;
     }
+    e.preventDefault(); // prevents page reload
   };
 
   render() {

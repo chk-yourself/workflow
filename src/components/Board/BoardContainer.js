@@ -12,6 +12,7 @@ import Board from './Board';
 import { List } from '../List';
 import { CardEditor } from '../CardEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
+import { utils } from '../../utils';
 import './Board.scss';
 
 class BoardContainer extends Component {
@@ -25,14 +26,17 @@ class BoardContainer extends Component {
   }
 
   componentDidMount() {
-    const boardId = this.props.match.params.id;
     const {
       current,
       fetchListsById,
       fetchCardsById,
       firebase,
+      updateBoardsById,
       updateListsById,
-      updateCardsById
+      updateCardsById,
+      boardId,
+      board,
+      updateListIds
     } = this.props;
 
     if (current.boardId !== boardId) {
@@ -45,7 +49,13 @@ class BoardContainer extends Component {
         isFetching: false
       });
     });
-    this.listListener = firebase.db
+    this.boardObserver = firebase.getBoardDoc(boardId).onSnapshot(snapshot => {
+      const updatedBoard = snapshot.data();
+      if (!utils.isEqual(updatedBoard.listIds, board.listIds)) {
+        updateListIds(boardId, updatedBoard.listIds);
+      }
+    });
+    this.listObserver = firebase.db
       .collection('lists')
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
@@ -56,7 +66,7 @@ class BoardContainer extends Component {
           updateListsById(list);
         });
       });
-    this.cardListener = firebase.db
+    this.cardObserver = firebase.db
       .collection('cards')
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
@@ -74,8 +84,9 @@ class BoardContainer extends Component {
   }
 
   componentWillUnmount() {
-    this.listListener();
-    this.cardListener();
+    this.boardObserver();
+    this.listObserver();
+    this.cardObserver();
   }
 
   onDragStart = () => {
@@ -144,11 +155,9 @@ class BoardContainer extends Component {
 
   render() {
     const { isFetching, isCardEditorOpen } = this.state;
-    const { current, boardsById, listsArray, cardsById, match } = this.props;
-    const boardId = match.params.id;
+    const { current, boardsById, listsArray, cardsById, boardId, board } = this.props;
     if (isFetching) return null;
     const { cardId } = current;
-    const board = boardsById[boardId];
     const { boardTitle } = board;
     const lists = listsArray.map((list, listIndex) => {
       const { listId, listTitle, cardIds } = list;
@@ -162,6 +171,7 @@ class BoardContainer extends Component {
           isFetchingCards={this.state.isFetching}
           isDragging={this.state.isDragging}
           onCardClick={this.handleCardClick}
+          boardId={boardId}
         />
       );
     });
@@ -188,20 +198,20 @@ class BoardContainer extends Component {
 
 const condition = authUser => !!authUser;
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     user: userSelectors.getUserData(state),
     boardsById: boardSelectors.getBoardsById(state),
     current: currentSelectors.getCurrent(state),
     listsById: listSelectors.getListsById(state),
     listsArray: listSelectors.getListsArray(state),
-    cardsById: cardSelectors.getCardsById(state)
+    cardsById: cardSelectors.getCardsById(state),
+    board: boardSelectors.getBoard(state, ownProps.boardId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
     updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
     selectCard: cardId => dispatch(currentActions.selectCard(cardId)),
@@ -210,7 +220,9 @@ const mapDispatchToProps = dispatch => {
     fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
     updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
     reorderLists: (boardId, listIds) =>
-      dispatch(boardActions.reorderLists(boardId, listIds))
+      dispatch(boardActions.reorderLists(boardId, listIds)),
+    updateListIds: (boardId, listIds) =>
+      dispatch(boardActions.updateListIds(boardId, listIds))
   };
 };
 

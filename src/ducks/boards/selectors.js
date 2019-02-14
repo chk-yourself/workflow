@@ -11,3 +11,8 @@ export const getBoardsArray = state => {
     };
   });
 };
+
+export const getBoard = (state, boardId) => {
+  const { boardsById } = state;
+  return boardsById[boardId];
+};

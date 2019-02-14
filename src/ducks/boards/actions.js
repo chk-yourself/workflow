@@ -43,3 +43,11 @@ export const reorderLists = (boardId, listIds) => {
     listIds
   };
 };
+
+export const updateListIds = (boardId, listIds) => {
+  return {
+    type: types.UPDATE_LIST_IDS,
+    boardId,
+    listIds
+  };
+};

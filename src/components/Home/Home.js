@@ -71,7 +71,7 @@ class HomePage extends Component {
           />
           <Route
             path={ROUTES.BOARD}
-            render={props => <BoardContainer {...props} />}
+            render={props => <BoardContainer boardId={props.match.params.id} {...props} />}
           />
         </Switch>
       </>

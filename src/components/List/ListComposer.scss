@@ -7,20 +7,20 @@
   height: 100%;
   display: flex;
   flex-flow: column wrap;
+  background-color: $grey-300;
+  border-radius: 4px;
+  padding: 8px;
   &.is-active {
     .list-composer__input {
       background-color: $white;
+      margin-bottom: 8px;
     }
   }
 }
 
 .list-composer__input {
-  background-color: $grey-300;
-  margin-bottom: 8px;
-}
-
-.list-composer__footer {
-  padding-bottom: 8px;
+  background-color: transparent;
+  height: 40px;
 }
 
 .list-composer__btn--add {

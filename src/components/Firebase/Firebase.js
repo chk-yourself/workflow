@@ -33,7 +33,6 @@ class Firebase {
   // Utility API
 
   getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
-
   addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
   removeFromArray = value => firebase.firestore.FieldValue.arrayRemove(value);
 
@@ -109,6 +108,40 @@ class Firebase {
       });
   };
 
+  deleteList = ({ listId, boardId }) => {
+    const batch = this.db.batch();
+    const listRef = this.getListDoc(listId);
+    const boardRef = this.getBoardDoc(boardId);
+
+    // Delete list
+    batch.delete(listRef);
+
+    // Remove list id from board
+    batch.update(boardRef, {
+      listIds: this.removeFromArray(listId),
+      lastModifiedAt: this.getTimestamp()
+    });
+
+    // Delete cards assigned to list
+    this.db
+      .collection('cards')
+      .where('listId', '==', listId)
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch
+          .commit()
+          .then(() => {
+            console.log('list deleted');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+  };
+
   // Card API
 
   getCardDoc = cardId => this.db.collection('cards').doc(cardId);
@@ -139,15 +172,6 @@ class Firebase {
   };
 
   deleteCard = ({ cardId, listId }) => {
-    this.db
-      .collection('cards')
-      .doc(cardId)
-      .delete();
-    this.updateList(listId, {
-      cardIds: this.removeFromArray(cardId)
-    });
-
-    /*
     const batch = this.db.batch();
     const cardRef = this.getCardDoc(cardId);
     const listRef = this.getListDoc(listId);
@@ -165,7 +189,6 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
-      */
   };
 
   moveCardToList = ({ cardId, origListId, newListId, updatedCardIds }) => {

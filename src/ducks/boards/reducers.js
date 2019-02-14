@@ -16,7 +16,7 @@ const boardsById = (state = {}, action) => {
         ...board
       };
     }
-
+    case types.UPDATE_LIST_IDS:
     case types.REORDER_LISTS: {
       const { boardId, listIds } = action;
       return {
@@ -27,7 +27,6 @@ const boardsById = (state = {}, action) => {
         }
       };
     }
-
     default:
       return state;
   }
