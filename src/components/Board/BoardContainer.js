@@ -7,8 +7,10 @@ import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
+import * as ROUTES from '../../constants/routes';
 import Board from './Board';
-import { List, ListComposer } from '../List';
+import { List } from '../List';
+import { CardEditor } from '../CardEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
 import './Board.scss';
 
@@ -18,19 +20,32 @@ class BoardContainer extends Component {
     this.state = {
       isFetching: true,
       isDragging: false,
-      draggedCard: null
+      isCardEditorOpen: false
     };
   }
 
   componentDidMount() {
-    const { boardId } = this.props.current;
-    this.props.fetchListsById(boardId);
-    this.props.fetchCardsById(boardId).then(() => {
+    const boardId = this.props.match.params.id;
+    const {
+      current,
+      fetchListsById,
+      fetchCardsById,
+      firebase,
+      updateListsById,
+      updateCardsById
+    } = this.props;
+
+    if (current.boardId !== boardId) {
+      this.props.selectBoard(boardId);
+    }
+
+    fetchListsById(boardId);
+    fetchCardsById(boardId).then(() => {
       this.setState({
         isFetching: false
       });
     });
-    this.listListener = this.props.firebase.db
+    this.listListener = firebase.db
       .collection('lists')
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
@@ -38,19 +53,21 @@ class BoardContainer extends Component {
           const list = {
             [change.doc.id]: change.doc.data()
           };
-          console.log({ list });
-          this.props.updateListsById(list);
+          updateListsById(list);
         });
       });
-    this.cardListener = this.props.firebase.db
+    this.cardListener = firebase.db
       .collection('cards')
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
           const card = {
-            [change.doc.id]: change.doc.data()
+            [change.doc.id]: {
+              cardId: change.doc.id,
+              ...change.doc.data()
+            }
           };
-          this.props.updateCardsById(card);
+          updateCardsById(card);
         });
       });
     console.log('mounted');
@@ -61,6 +78,12 @@ class BoardContainer extends Component {
     this.cardListener();
   }
 
+  onDragStart = () => {
+    this.setState({
+      isDragging: true
+    });
+  };
+
   onDragEnd = ({ destination, draggableId, source, type }) => {
     if (!destination) return;
 
@@ -69,14 +92,14 @@ class BoardContainer extends Component {
       destination.index === source.index
     )
       return;
+    const { firebase } = this.props;
     if (type === droppableTypes.CARD) {
-      const { listsById, firebase } = this.props;
+      const { listsById } = this.props;
       const isMovedWithinList = source.droppableId === destination.droppableId;
       const updatedCardIds = [...listsById[destination.droppableId].cardIds];
       if (isMovedWithinList) {
         updatedCardIds.splice(source.index, 1);
         updatedCardIds.splice(destination.index, 0, draggableId);
-        console.log(updatedCardIds);
         firebase.updateList(source.droppableId, {
           cardIds: updatedCardIds
         });
@@ -90,23 +113,55 @@ class BoardContainer extends Component {
         });
       }
     }
+
+    if (type === droppableTypes.LIST) {
+      const { boardsById, current, reorderLists } = this.props;
+      const { boardId } = current;
+      const updatedListIds = [...boardsById[boardId].listIds];
+      updatedListIds.splice(source.index, 1);
+      updatedListIds.splice(destination.index, 0, draggableId);
+      firebase.updateBoard(boardId, {
+        listIds: updatedListIds
+      });
+      reorderLists(boardId, updatedListIds);
+    }
+
+    this.setState({
+      isDragging: false
+    });
+  };
+
+  toggleCardEditor = () => {
+    this.setState(prevState => ({
+      isCardEditorOpen: !prevState.isCardEditorOpen
+    }));
+  };
+
+  handleCardClick = cardId => {
+    this.props.selectCard(cardId);
+    this.toggleCardEditor();
   };
 
   render() {
-    const { current, boardsById, listsArray } = this.props;
-    const { boardId } = current;
+    const { isFetching, isCardEditorOpen } = this.state;
+    const { current, boardsById, listsArray, cardsById, match } = this.props;
+    const boardId = match.params.id;
+    if (isFetching) return null;
+    const { cardId } = current;
     const board = boardsById[boardId];
     const { boardTitle } = board;
-
-    const lists = listsArray.map(list => {
+    const lists = listsArray.map((list, listIndex) => {
       const { listId, listTitle, cardIds } = list;
       return (
         <List
           listId={listId}
           key={listId}
+          listIndex={listIndex}
           listTitle={listTitle}
           cardIds={cardIds}
           isFetchingCards={this.state.isFetching}
+          isDragging={this.state.isDragging}
+          onCardClick={this.handleCardClick}
         />
       );
     });
@@ -114,12 +169,18 @@ class BoardContainer extends Component {
     return (
       <main className="board-container">
         <h1>{boardTitle}</h1>
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Board>
-            {lists}
-            <ListComposer />
-          </Board>
+        <DragDropContext
+          onDragEnd={this.onDragEnd}
+          onDragStart={this.onDragStart}
+        >
+          <Board boardId={boardId}>{lists}</Board>
         </DragDropContext>
+        {isCardEditorOpen && (
+          <CardEditor
+            card={cardsById[cardId]}
+            onCardEditorClose={this.toggleCardEditor}
+          />
+        )}
       </main>
     );
   }
@@ -133,20 +194,23 @@ const mapStateToProps = state => {
     boardsById: boardSelectors.getBoardsById(state),
     current: currentSelectors.getCurrent(state),
     listsById: listSelectors.getListsById(state),
-    listsArray: listSelectors.getListsArray(state)
+    listsArray: listSelectors.getListsArray(state),
+    cardsById: cardSelectors.getCardsById(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getUserData: userId => dispatch(userActions.getUserData(userId)),
     fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
     updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
+    selectCard: cardId => dispatch(currentActions.selectCard(cardId)),
     fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
     updateListsById: list => dispatch(listActions.updateListsById(list)),
     fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
-    updateCardsById: listId => dispatch(cardActions.updateCardsById(listId))
+    updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
+    reorderLists: (boardId, listIds) =>
+      dispatch(boardActions.reorderLists(boardId, listIds))
   };
 };
 

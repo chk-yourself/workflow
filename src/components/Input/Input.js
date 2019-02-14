@@ -3,14 +3,14 @@ import './Input.scss';
 
 const Input = props => {
   return (
-    <div className="input__group">
+    <>
       {!props.hideLabel && (
         <label htmlFor={props.name} className="input__label">
           {props.title}
         </label>
       )}
       <input
-        className="input"
+        className={props.className}
         id={props.name}
         name={props.name}
         type={props.type}
@@ -18,8 +18,9 @@ const Input = props => {
         onChange={props.onChange}
         placeholder={props.placeholder}
         required={props.isRequired}
+        onBlur={props.onBlur}
       />
-    </div>
+    </>
   );
 };
 

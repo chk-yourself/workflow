@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withFirebase } from '../Firebase';
 import { Input } from '../Input';
+import { Button } from '../Button';
 
 const INITIAL_STATE = {
   email: '',
@@ -38,17 +39,24 @@ class PasswordForgetForm extends Component {
     const isInvalid = email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="email"
           title="Email"
           value={email}
           onChange={this.onChange}
           type="email"
+          className="user-form__input"
         />
-        <button disabled={isInvalid} type="submit">
+        <Button
+          disabled={isInvalid}
+          type="submit"
+          size="large"
+          variant="contained"
+          color="primary"
+        >
           Reset My Password
-        </button>
+        </Button>
         {error && <p>{error.message}</p>}
       </form>
     );

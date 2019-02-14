@@ -6,25 +6,48 @@
   height: 80px;
   border-radius: 4px;
   margin: 8px;
-  padding: 0 12px;
   background-color: $white;
   box-shadow: 0 1px 3px 0 rgba(21, 27, 38, 0.15);
+  .card__popover-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.card__popover {
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  background-color: #fff;
+  min-width: 200px;
+  @include box-shadow(2);
+  a {
+    color: $grey-900;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 8px 12px;
+    &:hover {
+      background-color: $primary;
+      color: #fff;
+    }
+  }
 }
 
 .card__title {
   font-size: 16px;
   margin: 0;
+  font-weight: 400;
 }
 
 .card__header {
   position: relative;
-  padding-top: 8px;
+  padding: 12px;
 }
 
 .card__btn--more-actions {
-  position: absolute;
-  top: 0;
-  right: 0;
   .feather {
     width: 18px;
     height: 18px;

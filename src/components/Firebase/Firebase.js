@@ -131,11 +131,42 @@ class Firebase {
       });
   };
 
-  updateCard = (cardId, newValue = {}) =>
+  updateCard = (cardId, newValue = {}) => {
     this.getCardDoc(cardId).update({
       lastModifiedAt: this.getTimestamp(),
       ...newValue
     });
+  };
+
+  deleteCard = ({ cardId, listId }) => {
+    this.db
+      .collection('cards')
+      .doc(cardId)
+      .delete();
+    this.updateList(listId, {
+      cardIds: this.removeFromArray(cardId)
+    });
+
+    /*
+    const batch = this.db.batch();
+    const cardRef = this.getCardDoc(cardId);
+    const listRef = this.getListDoc(listId);
+    batch.delete(cardRef);
+    batch.update(listRef, {
+      cardIds: this.removeFromArray(cardId),
+      lastModifiedAt: this.getTimestamp()
+    });
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('card deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+      */
+  };
 
   moveCardToList = ({ cardId, origListId, newListId, updatedCardIds }) => {
     const batch = this.db.batch();

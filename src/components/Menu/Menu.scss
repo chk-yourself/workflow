@@ -1,0 +1,12 @@
+@import '../../styles/_variables';
+
+.menu {
+  list-style: none;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.menu__item {
+  box-sizing: border-box;
+}

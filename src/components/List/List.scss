@@ -1,15 +1,10 @@
 @import '../../styles/_variables.scss';
-@import '../../styles/_mixins.scss';
 
-.list,
-.list-composer {
+.list {
   width: 272px;
   margin: 0 4px;
   box-sizing: border-box;
   height: 100%;
-}
-
-.list {
   background-color: $grey-300;
   border-radius: 4px;
   white-space: nowrap;
@@ -26,7 +21,4 @@
   font-size: 18px;
   margin: 0;
   padding: 16px 8px;
-}
-
-.list-composer {
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import PasswordForgetForm from './PasswordForgetForm';
+import { UserFormPage } from '../UserFormPage';
 
 const PasswordForgetPage = () => (
-  <main className="app__main">
-    <h1>Forgot your password?</h1>
+  <UserFormPage title="Forgot your password?">
     <PasswordForgetForm />
-  </main>
+  </UserFormPage>
 );
 
 export default PasswordForgetPage;

@@ -5,6 +5,7 @@ import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Input } from '../Input';
+import { Button } from '../Button';
 
 const INITIAL_STATE = {
   email: '',
@@ -42,13 +43,14 @@ class SignInForm extends Component {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="email"
           title="Email"
           value={email}
           onChange={this.onChange}
           type="email"
+          className="user-form__input"
         />
         <Input
           name="password"
@@ -56,10 +58,17 @@ class SignInForm extends Component {
           value={password}
           onChange={this.onChange}
           type="password"
+          className="user-form__input"
         />
-        <button disabled={isInvalid} type="submit">
+        <Button
+          disabled={isInvalid}
+          type="submit"
+          size="large"
+          variant="contained"
+          color="primary"
+        >
           Sign In
-        </button>
+        </Button>
         {error && <p>{error.message}</p>}
       </form>
     );

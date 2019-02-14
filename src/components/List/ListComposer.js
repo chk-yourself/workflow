@@ -1,30 +1,37 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Input } from '../Input';
-import { FeatherIcon } from '../FeatherIcon';
+import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import './List.scss';
+import { Button } from '../Button';
+import './ListComposer.scss';
+
+const INITIAL_STATE = {
+  cardTitle: '',
+  isActive: false
+};
 
 class ListComposer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      listTitle: '',
-      isActive: false
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   resetForm = () => {
     this.setState({ listTitle: '' });
   };
 
+  onReset = e => {
+    this.setState({ ...INITIAL_STATE });
+  };
+
   onSubmit = e => {
     e.preventDefault();
     const { listTitle } = this.state;
-    const { boardId } = this.props.current;
+    const { boardId } = this.props;
     this.props.firebase.addList({ boardId, listTitle });
     this.resetForm();
   };
@@ -62,19 +69,32 @@ class ListComposer extends Component {
             onChange={this.onChange}
             value={listTitle}
             placeholder={isActive ? 'Enter list title...' : 'Add a list'}
-            required="true"
+            required={true}
             name="listTitle"
-            hideLabel="true"
+            hideLabel={true}
+            className="list-composer__input"
           />
           {isActive && (
-            <>
-              <button className="list-composer__btn--add" type="submit">
+            <div className="list-composer__footer">
+              <Button
+                className="list-composer__btn--add"
+                type="submit"
+                onClick={this.onSubmit}
+                color="primary"
+                variant="contained"
+              >
                 Add List
-              </button>
-              <button className="list-composer__btn--close" type="button">
-                <FeatherIcon name="x" />
-              </button>
-            </>
+              </Button>
+              <Button
+                className="list-composer__btn--close"
+                type="reset"
+                onClick={this.onReset}
+                size="small"
+                iconOnly
+              >
+                <Icon name="x" />
+              </Button>
+            </div>
           )}
         </form>
       </div>

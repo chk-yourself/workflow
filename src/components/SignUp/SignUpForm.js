@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Input } from '../Input';
+import { Button } from '../Button';
 
 const INITIAL_STATE = {
   username: '',
@@ -66,13 +67,14 @@ class SignUpForm extends Component {
       passwordOne !== passwordTwo;
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="name"
           title="Full Name"
           value={name}
           onChange={this.onChange}
           type="text"
+          className="user-form__input"
         />
         <Input
           name="username"
@@ -80,6 +82,7 @@ class SignUpForm extends Component {
           value={username}
           onChange={this.onChange}
           type="text"
+          className="user-form__input"
         />
         <Input
           name="email"
@@ -87,6 +90,7 @@ class SignUpForm extends Component {
           value={email}
           onChange={this.onChange}
           type="email"
+          className="user-form__input"
         />
         <Input
           name="passwordOne"
@@ -94,6 +98,7 @@ class SignUpForm extends Component {
           value={passwordOne}
           onChange={this.onChange}
           type="password"
+          className="user-form__input"
         />
         <Input
           name="passwordTwo"
@@ -101,10 +106,17 @@ class SignUpForm extends Component {
           value={passwordTwo}
           onChange={this.onChange}
           type="password"
+          className="user-form__input"
         />
-        <button disabled={isInvalid} type="submit">
+        <Button
+          disabled={isInvalid}
+          type="submit"
+          size="large"
+          variant="contained"
+          color="primary"
+        >
           Sign Up
-        </button>
+        </Button>
         {error && <p>{error.message}</p>}
       </form>
     );

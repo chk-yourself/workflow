@@ -2,12 +2,8 @@ export const getCardsById = state => {
   return state.cardsById;
 };
 
-export const getCardsArray = state => {
+export const getCardsArray = (state, ownProps) => {
   const { cardsById } = state;
-  return Object.keys(cardsById).map(cardId => {
-    return {
-      cardId,
-      ...cardsById[cardId]
-    };
-  });
+  const { cardIds } = ownProps;
+  return cardIds.map(cardId => cardsById[cardId]);
 };

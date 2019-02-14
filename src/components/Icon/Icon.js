@@ -1,7 +1,7 @@
 import React from 'react';
 import featherIcons from '../../assets/feather/feather-sprite.svg';
 
-function FeatherIcon(props) {
+function Icon(props) {
   return (
     <svg
       className={`feather feather-${props.name} ${props.addClass || ''}`.trim()}
@@ -21,4 +21,4 @@ function FeatherIcon(props) {
   );
 }
 
-export default FeatherIcon;
+export default Icon;

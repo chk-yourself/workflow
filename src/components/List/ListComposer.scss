@@ -1,0 +1,29 @@
+@import '../../styles/_variables.scss';
+
+.list-composer {
+  width: 272px;
+  margin: 0 4px;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  &.is-active {
+    .list-composer__input {
+      background-color: $white;
+    }
+  }
+}
+
+.list-composer__input {
+  background-color: $grey-300;
+  margin-bottom: 8px;
+}
+
+.list-composer__footer {
+  padding-bottom: 8px;
+}
+
+.list-composer__btn--add {
+  margin: 0;
+  vertical-align: top;
+}

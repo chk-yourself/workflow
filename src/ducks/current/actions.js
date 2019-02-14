@@ -17,7 +17,7 @@ export const selectList = listId => {
 
 export const selectCard = cardId => {
   return {
-    types: types.SELECT_CARD,
+    type: types.SELECT_CARD,
     cardId
   };
 };

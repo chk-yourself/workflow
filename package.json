@@ -8,6 +8,8 @@
     "firebase-admin": "^7.0.0",
     "history": "^4.7.2",
     "node-sass": "^4.11.0",
+    "normalize.css": "^8.0.1",
+    "prop-types": "^15.7.1",
     "react": "^16.7.0",
     "react-beautiful-dnd": "^10.0.4",
     "react-dom": "^16.7.0",

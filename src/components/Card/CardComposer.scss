@@ -1,8 +1,38 @@
+@import '../../styles/_variables';
+
+.card-composer {
+  &.is-active {
+    .card-composer__textarea {
+      height: 80px;
+      background-color: $white;
+      box-shadow: 0 1px 3px 0 rgba(21, 27, 38, 0.15);
+      padding: 12px;
+    }
+  }
+}
+
 .card-composer__form {
   display: flex;
   flex-wrap: wrap;
+}
 
-  .textarea {
-    width: 100%;
-  }
+.card-composer__textarea {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin: 0 8px 8px;
+  height: 32px;
+  background-color: transparent;
+}
+
+.card-composer__footer {
+  margin: 0 8px;
+  padding-bottom: 8px;
+}
+
+.card-composer__btn--add {
+  margin: 0;
+  vertical-align: top;
+  font-weight: 600;
 }

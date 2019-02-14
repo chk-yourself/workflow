@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FeatherIcon } from '../FeatherIcon';
+import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Textarea } from '../Textarea';
+import { Button } from '../Button';
 import './CardComposer.scss';
+
+const INITIAL_STATE = {
+  cardTitle: '',
+  isActive: false
+};
 
 class CardComposer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      cardTitle: '',
-      isActive: false
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   resetForm = () => {
@@ -43,6 +46,10 @@ class CardComposer extends Component {
     });
   };
 
+  onReset = e => {
+    this.setState({ ...INITIAL_STATE });
+  };
+
   onBlur = e => {
     if (e.target.value !== '') return;
     this.setState({
@@ -63,19 +70,31 @@ class CardComposer extends Component {
             onChange={this.onChange}
             value={cardTitle}
             placeholder={isActive ? 'Enter card title...' : 'Add a card'}
-            isRequired={true}
+            isRequired
             name="cardTitle"
-            style="card"
+            className="card-composer__textarea"
           />
           {isActive && (
-            <>
-              <button className="card-composer__btn--add" type="submit">
+            <div className="card-composer__footer">
+              <Button
+                className="card-composer__btn--add"
+                type="submit"
+                onClick={this.onSubmit}
+                color="primary"
+                variant="contained"
+              >
                 Add Card
-              </button>
-              <button className="card-composer__btn--close" type="button">
-                <FeatherIcon name="x" />
-              </button>
-            </>
+              </Button>
+              <Button
+                className="card-composer__btn--close"
+                type="reset"
+                onClick={this.onReset}
+                size="small"
+                iconOnly
+              >
+                <Icon name="x" />
+              </Button>
+            </div>
           )}
         </form>
       </div>

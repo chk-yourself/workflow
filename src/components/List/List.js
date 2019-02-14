@@ -1,88 +1,80 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Droppable } from 'react-beautiful-dnd';
+import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
-import { boardActions } from '../../ducks/boards';
-import { currentActions, currentSelectors } from '../../ducks/current';
-import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
-import { Card, CardComposer } from '../Card';
+import { CardComposer } from '../Card';
+import Cards from './Cards';
 import './List.scss';
-import * as droppableTypes from '../../constants/droppableTypes';
 
 class List extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isDragging: this.props.isDragging
+    };
   }
+
+  handleCardDelete = cardId => {
+    const { listId, firebase } = this.props;
+    console.log({ cardId, listId });
+    firebase.deleteCard({ cardId, listId });
+  };
 
   render() {
     const {
-      cardIds,
-      cardsById,
+      cards,
+      onCardClick,
       listId,
       listTitle,
+      listIndex,
       isFetchingCards
     } = this.props;
     if (isFetchingCards) return null;
-    const cards = cardIds.map((cardId, cardIndex) => {
-      const card = cardsById[cardId];
-      const { cardTitle } = card;
-      return (
-        <Card
-          key={cardId}
-          cardTitle={cardTitle}
-          cardId={cardId}
-          cardIndex={cardIndex}
-          listId={listId}
-        />
-      );
-    });
 
     return (
-      <Droppable droppableId={listId} type={droppableTypes.CARD}>
+      <Draggable draggableId={listId} index={listIndex}>
         {provided => (
-          <section
-            className="list"
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <header className="list__header">
-              <h2 className="list__title">{listTitle}</h2>
-            </header>
-            {cards}
+          <>
+            <section
+              className="list"
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              <header className="list__header">
+                <h2 className="list__title">{listTitle}</h2>
+              </header>
+              <Cards
+                cards={cards}
+                listId={listId}
+                onCardClick={onCardClick}
+                onCardDelete={this.handleCardDelete}
+              />
+              {provided.placeholder}
+              <CardComposer listId={listId} />
+            </section>
             {provided.placeholder}
-            <CardComposer listId={listId} />
-          </section>
+          </>
         )}
-      </Droppable>
+      </Draggable>
     );
   }
 }
 
 const condition = authUser => !!authUser;
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     user: userSelectors.getUserData(state),
-    current: currentSelectors.getCurrent(state),
-    listsById: listSelectors.getListsById(state),
-    listsArray: listSelectors.getListsArray(state),
-    cardsById: cardSelectors.getCardsById(state)
+    cards: cardSelectors.getCardsArray(state, ownProps)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getUserData: userId => dispatch(userActions.getUserData(userId)),
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
-    selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
-    fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
-    updateListsById: list => dispatch(listActions.updateListsById(list)),
-    fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
-    updateCardsById: listId => dispatch(cardActions.updateCardsById(listId))
+    getUserData: userId => dispatch(userActions.getUserData(userId))
   };
 };
 

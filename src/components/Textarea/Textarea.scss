@@ -3,7 +3,8 @@
 .textarea {
   box-sizing: border-box;
   border: 2px solid transparent;
-  padding: 8px 12px;
+  border-radius: 4px;
+  padding: 12px;
   font-family: $body-font;
   &:focus {
     border-color: $primary;

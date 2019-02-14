@@ -1,0 +1,106 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.card-editor {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.card-editor__section {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding: 0;
+  &.is-focused {
+    .feather {
+      color: $primary;
+    }
+  }
+}
+
+.card-editor__input--title {
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 1.2rem;
+  &:focus {
+    border-color: $primary;
+  }
+}
+
+.card-editor__textarea--description,
+.card-editor__textarea--subtask,
+.card-editor__textarea--comment {
+  line-height: 1.4;
+  min-height: 40px;
+  overflow: hidden;
+  margin-top: 0;
+  padding: 8px;
+  width: calc(100% - 32px);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  vertical-align: top;
+}
+
+.card-editor__textarea--comment,
+.card-editor__textarea--subtask {
+  width: 100%;
+  padding: 0;
+  &:focus {
+    border-color: transparent;
+  }
+}
+
+.card-editor__section-icon {
+  width: 32px;
+  height: 40px;
+  line-height: 38px;
+  padding: 4px;
+  vertical-align: middle;
+  text-align: center;
+  display: inline-block;
+  .feather {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.card-editor__edit-card-form {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  margin-top: 21px;
+}
+
+.card-editor__comment-form,
+.card-editor__subtask-form {
+  display: flex;
+  width: calc(100% - 32px);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 8px;
+  margin-left: auto;
+  &:focus,
+  &.is-focused {
+    border-color: $primary;
+  }
+}
+
+.card-editor__btn--submit-comment,
+.card-editor__btn--submit-subtask {
+  flex: none;
+  height: 36px;
+  align-self: flex-end;
+}
+
+.card-editor__hr {
+  border-top: 0.5px solid $grey-300;
+  width: 100%;
+}
+
+.card-editor__section-title {
+  flex: 0;
+  padding: 8px;
+  margin: 2px 10px 0 0;
+  font-weight: 700;
+}

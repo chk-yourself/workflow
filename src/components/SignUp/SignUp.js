@@ -1,11 +1,11 @@
 import React from 'react';
 import SignUpForm from './SignUpForm';
+import { UserFormPage } from '../UserFormPage';
 
 const SignUpPage = () => (
-  <main className="app__main">
-    <h1>Sign Up</h1>
+  <UserFormPage title="Sign Up">
     <SignUpForm />
-  </main>
+  </UserFormPage>
 );
 
 export default SignUpPage;

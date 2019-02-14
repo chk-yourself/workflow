@@ -1,6 +1,6 @@
 @import '../../styles/_variables.scss';
 
-.input {
+input {
   box-sizing: border-box;
   border: 2px solid $grey-300;
   padding: 16px 8px;
@@ -23,8 +23,4 @@
 .input__label {
   margin-bottom: 8px;
   display: block;
-}
-
-.input__group {
-  margin-bottom: 24px;
 }

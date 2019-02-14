@@ -8,7 +8,7 @@ export const updateUserBoards = boardIds => {
   };
 };
 
-export const getUserData = userId => {
+export const fetchUserData = userId => {
   return async dispatch => {
     try {
       const user = await firebase

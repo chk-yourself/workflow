@@ -2,14 +2,14 @@ import React from 'react';
 import SignInForm from './SignInForm';
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../PasswordForget';
+import { UserFormPage } from '../UserFormPage';
 
 const SignInPage = () => (
-  <main className="app__main">
-    <h1>Sign In</h1>
+  <UserFormPage title="Sign In">
     <SignInForm />
     <PasswordForgetLink />
     <SignUpLink />
-  </main>
+  </UserFormPage>
 );
 
 export default SignInPage;

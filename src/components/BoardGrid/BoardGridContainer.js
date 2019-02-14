@@ -11,12 +11,12 @@ import { currentActions, currentSelectors } from '../../ducks/current';
 class BoardGridContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+    };
   }
 
   componentDidMount() {
     const { userId } = this.props.user;
-    this.props.fetchBoardsById(userId);
     this.listener = this.props.firebase.db
       .collection('boards')
       .where('memberIds', 'array-contains', userId)
@@ -77,7 +77,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getUserData: userId => dispatch(userActions.getUserData(userId)),
     updateUserBoards: boardIds =>
       dispatch(userActions.updateUserBoards(boardIds)),
     fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),

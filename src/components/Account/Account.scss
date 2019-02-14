@@ -1,0 +1,23 @@
+@import '../../styles/_mixins.scss';
+
+.user-form {
+  max-width: 400px;
+}
+
+.user-form__input {
+  margin-bottom: 24px;
+}
+
+.account {
+  padding: 8px 16px;
+  @include md {
+    padding: 8px 24px;
+  }
+  @include lg {
+    padding: 8px 32px;
+  }
+}
+
+.account__section {
+  margin-bottom: 80px;
+}

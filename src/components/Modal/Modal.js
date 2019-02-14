@@ -1,17 +1,17 @@
 import React from 'react';
-import { FeatherIcon } from '../FeatherIcon';
+import { Icon } from '../Icon';
 import './Modal.scss';
 
-const Modal = ({ onModalClose, children }) => {
+const Modal = ({ onModalClose, children, className, onModalClick }) => {
   return (
-    <div className="modal">
-      <div className="modal__content">
+    <div className="modal" onClick={onModalClick}>
+      <div className={`modal__content ${className}`}>
         <button
           type="button"
           className="modal__btn--close"
           onClick={onModalClose}
         >
-          <FeatherIcon name="x" />
+          <Icon name="x" />
         </button>
         {children}
       </div>

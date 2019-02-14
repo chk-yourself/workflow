@@ -1,0 +1,143 @@
+@import '../../styles/_variables';
+
+button {
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  min-width: 64px;
+  &:active,
+  &:focus {
+    outline: none;
+  }
+  .feather {
+    pointer-events: none;
+    vertical-align: middle;
+  }
+  span {
+    pointer-events: none;
+  }
+}
+
+// Colors + Variants
+
+// Contained
+.primary.contained {
+  background-color: $primary;
+  color: $white;
+}
+
+.secondary.contained {
+  background-color: $secondary;
+  color: $white;
+}
+
+.neutral.contained {
+  background-color: $grey-700;
+  color: $white;
+}
+
+// Outlined
+.primary.outlined {
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.secondary.outlined {
+  border: 1px solid $secondary;
+  color: $secondary;
+}
+
+.neutral.outlined {
+  border: 1px solid $grey-700;
+  color: $grey-700;
+}
+
+// Text
+
+.primary.text {
+  color: $primary;
+}
+
+.secondary.text {
+  color: $secondary;
+}
+
+.neutral.text {
+  color: $grey-700;
+}
+
+// Sizes
+.small {
+  padding: 4px 8px;
+  font-size: 0.8125rem;
+  .feather {
+    font-size: 18px;
+  }
+}
+
+.medium {
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  min-height: 36px;
+  .feather {
+    font-size: 20px;
+  }
+}
+
+.large {
+  padding: 10px 24px;
+  font-size: 1.1rem;
+  .feather {
+    font-size: 32px;
+  }
+}
+
+.icon-only {
+  padding: 8px;
+  margin: 0;
+  min-width: 0;
+  .feather {
+    vertical-align: baseline;
+  }
+}
+
+.small.icon-only {
+  font-size: 18px;
+  line-height: 18px;
+  height: 36px;
+  width: 36px;
+  .feather {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.medium.icon-only {
+  font-size: 22px;
+  line-height: 22px;
+  height: 40px;
+  width: 40px;
+  .feather {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.large.icon-only {
+  font-size: 32px;
+  line-height: 32px;
+  height: 50px;
+  width: 50px;
+  .feather {
+    width: 32px;
+    height: 32px;
+  }
+}

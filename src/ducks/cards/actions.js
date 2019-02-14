@@ -18,7 +18,10 @@ export const fetchCardsById = boardId => {
         .then(snapshot => {
           const cardsById = {};
           snapshot.forEach(doc => {
-            cardsById[doc.id] = doc.data();
+            cardsById[doc.id] = {
+              cardId: doc.id,
+              ...doc.data()
+            };
           });
           return cardsById;
         });
