@@ -12,11 +12,12 @@ export default class PopoverWrapper extends Component {
     wrapperClass: '',
     popoverClass: '',
     buttonProps: {},
-    align: 'left'
+    align: 'left',
+    anchorEl: null
   };
 
-  handleOutsideClick = e => {
-    if (!this.componentEl.contains(e.target)) {
+  handleOutsideClick = target => {
+    if (!this.componentEl.contains(target)) {
       this.setState({
         isOpen: false
       });
@@ -32,21 +33,23 @@ export default class PopoverWrapper extends Component {
   render() {
     const {
       children,
-      align,
+      innerAlign,
+      outerAlign,
       buttonProps,
       wrapperClass,
-      popoverClass
+      popoverClass,
+      anchorEl
     } = this.props;
     const { isOpen } = this.state;
-    let popoverStyle = null;
 
-    if (this.anchorEl) {
-      const { height } = this.anchorEl.getBoundingClientRect();
-
-      popoverStyle = {
-        top: height,
-        left: align === 'left' ? 0 : 'auto',
-        right: align === 'right' ? 0 : 'auto'
+    let popoverWrapperStyle = null;
+    
+    if (anchorEl) {
+      const { offsetTop, offsetLeft } = anchorEl;
+      popoverWrapperStyle = {
+        position: 'absolute',
+        top: offsetTop,
+        [outerAlign]: offsetLeft
       };
     }
 
@@ -54,20 +57,14 @@ export default class PopoverWrapper extends Component {
       <div
         className={`popover-wrapper ${wrapperClass}`}
         ref={el => (this.componentEl = el)}
+        style={popoverWrapperStyle}
       >
-        <Button
-          type="button"
-          onClick={this.toggleOpen}
-          buttonRef={el => (this.anchorEl = el)}
-          {...buttonProps}
-        />
+        <Button type="button" onClick={this.toggleOpen} {...buttonProps} />
         {isOpen && (
           <Popover
-            className={popoverClass}
+            className={`align-${innerAlign} ${popoverClass}`}
             onClick={this.toggleOpen}
-            style={popoverStyle}
             onOutsideClick={this.handleOutsideClick}
-            key="popover"
           >
             {children}
           </Popover>

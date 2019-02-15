@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
-import { Navigation } from '../Navigation';
+import { Navbar } from '../Navbar';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
@@ -12,8 +12,7 @@ import { HomePage } from '../Home';
 import { AccountPage } from '../Account';
 import { AdminPage } from '../Admin';
 import { withAuthentication } from '../Session';
-import { Board } from '../Board';
-import {Header} from '../Header';
+import { Header } from '../Header';
 
 class App extends Component {
   render() {

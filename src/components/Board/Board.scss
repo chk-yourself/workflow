@@ -12,6 +12,7 @@
 .board-container {
   padding: 4px 8px;
   overflow-y: hidden;
+  overflow-x: visible;
   @include md {
     padding: 8px;
   }

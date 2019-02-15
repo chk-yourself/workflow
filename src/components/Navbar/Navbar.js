@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { SignOutButton } from '../SignOut';
-import './Navigation.scss';
+import './Navbar.scss';
 import { AuthUserContext } from '../Session';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 
-const NavLinksAuth = ({ className = '' }) => (
-  <ul className={`navbar__links ${className}`}>
+const NavLinksAuth = ({ className = '', onClick }) => (
+  <ul className={`navbar__links ${className}`} onClick={onClick}>
     <li>
       <Link to={ROUTES.HOME}>Home</Link>
     </li>
@@ -24,8 +24,8 @@ const NavLinksAuth = ({ className = '' }) => (
   </ul>
 );
 
-const NavLinksNonAuth = ({ className = '' }) => (
-  <ul className={`navbar__links ${className}`}>
+const NavLinksNonAuth = ({ className = '', onClick }) => (
+  <ul className={`navbar__links ${className}`} onClick={onClick}>
     <li>
       <Link to={ROUTES.SIGN_IN}>Sign In</Link>
     </li>
@@ -44,7 +44,20 @@ export default class Navbar extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
+    document.addEventListener('click', this.handleOutsideClick);
   }
+
+  handleOutsideClick = e => {
+    const { viewportWidth } = this.state;
+    const { minWidth } = this.props;
+    const isMobileView = viewportWidth < minWidth;
+    
+    if (!isMobileView || this.navEl.contains(e.target)) return;
+
+    this.setState({
+      isMobileNavVisible: false
+    });
+  };
 
   handleResize = () => {
     this.setState({
@@ -58,13 +71,25 @@ export default class Navbar extends Component {
     }));
   };
 
+  handleClick = e => {
+    const { viewportWidth } = this.state;
+    const { minWidth } = this.props;
+    const isMobileView = viewportWidth < minWidth;
+
+    if (!isMobileView) return;
+    if (e.target.matches('button') || e.target.matches('a')) {
+      this.toggleMobileNavVisibility();
+    }
+  };
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleResize);
+    document.removeEventListener('click', this.handleOutsideClick);
   }
 
   render() {
     const { viewportWidth, isMobileNavVisible } = this.state;
-    const { minWidth } = this.props;
+    const { minWidth, navRef } = this.props;
     const isMobileView = viewportWidth < minWidth;
 
     return (
@@ -72,6 +97,7 @@ export default class Navbar extends Component {
         className={`navbar ${isMobileView ? 'is-collapsed' : ''} ${
           isMobileView && isMobileNavVisible ? 'show-links' : ''
         }`}
+        ref={el => (this.navEl = el)}
       >
         <span className="navbar__logo">
           <Link to={ROUTES.LANDING}>workflow</Link>
@@ -87,7 +113,13 @@ export default class Navbar extends Component {
           </Button>
         )}
         <AuthUserContext.Consumer>
-          {authUser => (authUser ? <NavLinksAuth /> : <NavLinksNonAuth />)}
+          {authUser =>
+            authUser ? (
+              <NavLinksAuth onClick={this.handleClick} />
+            ) : (
+              <NavLinksNonAuth onClick={this.handleClick} />
+            )
+          }
         </AuthUserContext.Consumer>
       </nav>
     );

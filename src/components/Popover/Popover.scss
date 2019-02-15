@@ -5,4 +5,13 @@
 .popover {
   position: absolute;
   z-index: 2;
+  top: 100%;
+  &.align-left {
+    left: 0;
+    right: auto;
+  }
+  &.align-right {
+    right: 0;
+    left: auto;
+  }
 }

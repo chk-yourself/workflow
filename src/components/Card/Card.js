@@ -43,17 +43,19 @@ export default class Card extends Component {
               {...provided.dragHandleProps}
               ref={provided.innerRef}
             >
-              <div className="card__header">
+              <div className="card__header" ref={el => (this.headerEl = el)}>
                 <PopoverWrapper
                   wrapperClass="card__popover-wrapper"
                   popoverClass="card__popover"
-                  align="left"
+                  outerAlign="right"
+                  innerAlign="left"
                   buttonProps={{
                     size: 'small',
                     iconOnly: true,
                     className: 'card__btn--more-actions',
                     children: <Icon name="more-horizontal" />
                   }}
+                  anchorEl={this.headerEl}
                 >
                   <Menu onClick={this.handleMoreActions}>
                     <MenuItem>

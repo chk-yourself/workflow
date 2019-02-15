@@ -7,6 +7,7 @@
   background-color: $white;
   padding: 4px 16px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
+  z-index: 4;
   @include md {
     padding: 8px 24px;
   }
