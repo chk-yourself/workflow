@@ -105,6 +105,7 @@ class CardEditor extends Component {
         onModalClose={onCardEditorClose}
         className="card-editor"
         onModalClick={this.handleModalClick}
+        size="lg"
       >
         <form
           name="editCardForm"

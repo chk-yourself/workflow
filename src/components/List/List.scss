@@ -17,8 +17,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
     line-height: 48px;
+    z-index: 4;
   }
 }
 
@@ -75,4 +75,5 @@
 .list__content {
   overflow-x: hidden;
   overflow-y: auto;
+  min-height: 16px;
 }

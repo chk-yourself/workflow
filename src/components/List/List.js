@@ -80,7 +80,7 @@ class List extends Component {
 
     const { listTitle, viewportHeight } = this.state;
     const listContentHeight = {};
-    
+
     if (this.listHeaderEl) {
       const { bottom } = this.listHeaderEl.getBoundingClientRect();
       listContentHeight.maxHeight = viewportHeight - (bottom + 80);
@@ -96,7 +96,10 @@ class List extends Component {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <header className="list__header" ref={el => (this.listHeaderEl = el)}>
+              <header
+                className="list__header"
+                ref={el => (this.listHeaderEl = el)}
+              >
                 <Input
                   className="list__input--title"
                   name="listTitle"
@@ -110,7 +113,7 @@ class List extends Component {
                 <PopoverWrapper
                   wrapperClass="list__popover-wrapper"
                   popoverClass="list__popover"
-                  align="left"
+                  alignInner="left"
                   buttonProps={{
                     size: 'medium',
                     iconOnly: true,

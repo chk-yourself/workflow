@@ -33,8 +33,8 @@ export default class PopoverWrapper extends Component {
   render() {
     const {
       children,
-      innerAlign,
-      outerAlign,
+      alignInner,
+      alignOuter,
       buttonProps,
       wrapperClass,
       popoverClass,
@@ -49,7 +49,7 @@ export default class PopoverWrapper extends Component {
       popoverWrapperStyle = {
         position: 'absolute',
         top: offsetTop,
-        [outerAlign]: offsetLeft
+        [alignOuter]: offsetLeft
       };
     }
 
@@ -62,7 +62,7 @@ export default class PopoverWrapper extends Component {
         <Button type="button" onClick={this.toggleOpen} {...buttonProps} />
         {isOpen && (
           <Popover
-            className={`align-${innerAlign} ${popoverClass}`}
+            className={`align-${alignInner} ${popoverClass}`}
             onClick={this.toggleOpen}
             onOutsideClick={this.handleOutsideClick}
           >

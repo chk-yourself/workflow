@@ -10,7 +10,7 @@
   display: block;
   z-index: 99;
   background-color: $white;
-  @include md {
+  @include xs {
     background-color: rgba(0, 0, 0, 0.6);
   }
 }
@@ -23,33 +23,21 @@
   justify-content: start;
   align-items: flex-start;
   background-color: $white;
-  width: 480px;
+  width: 100%;
   max-width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: 24px;
+  padding: 12px;
   box-shadow: none;
-  top: 0;
-  left: 0;
-  border-radius: 10px;
   -webkit-backface-visibility: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   // box-shadow: 0 1px 2px 0 rgba(0,0,0,.15);
-  @include md {
-    position: fixed;
-    align-items: center;
-    flex-wrap: wrap;
-    flex-direction: row;
-    min-height: 400px;
-    height: auto;
-    justify-content: space-between;
-    width: 600px;
-    top: 50%;
-    transform: translateY(-50%);
-    left: calc(50% - 300px);
+  @include xs {
+    border-radius: 4px;
     @include box-shadow(5);
-    .modal__title {
-      font-size: 1.5rem;
-    }
   }
 }
 
@@ -67,8 +55,60 @@
 
 .modal__btn--close {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 4px;
+  right: 4px;
   padding: 8px;
   z-index: 99;
+  min-width: 0;
+}
+
+.modal__content--sm {
+  padding: 32px 12px 12px;
+  @include xs {
+    width: 300px;
+    padding: 24px 20px 20px;
+    height: auto;
+  }
+  @include sm {
+    width: 340px;
+    padding: 32px 24px 24px;
+  }
+}
+
+.modal__content--md {
+  @include xs {
+    width: 400px;
+    height: auto;
+  }
+  @include lg {
+    width: 440px;
+  }
+}
+
+.modal__content--lg {
+  border-radius: 0;
+  @include sm {
+    max-width: 480px;
+    height: auto;
+    border-radius: 4px;
+  }
+  @include md {
+    max-width: 600px;
+    position: fixed;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    min-height: 400px;
+    height: auto;
+    justify-content: space-between;
+    .modal__title {
+      font-size: 1.5rem;
+    }
+  }
+  @include lg {
+    max-width: 760px;
+  }
+  @include xl {
+    max-width: 900px;
+  }
 }

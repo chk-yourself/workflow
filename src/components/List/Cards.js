@@ -9,15 +9,25 @@ export default class Cards extends Component {
     listId: PropTypes.string.isRequired
   };
 
+  shouldComponentUpdate(nextProps) {
+    if (this.props.cards === nextProps.cards) {
+      return false;
+    }
+    return true;
+  }
+
   render() {
     const { listId, cards, style, onCardClick, onCardDelete } = this.props;
     return (
       <Droppable droppableId={listId} type={droppableTypes.CARD}>
-        {provided => (
+        {(provided, snapshot) => (
           <div
             className="list__content"
             ref={provided.innerRef}
-            style={style}
+            style={{
+              ...style,
+              minHeight: snapshot.isDraggingOver ? 80 : 16
+            }}
             {...provided.droppableProps}
           >
             {cards.map((card, cardIndex) => {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal } from '../Modal';
 import { Input } from '../Input';
+import { Button } from '../Button';
 
 const INITIAL_STATE = {
   boardTitle: ''
@@ -30,7 +31,7 @@ export default class BoardComposer extends Component {
   render() {
     const { boardTitle } = this.state;
     return (
-      <Modal onModalClose={this.props.onClose}>
+      <Modal onModalClose={this.props.onClose} size="sm">
         <form onSubmit={this.onSubmit}>
           <Input
             name="boardTitle"
@@ -39,7 +40,15 @@ export default class BoardComposer extends Component {
             onChange={this.onChange}
             type="text"
           />
-          <button type="submit">Create Board</button>
+          <Button
+            className="board-composer__btn--add"
+            type="submit"
+            onClick={this.onSubmit}
+            color="primary"
+            variant="contained"
+          >
+            Create Board
+          </Button>
         </form>
       </Modal>
     );

@@ -44,6 +44,26 @@ export default class Card extends Component {
               ref={provided.innerRef}
             >
               <div className="card__header" ref={el => (this.headerEl = el)}>
+                <PopoverWrapper
+                  wrapperClass="card__popover-wrapper"
+                  popoverClass="card__popover"
+                  alignOuter="right"
+                  alignInner="right"
+                  buttonProps={{
+                    size: 'small',
+                    iconOnly: true,
+                    className: 'card__btn--more-actions',
+                    children: <Icon name="more-horizontal" />
+                  }}
+                >
+                  <Menu onClick={this.handleMoreActions}>
+                    <MenuItem>
+                      <a href="" data-action="delete">
+                        Delete
+                      </a>
+                    </MenuItem>
+                  </Menu>
+                </PopoverWrapper>
                 <div className="card__tags" />
                 <h3 className="card__title">{cardTitle}</h3>
               </div>
