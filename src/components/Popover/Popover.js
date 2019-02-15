@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 
 export default class Popover extends Component {
   componentDidMount() {
-    document.body.addEventListener('click', this.handleOutsideClick, false);
+    window.addEventListener('click', this.handleOutsideClick, false);
   }
 
   handleOutsideClick = e => {
     const { onOutsideClick } = this.props;
     onOutsideClick(e);
-    document.body.removeEventListener('click', this.handleOutsideClick);
+    console.log('click');
+    window.removeEventListener('click', this.handleOutsideClick);
   };
 
   render() {
