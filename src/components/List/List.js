@@ -17,9 +17,20 @@ class List extends Component {
     super(props);
     this.state = {
       isDragging: this.props.isDragging,
-      listTitle: this.props.listTitle
+      listTitle: this.props.listTitle,
+      viewportHeight: window.innerHeight
     };
   }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  handleResize = () => {
+    this.setState({
+      viewportHeight: window.innerHeight
+    });
+  };
 
   handleCardDelete = cardId => {
     const { listId, firebase } = this.props;
@@ -53,6 +64,10 @@ class List extends Component {
     }
   };
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
   render() {
     const {
       cards,
@@ -63,7 +78,13 @@ class List extends Component {
     } = this.props;
     if (isFetchingCards) return null;
 
-    const { listTitle } = this.state;
+    const { listTitle, viewportHeight } = this.state;
+    const listContentHeight = {};
+    
+    if (this.listHeaderEl) {
+      const { bottom } = this.listHeaderEl.getBoundingClientRect();
+      listContentHeight.maxHeight = viewportHeight - (bottom + 80);
+    }
 
     return (
       <Draggable draggableId={listId} index={listIndex}>
@@ -75,7 +96,7 @@ class List extends Component {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <header className="list__header">
+              <header className="list__header" ref={el => (this.listHeaderEl = el)}>
                 <Input
                   className="list__input--title"
                   name="listTitle"
@@ -111,6 +132,7 @@ class List extends Component {
                 listId={listId}
                 onCardClick={onCardClick}
                 onCardDelete={this.handleCardDelete}
+                style={listContentHeight}
               />
               {provided.placeholder}
               <CardComposer listId={listId} />

@@ -1,9 +1,43 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
 .board {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
 }
 
 .board-container {
-  padding: 8px;
+  padding: 4px 8px;
+  overflow-y: hidden;
+  @include md {
+    padding: 8px;
+  }
+}
+
+.board__input--title {
+  background-color: transparent;
+  border-color: transparent;
+  width: auto;
+  margin: 0 6px;
+  font-size: 1.1rem;
+  font-family: $heading-font;
+  font-weight: 500;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  height: auto;
+  &:focus {
+    background-color: rgba(#fff, 0.6);
+  }
+  @include md {
+    font-size: 1.35rem;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  @include xl {
+    font-size: 1.5rem;
+    padding: 14px;
+  }
 }

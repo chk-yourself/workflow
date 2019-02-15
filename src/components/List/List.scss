@@ -3,12 +3,12 @@
 
 .list {
   width: 272px;
-  margin: 0 4px;
+  min-width: 272px;
+  margin: 0 6px;
   box-sizing: border-box;
   height: 100%;
   background-color: $grey-300;
   border-radius: 4px;
-  white-space: nowrap;
   display: flex;
   flex-direction: column;
   .list__popover-wrapper {
@@ -68,4 +68,8 @@
     border-color: $primary;
     background-color: rgba($white, 0.6);
   }
+}
+
+.list__content {
+  overflow-y: scroll;
 }

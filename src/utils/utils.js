@@ -1,3 +1,4 @@
+
 /**
  * Checks if two arrays or objects are equal
  * @param {Array|Object} value
@@ -47,4 +48,26 @@ export const isEqual = (value, other) => {
     }
   }
   return true;
+};
+
+/**
+ * Delays callback execution until next browser repaint
+ * Best used for `scroll` and `resize` window events
+ * @param {Function} callback - The function to debounce
+ */
+
+export const windowDebouncer = callback => {
+  let request;
+
+  return (...args) => {
+    const context = this;
+
+    if (request) {
+      window.cancelAnimationFrame(request);
+    }
+
+    request = window.requestAnimationFrame(() => {
+      callback.apply(context, args);
+    });
+  };
 };

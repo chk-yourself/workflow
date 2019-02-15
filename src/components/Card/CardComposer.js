@@ -59,6 +59,7 @@ class CardComposer extends Component {
 
   render() {
     const { cardTitle, isActive } = this.state;
+
     return (
       <div
         className={`card-composer${isActive ? ' is-active' : ''}`}

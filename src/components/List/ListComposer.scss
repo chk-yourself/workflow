@@ -2,7 +2,8 @@
 
 .list-composer {
   width: 272px;
-  margin: 0 4px;
+  min-width: 272px;
+  margin: 0 6px;
   box-sizing: border-box;
   height: 100%;
   display: flex;
@@ -12,7 +13,7 @@
   padding: 8px;
   &.is-active {
     .list-composer__input {
-      background-color: $white;
+      background-color: rgba($white, 0.6);
       margin-bottom: 8px;
     }
   }

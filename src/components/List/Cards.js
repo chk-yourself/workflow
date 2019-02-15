@@ -10,13 +10,14 @@ export default class Cards extends Component {
   };
 
   render() {
-    const { listId, cards, onCardClick, onCardDelete } = this.props;
+    const { listId, cards, style, onCardClick, onCardDelete } = this.props;
     return (
       <Droppable droppableId={listId} type={droppableTypes.CARD}>
         {provided => (
           <div
             className="list__content"
             ref={provided.innerRef}
+            style={style}
             {...provided.droppableProps}
           >
             {cards.map((card, cardIndex) => {

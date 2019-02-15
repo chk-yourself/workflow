@@ -2,10 +2,10 @@ import React from 'react';
 import { Icon } from '../Icon';
 import './Modal.scss';
 
-const Modal = ({ onModalClose, children, className, onModalClick }) => {
+const Modal = ({ onModalClose, children, className="", onModalClick, size="medium" }) => {
   return (
     <div className="modal" onClick={onModalClick}>
-      <div className={`modal__content ${className}`}>
+      <div className={`modal__content ${className} ${size}`}>
         <button
           type="button"
           className="modal__btn--close"

@@ -9,6 +9,7 @@ import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import * as ROUTES from '../../constants/routes';
 import Board from './Board';
+import { Input } from '../Input';
 import { List } from '../List';
 import { CardEditor } from '../CardEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
@@ -21,7 +22,8 @@ class BoardContainer extends Component {
     this.state = {
       isFetching: true,
       isDragging: false,
-      isCardEditorOpen: false
+      isCardEditorOpen: false,
+      boardTitle: this.props.boardTitle
     };
   }
 
@@ -153,9 +155,36 @@ class BoardContainer extends Component {
     this.toggleCardEditor();
   };
 
+  onTitleChange = e => {
+    this.setState({
+      boardTitle: e.target.value
+    });
+  };
+
+  onTitleBlur = e => {
+    const { boardTitle, boardId, firebase } = this.props;
+    const { boardTitle: newBoardTitle } = this.state;
+
+    // When field loses focus, update list title if change is detected
+
+    if (newBoardTitle !== boardTitle) {
+      firebase.updateBoard(boardId, {
+        boardTitle: newBoardTitle
+      });
+      console.log('updated!');
+    }
+  };
+
   render() {
     const { isFetching, isCardEditorOpen } = this.state;
-    const { current, boardsById, listsArray, cardsById, boardId, board } = this.props;
+    const {
+      current,
+      boardsById,
+      listsArray,
+      cardsById,
+      boardId,
+      board
+    } = this.props;
     if (isFetching) return null;
     const { cardId } = current;
     const { boardTitle } = board;
@@ -178,7 +207,16 @@ class BoardContainer extends Component {
 
     return (
       <main className="board-container">
-        <h1>{boardTitle}</h1>
+        <Input
+          className="board__input--title"
+          name="boardTitle"
+          type="text"
+          value={boardTitle}
+          onChange={this.onTitleChange}
+          required
+          hideLabel
+          onBlur={this.onTitleBlur}
+        />
         <DragDropContext
           onDragEnd={this.onDragEnd}
           onDragStart={this.onDragStart}

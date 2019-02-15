@@ -5,7 +5,7 @@ const Button = ({
   children,
   type,
   onClick,
-  className,
+  className = '',
   color = 'neutral',
   size = 'medium',
   variant = 'text',

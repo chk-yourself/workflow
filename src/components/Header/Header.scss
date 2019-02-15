@@ -2,9 +2,10 @@
 
 .header {
   width: 100%;
-  height: auto; // 88px
+  height: auto;
+  position: fixed;
   background-color: $white;
-  padding: 8px 16px;
+  padding: 4px 16px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
   @include md {
     padding: 8px 24px;
