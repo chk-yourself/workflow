@@ -4,7 +4,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
 import { cardActions, cardSelectors } from '../../ducks/cards';
-import { CardComposer } from '../Card';
+import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
@@ -17,29 +17,12 @@ class List extends Component {
     super(props);
     this.state = {
       isDragging: this.props.isDragging,
-      listTitle: this.props.listTitle,
-      viewportHeight: window.innerHeight
+      listTitle: this.props.listTitle
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
-  }
-
-  handleResize = () => {
-    this.setState({
-      viewportHeight: window.innerHeight
-    });
-  };
-
-  handleCardDelete = cardId => {
-    const { listId, firebase } = this.props;
-    firebase.deleteCard({ cardId, listId });
-  };
-
   handleListDelete = e => {
     e.preventDefault();
-
     const { listId, boardId, firebase } = this.props;
     firebase.deleteList({ listId, boardId });
   };
@@ -64,10 +47,6 @@ class List extends Component {
     }
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  }
-
   render() {
     const {
       cards,
@@ -79,12 +58,6 @@ class List extends Component {
     if (isFetchingCards) return null;
 
     const { listTitle, viewportHeight } = this.state;
-    const listContentHeight = {};
-
-    if (this.listHeaderEl) {
-      const { bottom } = this.listHeaderEl.getBoundingClientRect();
-      listContentHeight.maxHeight = viewportHeight - (bottom + 80);
-    }
 
     return (
       <Draggable draggableId={listId} index={listIndex}>
@@ -135,7 +108,6 @@ class List extends Component {
                 listId={listId}
                 onCardClick={onCardClick}
                 onCardDelete={this.handleCardDelete}
-                style={listContentHeight}
               />
               {provided.placeholder}
               <CardComposer listId={listId} />

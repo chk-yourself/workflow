@@ -6,7 +6,7 @@ import * as ROUTES from '../../constants/routes';
 import { userActions, userSelectors } from '../../ducks/user';
 import { currentSelectors } from '../../ducks/current';
 import { BoardGridContainer } from '../BoardGrid';
-import { BoardComposer } from '../Board';
+import { BoardComposer } from '../BoardComposer';
 import { BoardContainer } from '../Board';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import './Home.scss';
@@ -71,7 +71,9 @@ class HomePage extends Component {
           />
           <Route
             path={ROUTES.BOARD}
-            render={props => <BoardContainer boardId={props.match.params.id} {...props} />}
+            render={props => (
+              <BoardContainer boardId={props.match.params.id} {...props} />
+            )}
           />
         </Switch>
       </>

@@ -11,6 +11,8 @@ import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
+import { Toolbar } from '../Toolbar';
+import CardEditorMoreActions from './CardEditorMoreActions';
 import './CardEditor.scss';
 
 class CardEditor extends Component {
@@ -39,6 +41,13 @@ class CardEditor extends Component {
       [e.target.name]: e.target.value
     });
     console.log('changed');
+  };
+
+  handleCardDelete = () => {
+    const { card, firebase, onCardEditorClose } = this.props;
+    const { cardId, listId } = card;
+    firebase.deleteCard({ cardId, listId });
+    onCardEditorClose();
   };
 
   onBlur = e => {
@@ -87,9 +96,21 @@ class CardEditor extends Component {
     }
   };
 
+  handleMoreActions = e => {
+    if (!e.target.matches('a')) return;
+    const { action } = e.target.dataset;
+    const { cardId } = this.props;
+    switch (action) {
+      case 'delete':
+        this.handleCardDelete(cardId);
+        break;
+    }
+    e.preventDefault(); // prevents page reload
+  };
+
   render() {
     const { onCardEditorClose, user } = this.props;
-    console.log({user});
+
     const {
       cardTitle,
       cardDescription,
@@ -107,19 +128,20 @@ class CardEditor extends Component {
         onModalClick={this.handleModalClick}
         size="lg"
       >
+        <Toolbar className="card-editor__toolbar">
+          <CardEditorMoreActions onMenuClick={this.handleMoreActions} />
+        </Toolbar>
         <form
           name="editCardForm"
           onFocus={this.onFocus}
           className="card-editor__edit-card-form"
         >
-          <Input
-            className="card-editor__input--title"
+          <Textarea
+            className="card-editor__textarea--title"
             name="cardTitle"
-            type="text"
             value={cardTitle}
             onChange={this.onChange}
             required
-            hideLabel
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />

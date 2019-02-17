@@ -75,7 +75,7 @@ button {
 }
 
 // Sizes
-.small {
+.sm {
   padding: 4px 8px;
   font-size: 0.8125rem;
   .feather {
@@ -83,16 +83,16 @@ button {
   }
 }
 
-.medium {
+.md {
   padding: 6px 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   min-height: 36px;
   .feather {
     font-size: 20px;
   }
 }
 
-.large {
+.lg {
   padding: 10px 24px;
   font-size: 1.1rem;
   .feather {
@@ -109,7 +109,7 @@ button {
   }
 }
 
-.small.icon-only {
+.sm.icon-only {
   font-size: 18px;
   line-height: 18px;
   height: 36px;
@@ -120,7 +120,7 @@ button {
   }
 }
 
-.medium.icon-only {
+.md.icon-only {
   font-size: 22px;
   line-height: 22px;
   height: 40px;
@@ -131,7 +131,7 @@ button {
   }
 }
 
-.large.icon-only {
+.lg.icon-only {
   font-size: 32px;
   line-height: 32px;
   height: 50px;

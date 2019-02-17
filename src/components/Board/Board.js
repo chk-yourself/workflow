@@ -1,7 +1,7 @@
 import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import * as droppableTypes from '../../constants/droppableTypes';
-import { ListComposer } from '../List';
+import { ListComposer } from '../ListComposer';
 
 const Board = props => {
   const { boardId, children } = props;

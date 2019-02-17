@@ -17,7 +17,7 @@ export default class PopoverWrapper extends Component {
   };
 
   handleOutsideClick = target => {
-    if (!this.componentEl.contains(target)) {
+    if (this.componentEl && !this.componentEl.contains(target)) {
       this.setState({
         isOpen: false
       });
@@ -55,7 +55,7 @@ export default class PopoverWrapper extends Component {
 
     return (
       <div
-        className={`popover-wrapper ${wrapperClass}`}
+        className={`popover-wrapper ${isOpen ? 'is-active' : ''} ${wrapperClass}`}
         ref={el => (this.componentEl = el)}
         style={popoverWrapperStyle}
       >

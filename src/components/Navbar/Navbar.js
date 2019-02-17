@@ -47,18 +47,6 @@ export default class Navbar extends Component {
     document.addEventListener('click', this.handleOutsideClick);
   }
 
-  handleOutsideClick = e => {
-    const { viewportWidth } = this.state;
-    const { minWidth } = this.props;
-    const isMobileView = viewportWidth < minWidth;
-    
-    if (!isMobileView || this.navEl.contains(e.target)) return;
-
-    this.setState({
-      isMobileNavVisible: false
-    });
-  };
-
   handleResize = () => {
     this.setState({
       viewportWidth: window.innerWidth
@@ -86,6 +74,19 @@ export default class Navbar extends Component {
     window.removeEventListener('resize', this.handleResize);
     document.removeEventListener('click', this.handleOutsideClick);
   }
+
+  handleOutsideClick = e => {
+    e.preventDefault(); // prevents double triggering if `touch` event is fired
+    const { viewportWidth } = this.state;
+    const { minWidth } = this.props;
+    const isMobileView = viewportWidth < minWidth;
+
+    if (!isMobileView || this.navEl.contains(e.target)) return;
+
+    this.setState({
+      isMobileNavVisible: false
+    });
+  };
 
   render() {
     const { viewportWidth, isMobileNavVisible } = this.state;

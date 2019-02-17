@@ -18,18 +18,6 @@ export default class Card extends Component {
     onCardClick(cardId);
   };
 
-  handleMoreActions = e => {
-    if (!e.target.matches('a')) return;
-    const { action } = e.target.dataset;
-    const { cardId, onCardDelete } = this.props;
-    switch (action) {
-      case 'delete':
-        onCardDelete(cardId);
-        break;
-    }
-    e.preventDefault(); // prevents page reload
-  };
-
   render() {
     const { cardTitle, cardId, cardIndex } = this.props;
     return (

@@ -1,19 +1,56 @@
-import React from 'react';
+import React, { Component, createRef } from 'react';
 import './Textarea.scss';
 
-const Textarea = props => {
-  return (
-    <textarea
-      className={`textarea ${props.className}`}
-      id={props.name}
-      name={props.name}
-      value={props.value}
-      onChange={props.onChange}
-      placeholder={props.placeholder}
-      required={props.isRequired}
-      onBlur={props.onBlur}
-    />
-  );
-};
+export default class Textarea extends Component {
 
-export default Textarea;
+  static defaultProps = {
+    isAutoHeightResizeEnabled: true
+  };
+
+  constructor(props) {
+    super(props);
+    this.textareaEl = createRef();
+  }
+
+  componentDidMount() {
+    const { isAutoHeightResizeEnabled } = this.props;
+    if (!isAutoHeightResizeEnabled) return;
+    this.autoHeightResize();
+  }
+
+  autoHeightResize = () => {
+    const { isAutoHeightResizeEnabled } = this.props;
+    if (!isAutoHeightResizeEnabled) return;
+    
+    this.textareaEl.current.style.height = '0px'; // resets scroll height
+    this.textareaEl.current.style.height = `${
+      this.textareaEl.current.scrollHeight
+    }px`;
+  };
+
+  render() {
+    const {
+      className,
+      name,
+      value,
+      onChange,
+      placeholder,
+      isRequired,
+      onBlur
+    } = this.props;
+    return (
+      <textarea
+        className={`textarea ${className}`}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={isRequired}
+        onBlur={onBlur}
+        onInput={this.autoHeightResize}
+        ref={this.textareaEl}
+      />
+    );
+  }
+}

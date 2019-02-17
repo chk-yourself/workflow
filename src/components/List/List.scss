@@ -60,12 +60,11 @@
 .list__input--title {
   border: 2px solid transparent;
   font-weight: 700;
-  font-size: 1.2rem;
   padding: 8px;
   background-color: transparent;
   width: calc(100% - 32px);
-  font-size: 18px;
-  height: 40px;
+  font-size: 16px;
+  height: 38px;
   &:focus {
     border-color: $primary;
     background-color: rgba($white, 0.6);
@@ -76,4 +75,11 @@
   overflow-x: hidden;
   overflow-y: auto;
   min-height: 16px;
+  max-height: calc(100vh - 282px);
+  @include md {
+    max-height: calc(100vh - 302px);
+  }
+  @include xl {
+    max-height: calc(100vh - 328px);
+  }
 }

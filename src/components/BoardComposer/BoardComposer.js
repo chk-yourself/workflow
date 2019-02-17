@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal } from '../Modal';
 import { Input } from '../Input';
 import { Button } from '../Button';
+import './BoardComposer.scss';
 
 const INITIAL_STATE = {
   boardTitle: ''

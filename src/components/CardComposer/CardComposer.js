@@ -1,38 +1,36 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
+import { cardActions, cardSelectors } from '../../ducks/cards';
 import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
+import { Textarea } from '../Textarea';
 import { Button } from '../Button';
-import './ListComposer.scss';
+import './CardComposer.scss';
 
 const INITIAL_STATE = {
-  listTitle: '',
+  cardTitle: '',
   isActive: false
 };
 
-class ListComposer extends Component {
+class CardComposer extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
   }
 
   resetForm = () => {
-    this.setState({ listTitle: '' });
-  };
-
-  onReset = e => {
-    this.setState({ ...INITIAL_STATE });
+    this.setState({ cardTitle: '' });
   };
 
   onSubmit = e => {
     e.preventDefault();
-    const { listTitle } = this.state;
-    const { boardId } = this.props;
-    this.props.firebase.addList({ boardId, listTitle });
+    const { cardTitle } = this.state;
+    const { boardId } = this.props.current;
+    const { listId } = this.props;
+    this.props.firebase.addCard({ boardId, listId, cardTitle });
     this.resetForm();
   };
 
@@ -48,48 +46,52 @@ class ListComposer extends Component {
     });
   };
 
+  onReset = e => {
+    this.setState({ ...INITIAL_STATE });
+  };
+
   onBlur = e => {
-    if (e.target.value === '') {
-      this.setState({
-        isActive: false
-      });
-    }
+    if (e.target.value !== '') return;
+    this.setState({
+      isActive: false
+    });
   };
 
   render() {
-    const { listTitle, isActive } = this.state;
+    const { cardTitle, isActive } = this.state;
+
     return (
       <div
-        className={`list-composer${isActive ? ' is-active' : ''}`}
+        className={`card-composer${isActive ? ' is-active' : ''}`}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
       >
-        <form className="list-composer__form" onSubmit={this.onSubmit}>
-          <Input
+        <form className="card-composer__form" onSubmit={this.onSubmit}>
+          <Textarea
             onChange={this.onChange}
-            value={listTitle}
-            placeholder={isActive ? 'Enter list title...' : 'Add a list'}
-            required={true}
-            name="listTitle"
-            hideLabel={true}
-            className="list-composer__input"
+            value={cardTitle}
+            placeholder={isActive ? 'Enter card title...' : 'Add a card'}
+            isRequired
+            name="cardTitle"
+            className="card-composer__textarea"
+            isAutoHeightResizeEnabled={false}
           />
           {isActive && (
-            <div className="list-composer__footer">
+            <div className="card-composer__footer">
               <Button
-                className="list-composer__btn--add"
+                className="card-composer__btn--add"
                 type="submit"
                 onClick={this.onSubmit}
                 color="primary"
                 variant="contained"
               >
-                Add List
+                Add Card
               </Button>
               <Button
-                className="list-composer__btn--close"
+                className="card-composer__btn--close"
                 type="reset"
                 onClick={this.onReset}
-                size="small"
+                size="sm"
                 iconOnly
               >
                 <Icon name="x" />
@@ -115,10 +117,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getUserData: userId => dispatch(userActions.getUserData(userId)),
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
-    selectBoard: boardId => dispatch(currentActions.selectBoard(boardId))
+    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board))
   };
 };
 
@@ -126,5 +125,5 @@ export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ListComposer)
+  )(CardComposer)
 );

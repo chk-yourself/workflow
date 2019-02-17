@@ -3,11 +3,11 @@ import './Button.scss';
 
 const Button = ({
   children,
-  type,
+  type = 'button',
   onClick,
   className = '',
   color = 'neutral',
-  size = 'medium',
+  size = 'md',
   variant = 'text',
   disabled,
   name,
@@ -15,6 +15,7 @@ const Button = ({
   buttonRef,
   ...props
 }) => (
+  // eslint-disable-next-line react/button-has-type
   <button
     className={`${className} ${color} ${size} ${variant} ${
       iconOnly ? 'icon-only' : ''
@@ -24,9 +25,19 @@ const Button = ({
     disabled={disabled}
     name={name}
     ref={buttonRef}
+    {...props}
   >
     {children}
   </button>
 );
+
+Button.defaultProps = {
+  type: 'button',
+  className: '',
+  color: 'neutral',
+  size: 'md',
+  variant: 'text',
+  iconOnly: false
+};
 
 export default Button;
