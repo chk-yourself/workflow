@@ -281,6 +281,7 @@ class CardEditor extends Component {
                       name={taskId}
                       isChecked={cardTasks[taskId].isCompleted}
                       onChange={this.handleCheckboxChange}
+                      labelClass="card-editor__checkbox-label"
                     />
                     <Textarea
                       value={cardTasks[taskId].text}

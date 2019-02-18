@@ -180,13 +180,23 @@ class Firebase {
       lastModifiedAt: this.getTimestamp()
     });
 
-    return batch
-      .commit()
-      .then(() => {
-        console.log('card deleted');
-      })
-      .catch(error => {
-        console.error(error);
+    // Delete tasks assigned to card
+    this.db
+      .collection('tasks')
+      .where('cardId', '==', cardId)
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch
+          .commit()
+          .then(() => {
+            console.log('list deleted');
+          })
+          .catch(error => {
+            console.error(error);
+          });
       });
   };
 

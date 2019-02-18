@@ -3,7 +3,7 @@
 
 .card-editor {
   display: flex;
-  flex-flow: column wrap;
+  flex-direction: column;
 }
 
 .card-editor__section {
@@ -12,6 +12,7 @@
   flex-wrap: wrap;
   margin-top: 24px;
   padding: 0;
+  min-height: min-content;
   &.is-focused {
     .feather {
       color: $primary;
@@ -20,6 +21,7 @@
 }
 
 .card-editor__textarea--title {
+  width: 100%;
   border: 1px solid transparent;
   font-weight: 700;
   font-size: 1.2rem;
@@ -57,6 +59,7 @@
   width: calc(100% - 28px);
   margin-left: 8px;
   padding: 12px 6px;
+  vertical-align: middle;
 }
 
 .card-editor__section-icon {
@@ -75,9 +78,10 @@
 
 .card-editor__edit-card-form {
   display: flex;
-  flex-flow: column wrap;
+  flex-direction: column;
   width: 100%;
   margin-top: 46px;
+  min-height: min-content;
 }
 
 .card-editor__comment-form,
@@ -177,4 +181,9 @@
   width: calc(100% - 32px);
   padding: 0;
   margin-left: auto;
+}
+
+.card-editor__checkbox-label {
+  margin: 11px 0;
+  vertical-align: top;
 }

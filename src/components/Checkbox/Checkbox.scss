@@ -5,7 +5,7 @@
   height: 20px;
   display: inline-block;
   position: relative;
-  margin: 11px 0;
+  background-color: transparent;
   .feather {
     pointer-events: none;
     width: 16px;
@@ -25,4 +25,6 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
+  background-color: transparent;
+  -webkit-appearance: none;
 }
