@@ -1,8 +1,27 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
 .user-form__container {
   max-width: 400px;
-  margin: 0 auto;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 4px 8px;
+  @include md {
+    padding: 8px;
+  }
 }
 
 .user-form__input {
   margin-bottom: 24px;
+}
+
+.user-form__title {
+  font-size: 1.5rem;
+  color: $grey-900;
+  @include md {
+    font-size: 1.75rem;
+  }
+  @include xl {
+    font-size: 2rem;
+  }
 }

@@ -27,7 +27,10 @@ const NavLinksAuth = ({ className = '', onClick }) => (
 const NavLinksNonAuth = ({ className = '', onClick }) => (
   <ul className={`navbar__links ${className}`} onClick={onClick}>
     <li>
-      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+      <Link to={ROUTES.SIGN_IN}>Log In</Link>
+    </li>
+    <li>
+      <Link to={ROUTES.SIGN_UP}>Get Started</Link>
     </li>
   </ul>
 );

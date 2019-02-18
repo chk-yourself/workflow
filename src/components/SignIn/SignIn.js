@@ -5,7 +5,7 @@ import { PasswordForgetLink } from '../PasswordForget';
 import { UserFormPage } from '../UserFormPage';
 
 const SignInPage = () => (
-  <UserFormPage title="Sign In">
+  <UserFormPage title="Log In">
     <SignInForm />
     <PasswordForgetLink />
     <SignUpLink />

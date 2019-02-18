@@ -51,9 +51,10 @@ class PasswordForgetForm extends Component {
         <Button
           disabled={isInvalid}
           type="submit"
-          size="large"
+          size="lg"
           variant="contained"
           color="primary"
+          onClick={this.onSubmit}
         >
           Reset My Password
         </Button>

@@ -111,11 +111,12 @@ class SignUpForm extends Component {
         <Button
           disabled={isInvalid}
           type="submit"
-          size="large"
+          size="lg"
           variant="contained"
           color="primary"
+          onClick={this.onSubmit}
         >
-          Sign Up
+          Create Account
         </Button>
         {error && <p>{error.message}</p>}
       </form>

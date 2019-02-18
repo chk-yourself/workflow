@@ -3,7 +3,7 @@ import SignUpForm from './SignUpForm';
 import { UserFormPage } from '../UserFormPage';
 
 const SignUpPage = () => (
-  <UserFormPage title="Sign Up">
+  <UserFormPage title="Create an account">
     <SignUpForm />
   </UserFormPage>
 );

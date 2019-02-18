@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { compose, renderComponent } from 'recompose';
+import { compose } from 'recompose';
 import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
@@ -63,11 +63,12 @@ class SignInForm extends Component {
         <Button
           disabled={isInvalid}
           type="submit"
-          size="large"
+          size="lg"
           variant="contained"
           color="primary"
+          onClick={this.onSubmit}
         >
-          Sign In
+          Log In
         </Button>
         {error && <p>{error.message}</p>}
       </form>
