@@ -7,8 +7,12 @@
   padding: 12px;
   font-family: $body-font;
   resize: none;
+  -webkit-appearance: none;
   &:focus {
     border-color: $primary;
     outline: none;
+  }
+  &:placeholder {
+    color: $grey-500;
   }
 }

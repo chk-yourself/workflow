@@ -2,7 +2,6 @@ import React, { Component, createRef } from 'react';
 import './Textarea.scss';
 
 export default class Textarea extends Component {
-
   static defaultProps = {
     isAutoHeightResizeEnabled: true
   };
@@ -21,7 +20,7 @@ export default class Textarea extends Component {
   autoHeightResize = () => {
     const { isAutoHeightResizeEnabled } = this.props;
     if (!isAutoHeightResizeEnabled) return;
-    
+
     this.textareaEl.current.style.height = '0px'; // resets scroll height
     this.textareaEl.current.style.height = `${
       this.textareaEl.current.scrollHeight
@@ -36,7 +35,8 @@ export default class Textarea extends Component {
       onChange,
       placeholder,
       isRequired,
-      onBlur
+      onBlur,
+      onFocus
     } = this.props;
     return (
       <textarea
@@ -50,6 +50,7 @@ export default class Textarea extends Component {
         onBlur={onBlur}
         onInput={this.autoHeightResize}
         ref={this.textareaEl}
+        onFocus={onFocus}
       />
     );
   }

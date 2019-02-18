@@ -11,8 +11,9 @@ input {
   color: $black;
   outline: none;
   height: 52px;
+  -webkit-appearance: none;
   &::placeholder {
-    color: rgba($grey-700, 0.6);
+    color: $grey-600;
   }
   &:active,
   &:focus {

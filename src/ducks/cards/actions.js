@@ -16,14 +16,14 @@ export const fetchCardsById = boardId => {
         .where('boardId', '==', boardId)
         .get()
         .then(snapshot => {
-          const cardsById = {};
+          const cards = {};
           snapshot.forEach(doc => {
-            cardsById[doc.id] = {
+            cards[doc.id] = {
               cardId: doc.id,
               ...doc.data()
             };
           });
-          return cardsById;
+          return cards;
         });
       dispatch(loadCardsById(cardsById));
     } catch (error) {
@@ -38,3 +38,4 @@ export const updateCardsById = card => {
     card
   };
 };
+

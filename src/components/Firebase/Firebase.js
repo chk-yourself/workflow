@@ -102,8 +102,7 @@ class Firebase {
       })
       .then(ref => {
         this.updateBoard(boardId, {
-          listIds: this.addToArray(ref.id),
-          lastModifiedAt: this.getTimestamp()
+          listIds: this.addToArray(ref.id)
         });
       });
   };
@@ -216,6 +215,39 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
+  };
+
+  // Task API
+
+  getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
+
+  addTask = ({ userId, memberIds = [], boardId = null, cardId = null, dueDate = null, text }) => {
+    this.db
+      .collection('tasks')
+      .add({
+        createdAt: this.getTimestamp(),
+        lastModifiedAt: this.getTimestamp(),
+        isCompleted: false,
+        createdBy: userId,
+        assignedTo: [userId, ...memberIds],
+        dueDate,
+        boardId,
+        cardId,
+        text
+      })
+      .then(ref => {
+        if (cardId === null) return;
+        this.updateCard(cardId, {
+          taskIds: this.addToArray(ref.id)
+        });
+      });
+  };
+
+  updateTask = (taskId, newValue = {}) => {
+    this.getTaskDoc(taskId).update({
+      lastModifiedAt: this.getTimestamp(),
+      ...newValue
+    });
   };
 }
 

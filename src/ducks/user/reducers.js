@@ -7,11 +7,13 @@ const user = (state = {}, action) => {
         ...state,
         boardIds: [...action.boardIds]
       };
-    case types.LOAD_USER_DATA:
+    case types.LOAD_USER_DATA: {
+      const { user } = action;
       return {
         ...state,
-        ...action.user
+        ...user
       };
+    }
     default:
       return state;
   }

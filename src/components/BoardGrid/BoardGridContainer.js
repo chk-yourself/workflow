@@ -7,12 +7,12 @@ import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
+import { Icon } from '../Icon';
 
 class BoardGridContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   componentDidMount() {
@@ -57,7 +57,8 @@ class BoardGridContainer extends Component {
             className="board-grid__tile board-grid__btn--add"
             onClick={this.props.openBoardComposer}
           >
-            Create new board...
+            <Icon name="plus-circle" />
+            Create new board
           </button>
         </BoardGrid>
       </section>

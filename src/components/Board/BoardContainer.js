@@ -7,6 +7,7 @@ import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
 import * as ROUTES from '../../constants/routes';
 import Board from './Board';
 import { Input } from '../Input';
@@ -32,13 +33,17 @@ class BoardContainer extends Component {
       current,
       fetchListsById,
       fetchCardsById,
+      fetchCardTasks,
       firebase,
       updateBoardsById,
       updateListsById,
       updateCardsById,
       boardId,
       board,
-      updateListIds
+      updateListIds,
+      addTask,
+      updateTask,
+      deleteTask
     } = this.props;
 
     if (current.boardId !== boardId) {
@@ -46,7 +51,8 @@ class BoardContainer extends Component {
     }
 
     fetchListsById(boardId);
-    fetchCardsById(boardId).then(() => {
+    fetchCardsById(boardId);
+    fetchCardTasks(boardId).then(() => {
       this.setState({
         isFetching: false
       });
@@ -66,6 +72,24 @@ class BoardContainer extends Component {
             [change.doc.id]: change.doc.data()
           };
           updateListsById(list);
+        });
+      });
+    this.taskObserver = firebase.db
+      .collection('tasks')
+      .where('boardId', '==', boardId)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          const taskId = change.doc.id;
+          const taskData = change.doc.data();
+          if (change.type === 'added') {
+            addTask({ taskId, taskData });
+          }
+          if (change.type === 'modified') {
+            updateTask({ taskId, taskData });
+          }
+          if (change.type === 'removed') {
+            deleteTask(taskId);
+          }
         });
       });
     this.cardObserver = firebase.db
@@ -89,6 +113,7 @@ class BoardContainer extends Component {
     this.boardObserver();
     this.listObserver();
     this.cardObserver();
+    this.taskObserver();
   }
 
   onDragStart = () => {
@@ -256,11 +281,16 @@ const mapDispatchToProps = dispatch => {
     fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
     updateListsById: list => dispatch(listActions.updateListsById(list)),
     fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
+    fetchCardTasks: boardId => dispatch(taskActions.fetchCardTasks(boardId)),
     updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
     reorderLists: (boardId, listIds) =>
       dispatch(boardActions.reorderLists(boardId, listIds)),
     updateListIds: (boardId, listIds) =>
-      dispatch(boardActions.updateListIds(boardId, listIds))
+      dispatch(boardActions.updateListIds(boardId, listIds)),
+    addTask: ({ taskId, taskData }) => dispatch(taskActions.addTask({ taskId, taskData })),
+    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
+    updateTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.updateTask({ taskId, taskData }))
   };
 };
 

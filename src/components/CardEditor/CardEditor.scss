@@ -30,7 +30,7 @@
 }
 
 .card-editor__textarea--description,
-.card-editor__textarea--subtask,
+.card-editor__textarea--new-task,
 .card-editor__textarea--comment {
   line-height: 1.4;
   min-height: 40px;
@@ -44,12 +44,19 @@
 }
 
 .card-editor__textarea--comment,
-.card-editor__textarea--subtask {
+.card-editor__textarea--new-task {
   width: 100%;
   padding: 0;
   &:focus {
     border-color: transparent;
   }
+}
+
+.card-editor__textarea--task {
+  border-width: 1px;
+  width: calc(100% - 28px);
+  margin-left: 8px;
+  padding: 12px 6px;
 }
 
 .card-editor__section-icon {
@@ -74,8 +81,9 @@
 }
 
 .card-editor__comment-form,
-.card-editor__subtask-form {
+.card-editor__new-task-form {
   display: flex;
+  flex-direction: column;
   width: calc(100% - 32px);
   border: 1px solid transparent;
   border-radius: 4px;
@@ -88,10 +96,12 @@
 }
 
 .card-editor__btn--submit-comment,
-.card-editor__btn--submit-subtask {
+.card-editor__btn--add-task {
   flex: none;
   height: 36px;
-  align-self: flex-end;
+  align-self: flex-start;
+  z-index: 3;
+  margin-top: 8px;
 }
 
 .card-editor__hr {
@@ -154,4 +164,17 @@
       color: $grey-800;
     }
   }
+}
+
+.card-editor__tasks {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card-editor__task {
+  width: calc(100% - 32px);
+  padding: 0;
+  margin-left: auto;
 }

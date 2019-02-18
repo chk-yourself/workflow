@@ -8,6 +8,13 @@ export const updateUserBoards = boardIds => {
   };
 };
 
+export const loadUserData = user => {
+  return {
+    type: types.LOAD_USER_DATA,
+    user
+  };
+};
+
 export const fetchUserData = userId => {
   return async dispatch => {
     try {
@@ -19,12 +26,5 @@ export const fetchUserData = userId => {
     } catch (error) {
       console.log(error);
     }
-  };
-};
-
-export const loadUserData = user => {
-  return {
-    type: types.LOAD_USER_DATA,
-    user
   };
 };

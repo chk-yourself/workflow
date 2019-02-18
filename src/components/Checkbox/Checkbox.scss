@@ -1,0 +1,28 @@
+@import '../../styles/_variables.scss';
+
+.checkbox__label {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: relative;
+  margin: 11px 0;
+  .feather {
+    pointer-events: none;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: calc(50% - 8px);
+    top: calc(50% - 8px);
+    color: $primary;
+  }
+}
+
+.checkbox {
+  border: 1px solid $primary;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

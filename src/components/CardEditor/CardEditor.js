@@ -6,12 +6,14 @@ import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { Input } from '../Input';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
+import { Checkbox } from '../Checkbox';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import './CardEditor.scss';
 
@@ -22,25 +24,59 @@ class CardEditor extends Component {
       cardId: this.props.card.cardId,
       cardTitle: this.props.card.cardTitle,
       cardDescription: this.props.card.cardDescription,
+      newTask: '',
+      cardTasks: this.props.tasksArray.reduce((tasks, task) => {
+        const { taskId, text, isCompleted } = task;
+        tasks[taskId] = {
+          text,
+          isCompleted
+        };
+        return tasks;
+      }, {}),
       cardComment: '',
       currentFocus: null,
       isCommentFormFocused: false
     };
     this.commentFormRef = null;
-    this.subtaskFormRef = null;
     this.setCommentFormRef = element => {
       this.commentFormRef = element;
     };
-    this.setSubtaskFormRef = element => {
-      this.subtaskFormRef = element;
-    };
   }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.tasksArray.length !== Object.keys(state.cardTasks).length) {
+      return {
+        cardTasks: props.tasksArray.reduce((tasks, task) => {
+          const { taskId, text, isCompleted } = task;
+          tasks[taskId] = {
+            text,
+            isCompleted
+          };
+          return tasks;
+        }, {})
+      };
+    }
+    return null;
+  }
+
+  updateCardTasks = () => {
+    const { tasksArray } = this.props;
+    this.setState({
+      cardTasks: tasksArray.reduce((tasks, task) => {
+        const { taskId, text, isCompleted } = task;
+        tasks[taskId] = {
+          text,
+          isCompleted
+        };
+        return tasks;
+      }, {})
+    });
+  };
 
   onChange = e => {
     this.setState({
       [e.target.name]: e.target.value
     });
-    console.log('changed');
   };
 
   handleCardDelete = () => {
@@ -76,6 +112,22 @@ class CardEditor extends Component {
     e.preventDefault();
   };
 
+  resetNewTaskForm = () => {
+    this.setState({
+      newTask: ''
+    });
+  };
+
+  addTask = e => {
+    const { user, firebase, card } = this.props;
+    const { userId } = user;
+    const { cardId, boardId } = card;
+    const { newTask: text } = this.state;
+    firebase.addTask({ userId, text, cardId, boardId });
+    this.resetNewTaskForm();
+    e.preventDefault();
+  };
+
   onFocus = e => {
     this.setState({
       currentFocus: e.target.name
@@ -87,8 +139,7 @@ class CardEditor extends Component {
     if (
       (currentFocus === 'cardComment' &&
         !this.commentFormRef.contains(e.target)) ||
-      (currentFocus === 'cardSubtask' &&
-        !this.subtaskFormRef.contains(e.target))
+      (currentFocus === 'newTask' && !this.newTaskFormEl.contains(e.target))
     ) {
       this.setState({
         currentFocus: null
@@ -108,17 +159,62 @@ class CardEditor extends Component {
     e.preventDefault(); // prevents page reload
   };
 
+  onTaskChange = e => {
+    const { cardTasks } = this.state;
+    this.setState({
+      cardTasks: {
+        ...cardTasks,
+        [e.target.name]: {
+          ...cardTasks[e.target.name],
+          text: e.target.value
+        }
+      }
+    });
+  };
+
+  handleCheckboxChange = e => {
+    const taskId = e.target.name;
+    this.toggleTaskCompletion(taskId);
+  };
+
+  toggleTaskCompletion = taskId => {
+    const { isCompleted } = this.state.cardTasks[taskId];
+    this.setState(prevState => ({
+      cardTasks: {
+        ...prevState.cardTasks,
+        [taskId]: {
+          ...prevState.cardTasks[taskId],
+          isCompleted: !prevState.cardTasks[taskId].isCompleted
+        }
+      }
+    }));
+    const { firebase } = this.props;
+    firebase.updateTask(taskId, { isCompleted: !isCompleted });
+  };
+
+  updateTask = e => {
+    const taskId = e.target.name;
+    const { cardTasks } = this.state;
+    const { text } = cardTasks[taskId];
+    const { firebase } = this.props;
+    firebase.updateTask(taskId, { text });
+  };
+
   render() {
-    const { onCardEditorClose, user } = this.props;
+    const { onCardEditorClose, card, user, tasksById, tasksArray } = this.props;
+    const { taskIds } = card;
+    const hasTasks = taskIds !== undefined && taskIds.length > 0;
 
     const {
       cardTitle,
       cardDescription,
       cardComment,
       currentFocus,
-      cardSubtask
+      newTask,
+      cardTasks
     } = this.state;
-    const isInvalid = cardComment === '';
+    const isCommentInvalid = cardComment === '';
+    const isNewTaskInvalid = newTask === '';
     const commentFormIsFocused = currentFocus === 'cardComment';
 
     return (
@@ -166,39 +262,65 @@ class CardEditor extends Component {
         </form>
         <div
           className={`card-editor__section ${
-            currentFocus === 'cardSubtask' ? 'is-focused' : ''
+            currentFocus === 'newTask' ? 'is-focused' : ''
           }`}
         >
           <hr className="card-editor__hr" />
           <div className="card-editor__section-icon">
             <Icon name="check-square" />
           </div>
+          {hasTasks && (
+            <ul className="card-editor__tasks">
+              {tasksArray.map(task => {
+                const { taskId } = task;
+                return (
+                  <li className="card-editor__task" key={taskId}>
+                    <Checkbox
+                      id={`cb-${taskId}`}
+                      value={taskId}
+                      name={taskId}
+                      isChecked={cardTasks[taskId].isCompleted}
+                      onChange={this.handleCheckboxChange}
+                    />
+                    <Textarea
+                      value={cardTasks[taskId].text}
+                      onChange={this.onTaskChange}
+                      onBlur={this.updateTask}
+                      name={taskId}
+                      className="card-editor__textarea--task"
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           <form
-            name="subtaskForm"
-            className={`card-editor__subtask-form ${
-              currentFocus === 'cardSubtask' ? 'is-focused' : ''
+            name="newTaskForm"
+            className={`card-editor__new-task-form ${
+              currentFocus === 'newTask' ? 'is-focused' : ''
             }`}
-            onFocus={this.onFocus}
-            ref={this.setSubtaskFormRef}
+            ref={el => (this.newTaskFormEl = el)}
+            onSubmit={this.addTask}
           >
             <Textarea
-              className="card-editor__textarea--subtask"
-              name="cardSubtask"
-              value={cardSubtask}
+              className="card-editor__textarea--new-task"
+              name="newTask"
+              value={newTask}
               onChange={this.onChange}
-              placeholder="Add a subtask"
+              placeholder="Add a task"
+              onFocus={this.onFocus}
             />
-            {currentFocus === 'cardSubtask' && (
+            {currentFocus === 'newTask' && (
               <Button
                 type="submit"
                 color="secondary"
                 size="small"
                 variant="contained"
-                disabled={isInvalid}
-                onClick={this.submitSubtask}
-                className="card-editor__btn--submit-subtask"
+                disabled={isNewTaskInvalid}
+                onClick={this.addTask}
+                className="card-editor__btn--add-task"
               >
-                Add subtask
+                Add task
               </Button>
             )}
           </form>
@@ -217,7 +339,6 @@ class CardEditor extends Component {
             className={`card-editor__comment-form ${
               commentFormIsFocused ? 'is-focused' : ''
             }`}
-            onFocus={this.onFocus}
             ref={this.setCommentFormRef}
           >
             <Textarea
@@ -226,6 +347,7 @@ class CardEditor extends Component {
               value={cardComment}
               onChange={this.onChange}
               placeholder="Write a comment..."
+              onFocus={this.onFocus}
             />
             {commentFormIsFocused && (
               <Button
@@ -233,7 +355,7 @@ class CardEditor extends Component {
                 color="secondary"
                 size="small"
                 variant="contained"
-                disabled={isInvalid}
+                disabled={isCommentInvalid}
                 onClick={this.onSubmitComment}
                 name="cardCommentSubmit"
                 className="card-editor__btn--submit-comment"
@@ -250,13 +372,15 @@ class CardEditor extends Component {
 
 const condition = authUser => !!authUser;
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     user: userSelectors.getUserData(state),
     boardsById: boardSelectors.getBoardsById(state),
     current: currentSelectors.getCurrent(state),
     listsById: listSelectors.getListsById(state),
-    listsArray: listSelectors.getListsArray(state)
+    listsArray: listSelectors.getListsArray(state),
+    tasksById: taskSelectors.getTasksById(state),
+    tasksArray: taskSelectors.getTasksArray(state, ownProps.card.taskIds)
   };
 };
 
