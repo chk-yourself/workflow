@@ -192,7 +192,7 @@ class Firebase {
         return batch
           .commit()
           .then(() => {
-            console.log('list deleted');
+            console.log('card deleted');
           })
           .catch(error => {
             console.error(error);
@@ -258,6 +258,28 @@ class Firebase {
       lastModifiedAt: this.getTimestamp(),
       ...newValue
     });
+  };
+
+  deleteTask = ({ taskId, cardId = null }) => {
+    const batch = this.db.batch();
+    const taskRef = this.getTaskDoc(taskId);
+    batch.delete(taskRef);
+
+    if (cardId) {
+      const cardRef = this.getCardDoc(cardId);
+      batch.update(cardRef, {
+        taskIds: this.removeFromArray(taskId),
+        lastModifiedAt: this.getTimestamp()
+      });
+    }
+    return batch
+      .commit()
+      .then(() => {
+        console.log('task deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 }
 

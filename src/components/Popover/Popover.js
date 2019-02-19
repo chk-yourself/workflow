@@ -6,8 +6,25 @@ export default class Popover extends Component {
   };
 
   componentDidMount() {
+    document.addEventListener('touchstart', this.handleTouch);
     document.addEventListener('click', this.handleOutsideClick, false);
   }
+
+  componentWillUnmount() {
+    const { isTouchEnabled } = this.state;
+
+    if (isTouchEnabled) {
+      document.removeEventListener('touchstart', this.handleOutsideClick);
+    } else {
+      document.removeEventListener('click', this.handleOutsideClick);
+      document.removeEventListener('touchstart', this.handleTouch);
+    }
+  }
+
+  handleOutsideClick = e => {
+    const { onOutsideClick } = this.props;
+    onOutsideClick(e.target);
+  };
 
   handleTouch = () => {
     this.setState({
@@ -20,22 +37,6 @@ export default class Popover extends Component {
     // reattach outside click handler to touchstart events
     document.addEventListener('touchstart', this.handleOutsideClick);
   };
-
-  handleOutsideClick = e => {
-    const { onOutsideClick } = this.props;
-    onOutsideClick(e.target);
-  };
-
-  componentWillUnmount() {
-    const { isTouchEnabled } = this.state;
-
-    if (isTouchEnabled) {
-      document.removeEventListener('touchstart', this.handleOutsideClick);
-    } else {
-      document.removeEventListener('click', this.handleOutsideClick);
-      document.removeEventListener('touchstart', this.handleTouch);
-    }
-  }
 
   render() {
     const { className, onClick, style, children } = this.props;

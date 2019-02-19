@@ -203,8 +203,7 @@ class CardEditor extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    console.log(e.target.name);
-    console.log(e.target.value !== '');
+    
   };
 
   render() {
