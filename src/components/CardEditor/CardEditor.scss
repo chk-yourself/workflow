@@ -2,15 +2,13 @@
 @import '../../styles/_mixins';
 
 .card-editor {
-  display: flex;
-  flex-direction: column;
 }
 
 .card-editor__section {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  margin-top: 24px;
+  margin-top: 16px;
   padding: 0;
   min-height: min-content;
   &.is-focused {
@@ -31,18 +29,20 @@
   }
 }
 
-.card-editor__textarea--description,
-.card-editor__textarea--new-task,
-.card-editor__textarea--comment {
+.card-editor__textarea {
   line-height: 1.4;
   min-height: 40px;
   overflow: hidden;
   margin-top: 0;
-  padding: 8px;
-  width: calc(100% - 32px);
   border: 1px solid transparent;
   border-radius: 4px;
   vertical-align: top;
+  font-size: 14px;
+}
+
+.card-editor__textarea--description {
+  padding: 8px;
+  width: calc(100% - 26px);
 }
 
 .card-editor__textarea--comment,
@@ -54,16 +54,7 @@
   }
 }
 
-.card-editor__textarea--task {
-  border-width: 1px;
-  width: calc(100% - 28px);
-  margin-left: 8px;
-  padding: 12px 6px;
-  vertical-align: middle;
-}
-
 .card-editor__section-icon {
-  width: 32px;
   height: 40px;
   line-height: 38px;
   padding: 4px;
@@ -71,8 +62,8 @@
   text-align: center;
   display: inline-block;
   .feather {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -88,7 +79,7 @@
 .card-editor__new-task-form {
   display: flex;
   flex-direction: column;
-  width: calc(100% - 32px);
+  width: calc(100% - 26px);
   border: 1px solid transparent;
   border-radius: 4px;
   padding: 8px;
@@ -170,6 +161,8 @@
   }
 }
 
+// Tasks
+
 .card-editor__tasks {
   width: 100%;
   list-style: none;
@@ -178,12 +171,36 @@
 }
 
 .card-editor__task {
-  width: calc(100% - 32px);
+  width: 100%;
   padding: 0;
   margin-left: auto;
 }
 
+.card-editor__checkbox {
+  width: 18px;
+  height: 18px;
+  top: 8px;
+  left: 4px;
+}
+
 .card-editor__checkbox-label {
-  margin: 11px 0;
   vertical-align: top;
+  padding: 8px 4px;
+  width: 26px;
+  height: 34px;
+  .feather {
+    width: 12px;
+    height: 12px;
+    left: calc(50% - 6px);
+    top: calc(50% - 6px);
+  }
+}
+
+.card-editor__textarea--task {
+  border-width: 1px;
+  width: calc(100% - 30px);
+  margin-left: 4px;
+  padding: 8px 6px;
+  vertical-align: middle;
+  font-size: 14px;
 }

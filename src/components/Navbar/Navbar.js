@@ -85,7 +85,7 @@ export default class Navbar extends Component {
     const isMobileView = viewportWidth < minWidth;
 
     if (!isMobileView || this.navEl.contains(e.target)) return;
-
+    console.log('clicked outside');
     this.setState({
       isMobileNavVisible: false
     });

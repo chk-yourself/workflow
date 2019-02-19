@@ -34,4 +34,9 @@ const Checkbox = ({
   );
 };
 
+Checkbox.defaultProps = {
+  className: '',
+  labelClass: ''
+};
+
 export default Checkbox;

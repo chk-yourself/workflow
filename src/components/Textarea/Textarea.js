@@ -36,7 +36,8 @@ export default class Textarea extends Component {
       placeholder,
       isRequired,
       onBlur,
-      onFocus
+      onFocus,
+      onKeyDown
     } = this.props;
     return (
       <textarea
@@ -51,6 +52,7 @@ export default class Textarea extends Component {
         onInput={this.autoHeightResize}
         ref={this.textareaEl}
         onFocus={onFocus}
+        onKeyDown={onKeyDown}
       />
     );
   }

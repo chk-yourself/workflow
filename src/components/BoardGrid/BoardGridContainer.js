@@ -58,7 +58,7 @@ class BoardGridContainer extends Component {
             onClick={this.props.openBoardComposer}
           >
             <Icon name="plus-circle" />
-            Create new board
+            Create board
           </button>
         </BoardGrid>
       </section>

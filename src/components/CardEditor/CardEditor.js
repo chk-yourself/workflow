@@ -15,6 +15,7 @@ import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
 import { Checkbox } from '../Checkbox';
 import CardEditorMoreActions from './CardEditorMoreActions';
+import * as keys from '../../constants/keys';
 import './CardEditor.scss';
 
 class CardEditor extends Component {
@@ -200,6 +201,12 @@ class CardEditor extends Component {
     firebase.updateTask(taskId, { text });
   };
 
+  deleteTask = e => {
+    if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
+    console.log(e.target.name);
+    console.log(e.target.value !== '');
+  };
+
   render() {
     const { onCardEditorClose, card, user, tasksById, tasksArray } = this.props;
     const { taskIds } = card;
@@ -250,7 +257,7 @@ class CardEditor extends Component {
               <Icon name="edit-3" />
             </div>
             <Textarea
-              className="card-editor__textarea--description"
+              className="card-editor__textarea card-editor__textarea--description"
               name="cardDescription"
               value={cardDescription}
               onChange={this.onChange}
@@ -266,9 +273,6 @@ class CardEditor extends Component {
           }`}
         >
           <hr className="card-editor__hr" />
-          <div className="card-editor__section-icon">
-            <Icon name="check-square" />
-          </div>
           {hasTasks && (
             <ul className="card-editor__tasks">
               {tasksArray.map(task => {
@@ -281,6 +285,7 @@ class CardEditor extends Component {
                       name={taskId}
                       isChecked={cardTasks[taskId].isCompleted}
                       onChange={this.handleCheckboxChange}
+                      className="card-editor__checkbox"
                       labelClass="card-editor__checkbox-label"
                     />
                     <Textarea
@@ -289,12 +294,16 @@ class CardEditor extends Component {
                       onBlur={this.updateTask}
                       name={taskId}
                       className="card-editor__textarea--task"
+                      onKeyDown={this.deleteTask}
                     />
                   </li>
                 );
               })}
             </ul>
           )}
+          <div className="card-editor__section-icon">
+            <Icon name="check-square" />
+          </div>
           <form
             name="newTaskForm"
             className={`card-editor__new-task-form ${
@@ -304,7 +313,7 @@ class CardEditor extends Component {
             onSubmit={this.addTask}
           >
             <Textarea
-              className="card-editor__textarea--new-task"
+              className="card-editor__textarea card-editor__textarea--new-task"
               name="newTask"
               value={newTask}
               onChange={this.onChange}
@@ -343,7 +352,7 @@ class CardEditor extends Component {
             ref={this.setCommentFormRef}
           >
             <Textarea
-              className="card-editor__textarea--comment"
+              className="card-editor__textarea card-editor__textarea--comment"
               name="cardComment"
               value={cardComment}
               onChange={this.onChange}
