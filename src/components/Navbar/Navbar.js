@@ -42,13 +42,25 @@ export default class Navbar extends Component {
 
   state = {
     viewportWidth: window.innerWidth,
-    isMobileNavVisible: false
+    isMobileNavVisible: false,
+    isTouchEnabled: false
   };
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
+    document.addEventListener('touchstart', this.handleTouch);
     document.addEventListener('click', this.handleOutsideClick);
   }
+
+  handleTouch = () => {
+    const { isTouchEnabled } = this.state;
+    if (isTouchEnabled) return;
+    this.setState({
+      isTouchEnabled: true
+    });
+    document.removeEventListener('click', this.handleOutsideClick);
+    document.addEventListener('touchstart', this.handleOutsideClick);
+  };
 
   handleResize = () => {
     this.setState({
@@ -74,8 +86,14 @@ export default class Navbar extends Component {
   };
 
   componentWillUnmount() {
+    const { isTouchEnabled } = this.state;
     window.removeEventListener('resize', this.handleResize);
-    document.removeEventListener('click', this.handleOutsideClick);
+
+    if (isTouchEnabled) {
+      document.removeEventListener('touchstart', this.handleTouch);
+    } else {
+      document.removeEventListener('click', this.handleOutsideClick);
+    }
   }
 
   handleOutsideClick = e => {
@@ -85,7 +103,6 @@ export default class Navbar extends Component {
     const isMobileView = viewportWidth < minWidth;
 
     if (!isMobileView || this.navEl.contains(e.target)) return;
-    console.log('clicked outside');
     this.setState({
       isMobileNavVisible: false
     });
