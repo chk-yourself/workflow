@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { cardActions, cardSelectors } from '../../ducks/cards';
-import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
+import * as keys from '../../constants/keys';
 import './CardComposer.scss';
 
 const INITIAL_STATE = {
@@ -26,12 +25,13 @@ class CardComposer extends Component {
   };
 
   onSubmit = e => {
-    e.preventDefault();
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { cardTitle } = this.state;
     const { boardId } = this.props.current;
     const { listId } = this.props;
     this.props.firebase.addCard({ boardId, listId, cardTitle });
     this.resetForm();
+    e.preventDefault();
   };
 
   onChange = e => {
@@ -75,6 +75,7 @@ class CardComposer extends Component {
             name="cardTitle"
             className="card-composer__textarea"
             isAutoHeightResizeEnabled={false}
+            onKeyDown={this.onSubmit}
           />
           {isActive && (
             <div className="card-composer__footer">
@@ -108,8 +109,6 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = state => {
   return {
-    user: userSelectors.getUserData(state),
-    boardsById: boardSelectors.getBoardsById(state),
     boardsArray: boardSelectors.getBoardsArray(state),
     current: currentSelectors.getCurrent(state)
   };

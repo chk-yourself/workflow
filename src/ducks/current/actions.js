@@ -1,6 +1,13 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 
+export const selectUser = userId => {
+  return {
+    type: types.SELECT_USER,
+    userId
+  };
+};
+
 export const selectBoard = boardId => {
   return {
     type: types.SELECT_BOARD,

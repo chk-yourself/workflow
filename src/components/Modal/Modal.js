@@ -8,11 +8,15 @@ const Modal = ({
   children,
   className = '',
   onModalClick,
-  size = 'md'
+  size = 'md',
+  id
 }) => {
   return (
     <div className="modal" onClick={onModalClick}>
-      <div className={`modal__content ${className} modal__content--${size}`}>
+      <div
+        id={id}
+        className={`modal__content ${className} modal__content--${size}`}
+      >
         <Button
           type="button"
           className="modal__btn--close"

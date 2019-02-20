@@ -17,6 +17,36 @@ class Firebase {
   }
 
   // Auth API
+
+  signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    this.auth.signInWithPopup(provider).then((result) => {
+      if (result.credential) {
+      const token = result.credential.accessToken;
+      console.log(token);
+      const user = result.user;
+      }
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.email;
+      const credential = error.credential;
+
+      if (errorCode === 'auth/account-exists-with-different-credential') {
+        alert('You have already signed up with a different auth provider for that email.');
+      } else {
+        console.error(error);
+      }
+    });
+  };
+
+  signInWithGithub = () => {
+    const provider = new firebase.auth.GithubAuthProvider();
+    this.auth.signInWithRedirect(provider);
+  };
+
+
   createUserWithEmailAndPassword = (email, password) =>
     this.auth.createUserWithEmailAndPassword(email, password);
 
@@ -40,11 +70,11 @@ class Firebase {
 
   getUserDoc = userId => this.db.collection('users').doc(userId);
 
-  addUser = ({ userId, name, username, email, boardIds = [] }) =>
+  addUser = ({ userId, name, username, email, boardIds = [], photoURL = null }) =>
     this.db
       .collection('users')
       .doc(userId)
-      .set({ userId, name, username, email, boardIds });
+      .set({ userId, name, username, email, boardIds, photoURL });
 
   updateUser = (userId, newValue = {}) =>
     this.db
@@ -280,6 +310,37 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
+  };
+
+  // Comment API
+  getCommentDoc = commentId => this.db.collection('comments').doc(commentId);
+
+  addComment = ({ userId, memberIds = [], boardId, cardId, text }) => {
+    this.db
+      .collection('comments')
+      .add({
+        createdAt: this.getTimestamp(),
+        lastModifiedAt: this.getTimestamp(),
+        isPinned: false,
+        from: userId,
+        to: memberIds,
+        likes: [],
+        boardId,
+        cardId,
+        text
+      })
+      .then(ref => {
+        this.updateCard(cardId, {
+          commentIds: this.addToArray(ref.id)
+        });
+      });
+  };
+
+  updateComment = (commentId, newValue = {}) => {
+    this.getCommentDoc(commentId).update({
+      lastModifiedAt: this.getTimestamp(),
+      ...newValue
+    });
   };
 }
 

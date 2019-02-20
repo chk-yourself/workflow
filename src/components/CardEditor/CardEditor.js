@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/user';
-import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { commentActions, commentSelectors } from '../../ducks/comments';
 import { Input } from '../Input';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
@@ -16,13 +15,18 @@ import { Toolbar } from '../Toolbar';
 import { Checkbox } from '../Checkbox';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import * as keys from '../../constants/keys';
+import * as droppableTypes from '../../constants/droppableTypes';
+import CardEditorTask from './CardEditorTask';
+import CardEditorComment from './CardEditorComment';
 import './CardEditor.scss';
 
 class CardEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardId: this.props.card.cardId,
+      isFetching:
+        this.props.card.commentIds !== undefined &&
+        this.props.card.commentIds.length > 0,
       cardTitle: this.props.card.cardTitle,
       cardDescription: this.props.card.cardDescription,
       newTask: '',
@@ -34,18 +38,55 @@ class CardEditor extends Component {
         };
         return tasks;
       }, {}),
-      cardComment: '',
+      newComment: '',
       currentFocus: null,
-      isCommentFormFocused: false
-    };
-    this.commentFormRef = null;
-    this.setCommentFormRef = element => {
-      this.commentFormRef = element;
+      taskIds: this.props.card.taskIds
     };
   }
 
+  componentDidMount() {
+    const {
+      card,
+      firebase,
+      fetchCardComments,
+      addComment,
+      deleteComment,
+      updateComment
+    } = this.props;
+
+    const { cardId, commentIds } = card;
+
+    if (commentIds && commentIds.length > 0) {
+      fetchCardComments(cardId).then(() => {
+        this.setState({
+          isFetching: false
+        });
+      });
+    }
+
+    this.commentObserver = firebase.db
+      .collection('comments')
+      .where('cardId', '==', cardId)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          const commentId = change.doc.id;
+          const commentData = change.doc.data();
+          if (change.type === 'added') {
+            addComment({ commentId, commentData });
+          }
+          if (change.type === 'modified') {
+            updateComment({ commentId, commentData });
+          }
+          if (change.type === 'removed') {
+            deleteComment(commentId);
+          }
+        });
+      });
+  }
+
   static getDerivedStateFromProps(props, state) {
-    if (props.tasksArray.length !== Object.keys(state.cardTasks).length) {
+    if ('taskIds' in props.card === false) return null;
+    if (props.card.taskIds.length !== state.taskIds.length) {
       return {
         cardTasks: props.tasksArray.reduce((tasks, task) => {
           const { taskId, text, isCompleted } = task;
@@ -54,7 +95,8 @@ class CardEditor extends Component {
             isCompleted
           };
           return tasks;
-        }, {})
+        }, {}),
+        taskIds: props.card.taskIds
       };
     }
     return null;
@@ -80,24 +122,24 @@ class CardEditor extends Component {
     });
   };
 
-  handleCardDelete = () => {
-    const { card, firebase, onCardEditorClose } = this.props;
+  deleteCard = () => {
+    const { card, firebase, handleCardEditorClose } = this.props;
     const { cardId, listId } = card;
     firebase.deleteCard({ cardId, listId });
-    onCardEditorClose();
+    handleCardEditorClose();
   };
 
   onBlur = e => {
     const { card, firebase } = this.props;
-    const { cardTitle, cardDescription, currentFocus } = this.state;
     const cardKey = e.target.name;
+    const { [cardKey]: updatedValue } = this.state;
 
     // When field loses focus, update card if change is detected
 
-    if (this.state[cardKey] !== card[cardKey]) {
+    if (updatedValue !== card[cardKey]) {
       const { cardId } = card;
       firebase.updateCard(cardId, {
-        [cardKey]: this.state[cardKey]
+        [cardKey]: updatedValue
       });
       console.log('updated!');
     }
@@ -107,25 +149,29 @@ class CardEditor extends Component {
     });
   };
 
-  onSubmitComment = e => {
-    console.log(e.target.value);
-
+  addComment = e => {
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { userId, firebase, card } = this.props;
+    const { cardId, boardId } = card;
+    const { newComment: text } = this.state;
+    firebase.addComment({ userId, text, cardId, boardId });
+    this.resetForm('newComment');
     e.preventDefault();
   };
 
-  resetNewTaskForm = () => {
+  resetForm = key => {
     this.setState({
-      newTask: ''
+      [key]: ''
     });
   };
 
   addTask = e => {
-    const { user, firebase, card } = this.props;
-    const { userId } = user;
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { userId, firebase, card } = this.props;
     const { cardId, boardId } = card;
     const { newTask: text } = this.state;
     firebase.addTask({ userId, text, cardId, boardId });
-    this.resetNewTaskForm();
+    this.resetForm('newTask');
     e.preventDefault();
   };
 
@@ -138,8 +184,8 @@ class CardEditor extends Component {
   handleModalClick = e => {
     const { currentFocus } = this.state;
     if (
-      (currentFocus === 'cardComment' &&
-        !this.commentFormRef.contains(e.target)) ||
+      (currentFocus === 'newComment' &&
+        !this.commentFormEl.contains(e.target)) ||
       (currentFocus === 'newTask' && !this.newTaskFormEl.contains(e.target))
     ) {
       this.setState({
@@ -151,10 +197,9 @@ class CardEditor extends Component {
   handleMoreActions = e => {
     if (!e.target.matches('a')) return;
     const { action } = e.target.dataset;
-    const { cardId } = this.props;
     switch (action) {
       case 'delete':
-        this.handleCardDelete(cardId);
+        this.deleteCard();
         break;
     }
     e.preventDefault(); // prevents page reload
@@ -175,10 +220,10 @@ class CardEditor extends Component {
 
   handleCheckboxChange = e => {
     const taskId = e.target.name;
-    this.toggleTaskCompletion(taskId);
+    this.toggleTaskCompleted(taskId);
   };
 
-  toggleTaskCompletion = taskId => {
+  toggleTaskCompleted = taskId => {
     const { isCompleted } = this.state.cardTasks[taskId];
     this.setState(prevState => ({
       cardTasks: {
@@ -193,7 +238,7 @@ class CardEditor extends Component {
     firebase.updateTask(taskId, { isCompleted: !isCompleted });
   };
 
-  updateTask = e => {
+  updateTaskText = e => {
     const taskId = e.target.name;
     const { cardTasks } = this.state;
     const { text } = cardTasks[taskId];
@@ -203,32 +248,80 @@ class CardEditor extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    
+    const { card, firebase } = this.props;
+    const { cardId } = card;
+    const taskId = e.target.name;
+    firebase.deleteTask({ taskId, cardId });
   };
 
-  render() {
-    const { onCardEditorClose, card, user, tasksById, tasksArray } = this.props;
-    const { taskIds } = card;
-    const hasTasks = taskIds !== undefined && taskIds.length > 0;
+  moveTask = ({ destination, draggableId, source }) => {
+    if (!destination) return;
+    if (destination.index === source.index) return;
+    const { firebase } = this.props;
+    const { taskIds } = this.state;
+    const updatedTaskIds = [...taskIds];
+    updatedTaskIds.splice(source.index, 1);
+    updatedTaskIds.splice(destination.index, 0, draggableId);
+    this.setState({
+      taskIds: updatedTaskIds
+    });
+    firebase.updateCard(source.droppableId, {
+      taskIds: updatedTaskIds
+    });
+  };
 
+  handleCommentLike = commentId => {
+    const { firebase, userId, commentsById } = this.props;
+    const { likes } = commentsById[commentId];
+    
+    if (likes.indexOf(userId) === -1) {
+      firebase.updateComment(commentId, {
+        likes: firebase.addToArray(userId)
+      });
+    } else {
+      firebase.updateComment(commentId, {
+        likes: firebase.removeFromArray(userId)
+      });
+    }
+  };
+
+  componentWillUnmount() {
+    this.commentObserver();
+  }
+
+  render() {
+    const {
+      handleCardEditorClose,
+      card,
+      userId,
+      commentsArray
+    } = this.props;
+    const { cardId, commentIds } = card;
     const {
       cardTitle,
       cardDescription,
-      cardComment,
+      newComment,
       currentFocus,
       newTask,
-      cardTasks
+      cardTasks,
+      taskIds,
+      isFetching
     } = this.state;
-    const isCommentInvalid = cardComment === '';
+    const hasTasks = taskIds !== undefined && taskIds.length > 0;
+    const hasComments = commentIds !== undefined && commentIds.length > 0;
+    const isNewCommentInvalid = newComment === '';
     const isNewTaskInvalid = newTask === '';
-    const commentFormIsFocused = currentFocus === 'cardComment';
+    const commentFormIsFocused = currentFocus === 'newComment';
+
+    if (isFetching) return null;
 
     return (
       <Modal
-        onModalClose={onCardEditorClose}
+        onModalClose={handleCardEditorClose}
         className="card-editor"
         onModalClick={this.handleModalClick}
         size="lg"
+        id="cardEditor"
       >
         <Toolbar className="card-editor__toolbar">
           <CardEditorMoreActions onMenuClick={this.handleMoreActions} />
@@ -273,32 +366,34 @@ class CardEditor extends Component {
         >
           <hr className="card-editor__hr" />
           {hasTasks && (
-            <ul className="card-editor__tasks">
-              {tasksArray.map(task => {
-                const { taskId } = task;
-                return (
-                  <li className="card-editor__task" key={taskId}>
-                    <Checkbox
-                      id={`cb-${taskId}`}
-                      value={taskId}
-                      name={taskId}
-                      isChecked={cardTasks[taskId].isCompleted}
-                      onChange={this.handleCheckboxChange}
-                      className="card-editor__checkbox"
-                      labelClass="card-editor__checkbox-label"
-                    />
-                    <Textarea
-                      value={cardTasks[taskId].text}
-                      onChange={this.onTaskChange}
-                      onBlur={this.updateTask}
-                      name={taskId}
-                      className="card-editor__textarea--task"
-                      onKeyDown={this.deleteTask}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+            <DragDropContext onDragEnd={this.moveTask}>
+              <Droppable droppableId={cardId} type={droppableTypes.TASK}>
+                {provided => (
+                  <ul
+                    className="card-editor__tasks"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {taskIds.map((taskId, index) => {
+                      return (
+                        <CardEditorTask
+                          taskId={taskId}
+                          index={index}
+                          text={cardTasks[taskId].text}
+                          isCompleted={cardTasks[taskId].isCompleted}
+                          toggleCompleted={this.handleCheckboxChange}
+                          onChange={this.onTaskChange}
+                          onBlur={this.updateTaskText}
+                          onKeyDown={this.deleteTask}
+                          key={taskId}
+                        />
+                      );
+                    })}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
           )}
           <div className="card-editor__section-icon">
             <Icon name="check-square" />
@@ -318,6 +413,7 @@ class CardEditor extends Component {
               onChange={this.onChange}
               placeholder="Add a task"
               onFocus={this.onFocus}
+              onKeyDown={this.addTask}
             />
             {currentFocus === 'newTask' && (
               <Button
@@ -339,6 +435,14 @@ class CardEditor extends Component {
             commentFormIsFocused ? 'is-focused' : ''
           }`}
         >
+          {hasComments && (
+            <div className="card-editor__comments">
+              {commentsArray.map(comment => {
+                const { commentId } = comment;
+                return <CardEditorComment key={commentId} comment={comment} handleLike={this.handleCommentLike} />;
+              })}
+            </div>
+          )}
           <hr className="card-editor__hr" />
           <div className="card-editor__section-icon">
             <Icon name="message-circle" />
@@ -348,15 +452,17 @@ class CardEditor extends Component {
             className={`card-editor__comment-form ${
               commentFormIsFocused ? 'is-focused' : ''
             }`}
-            ref={this.setCommentFormRef}
+            ref={el => (this.commentFormEl = el)}
+            onSubmit={this.addComment}
           >
             <Textarea
               className="card-editor__textarea card-editor__textarea--comment"
-              name="cardComment"
-              value={cardComment}
+              name="newComment"
+              value={newComment}
               onChange={this.onChange}
               placeholder="Write a comment..."
               onFocus={this.onFocus}
+              onKeyDown={this.addComment}
             />
             {commentFormIsFocused && (
               <Button
@@ -364,9 +470,9 @@ class CardEditor extends Component {
                 color="secondary"
                 size="small"
                 variant="contained"
-                disabled={isCommentInvalid}
-                onClick={this.onSubmitComment}
-                name="cardCommentSubmit"
+                disabled={isNewCommentInvalid}
+                onClick={this.addComment}
+                name="newCommentSubmit"
                 className="card-editor__btn--submit-comment"
               >
                 Comment
@@ -383,24 +489,26 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state),
-    boardsById: boardSelectors.getBoardsById(state),
-    current: currentSelectors.getCurrent(state),
-    listsById: listSelectors.getListsById(state),
-    listsArray: listSelectors.getListsArray(state),
-    tasksById: taskSelectors.getTasksById(state),
-    tasksArray: taskSelectors.getTasksArray(state, ownProps.card.taskIds)
+    userId: currentSelectors.getCurrentUserId(state),
+    tasksArray: taskSelectors.getTasksArray(state, ownProps.card.taskIds),
+    commentsArray: commentSelectors.getCommentsArray(
+      state,
+      ownProps.card.commentIds
+    ),
+    commentsById: commentSelectors.getCommentsById(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
-    selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
-    updateListsById: list => dispatch(listActions.updateListsById(list)),
-    updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
-    reorderLists: (boardId, listIds) =>
-      dispatch(boardActions.reorderLists(boardId, listIds))
+    fetchCardComments: cardId =>
+      dispatch(commentActions.fetchCardComments(cardId)),
+    addComment: ({ commentId, commentData }) =>
+      dispatch(commentActions.addComment({ commentId, commentData })),
+    deleteComment: commentId =>
+      dispatch(commentActions.deleteComment(commentId)),
+    updateComment: ({ commentId, commentData }) =>
+      dispatch(commentActions.updateComment({ commentId, commentData }))
   };
 };
 

@@ -1,3 +1,7 @@
+export const getCurrentUserId = state => {
+  return state.current.userId;
+};
+
 export const getCurrentBoardId = state => {
   return state.current.boardId;
 };

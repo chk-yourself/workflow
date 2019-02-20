@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
@@ -35,7 +34,6 @@ class BoardContainer extends Component {
       fetchCardsById,
       fetchCardTasks,
       firebase,
-      updateBoardsById,
       updateListsById,
       updateCardsById,
       boardId,
@@ -43,11 +41,12 @@ class BoardContainer extends Component {
       updateListIds,
       addTask,
       updateTask,
-      deleteTask
+      deleteTask,
+      selectBoard
     } = this.props;
 
     if (current.boardId !== boardId) {
-      this.props.selectBoard(boardId);
+      selectBoard(boardId);
     }
 
     fetchListsById(boardId);
@@ -202,14 +201,7 @@ class BoardContainer extends Component {
 
   render() {
     const { isFetching, isCardEditorOpen } = this.state;
-    const {
-      current,
-      boardsById,
-      listsArray,
-      cardsById,
-      boardId,
-      board
-    } = this.props;
+    const { current, listsArray, cardsById, boardId, board } = this.props;
     if (isFetching) return null;
     const { cardId } = current;
     const { boardTitle } = board;
@@ -222,7 +214,7 @@ class BoardContainer extends Component {
           listIndex={listIndex}
           listTitle={listTitle}
           cardIds={cardIds}
-          isFetchingCards={this.state.isFetching}
+          isFetchingCards={isFetching}
           isDragging={this.state.isDragging}
           onCardClick={this.handleCardClick}
           boardId={boardId}
@@ -251,7 +243,7 @@ class BoardContainer extends Component {
         {isCardEditorOpen && (
           <CardEditor
             card={cardsById[cardId]}
-            onCardEditorClose={this.toggleCardEditor}
+            handleCardEditorClose={this.toggleCardEditor}
           />
         )}
       </main>
@@ -263,7 +255,6 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state),
     boardsById: boardSelectors.getBoardsById(state),
     current: currentSelectors.getCurrent(state),
     listsById: listSelectors.getListsById(state),
@@ -287,7 +278,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(boardActions.reorderLists(boardId, listIds)),
     updateListIds: (boardId, listIds) =>
       dispatch(boardActions.updateListIds(boardId, listIds)),
-    addTask: ({ taskId, taskData }) => dispatch(taskActions.addTask({ taskId, taskData })),
+    addTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.addTask({ taskId, taskData })),
     deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
     updateTask: ({ taskId, taskData }) =>
       dispatch(taskActions.updateTask({ taskId, taskData }))

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/user';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
@@ -16,7 +15,6 @@ class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDragging: this.props.isDragging,
       listTitle: this.props.listTitle
     };
   }
@@ -124,15 +122,12 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state),
     cards: cardSelectors.getCardsArray(state, ownProps)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    getUserData: userId => dispatch(userActions.getUserData(userId))
-  };
+  return {};
 };
 
 export default withAuthorization(condition)(

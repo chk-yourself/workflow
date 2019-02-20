@@ -4,10 +4,10 @@ import BoardGrid from './BoardGrid';
 import BoardTile from './BoardTile';
 import './BoardGrid.scss';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Icon } from '../Icon';
+import { userSelectors } from '../../ducks/users';
 
 class BoardGridContainer extends Component {
   constructor(props) {
@@ -16,8 +16,8 @@ class BoardGridContainer extends Component {
   }
 
   componentDidMount() {
-    const { userId } = this.props.user;
-    this.listener = this.props.firebase.db
+    const { userId, firebase, updateBoardsById } = this.props;
+    this.boardObserver = firebase.db
       .collection('boards')
       .where('memberIds', 'array-contains', userId)
       .onSnapshot(querySnapshot => {
@@ -25,17 +25,16 @@ class BoardGridContainer extends Component {
           const board = {
             [change.doc.id]: change.doc.data()
           };
-          this.props.updateBoardsById(board);
+          updateBoardsById(board);
         });
       });
   }
 
   componentWillUnmount() {
-    this.listener();
+    this.boardObserver();
   }
 
   render() {
-    const { boardIds, userId } = this.props.user;
     const { boardsArray, selectBoard } = this.props;
     const boardTiles = boardsArray.map(board => {
       const { boardTitle, boardId } = board;
@@ -68,9 +67,10 @@ class BoardGridContainer extends Component {
 
 const condition = authUser => !!authUser;
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state),
+    userId: currentSelectors.getCurrentUserId(state),
+    user: userSelectors.getUserData(state, ownProps.userId),
     boardsById: boardSelectors.getBoardsById(state),
     boardsArray: boardSelectors.getBoardsArray(state)
   };
@@ -78,8 +78,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateUserBoards: boardIds =>
-      dispatch(userActions.updateUserBoards(boardIds)),
     fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
     updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId))

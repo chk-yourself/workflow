@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/user';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Button } from '../Button';
@@ -69,9 +68,9 @@ class ListComposer extends Component {
             onChange={this.onChange}
             value={listTitle}
             placeholder={isActive ? 'Enter list title...' : 'Add a list'}
-            required={true}
+            required
             name="listTitle"
-            hideLabel={true}
+            hideLabel
             className="list-composer__input"
           />
           {isActive && (
@@ -106,7 +105,6 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = state => {
   return {
-    user: userSelectors.getUserData(state),
     boardsById: boardSelectors.getBoardsById(state),
     boardsArray: boardSelectors.getBoardsArray(state),
     current: currentSelectors.getCurrent(state)
@@ -115,8 +113,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getUserData: userId => dispatch(userActions.getUserData(userId)),
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
     updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId))
   };

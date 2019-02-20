@@ -2,6 +2,13 @@ import * as types from './types';
 
 const current = (state = {}, action) => {
   switch (action.type) {
+    case types.SELECT_USER: {
+      const { userId } = action;
+      return {
+        ...state,
+        userId
+      };
+    }
     case types.SELECT_BOARD: {
       const { boardId } = action;
       return {

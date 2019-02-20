@@ -39,11 +39,37 @@ class SignInForm extends Component {
     });
   };
 
+  enableGoogleLogin = e => {
+    const { signInWithGoogle } = this.props.firebase;
+    signInWithGoogle();
+    e.preventDefault();
+  }
+
   render() {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
-      <form onSubmit={this.onSubmit} className="user-form">
+      <form className="user-form">
+      {/*
+        <Button
+          type="click"
+          size="lg"
+          variant="contained"
+          color="primary"
+          onClick={this.enableGoogleLogin}
+        >
+          Continue with Google
+        </Button>
+        <Button
+          type="click"
+          size="lg"
+          variant="contained"
+          color="primary"
+          onClick={this.enableGithubLogin}
+        >
+          Continue with Github
+        </Button>
+      */}
         <Input
           name="email"
           title="Email"

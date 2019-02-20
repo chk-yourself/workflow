@@ -1,0 +1,60 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.card-editor__comment-wrapper {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.card-editor__comment {
+  width: 100%;
+}
+
+.card-editor__comment-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.card-editor__time-elapsed {
+  font-size: 11px;
+  color: $grey-700;
+}
+
+.card-editor__full-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.card-editor__comment-body {
+  font-size: 14px;
+  color: $grey-800;
+}
+
+.card-editor__likes {
+  width: 32px;
+  min-width: 0;
+  padding: 2px 8px 2px 0;
+  position: relative;
+  .feather {
+    width: 18px;
+    height: 18px;
+    color: $grey-800;
+  }
+}
+
+.card-editor__likes-counter {
+  font-size: 11px;
+  position: absolute;
+  right: 0;
+  font-weight: 600;
+}
+
+.card-editor__avatar {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin-right: 8px;
+}

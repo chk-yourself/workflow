@@ -37,7 +37,9 @@ export default class Textarea extends Component {
       isRequired,
       onBlur,
       onFocus,
-      onKeyDown
+      onKeyDown,
+      onDragStart,
+      isReadOnly
     } = this.props;
     return (
       <textarea
@@ -53,6 +55,8 @@ export default class Textarea extends Component {
         ref={this.textareaEl}
         onFocus={onFocus}
         onKeyDown={onKeyDown}
+        onDragStart={onDragStart}
+        readOnly={isReadOnly}
       />
     );
   }

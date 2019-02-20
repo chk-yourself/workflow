@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { withAuthorization } from '../Session';
 import * as ROUTES from '../../constants/routes';
-import { userActions, userSelectors } from '../../ducks/user';
-import { currentSelectors } from '../../ducks/current';
+import { userActions, userSelectors } from '../../ducks/users';
+import { currentActions, currentSelectors } from '../../ducks/current';
 import { BoardGridContainer } from '../BoardGrid';
 import { BoardComposer } from '../BoardComposer';
 import { BoardContainer } from '../Board';
@@ -21,14 +21,22 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
-    const userId = this.props.firebase.auth.currentUser.uid;
+    const {
+      firebase,
+      selectUser,
+      fetchUsersById,
+      fetchBoardsById
+    } = this.props;
+    const userId = firebase.auth.currentUser.uid;
+    selectUser(userId);
     console.log('mounted home');
-    this.props.fetchUserData(userId);
-    this.props.fetchBoardsById(userId).then(() =>
-      this.setState({
-        isFetching: false
-      })
-    );
+    fetchUsersById()
+      .then(() => fetchBoardsById(userId))
+      .then(() =>
+        this.setState({
+          isFetching: false
+        })
+      );
   }
 
   toggleBoardComposer = () => {
@@ -38,14 +46,14 @@ class HomePage extends Component {
   };
 
   createBoard = boardTitle => {
-    const userId = this.props.user.userId;
-    this.props.firebase.addBoard({ userId, boardTitle });
+    const { userId, firebase } = this.props;
+    firebase.addBoard({ userId, boardTitle });
   };
 
   render() {
     const { isBoardComposerOpen, isFetching } = this.state;
-    const userId = this.props.user.userId;
     if (isFetching) return null;
+    const { userId } = this.props;
     return (
       <>
         {isBoardComposerOpen && (
@@ -63,6 +71,7 @@ class HomePage extends Component {
                 <h1>Home</h1>
                 {userId && (
                   <BoardGridContainer
+                    userId={userId}
                     openBoardComposer={this.toggleBoardComposer}
                   />
                 )}
@@ -72,7 +81,11 @@ class HomePage extends Component {
           <Route
             path={ROUTES.BOARD}
             render={props => (
-              <BoardContainer boardId={props.match.params.id} {...props} />
+              <BoardContainer
+                userId={userId}
+                boardId={props.match.params.id}
+                {...props}
+              />
             )}
           />
         </Switch>
@@ -83,17 +96,18 @@ class HomePage extends Component {
 
 const condition = authUser => !!authUser;
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state),
-    currentBoardId: currentSelectors.getCurrentBoardId(state)
+    currentBoardId: currentSelectors.getCurrentBoardId(state),
+    userId: currentSelectors.getCurrentUserId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchUserData: userId => dispatch(userActions.fetchUserData(userId)),
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId))
+    fetchUsersById: () => dispatch(userActions.fetchUsersById()),
+    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
+    selectUser: userId => dispatch(currentActions.selectUser(userId))
   };
 };
 

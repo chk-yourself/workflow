@@ -25,7 +25,7 @@ export default class Cards extends Component {
   }
 
   scrollToBottom = () => {
-    this.listEnd.scrollIntoView();
+    this.listEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
   render() {

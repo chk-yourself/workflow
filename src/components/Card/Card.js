@@ -23,7 +23,6 @@ export default class Card extends Component {
     return (
       <Draggable draggableId={cardId} index={cardIndex}>
         {provided => (
-          <>
             <div
               className="card"
               onClick={this.handleCardClick}
@@ -39,8 +38,6 @@ export default class Card extends Component {
                 <div className="card__labels" />
               </div>
             </div>
-            {provided.placeholder}
-          </>
         )}
       </Draggable>
     );
