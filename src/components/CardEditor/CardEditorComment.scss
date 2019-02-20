@@ -19,7 +19,7 @@
 
 .card-editor__time-elapsed {
   font-size: 11px;
-  color: $grey-700;
+  color: $grey-600;
 }
 
 .card-editor__full-name {
@@ -57,4 +57,10 @@
   height: 30px;
   line-height: 30px;
   margin-right: 8px;
+}
+
+.card-editor__avatar-placeholder {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-size: 12px;
 }
