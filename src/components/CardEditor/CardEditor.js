@@ -273,7 +273,7 @@ class CardEditor extends Component {
   handleCommentLike = commentId => {
     const { firebase, userId, commentsById } = this.props;
     const { likes } = commentsById[commentId];
-    
+
     if (likes.indexOf(userId) === -1) {
       firebase.updateComment(commentId, {
         likes: firebase.addToArray(userId)
