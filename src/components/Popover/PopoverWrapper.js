@@ -30,6 +30,13 @@ export default class PopoverWrapper extends Component {
     }));
   };
 
+  handleClose = e => {
+    if (e.target.matches('input')) return;
+    this.setState(prevState => ({
+      isOpen: false
+    }));
+  };
+
   render() {
     const {
       children,
@@ -63,7 +70,7 @@ export default class PopoverWrapper extends Component {
         {isOpen && (
           <Popover
             className={`align-${alignInner} ${popoverClass}`}
-            onClick={this.toggleOpen}
+            onClick={this.handleClose}
             onOutsideClick={this.handleOutsideClick}
           >
             {children}

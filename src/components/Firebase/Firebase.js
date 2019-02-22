@@ -99,7 +99,7 @@ class Firebase {
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
         listIds: [],
-        authorId: userId,
+        createdBy: userId,
         memberIds: [userId],
         boardTitle
       })
@@ -181,6 +181,7 @@ class Firebase {
       .add({
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
+        assignedTo: [],
         listId,
         boardId,
         cardTitle
@@ -198,6 +199,28 @@ class Firebase {
       lastModifiedAt: this.getTimestamp(),
       ...newValue
     });
+  };
+
+  assignCard = ({ cardId, boardId, userId }) => {
+    const batch = this.db.batch();
+    const cardRef = this.getCardDoc(cardId);
+    const boardRef = this.getBoardDoc(boardId);
+    batch.update(cardRef, {
+      assignedTo: this.addToArray(userId),
+      lastModifiedAt: this.getTimestamp()
+    });
+    batch.update(boardRef, {
+      memberIds: this.addToArray(userId),
+      lastModifiedAt: this.getTimestamp()
+    });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('task deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   deleteCard = ({ cardId, listId }) => {

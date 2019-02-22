@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from '../Icon';
-import { withAuthorization } from '../Session';
+import { withFirebase } from '../Firebase';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Textarea } from '../Textarea';
@@ -105,8 +105,6 @@ class CardComposer extends Component {
   }
 }
 
-const condition = authUser => !!authUser;
-
 const mapStateToProps = state => {
   return {
     boardsArray: boardSelectors.getBoardsArray(state),
@@ -120,7 +118,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withAuthorization(condition)(
+export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps

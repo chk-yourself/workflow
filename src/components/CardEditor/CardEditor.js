@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { withAuthorization } from '../Session';
+import { withFirebase } from '../Firebase';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
@@ -12,7 +12,8 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
-import CardEditorAssignUser from './CardEditorAssignUser';
+import { Avatar } from '../Avatar';
+import CardEditorAssignMember from './CardEditorAssignMember';
 import { MemberSearch } from '../MemberSearch';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import * as keys from '../../constants/keys';
@@ -21,16 +22,14 @@ import CardEditorTask from './CardEditorTask';
 import CardEditorComment from './CardEditorComment';
 import './CardEditor.scss';
 
-
 class CardEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isFetching:
-        this.props.card.commentIds !== undefined &&
-        this.props.card.commentIds.length > 0,
-      cardTitle: this.props.card.cardTitle,
-      cardDescription: this.props.card.cardDescription,
+        this.props.commentIds !== undefined && this.props.commentIds.length > 0,
+      cardTitle: this.props.cardTitle,
+      cardDescription: this.props.cardDescription || '',
       newTask: '',
       cardTasks: this.props.tasksArray.reduce((tasks, task) => {
         const { taskId, text, isCompleted } = task;
@@ -42,21 +41,20 @@ class CardEditor extends Component {
       }, {}),
       newComment: '',
       currentFocus: null,
-      taskIds: this.props.card.taskIds
+      taskIds: this.props.taskIds
     };
   }
 
   componentDidMount() {
     const {
-      card,
+      cardId,
+      commentIds,
       firebase,
       fetchCardComments,
       addComment,
       deleteComment,
       updateComment
     } = this.props;
-
-    const { cardId, commentIds } = card;
 
     if (commentIds && commentIds.length > 0) {
       fetchCardComments(cardId).then(() => {
@@ -87,8 +85,8 @@ class CardEditor extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if ('taskIds' in props.card === false) return null;
-    if (props.card.taskIds.length !== state.taskIds.length) {
+    if ('taskIds' in props === false) return null;
+    if (props.taskIds.length !== state.taskIds.length) {
       return {
         cardTasks: props.tasksArray.reduce((tasks, task) => {
           const { taskId, text, isCompleted } = task;
@@ -98,7 +96,7 @@ class CardEditor extends Component {
           };
           return tasks;
         }, {}),
-        taskIds: props.card.taskIds
+        taskIds: props.taskIds
       };
     }
     return null;
@@ -125,21 +123,19 @@ class CardEditor extends Component {
   };
 
   deleteCard = () => {
-    const { card, firebase, handleCardEditorClose } = this.props;
-    const { cardId, listId } = card;
+    const { cardId, listId, firebase, handleCardEditorClose } = this.props;
     firebase.deleteCard({ cardId, listId });
     handleCardEditorClose();
   };
 
   onBlur = e => {
-    const { card, firebase } = this.props;
+    const { [cardKey]: currentValue, cardId, firebase } = this.props;
     const cardKey = e.target.name;
     const { [cardKey]: updatedValue } = this.state;
 
     // When field loses focus, update card if change is detected
 
-    if (updatedValue !== card[cardKey]) {
-      const { cardId } = card;
+    if (updatedValue !== currentValue) {
       firebase.updateCard(cardId, {
         [cardKey]: updatedValue
       });
@@ -153,8 +149,7 @@ class CardEditor extends Component {
 
   addComment = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { userId, firebase, card } = this.props;
-    const { cardId, boardId } = card;
+    const { userId, firebase, cardId, boardId } = this.props;
     const { newComment: text } = this.state;
     firebase.addComment({ userId, text, cardId, boardId });
     this.resetForm('newComment');
@@ -169,8 +164,7 @@ class CardEditor extends Component {
 
   addTask = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { userId, firebase, card } = this.props;
-    const { cardId, boardId } = card;
+    const { userId, firebase, cardId, boardId } = this.props;
     const { newTask: text } = this.state;
     firebase.addTask({ userId, text, cardId, boardId });
     this.resetForm('newTask');
@@ -250,8 +244,7 @@ class CardEditor extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { card, firebase } = this.props;
-    const { cardId } = card;
+    const { cardId, firebase } = this.props;
     const taskId = e.target.name;
     firebase.deleteTask({ taskId, cardId });
   };
@@ -288,7 +281,16 @@ class CardEditor extends Component {
   };
 
   assignMember = userId => {
-    console.log(userId);
+    const { cardId, boardId, assignedTo, firebase } = this.props;
+
+    if (assignedTo.indexOf(userId) !== -1) {
+      firebase.updateCard(cardId, {
+        assignedTo: firebase.removeFromArray(userId),
+        lastModifiedAt: firebase.getTimestamp()
+      });
+    } else {
+      firebase.assignCard({ cardId, boardId, userId }); 
+    }
   };
 
   componentWillUnmount() {
@@ -298,12 +300,14 @@ class CardEditor extends Component {
   render() {
     const {
       handleCardEditorClose,
-      card,
+      cardId,
+      commentIds,
       userId,
+      assignedTo,
       commentsArray,
-      usersArray
+      usersArray,
+      membersArray
     } = this.props;
-    const { cardId, commentIds } = card;
     const {
       cardTitle,
       cardDescription,
@@ -316,6 +320,7 @@ class CardEditor extends Component {
     } = this.state;
     const hasTasks = taskIds !== undefined && taskIds.length > 0;
     const hasComments = commentIds !== undefined && commentIds.length > 0;
+    const isAssigned = !!assignedTo && assignedTo.length > 0;
     const isNewCommentInvalid = newComment === '';
     const isNewTaskInvalid = newTask === '';
     const commentFormIsFocused = currentFocus === 'newComment';
@@ -331,6 +336,13 @@ class CardEditor extends Component {
         id="cardEditor"
       >
         <Toolbar className="card-editor__toolbar">
+          <CardEditorAssignMember>
+            <MemberSearch
+              users={usersArray}
+              assignedMembers={assignedTo}
+              onMemberClick={this.assignMember}
+            />
+          </CardEditorAssignMember>
           <CardEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
         <form
@@ -347,7 +359,31 @@ class CardEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
-          <MemberSearch users={usersArray} onMemberClick={this.assignMember} />
+          <div className="card-editor__section">
+            <div className="card-editor__section-icon">
+              <Icon name="user" />
+            </div>
+            {isAssigned && (
+              <div className="card-editor__members">
+                {membersArray.map(member => {
+                  const { name, photoURL, userId } = member;
+                  return (
+                    <Avatar
+                      classes={{
+                        avatar: 'card-editor__avatar',
+                        placeholder: 'card-editor__avatar-placeholder'
+                      }}
+                      fullName={name}
+                      size="sm"
+                      variant="circle"
+                      imgSrc={photoURL}
+                      key={userId}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
           <div
             className={`card-editor__section ${
               currentFocus === 'cardDescription' ? 'is-focused' : ''
@@ -447,7 +483,13 @@ class CardEditor extends Component {
             <div className="card-editor__comments">
               {commentsArray.map(comment => {
                 const { commentId } = comment;
-                return <CardEditorComment key={commentId} comment={comment} handleLike={this.handleCommentLike} />;
+                return (
+                  <CardEditorComment
+                    key={commentId}
+                    comment={comment}
+                    handleLike={this.handleCommentLike}
+                  />
+                );
               })}
             </div>
           )}
@@ -493,18 +535,17 @@ class CardEditor extends Component {
   }
 }
 
-const condition = authUser => !!authUser;
-
 const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentSelectors.getCurrentUserId(state),
-    tasksArray: taskSelectors.getTasksArray(state, ownProps.card.taskIds),
+    tasksArray: taskSelectors.getTasksArray(state, ownProps.taskIds),
     commentsArray: commentSelectors.getCommentsArray(
       state,
-      ownProps.card.commentIds
+      ownProps.commentIds
     ),
     commentsById: commentSelectors.getCommentsById(state),
-    usersArray: userSelectors.getUsersArray(state)
+    usersArray: userSelectors.getUsersArray(state),
+    membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo)
   };
 };
 
@@ -521,7 +562,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withAuthorization(condition)(
+export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps

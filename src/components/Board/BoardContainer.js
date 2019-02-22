@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { withAuthorization } from '../Session';
+import { withFirebase } from '../Firebase';
 import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
@@ -242,7 +242,7 @@ class BoardContainer extends Component {
         </DragDropContext>
         {isCardEditorOpen && (
           <CardEditor
-            card={cardsById[cardId]}
+            {...cardsById[cardId]}
             handleCardEditorClose={this.toggleCardEditor}
           />
         )}
@@ -250,8 +250,6 @@ class BoardContainer extends Component {
     );
   }
 }
-
-const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -286,7 +284,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withAuthorization(condition)(
+export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps

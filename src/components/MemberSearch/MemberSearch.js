@@ -19,9 +19,11 @@ export default class MemberSearch extends Component {
   componentDidMount() {
     document.addEventListener('touchstart', this.handleTouch);
     document.addEventListener('click', this.handleOutsideClick, false);
+    this.inputEl.focus();
   }
 
   handleOutsideClick = e => {
+    if (this.state.query !== '') return;
     if (!this.memberSearchEl.contains(e.target)) {
       this.setState({
         isActive: false
@@ -75,7 +77,9 @@ export default class MemberSearch extends Component {
     this.setState({
       selectedMember: persistSelectedMember
         ? selectedMember
-        : filteredList[0].userId || '',
+        : filteredList.length > 0
+        ? filteredList[0].userId
+        : '',
       selectedIndex: persistSelectedMember ? newIndex : 0,
       query,
       filteredList
@@ -138,7 +142,7 @@ export default class MemberSearch extends Component {
   }
 
   render() {
-    const { users, onMemberClick } = this.props;
+    const { users, onMemberClick, assignedMembers } = this.props;
     const { query, isActive, filteredList, selectedMember } = this.state;
 
     return (
@@ -146,12 +150,9 @@ export default class MemberSearch extends Component {
         className="member-search__wrapper"
         ref={el => (this.memberSearchEl = el)}
       >
-        <div className="card-editor__section-icon">
-          <Icon name="user-plus" />
-        </div>
         <Input
           name="query"
-          className="card-editor__member-search"
+          className="member-search"
           onChange={this.onChange}
           value={query}
           onFocus={this.onFocus}
@@ -159,45 +160,55 @@ export default class MemberSearch extends Component {
           type="text"
           autoComplete="off"
           hideLabel
-          placeholder="Add a member"
-          inputRef={el => (this.inputEl = el)}
+          placeholder="Assign or remove member"
           onKeyDown={this.onKeyDown}
+          inputRef={el => (this.inputEl = el)}
         />
         {isActive && (
           <ul className="member-search__list">
-            {filteredList.map((user, i) => {
-              const { name, photoURL, email, username, userId } = user;
-              return (
-                <li
-                  className={`member-search__item ${
-                    selectedMember === userId ? 'is-selected' : ''
-                  }`}
-                  onClick={() => onMemberClick(userId)}
-                  key={userId}
-                  id={userId}
-                >
-                  <Avatar
-                    classes={{
-                      avatar: 'member-search__avatar--sm',
-                      placeholder: 'member-search__avatar-placeholder--sm'
-                    }}
-                    fullName={name}
-                    size="sm"
-                    variant="circle"
-                    imgSrc={photoURL}
-                  />
-                  <span className="member-search__info member-search__name">
-                    {name}
-                  </span>
-                  <span className="member-search__info member-search__username">
-                    {username}
-                  </span>
-                  <span className="member-search__info member-search__email">
-                    {email}
-                  </span>
-                </li>
-              );
-            })}
+            {filteredList.length > 0 ? (
+              filteredList.map((user, i) => {
+                const { name, photoURL, email, username, userId } = user;
+                const isAssigned = assignedMembers.indexOf(userId) !== -1;
+                return (
+                  <li
+                    className={`member-search__item ${
+                      selectedMember === userId ? 'is-selected' : ''
+                    }`}
+                    onClick={() => onMemberClick(userId)}
+                    key={userId}
+                    id={userId}
+                  >
+                    <Icon name={isAssigned ? 'user-minus' : 'user-plus'} />
+                    <Avatar
+                      classes={{
+                        avatar: 'member-search__avatar--sm',
+                        placeholder: 'member-search__avatar-placeholder--sm'
+                      }}
+                      fullName={name}
+                      size="sm"
+                      variant="circle"
+                      imgSrc={photoURL}
+                    />
+                    <span className="member-search__info member-search__name">
+                      {name}
+                    </span>
+                    <span className="member-search__info member-search__username">
+                      {username}
+                    </span>
+                    <span className="member-search__info member-search__email">
+                      {email}
+                    </span>
+                  </li>
+                );
+              })
+            ) : (
+              <li className="member-search__item">
+                <span className="member-search__no-match">
+                  No matches found
+                </span>
+              </li>
+            )}
           </ul>
         )}
       </div>

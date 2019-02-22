@@ -10,7 +10,7 @@ const CardEditorMoreActions = ({ onMenuClick }) => (
     alignOuter="right"
     alignInner="right"
     buttonProps={{
-      size: 'medium',
+      size: 'md',
       iconOnly: true,
       className: 'card-editor__toolbar-btn',
       children: <Icon name="more-horizontal" />
