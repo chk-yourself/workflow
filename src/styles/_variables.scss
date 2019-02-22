@@ -1,3 +1,5 @@
+@import url('https://rsms.me/inter/inter.css');
+
 // Screen sizes
 
 $screen-xs-min: 425px; // Tiny phones
@@ -37,5 +39,5 @@ $tertiary-lt: #ffe0b2;
 $tertiary-dk: #c27301;
 
 // Fonts
-$heading-font: 'Roboto', Helvetica, Arial, sans-serif;
-$body-font: 'Open Sans', Arial, sans-serif;
+$heading-font: 'Inter', Helvetica, Arial, sans-serif;
+$body-font: 'Inter', Arial, sans-serif;

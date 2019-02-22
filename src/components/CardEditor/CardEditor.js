@@ -41,7 +41,7 @@ class CardEditor extends Component {
       }, {}),
       newComment: '',
       currentFocus: null,
-      taskIds: this.props.taskIds
+      taskIds: this.props.taskIds || []
     };
   }
 
@@ -302,11 +302,11 @@ class CardEditor extends Component {
       handleCardEditorClose,
       cardId,
       commentIds,
-      userId,
       assignedTo,
       commentsArray,
       usersArray,
-      membersArray
+      membersArray,
+      currentUser
     } = this.props;
     const {
       cardTitle,
@@ -324,6 +324,7 @@ class CardEditor extends Component {
     const isNewCommentInvalid = newComment === '';
     const isNewTaskInvalid = newTask === '';
     const commentFormIsFocused = currentFocus === 'newComment';
+    const newTaskFormIsFocused = currentFocus === 'newTask';
 
     if (isFetching) return null;
 
@@ -405,10 +406,16 @@ class CardEditor extends Component {
         </form>
         <div
           className={`card-editor__section ${
-            currentFocus === 'newTask' ? 'is-focused' : ''
+            newTaskFormIsFocused ? 'is-focused' : ''
           }`}
         >
+        <div className="card-editor__section-header">
+        <div className="card-editor__section-icon">
+            <Icon name="check-square" />
+          </div>
+          <h3 className="card-editor__section-title">Todos</h3>
           <hr className="card-editor__hr" />
+        </div>
           {hasTasks && (
             <DragDropContext onDragEnd={this.moveTask}>
               <Droppable droppableId={cardId} type={droppableTypes.TASK}>
@@ -440,7 +447,10 @@ class CardEditor extends Component {
             </DragDropContext>
           )}
           <div className="card-editor__section-icon">
-            <Icon name="check-square" />
+          {
+            newTaskFormIsFocused ? <div className="card-editor__checkbox"></div>
+            : <Icon name="plus-circle" />
+          }
           </div>
           <form
             name="newTaskForm"
@@ -479,6 +489,15 @@ class CardEditor extends Component {
             commentFormIsFocused ? 'is-focused' : ''
           }`}
         >
+        
+        <div className="card-editor__section-header">
+        <div className="card-editor__section-icon">
+            <Icon name="message-circle" />
+          </div>
+          <h3 className="card-editor__section-title">Comments</h3>
+          <hr className="card-editor__hr" />
+        </div>
+        
           {hasComments && (
             <div className="card-editor__comments">
               {commentsArray.map(comment => {
@@ -493,10 +512,16 @@ class CardEditor extends Component {
               })}
             </div>
           )}
-          <hr className="card-editor__hr" />
-          <div className="card-editor__section-icon">
-            <Icon name="message-circle" />
-          </div>
+          <Avatar
+          classes={{
+            avatar: 'card-editor__avatar',
+            placeholder: 'card-editor__avatar-placeholder'
+          }}
+          fullName={currentUser.name}
+          size="sm"
+          variant="circle"
+          imgSrc={currentUser.photoURL}
+        />
           <form
             name="commentForm"
             className={`card-editor__comment-form ${
@@ -538,6 +563,7 @@ class CardEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentSelectors.getCurrentUserId(state),
+    currentUser: userSelectors.getCurrentUserData(state),
     tasksArray: taskSelectors.getTasksArray(state, ownProps.taskIds),
     commentsArray: commentSelectors.getCommentsArray(
       state,

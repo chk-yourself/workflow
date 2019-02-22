@@ -1,9 +1,6 @@
 @import '../../styles/_variables';
 @import '../../styles/_mixins';
 
-.card-editor {
-}
-
 .card-editor__section {
   width: 100%;
   display: flex;
@@ -55,6 +52,14 @@
   }
 }
 
+.is-focused > .card-editor__textarea--comment {
+  min-height: 30px;
+}
+
+.card-editor__textarea--comment {
+  min-height: 0;
+}
+
 .card-editor__section-icon {
   height: 40px;
   line-height: 38px;
@@ -62,6 +67,7 @@
   vertical-align: middle;
   text-align: center;
   display: inline-block;
+  color: $grey-700;
   .feather {
     width: 18px;
     height: 18px;
@@ -91,6 +97,11 @@
   }
 }
 
+.card-editor__comment-form {
+  width: calc(100% - 38px);
+  border: 1px solid $grey-300;
+}
+
 .card-editor__btn--submit-comment,
 .card-editor__btn--add-task {
   flex: none;
@@ -99,12 +110,14 @@
   align-self: flex-start;
   z-index: 3;
   margin-top: 8px;
+  font-size: 14px;
 }
 
 .card-editor__hr {
-  border-top: 0.5px solid $grey-300;
+  border-top: 1px solid $grey-300;
   border-bottom: none;
   width: 100%;
+  flex: 1 1 auto;
 }
 
 .card-editor__section-title {
@@ -213,6 +226,9 @@
   height: 18px;
   top: 8px;
   left: 4px;
+  border: 1px solid $primary;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .card-editor__checkbox-label {
@@ -246,4 +262,19 @@
   display: flex;
   width: calc(100% - 34px);
   margin-left: auto;
+}
+
+.card-editor__section-header {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.card-editor__section-title {
+  padding: 11px 0;
+  font-size: 16px;
+  margin: 0 16px 0 12px;
+  font-weight: 500;
+  color: $grey-700;
 }
