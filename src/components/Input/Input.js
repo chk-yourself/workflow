@@ -1,24 +1,45 @@
 import React from 'react';
 import './Input.scss';
 
-const Input = props => {
+const Input = ({
+  className = '',
+  name,
+  type,
+  value,
+  onFocus,
+  onChange,
+  onInput,
+  placeholder,
+  isRequired,
+  onBlur,
+  autoComplete,
+  inputRef,
+  hideLabel,
+  label,
+  onKeyDown
+}) => {
   return (
     <>
-      {!props.hideLabel && (
-        <label htmlFor={props.name} className="input__label">
-          {props.title}
+      {!hideLabel && (
+        <label htmlFor={name} className="input__label">
+          {label}
         </label>
       )}
       <input
-        className={props.className}
-        id={props.name}
-        name={props.name}
-        type={props.type}
-        value={props.value}
-        onChange={props.onChange}
-        placeholder={props.placeholder}
-        required={props.isRequired}
-        onBlur={props.onBlur}
+        className={className}
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        onFocus={onFocus}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={isRequired}
+        onBlur={onBlur}
+        autoComplete={autoComplete}
+        ref={inputRef}
+        onInput={onInput}
+        onKeyDown={onKeyDown}
       />
     </>
   );

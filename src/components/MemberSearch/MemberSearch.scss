@@ -1,0 +1,89 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.member-search {
+  line-height: 1.4;
+  height: 40px;
+  overflow: hidden;
+  margin-top: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  vertical-align: top;
+  font-size: 14px;
+  width: calc(100% - 26px);
+  max-width: 600px;
+}
+
+.member-search__wrapper {
+  position: relative;
+  display: flex;
+  border-radius: 4px;
+}
+
+.member-search__list {
+  position: absolute;
+  top: 100%;
+  left: 26px;
+  list-style: none;
+  width: calc(100% - 26px);
+  max-width: 600px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  background-color: #fff;
+  z-index: 99;
+  overflow-x: auto;
+  @include box-shadow(2);
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background-color: transparent;
+  }
+}
+
+.member-search__item {
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  min-width: calc(100% + 16px);
+  &:hover {
+    background-color: $primary-lt;
+  }
+  cursor: pointer;
+  &.is-selected {
+    background-color: $primary-lt;
+  }
+  @include xs {
+    min-width: 100%;
+  }
+}
+
+.member-search__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.member-search__info {
+  white-space: nowrap;
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
+}
+
+.member-search__email,
+.member-search__username {
+  font-size: 11px;
+}
+
+.member-search__avatar--sm {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  margin-right: 6px;
+}
+
+.member-search__avatar-placeholder--sm {
+  font-size: 9px;
+}

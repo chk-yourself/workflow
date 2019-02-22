@@ -94,7 +94,8 @@
 .card-editor__btn--submit-comment,
 .card-editor__btn--add-task {
   flex: none;
-  height: 36px;
+  min-width: 0;
+  padding: 8px;
   align-self: flex-start;
   z-index: 3;
   margin-top: 8px;

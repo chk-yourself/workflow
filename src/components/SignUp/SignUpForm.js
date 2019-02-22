@@ -72,7 +72,7 @@ class SignUpForm extends Component {
       <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="name"
-          title="Full Name"
+          label="Full Name"
           value={name}
           onChange={this.onChange}
           type="text"
@@ -80,7 +80,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="username"
-          title="Username"
+          label="Username"
           value={username}
           onChange={this.onChange}
           type="text"
@@ -88,7 +88,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="email"
-          title="Email"
+          label="Email"
           value={email}
           onChange={this.onChange}
           type="email"
@@ -96,7 +96,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="passwordOne"
-          title="Password"
+          label="Password"
           value={passwordOne}
           onChange={this.onChange}
           type="password"
@@ -104,7 +104,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="passwordTwo"
-          title="Confirm Password"
+          label="Confirm Password"
           value={passwordTwo}
           onChange={this.onChange}
           type="password"

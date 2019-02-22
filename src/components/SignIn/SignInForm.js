@@ -72,7 +72,7 @@ class SignInForm extends Component {
       */}
         <Input
           name="email"
-          title="Email"
+          label="Email"
           value={email}
           onChange={this.onChange}
           type="email"
@@ -80,7 +80,7 @@ class SignInForm extends Component {
         />
         <Input
           name="password"
-          title="Password"
+          label="Password"
           value={password}
           onChange={this.onChange}
           type="password"

@@ -12,16 +12,16 @@ import { Avatar } from '../Avatar';
 import './CardEditorComment.scss';
 
 class CardEditorComment extends Component {
-  
   state = {
     secondsElapsed: 0
   };
 
   componentDidMount() {
     const { createdAt } = this.props.comment;
-    const secondsSinceCreation = Math.floor(Date.now()/1000) - Math.floor(createdAt.toDate().getTime()/1000);
-    console.log(secondsSinceCreation);
-    
+    const secondsSinceCreation =
+      Math.floor(Date.now() / 1000) -
+      Math.floor(createdAt.toDate().getTime() / 1000);
+
     this.setState({
       secondsElapsed: secondsSinceCreation
     });
@@ -33,7 +33,7 @@ class CardEditorComment extends Component {
     this.setState(prevState => ({
       secondsElapsed: prevState.secondsElapsed + 1
     }));
-  }
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -91,22 +91,26 @@ class CardEditorComment extends Component {
             <div className="card-editor__comment-details">
               <span className="card-editor__full-name">{name}</span>
               <span className="card-editor__timestamp">
-                {secondsElapsed < 60 ? 'Just now'
+                {secondsElapsed < 60
+                  ? 'Just now'
                   : secondsElapsed < 120 // = up until 2 minutes
-                    ? '1 minute ago'
-                    : secondsElapsed < 3600 // up until 1st hour
-                    ? `${Math.floor(secondsElapsed/60)} minutes ago`
-                    : secondsElapsed < 21600 // up until 6th hour
-                    ? `${Math.floor(secondsElapsed/3600)} hours ago`
-                    : isToday
-                    ? `Today at ${timeCreated}`
-                    : isYesterday
-                    ? `Yesterday at ${timeCreated}`
-                    : `${dateCreated} ${timeCreated}`
-                    }
-                </span>
+                  ? '1 minute ago'
+                  : secondsElapsed < 3600 // up until 1st hour
+                  ? `${Math.floor(secondsElapsed / 60)} minutes ago`
+                  : secondsElapsed < 21600 // up until 6th hour
+                  ? `${Math.floor(secondsElapsed / 3600)} hours ago`
+                  : isToday
+                  ? `Today at ${timeCreated}`
+                  : isYesterday
+                  ? `Yesterday at ${timeCreated}`
+                  : `${dateCreated} ${timeCreated}`}
+              </span>
             </div>
-            <Button className="card-editor__likes" onClick={this.handleLikeClick} size="sm">
+            <Button
+              className="card-editor__likes"
+              onClick={this.handleLikeClick}
+              size="sm"
+            >
               <span className="card-editor__likes-counter">
                 {likes.length > 0 ? likes.length : ''}
               </span>

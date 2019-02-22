@@ -5,20 +5,22 @@ import { withAuthorization } from '../Session';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { cardActions, cardSelectors } from '../../ducks/cards';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { userSelectors } from '../../ducks/users';
 import { commentActions, commentSelectors } from '../../ducks/comments';
-import { Input } from '../Input';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
-import { Checkbox } from '../Checkbox';
+import CardEditorAssignUser from './CardEditorAssignUser';
+import { MemberSearch } from '../MemberSearch';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
 import CardEditorTask from './CardEditorTask';
 import CardEditorComment from './CardEditorComment';
 import './CardEditor.scss';
+
 
 class CardEditor extends Component {
   constructor(props) {
@@ -285,6 +287,10 @@ class CardEditor extends Component {
     }
   };
 
+  assignMember = userId => {
+    console.log(userId);
+  };
+
   componentWillUnmount() {
     this.commentObserver();
   }
@@ -294,7 +300,8 @@ class CardEditor extends Component {
       handleCardEditorClose,
       card,
       userId,
-      commentsArray
+      commentsArray,
+      usersArray
     } = this.props;
     const { cardId, commentIds } = card;
     const {
@@ -340,6 +347,7 @@ class CardEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
+          <MemberSearch users={usersArray} onMemberClick={this.assignMember} />
           <div
             className={`card-editor__section ${
               currentFocus === 'cardDescription' ? 'is-focused' : ''
@@ -418,7 +426,7 @@ class CardEditor extends Component {
             {currentFocus === 'newTask' && (
               <Button
                 type="submit"
-                color="secondary"
+                color="primary"
                 size="small"
                 variant="contained"
                 disabled={isNewTaskInvalid}
@@ -467,7 +475,7 @@ class CardEditor extends Component {
             {commentFormIsFocused && (
               <Button
                 type="submit"
-                color="secondary"
+                color="primary"
                 size="small"
                 variant="contained"
                 disabled={isNewCommentInvalid}
@@ -495,7 +503,8 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.card.commentIds
     ),
-    commentsById: commentSelectors.getCommentsById(state)
+    commentsById: commentSelectors.getCommentsById(state),
+    usersArray: userSelectors.getUsersArray(state)
   };
 };
 
