@@ -4,7 +4,7 @@ import { cardsById } from '../ducks/cards';
 import { listsById } from '../ducks/lists';
 import { usersById } from '../ducks/users';
 import { current } from '../ducks/current';
-import { tasksById } from '../ducks/tasks';
+import { subtasksById } from '../ducks/subtasks';
 import { commentsById } from '../ducks/comments';
 
 export default combineReducers({
@@ -13,6 +13,6 @@ export default combineReducers({
   listsById,
   usersById,
   current,
-  tasksById,
+  subtasksById,
   commentsById
 });

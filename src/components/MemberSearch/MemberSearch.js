@@ -169,7 +169,8 @@ export default class MemberSearch extends Component {
             {filteredList.length > 0 ? (
               filteredList.map((user, i) => {
                 const { name, photoURL, email, username, userId } = user;
-                const isAssigned = assignedMembers.indexOf(userId) !== -1;
+                const isAssigned =
+                  assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
                   <li
                     className={`member-search__item ${

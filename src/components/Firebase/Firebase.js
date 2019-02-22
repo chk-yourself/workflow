@@ -244,9 +244,9 @@ class Firebase {
       lastModifiedAt: this.getTimestamp()
     });
 
-    // Delete tasks assigned to card
+    // Delete subtasks assigned to card
     this.db
-      .collection('tasks')
+      .collection('subtasks')
       .where('cardId', '==', cardId)
       .get()
       .then(snapshot => {
@@ -302,11 +302,11 @@ class Firebase {
       });
   };
 
-  // Task API
+  // Subtask API
 
-  getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
+  getSubtaskDoc = subtaskId => this.db.collection('subtasks').doc(subtaskId);
 
-  addTask = ({
+  addSubtask = ({
     userId,
     memberIds = [],
     boardId = null,
@@ -315,7 +315,7 @@ class Firebase {
     text
   }) => {
     this.db
-      .collection('tasks')
+      .collection('subtasks')
       .add({
         createdAt: this.getTimestamp(),
         lastModifiedAt: this.getTimestamp(),
@@ -330,34 +330,34 @@ class Firebase {
       .then(ref => {
         if (cardId === null) return;
         this.updateCard(cardId, {
-          taskIds: this.addToArray(ref.id)
+          subtaskIds: this.addToArray(ref.id)
         });
       });
   };
 
-  updateTask = (taskId, newValue = {}) => {
-    this.getTaskDoc(taskId).update({
+  updateSubtask = (subtaskId, newValue = {}) => {
+    this.getSubtaskDoc(subtaskId).update({
       lastModifiedAt: this.getTimestamp(),
       ...newValue
     });
   };
 
-  deleteTask = ({ taskId, cardId = null }) => {
+  deleteSubtask = ({ subtaskId, cardId = null }) => {
     const batch = this.db.batch();
-    const taskRef = this.getTaskDoc(taskId);
-    batch.delete(taskRef);
+    const subtaskRef = this.getSubtaskDoc(subtaskId);
+    batch.delete(subtaskRef);
 
     if (cardId) {
       const cardRef = this.getCardDoc(cardId);
       batch.update(cardRef, {
-        taskIds: this.removeFromArray(taskId),
+        subtaskIds: this.removeFromArray(subtaskId),
         lastModifiedAt: this.getTimestamp()
       });
     }
     return batch
       .commit()
       .then(() => {
-        console.log('task deleted');
+        console.log('subtask deleted');
       })
       .catch(error => {
         console.error(error);

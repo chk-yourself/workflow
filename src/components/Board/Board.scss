@@ -25,10 +25,11 @@
   margin: 0 6px;
   font-size: 1.1rem;
   font-family: $heading-font;
-  font-weight: 500;
+  font-weight: 600;
   padding: 8px 10px;
   margin-bottom: 4px;
   height: auto;
+  color: $grey-900;
   &:focus {
     background-color: rgba(#fff, 0.6);
   }

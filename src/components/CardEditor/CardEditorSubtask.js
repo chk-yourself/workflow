@@ -6,7 +6,7 @@ import { Textarea } from '../Textarea';
 
 const appRoot = document.getElementById('root');
 
-export default class CardEditorTask extends Component {
+export default class CardEditorSubtask extends Component {
   constructor(props) {
     super(props);
     this.portal = document.createElement('div');
@@ -29,7 +29,7 @@ export default class CardEditorTask extends Component {
 
   render() {
     const {
-      taskId,
+      subtaskId,
       index,
       text,
       isCompleted,
@@ -40,19 +40,19 @@ export default class CardEditorTask extends Component {
     } = this.props;
 
     return (
-      <Draggable draggableId={taskId} index={index}>
+      <Draggable draggableId={subtaskId} index={index}>
         {(provided, snapshot) => {
           const inner = (
             <li
-              className="card-editor__task"
+              className="card-editor__subtask"
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
               <Checkbox
-                id={`cb-${taskId}`}
-                value={taskId}
-                name={taskId}
+                id={`cb-${subtaskId}`}
+                value={subtaskId}
+                name={subtaskId}
                 isChecked={isCompleted}
                 onChange={toggleCompleted}
                 className="card-editor__checkbox"
@@ -62,8 +62,8 @@ export default class CardEditorTask extends Component {
                 value={text}
                 onChange={onChange}
                 onBlur={onBlur}
-                name={taskId}
-                className="card-editor__textarea--task"
+                name={subtaskId}
+                className="card-editor__textarea--subtask"
                 onKeyDown={onKeyDown}
                 onDragStart={this.onDragStart}
               />

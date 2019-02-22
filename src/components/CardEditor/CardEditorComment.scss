@@ -22,10 +22,11 @@
   color: $grey-600;
 }
 
-.card-editor__full-name {
+.card-editor__name {
   font-size: 14px;
   font-weight: 600;
   margin-right: 8px;
+  color: $grey-900;
 }
 
 .card-editor__comment-body {
@@ -34,32 +35,32 @@
 }
 
 .card-editor__likes {
-  width: 32px;
   min-width: 0;
-  padding: 2px 8px 2px 0;
+  padding: 2px 14px 2px 0;
   position: relative;
+  color: $grey-700;
   .feather {
-    width: 18px;
-    height: 18px;
-    color: $grey-800;
+    width: 16px;
+    height: 16px;
+    color: $grey-700;
   }
 }
 
 .card-editor__likes-counter {
   font-size: 11px;
   position: absolute;
-  right: 0;
+  left: 18px;
   font-weight: 600;
 }
 
-.card-editor__avatar {
+.card-editor__comment-avatar {
   width: 30px;
   height: 30px;
   line-height: 30px;
   margin-right: 8px;
 }
 
-.card-editor__avatar-placeholder {
+.card-editor__comment-avatar-placeholder {
   font-weight: 700;
   letter-spacing: 0.03em;
   font-size: 12px;

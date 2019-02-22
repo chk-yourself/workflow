@@ -12,7 +12,7 @@
     border-color: $primary;
     outline: none;
   }
-  &:placeholder {
-    color: $grey-500;
+  &::placeholder {
+    color: $grey-600;
   }
 }

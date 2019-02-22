@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
@@ -78,8 +79,8 @@ class CardEditorComment extends Component {
       >
         <Avatar
           classes={{
-            avatar: 'card-editor__avatar',
-            placeholder: 'card-editor__avatar-placeholder'
+            avatar: 'card-editor__comment-avatar',
+            placeholder: 'card-editor__comment-avatar-placeholder'
           }}
           fullName={name}
           size="sm"
@@ -89,15 +90,17 @@ class CardEditorComment extends Component {
         <div className="card-editor__comment">
           <div className="card-editor__comment-header">
             <div className="card-editor__comment-details">
-              <span className="card-editor__full-name">{name}</span>
+              <span className="card-editor__name">{name}</span>
               <span className="card-editor__timestamp">
-                {secondsElapsed < 60
+                {secondsElapsed < 60 // less than one minute
                   ? 'Just now'
-                  : secondsElapsed < 120 // = up until 2 minutes
+                  : secondsElapsed < 120 // less than 2 minutes
                   ? '1 minute ago'
-                  : secondsElapsed < 3600 // up until 1st hour
+                  : secondsElapsed < 3600 // less than 1 hour
                   ? `${Math.floor(secondsElapsed / 60)} minutes ago`
-                  : secondsElapsed < 21600 // up until 6th hour
+                  : secondsElapsed < 7200 // less than 2 hours
+                  ? '1 hour ago'
+                  : secondsElapsed < 21600 // less than 6 hours
                   ? `${Math.floor(secondsElapsed / 3600)} hours ago`
                   : isToday
                   ? `Today at ${timeCreated}`
@@ -111,10 +114,10 @@ class CardEditorComment extends Component {
               onClick={this.handleLikeClick}
               size="sm"
             >
+              <Icon name="thumbs-up" />
               <span className="card-editor__likes-counter">
                 {likes.length > 0 ? likes.length : ''}
               </span>
-              <Icon name="thumbs-up" />
             </Button>
           </div>
           <div className="card-editor__comment-body">{text}</div>

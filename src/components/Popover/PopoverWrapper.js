@@ -50,7 +50,7 @@ export default class PopoverWrapper extends Component {
     const { isOpen } = this.state;
 
     let popoverWrapperStyle = null;
-    
+
     if (anchorEl) {
       const { offsetTop, offsetLeft } = anchorEl;
       popoverWrapperStyle = {
@@ -62,11 +62,18 @@ export default class PopoverWrapper extends Component {
 
     return (
       <div
-        className={`popover-wrapper ${isOpen ? 'is-active' : ''} ${wrapperClass}`}
+        className={`popover-wrapper ${
+          isOpen ? 'is-active' : ''
+        } ${wrapperClass}`}
         ref={el => (this.componentEl = el)}
         style={popoverWrapperStyle}
       >
-        <Button type="button" onClick={this.toggleOpen} {...buttonProps} />
+        <Button
+          type="button"
+          onClick={this.toggleOpen}
+          buttonRef={this.props.buttonRef}
+          {...buttonProps}
+        />
         {isOpen && (
           <Popover
             className={`align-${alignInner} ${popoverClass}`}

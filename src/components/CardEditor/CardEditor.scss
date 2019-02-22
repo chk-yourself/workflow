@@ -17,11 +17,15 @@
 }
 
 .card-editor__textarea--title {
-  width: 100%;
+  width: calc(100% + 12px);
   border: 1px solid transparent;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1.2rem;
   height: 46px;
+  color: $grey-900;
+  padding: 8px 6px;
+  position: relative;
+  left: -6px;
   &:focus {
     border-color: $primary;
   }
@@ -44,7 +48,7 @@
 }
 
 .card-editor__textarea--comment,
-.card-editor__textarea--new-task {
+.card-editor__textarea--new-subtask {
   width: 100%;
   padding: 0;
   &:focus {
@@ -60,6 +64,7 @@
   min-height: 0;
 }
 
+.card-editor__btn--add-member,
 .card-editor__section-icon {
   height: 40px;
   line-height: 38px;
@@ -74,6 +79,22 @@
   }
 }
 
+.card-editor__btn--add-member {
+  min-width: 0;
+  line-height: 30px;
+  font-weight: 400;
+  .feather {
+    color: $grey-600;
+  }
+  &:hover,
+  &:active {
+    .feather,
+    span {
+      color: $primary;
+    }
+  }
+}
+
 .card-editor__edit-card-form {
   display: flex;
   flex-direction: column;
@@ -83,7 +104,7 @@
 }
 
 .card-editor__comment-form,
-.card-editor__new-task-form {
+.card-editor__new-subtask-form {
   display: flex;
   flex-direction: column;
   width: calc(100% - 26px);
@@ -103,7 +124,7 @@
 }
 
 .card-editor__btn--submit-comment,
-.card-editor__btn--add-task {
+.card-editor__btn--add-subtask {
   flex: none;
   min-width: 0;
   padding: 8px;
@@ -203,9 +224,9 @@
   }
 }
 
-// Tasks
+// Subtasks
 
-.card-editor__tasks {
+.card-editor__subtasks {
   width: 100%;
   list-style: none;
   margin: 0;
@@ -213,7 +234,7 @@
   overflow: visible;
 }
 
-.card-editor__task {
+.card-editor__subtask {
   width: 100%;
   padding: 0;
   list-style: none;
@@ -244,7 +265,7 @@
   }
 }
 
-.card-editor__textarea--task {
+.card-editor__textarea--subtask {
   border-width: 1px;
   width: calc(100% - 30px);
   margin-left: 4px;
@@ -260,8 +281,9 @@
 
 .card-editor__members {
   display: flex;
-  width: calc(100% - 34px);
-  margin-left: auto;
+  max-width: calc(100% - 34px);
+  margin-top: 5px;
+  margin-left: 8px;
 }
 
 .card-editor__section-header {
@@ -277,4 +299,31 @@
   margin: 0 16px 0 12px;
   font-weight: 500;
   color: $grey-700;
+  &--sm {
+    font-size: 13px;
+    font-weight: 600;
+    color: $grey-700;
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.card-editor__placeholder--unassigned {
+  font-size: 14px;
+  color: $grey-600;
+  padding: 11px 0;
+  margin-left: 4px;
+}
+
+.card-editor__avatar {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin-right: 4px;
+}
+
+.card-editor__avatar-placeholder {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-size: 12px;
 }

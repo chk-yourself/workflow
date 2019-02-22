@@ -6,7 +6,7 @@ import { boardActions, boardSelectors } from '../../ducks/boards';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { cardActions, cardSelectors } from '../../ducks/cards';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
 import * as ROUTES from '../../constants/routes';
 import Board from './Board';
 import { Input } from '../Input';
@@ -32,16 +32,16 @@ class BoardContainer extends Component {
       current,
       fetchListsById,
       fetchCardsById,
-      fetchCardTasks,
+      fetchCardSubtasks,
       firebase,
       updateListsById,
       updateCardsById,
       boardId,
       board,
       updateListIds,
-      addTask,
-      updateTask,
-      deleteTask,
+      addSubtask,
+      updateSubtask,
+      deleteSubtask,
       selectBoard
     } = this.props;
 
@@ -51,7 +51,7 @@ class BoardContainer extends Component {
 
     fetchListsById(boardId);
     fetchCardsById(boardId);
-    fetchCardTasks(boardId).then(() => {
+    fetchCardSubtasks(boardId).then(() => {
       this.setState({
         isFetching: false
       });
@@ -73,21 +73,21 @@ class BoardContainer extends Component {
           updateListsById(list);
         });
       });
-    this.taskObserver = firebase.db
-      .collection('tasks')
+    this.subtaskObserver = firebase.db
+      .collection('subtasks')
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const taskId = change.doc.id;
-          const taskData = change.doc.data();
+          const subtaskId = change.doc.id;
+          const subtaskData = change.doc.data();
           if (change.type === 'added') {
-            addTask({ taskId, taskData });
+            addSubtask({ subtaskId, subtaskData });
           }
           if (change.type === 'modified') {
-            updateTask({ taskId, taskData });
+            updateSubtask({ subtaskId, subtaskData });
           }
           if (change.type === 'removed') {
-            deleteTask(taskId);
+            deleteSubtask(subtaskId);
           }
         });
       });
@@ -112,7 +112,7 @@ class BoardContainer extends Component {
     this.boardObserver();
     this.listObserver();
     this.cardObserver();
-    this.taskObserver();
+    this.subtaskObserver();
   }
 
   onDragStart = () => {
@@ -270,17 +270,19 @@ const mapDispatchToProps = dispatch => {
     fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
     updateListsById: list => dispatch(listActions.updateListsById(list)),
     fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
-    fetchCardTasks: boardId => dispatch(taskActions.fetchCardTasks(boardId)),
+    fetchCardSubtasks: boardId =>
+      dispatch(subtaskActions.fetchCardSubtasks(boardId)),
     updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
     reorderLists: (boardId, listIds) =>
       dispatch(boardActions.reorderLists(boardId, listIds)),
     updateListIds: (boardId, listIds) =>
       dispatch(boardActions.updateListIds(boardId, listIds)),
-    addTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.addTask({ taskId, taskData })),
-    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
-    updateTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.updateTask({ taskId, taskData }))
+    addSubtask: ({ subtaskId, subtaskData }) =>
+      dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
+    deleteSubtask: subtaskId =>
+      dispatch(subtaskActions.deleteSubtask(subtaskId)),
+    updateSubtask: ({ subtaskId, subtaskData }) =>
+      dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData }))
   };
 };
 

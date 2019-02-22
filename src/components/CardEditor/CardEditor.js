@@ -4,7 +4,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { cardActions, cardSelectors } from '../../ducks/cards';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
 import { userSelectors } from '../../ducks/users';
 import { commentActions, commentSelectors } from '../../ducks/comments';
 import { Textarea } from '../Textarea';
@@ -18,7 +18,7 @@ import { MemberSearch } from '../MemberSearch';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
-import CardEditorTask from './CardEditorTask';
+import CardEditorSubtask from './CardEditorSubtask';
 import CardEditorComment from './CardEditorComment';
 import './CardEditor.scss';
 
@@ -30,19 +30,20 @@ class CardEditor extends Component {
         this.props.commentIds !== undefined && this.props.commentIds.length > 0,
       cardTitle: this.props.cardTitle,
       cardDescription: this.props.cardDescription || '',
-      newTask: '',
-      cardTasks: this.props.tasksArray.reduce((tasks, task) => {
-        const { taskId, text, isCompleted } = task;
-        tasks[taskId] = {
+      newSubtask: '',
+      cardSubtasks: this.props.subtasksArray.reduce((subtasks, subtask) => {
+        const { subtaskId, text, isCompleted } = subtask;
+        subtasks[subtaskId] = {
           text,
           isCompleted
         };
-        return tasks;
+        return subtasks;
       }, {}),
       newComment: '',
       currentFocus: null,
-      taskIds: this.props.taskIds || []
+      subtaskIds: this.props.subtaskIds || []
     };
+    this.membersListButton = React.createRef();
   }
 
   componentDidMount() {
@@ -85,33 +86,33 @@ class CardEditor extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if ('taskIds' in props === false) return null;
-    if (props.taskIds.length !== state.taskIds.length) {
+    if ('subtaskIds' in props === false) return null;
+    if (props.subtaskIds.length !== state.subtaskIds.length) {
       return {
-        cardTasks: props.tasksArray.reduce((tasks, task) => {
-          const { taskId, text, isCompleted } = task;
-          tasks[taskId] = {
+        cardSubtasks: props.subtasksArray.reduce((subtasks, subtask) => {
+          const { subtaskId, text, isCompleted } = subtask;
+          subtasks[subtaskId] = {
             text,
             isCompleted
           };
-          return tasks;
+          return subtasks;
         }, {}),
-        taskIds: props.taskIds
+        subtaskIds: props.subtaskIds
       };
     }
     return null;
   }
 
-  updateCardTasks = () => {
-    const { tasksArray } = this.props;
+  updateCardSubtasks = () => {
+    const { subtasksArray } = this.props;
     this.setState({
-      cardTasks: tasksArray.reduce((tasks, task) => {
-        const { taskId, text, isCompleted } = task;
-        tasks[taskId] = {
+      cardSubtasks: subtasksArray.reduce((subtasks, subtask) => {
+        const { subtaskId, text, isCompleted } = subtask;
+        subtasks[subtaskId] = {
           text,
           isCompleted
         };
-        return tasks;
+        return subtasks;
       }, {})
     });
   };
@@ -162,12 +163,12 @@ class CardEditor extends Component {
     });
   };
 
-  addTask = e => {
+  addSubtask = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { userId, firebase, cardId, boardId } = this.props;
-    const { newTask: text } = this.state;
-    firebase.addTask({ userId, text, cardId, boardId });
-    this.resetForm('newTask');
+    const { newSubtask: text } = this.state;
+    firebase.addSubtask({ userId, text, cardId, boardId });
+    this.resetForm('newSubtask');
     e.preventDefault();
   };
 
@@ -182,7 +183,7 @@ class CardEditor extends Component {
     if (
       (currentFocus === 'newComment' &&
         !this.commentFormEl.contains(e.target)) ||
-      (currentFocus === 'newTask' && !this.newTaskFormEl.contains(e.target))
+      (currentFocus === 'newSubtask' && !this.newSubtaskFormEl.contains(e.target))
     ) {
       this.setState({
         currentFocus: null
@@ -201,13 +202,13 @@ class CardEditor extends Component {
     e.preventDefault(); // prevents page reload
   };
 
-  onTaskChange = e => {
-    const { cardTasks } = this.state;
+  onSubtaskChange = e => {
+    const { cardSubtasks } = this.state;
     this.setState({
-      cardTasks: {
-        ...cardTasks,
+      cardSubtasks: {
+        ...cardSubtasks,
         [e.target.name]: {
-          ...cardTasks[e.target.name],
+          ...cardSubtasks[e.target.name],
           text: e.target.value
         }
       }
@@ -215,53 +216,53 @@ class CardEditor extends Component {
   };
 
   handleCheckboxChange = e => {
-    const taskId = e.target.name;
-    this.toggleTaskCompleted(taskId);
+    const subtaskId = e.target.name;
+    this.toggleSubtaskCompleted(subtaskId);
   };
 
-  toggleTaskCompleted = taskId => {
-    const { isCompleted } = this.state.cardTasks[taskId];
+  toggleSubtaskCompleted = subtaskId => {
+    const { isCompleted } = this.state.cardSubtasks[subtaskId];
     this.setState(prevState => ({
-      cardTasks: {
-        ...prevState.cardTasks,
-        [taskId]: {
-          ...prevState.cardTasks[taskId],
-          isCompleted: !prevState.cardTasks[taskId].isCompleted
+      cardSubtasks: {
+        ...prevState.cardSubtasks,
+        [subtaskId]: {
+          ...prevState.cardSubtasks[subtaskId],
+          isCompleted: !prevState.cardSubtasks[subtaskId].isCompleted
         }
       }
     }));
     const { firebase } = this.props;
-    firebase.updateTask(taskId, { isCompleted: !isCompleted });
+    firebase.updateSubtask(subtaskId, { isCompleted: !isCompleted });
   };
 
-  updateTaskText = e => {
-    const taskId = e.target.name;
-    const { cardTasks } = this.state;
-    const { text } = cardTasks[taskId];
+  updateSubtaskText = e => {
+    const subtaskId = e.target.name;
+    const { cardSubtasks } = this.state;
+    const { text } = cardSubtasks[subtaskId];
     const { firebase } = this.props;
-    firebase.updateTask(taskId, { text });
+    firebase.updateSubtask(subtaskId, { text });
   };
 
-  deleteTask = e => {
+  deleteSubtask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
     const { cardId, firebase } = this.props;
-    const taskId = e.target.name;
-    firebase.deleteTask({ taskId, cardId });
+    const subtaskId = e.target.name;
+    firebase.deleteSubtask({ subtaskId, cardId });
   };
 
-  moveTask = ({ destination, draggableId, source }) => {
+  moveSubtask = ({ destination, draggableId, source }) => {
     if (!destination) return;
     if (destination.index === source.index) return;
     const { firebase } = this.props;
-    const { taskIds } = this.state;
-    const updatedTaskIds = [...taskIds];
-    updatedTaskIds.splice(source.index, 1);
-    updatedTaskIds.splice(destination.index, 0, draggableId);
+    const { subtaskIds } = this.state;
+    const updatedSubtaskIds = [...subtaskIds];
+    updatedSubtaskIds.splice(source.index, 1);
+    updatedSubtaskIds.splice(destination.index, 0, draggableId);
     this.setState({
-      taskIds: updatedTaskIds
+      subtaskIds: updatedSubtaskIds
     });
     firebase.updateCard(source.droppableId, {
-      taskIds: updatedTaskIds
+      subtaskIds: updatedSubtaskIds
     });
   };
 
@@ -313,18 +314,20 @@ class CardEditor extends Component {
       cardDescription,
       newComment,
       currentFocus,
-      newTask,
-      cardTasks,
-      taskIds,
+      newSubtask,
+      cardSubtasks,
+      subtaskIds,
       isFetching
     } = this.state;
-    const hasTasks = taskIds !== undefined && taskIds.length > 0;
+    const hasSubtasks = subtaskIds !== undefined && subtaskIds.length > 0;
     const hasComments = commentIds !== undefined && commentIds.length > 0;
     const isAssigned = !!assignedTo && assignedTo.length > 0;
     const isNewCommentInvalid = newComment === '';
-    const isNewTaskInvalid = newTask === '';
+    const isNewSubtaskInvalid = newSubtask === '';
     const commentFormIsFocused = currentFocus === 'newComment';
-    const newTaskFormIsFocused = currentFocus === 'newTask';
+    const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
+
+    console.log(this.membersListButton);
 
     if (isFetching) return null;
 
@@ -337,7 +340,7 @@ class CardEditor extends Component {
         id="cardEditor"
       >
         <Toolbar className="card-editor__toolbar">
-          <CardEditorAssignMember>
+          <CardEditorAssignMember buttonRef={this.membersListButton}>
             <MemberSearch
               users={usersArray}
               assignedMembers={assignedTo}
@@ -384,6 +387,9 @@ class CardEditor extends Component {
                 })}
               </div>
             )}
+            <Button type="button" className="card-editor__btn--add-member" onClick={() => this.membersListButton.current.click()}>
+            <Icon name="plus-circle" />{!isAssigned && <span className="card-editor__placeholder--unassigned">Assign member</span>}
+          </Button>
           </div>
           <div
             className={`card-editor__section ${
@@ -406,37 +412,37 @@ class CardEditor extends Component {
         </form>
         <div
           className={`card-editor__section ${
-            newTaskFormIsFocused ? 'is-focused' : ''
+            newSubtaskFormIsFocused ? 'is-focused' : ''
           }`}
         >
         <div className="card-editor__section-header">
         <div className="card-editor__section-icon">
             <Icon name="check-square" />
           </div>
-          <h3 className="card-editor__section-title">Todos</h3>
+          <h3 className="card-editor__section-title">Subtasks</h3>
           <hr className="card-editor__hr" />
         </div>
-          {hasTasks && (
-            <DragDropContext onDragEnd={this.moveTask}>
+          {hasSubtasks && (
+            <DragDropContext onDragEnd={this.moveSubtask}>
               <Droppable droppableId={cardId} type={droppableTypes.TASK}>
                 {provided => (
                   <ul
-                    className="card-editor__tasks"
+                    className="card-editor__subtasks"
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {taskIds.map((taskId, index) => {
+                    {subtaskIds.map((subtaskId, index) => {
                       return (
-                        <CardEditorTask
-                          taskId={taskId}
+                        <CardEditorSubtask
+                          subtaskId={subtaskId}
                           index={index}
-                          text={cardTasks[taskId].text}
-                          isCompleted={cardTasks[taskId].isCompleted}
+                          text={cardSubtasks[subtaskId].text}
+                          isCompleted={cardSubtasks[subtaskId].isCompleted}
                           toggleCompleted={this.handleCheckboxChange}
-                          onChange={this.onTaskChange}
-                          onBlur={this.updateTaskText}
-                          onKeyDown={this.deleteTask}
-                          key={taskId}
+                          onChange={this.onSubtaskChange}
+                          onBlur={this.updateSubtaskText}
+                          onKeyDown={this.deleteSubtask}
+                          key={subtaskId}
                         />
                       );
                     })}
@@ -448,38 +454,38 @@ class CardEditor extends Component {
           )}
           <div className="card-editor__section-icon">
           {
-            newTaskFormIsFocused ? <div className="card-editor__checkbox"></div>
+            newSubtaskFormIsFocused ? <div className="card-editor__checkbox"></div>
             : <Icon name="plus-circle" />
           }
           </div>
           <form
-            name="newTaskForm"
-            className={`card-editor__new-task-form ${
-              currentFocus === 'newTask' ? 'is-focused' : ''
+            name="newSubtaskForm"
+            className={`card-editor__new-subtask-form ${
+              currentFocus === 'newSubtask' ? 'is-focused' : ''
             }`}
-            ref={el => (this.newTaskFormEl = el)}
-            onSubmit={this.addTask}
+            ref={el => (this.newSubtaskFormEl = el)}
+            onSubmit={this.addSubtask}
           >
             <Textarea
-              className="card-editor__textarea card-editor__textarea--new-task"
-              name="newTask"
-              value={newTask}
+              className="card-editor__textarea card-editor__textarea--new-subtask"
+              name="newSubtask"
+              value={newSubtask}
               onChange={this.onChange}
-              placeholder="Add a task"
+              placeholder="Add a subtask"
               onFocus={this.onFocus}
-              onKeyDown={this.addTask}
+              onKeyDown={this.addSubtask}
             />
-            {currentFocus === 'newTask' && (
+            {currentFocus === 'newSubtask' && (
               <Button
                 type="submit"
                 color="primary"
                 size="small"
                 variant="contained"
-                disabled={isNewTaskInvalid}
-                onClick={this.addTask}
-                className="card-editor__btn--add-task"
+                disabled={isNewSubtaskInvalid}
+                onClick={this.addSubtask}
+                className="card-editor__btn--add-subtask"
               >
-                Add task
+                Add subtask
               </Button>
             )}
           </form>
@@ -550,7 +556,7 @@ class CardEditor extends Component {
                 name="newCommentSubmit"
                 className="card-editor__btn--submit-comment"
               >
-                Comment
+                Send
               </Button>
             )}
           </form>
@@ -564,7 +570,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentSelectors.getCurrentUserId(state),
     currentUser: userSelectors.getCurrentUserData(state),
-    tasksArray: taskSelectors.getTasksArray(state, ownProps.taskIds),
+    subtasksArray: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
     commentsArray: commentSelectors.getCommentsArray(
       state,
       ownProps.commentIds
