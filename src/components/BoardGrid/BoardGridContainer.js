@@ -16,16 +16,15 @@ class BoardGridContainer extends Component {
   }
 
   componentDidMount() {
-    const { userId, firebase, updateBoardsById } = this.props;
+    const { userId, firebase, updateBoard } = this.props;
     this.boardObserver = firebase.db
       .collection('boards')
       .where('memberIds', 'array-contains', userId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const board = {
-            [change.doc.id]: change.doc.data()
-          };
-          updateBoardsById(board);
+          const boardId = change.doc.id;
+          const boardData = change.doc.data();
+          updateBoard(boardId, boardData);
         });
       });
   }
@@ -79,7 +78,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
+    updateBoard: (boardId, boardData) => dispatch(boardActions.updateBoard(boardId, boardData)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId))
   };
 };

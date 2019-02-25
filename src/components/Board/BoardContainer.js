@@ -34,7 +34,7 @@ class BoardContainer extends Component {
       fetchCardsById,
       fetchCardSubtasks,
       firebase,
-      updateBoardsById,
+      updateBoard,
       updateListsById,
       addCard,
       deleteCard,
@@ -67,7 +67,7 @@ class BoardContainer extends Component {
       } else if (!utils.isEqual(updatedBoard.tags, board.tags)) {
         updateBoardTags(boardId, updatedBoard.tags);
       } else {
-        updateBoardsById(boardId, updatedBoard);
+        updateBoard(boardId, updatedBoard);
       }
     });
     this.listObserver = firebase.db
@@ -210,11 +210,17 @@ class BoardContainer extends Component {
   };
 
   render() {
-    const { isFetching, isCardEditorOpen } = this.state;
-    const { current, listsArray, cardsById, boardId, board, userId } = this.props;
+    const { isFetching, isCardEditorOpen, boardTitle } = this.state;
+    const {
+      current,
+      listsArray,
+      cardsById,
+      boardId,
+      board,
+      userId
+    } = this.props;
     if (isFetching) return null;
     const { cardId } = current;
-    const { boardTitle } = board;
     const lists = listsArray.map((list, listIndex) => {
       const { listId, listTitle, cardIds } = list;
       return (
@@ -275,7 +281,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
+    updateBoard: (boardId, boardData) => dispatch(boardActions.updateBoard(boardId, boardData)),
     selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
     selectCard: cardId => dispatch(currentActions.selectCard(cardId)),
     fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
@@ -287,8 +293,10 @@ const mapDispatchToProps = dispatch => {
       dispatch(boardActions.reorderLists(boardId, listIds)),
     updateListIds: (boardId, listIds) =>
       dispatch(boardActions.updateListIds(boardId, listIds)),
-    updateBoardTags: (boardId, tags) => dispatch(boardActions.updateBoardTags(boardId, tags)),
-    addCard: ({ cardId, cardData }) => dispatch(cardActions.addCard({ cardId, cardData })),
+    updateBoardTags: (boardId, tags) =>
+      dispatch(boardActions.updateBoardTags(boardId, tags)),
+    addCard: ({ cardId, cardData }) =>
+      dispatch(cardActions.addCard({ cardId, cardData })),
     updateCard: ({ cardId, cardData }) =>
       dispatch(cardActions.updateCard({ cardId, cardData })),
     deleteCard: cardId => dispatch(cardActions.deleteCard(cardId)),

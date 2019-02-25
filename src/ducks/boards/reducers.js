@@ -4,12 +4,13 @@ const boardsById = (state = {}, action) => {
   switch (action.type) {
     case types.LOAD_BOARDS_BY_ID: {
       const { boardsById } = action;
+      console.log(boardsById);
       return {
         ...state,
         ...boardsById
       };
     }
-    case types.UPDATE_BOARDS_BY_ID: {
+    case types.UPDATE_BOARD: {
       const { boardId, boardData } = action;
       return {
         ...state,
@@ -36,7 +37,9 @@ const boardsById = (state = {}, action) => {
         ...state,
         [boardId]: {
           ...state[boardId],
-          tags
+          tags: {
+            ...tags
+          }
         }
       };
     }

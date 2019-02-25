@@ -78,6 +78,18 @@
   }
 }
 
+.card-editor__due-date-icon {
+  padding: 4px;
+  vertical-align: middle;
+  text-align: center;
+  display: inline-block;
+  color: $grey-700;
+  .feather {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .card-editor__btn--add-member {
   min-width: 0;
   min-height: 0;
@@ -313,12 +325,40 @@
   font-weight: 500;
   color: $grey-700;
   &--sm {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     color: $grey-700;
+    line-height: 1;
     padding: 0;
     width: 100%;
+    margin: 0 0 3px 0;
   }
+}
+
+.card-editor__btn--due-date {
+  min-height: 0;
+  padding: 4px 0;
+  display: flex;
+  border: none;
+  &:hover {
+    .card-editor__section-title--sm,
+    .card-editor__due-date,
+    .feather {
+      color: $primary;
+    }
+  }
+}
+
+.card-editor__btn--due-date-text {
+  margin-left: 8px;
+}
+
+.card-editor__due-date {
+  font-size: 14px;
+  text-align: left;
+  color: $grey-900;
+  font-weight: 600;
+  line-height: 12px;
 }
 
 .card-editor__placeholder--unassigned {

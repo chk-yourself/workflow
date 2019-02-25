@@ -1,0 +1,52 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.date-picker {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 12px;
+  @include box-shadow(2);
+  position: absolute;
+  z-index: 99;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.date-picker__btn--set-due-date {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.date-picker__btn--cancel {
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.date-picker__calendar {
+  max-width: 224px;
+  margin: 0 auto;
+}
+
+.date-picker__week-day {
+  height: 32px;
+  line-height: 32px;
+  font-weight: 600;
+  color: $grey-800;
+}
+
+.date-picker__footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-picker__header {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+  color: $grey-700;
+  margin-bottom: 4px;
+}

@@ -24,6 +24,8 @@ import CardEditorComment from './CardEditorComment';
 import { TagsInput } from '../TagsInput';
 import './CardEditor.scss';
 import { boardSelectors } from '../../ducks/boards';
+import { DatePicker } from '../DatePicker';
+import { MONTHS, dateUtils } from '../Calendar';
 
 class CardEditor extends Component {
   constructor(props) {
@@ -46,7 +48,8 @@ class CardEditor extends Component {
       currentFocus: null,
       subtaskIds: this.props.subtaskIds || [],
       isColorPickerActive: false,
-      currentTag: null
+      currentTag: null,
+      isDatePickerActive: false
     };
     this.membersListButton = React.createRef();
   }
@@ -319,12 +322,11 @@ class CardEditor extends Component {
     const { userId, tags: userTags } = currentUser;
     const isBoardTag = boardTags && text in boardTags;
     const isUserTag = userTags && text in userTags;
-    const tagData =
-      isBoardTag
-        ? boardTags[text]
-        : isUserTag
-        ? userTags[text]
-        : { boardId, text };
+    const tagData = isBoardTag
+      ? boardTags[text]
+      : isUserTag
+      ? userTags[text]
+      : { boardId, text };
 
     firebase
       .addTag({
@@ -355,6 +357,20 @@ class CardEditor extends Component {
     this.toggleColorPicker(false);
   };
 
+  setDueDate = date => {
+    const { firebase, cardId } = this.props;
+
+    firebase.updateCard(cardId, {
+      dueDate: date
+    });
+  };
+
+  toggleDatePicker = () => {
+    this.setState(prevState => ({
+      isDatePickerActive: !prevState.isDatePickerActive
+    }));
+  };
+
   componentWillUnmount() {
     this.commentObserver();
   }
@@ -370,7 +386,8 @@ class CardEditor extends Component {
       membersArray,
       currentUser,
       cardTags,
-      mergedTags
+      mergedTags,
+      dueDate
     } = this.props;
     const {
       cardTitle,
@@ -382,6 +399,7 @@ class CardEditor extends Component {
       subtaskIds,
       isFetching,
       isColorPickerActive,
+      isDatePickerActive,
       currentTag
     } = this.state;
     const hasSubtasks = subtaskIds !== undefined && subtaskIds.length > 0;
@@ -391,6 +409,9 @@ class CardEditor extends Component {
     const isNewSubtaskInvalid = newSubtask === '';
     const commentFormIsFocused = currentFocus === 'newComment';
     const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
+    const cardDueDate = dueDate
+      ? dateUtils.getSimpleDate(dueDate.toDate())
+      : dateUtils.getSimpleDate(new Date());
 
     if (isFetching) return null;
 
@@ -426,6 +447,32 @@ class CardEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
+          <div className="card-editor__section">
+            <Button onClick={this.toggleDatePicker} type="button" className="card-editor__btn--due-date">
+            <div className="card-editor__due-date-icon">
+              <Icon name="calendar" />
+            </div>
+              { !dueDate ? (
+                <span className="card-editor__label--no-due-date">
+                  Set due date
+                </span>
+              ) : (
+                <div className="card-editor__btn--due-date-text">
+                  <div className="card-editor__section-title--sm">Due Date</div>
+                  <div className="card-editor__due-date">{`${MONTHS[cardDueDate.month].short} ${cardDueDate.day}`}</div>
+                </div>
+              )}
+            </Button>
+            {isDatePickerActive &&
+              <DatePicker
+            onClose={this.toggleDatePicker}
+            selectedDay={dueDate ? cardDueDate : null}
+            currentMonth={cardDueDate.month}
+            currentYear={cardDueDate.year}
+            selectDate={this.setDueDate}
+          />
+            }
+          </div>
           <div className="card-editor__section">
             <div className="card-editor__section-icon">
               <Icon name="tag" />

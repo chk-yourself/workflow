@@ -53,7 +53,7 @@ class HomePage extends Component {
   render() {
     const { isBoardComposerOpen, isFetching } = this.state;
     if (isFetching) return null;
-    const { userId } = this.props;
+    const { userId, boardsById } = this.props;
     return (
       <>
         {isBoardComposerOpen && (
@@ -84,6 +84,7 @@ class HomePage extends Component {
               <BoardContainer
                 userId={userId}
                 boardId={props.match.params.id}
+                boardTitle={boardsById[props.match.params.id].boardTitle}
                 {...props}
               />
             )}
@@ -99,7 +100,8 @@ const condition = authUser => !!authUser;
 const mapStateToProps = (state, ownProps) => {
   return {
     currentBoardId: currentSelectors.getCurrentBoardId(state),
-    userId: currentSelectors.getCurrentUserId(state)
+    userId: currentSelectors.getCurrentUserId(state),
+    boardsById: boardSelectors.getBoardsById(state)
   };
 };
 

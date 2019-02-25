@@ -16,11 +16,14 @@ export const fetchBoardsById = userId => {
         .where('memberIds', 'array-contains', userId)
         .get()
         .then(snapshot => {
-          const boardsById = {};
+          const boards = {};
           snapshot.forEach(doc => {
-            boardsById[doc.id] = doc.data();
+            boards[doc.id] = {
+              boardId: doc.id,
+              ...doc.data()
+            };
           });
-          return boardsById;
+          return boards;
         });
       dispatch(loadBoardsById(boardsById));
     } catch (error) {
@@ -29,9 +32,9 @@ export const fetchBoardsById = userId => {
   };
 };
 
-export const updateBoardsById = (boardId, boardData) => {
+export const updateBoard = (boardId, boardData) => {
   return {
-    type: types.UPDATE_BOARDS_BY_ID,
+    type: types.UPDATE_BOARD,
     boardId,
     boardData
   };
@@ -60,4 +63,3 @@ export const updateBoardTags = (boardId, tags) => {
     tags
   };
 };
-

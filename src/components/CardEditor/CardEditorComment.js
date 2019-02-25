@@ -69,7 +69,9 @@ class CardEditorComment extends Component {
     });
     const dateCreated = dateCreatedFull.toDateString();
     const isToday = date.toDateString() === dateCreated;
-    const isYesterday = date.setDate(date.getDate() - 1);
+    const isYesterday =
+      new Date(date.setDate(date.getDate() - 1)).setHours(0, 0, 0, 0) ===
+      new Date(dateCreatedFull.getTime()).setHours(0, 0, 0, 0);
 
     return (
       <div
