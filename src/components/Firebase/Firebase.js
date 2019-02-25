@@ -67,8 +67,12 @@ class Firebase {
   // Utility API
 
   getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
+
   addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
+
   removeFromArray = value => firebase.firestore.FieldValue.arrayRemove(value);
+
+  deleteField = () => firebase.firestore.FieldValue.delete();
 
   // User API
 
@@ -92,6 +96,106 @@ class Firebase {
       .collection('users')
       .doc(userId)
       .update(newValue);
+
+  // Tags API
+
+  addTag = ({ cardId, userId, boardId, text, color = 'default' }) => {
+    const batch = this.db.batch();
+    const userRef = this.getUserDoc(userId);
+    const cardRef = this.getCardDoc(cardId);
+    const boardRef = this.getBoardDoc(boardId);
+
+    batch.update(cardRef, {
+      tags: this.addToArray(text),
+      lastModifiedAt: this.getTimestamp()
+    });
+
+    batch.set(
+      userRef,
+      {
+        tags: {
+          [text]: {
+            text,
+            color,
+            lastUsedAt: this.getTimestamp()
+          }
+        },
+        lastModifiedAt: this.getTimestamp()
+      },
+      { merge: true }
+    );
+
+    batch.set(
+      boardRef,
+      {
+        tags: {
+          [text]: {
+            text,
+            color,
+            lastUsedAt: this.getTimestamp()
+          }
+        },
+        lastModifiedAt: this.getTimestamp()
+      },
+      { merge: true }
+    );
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('tag added');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  removeTag = ({ cardId, tag }) => {
+    this.updateCard(cardId, {
+      tags: this.removeFromArray(tag)
+    });
+  };
+
+  setTagColor = ({ userId, boardId, tag, color }) => {
+    const batch = this.db.batch();
+    const userRef = this.getUserDoc(userId);
+    const boardRef = this.getBoardDoc(boardId);
+
+    batch.set(
+      userRef,
+      {
+        tags: {
+          [tag]: {
+            color
+          }
+        },
+        lastModifiedAt: this.getTimestamp()
+      },
+      { merge: true }
+    );
+
+    batch.set(
+      boardRef,
+      {
+        tags: {
+          [tag]: {
+            color
+          }
+        },
+        lastModifiedAt: this.getTimestamp()
+      },
+      { merge: true }
+    );
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('tag color updated');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   // Board API
 

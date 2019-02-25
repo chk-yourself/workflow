@@ -1,0 +1,70 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.tags__container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(100% - 26px);
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  &.is-active {
+    border-color: $primary;
+  }
+}
+
+.tags-input__wrapper {
+  position: relative;
+  display: inline-block;
+  height: 30px;
+}
+
+.tags-input {
+  border: 1px solid transparent;
+  height: 30px;
+  font-size: 14px;
+  display: inline-block;
+  width: auto;
+  padding: 7px;
+  &:focus,
+  &:active {
+    border-color: transparent;
+  }
+}
+
+.tags-input__list {
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  margin: 0;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border-radius: 4px;
+  background-color: $white;
+  overflow-x: hidden;
+  @include box-shadow(2);
+}
+
+.tags-input__item {
+  padding: 6px;
+  &.is-selected {
+    background-color: $primary-lt;
+  }
+}
+
+.tags-input__item--heading {
+  font-size: 11px;
+  text-transform: uppercase;
+  margin: 0 0 4px 0;
+  font-weight: 400;
+}
+
+.tags-input__item--new {
+  background-color: $grey-000;
+}
+
+.tags-input__item--text {
+  font-size: 12px;
+}

@@ -1,0 +1,143 @@
+@import '../../styles/_variables';
+
+.color-picker {
+  font-size: 0; // get rid of extra white space
+  background-color: $white;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  max-width: 148px;
+  padding: 5px;
+  border-radius: 4px;
+  display: inline-flex;
+  border: 1px solid lighten($grey-800, 30%);
+  position: absolute;
+  z-index: 1;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    left: calc(50% - 8px);
+  }
+  &::before {
+    top: -8px;
+    border-bottom: 8px solid lighten($grey-800, 30%);
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    z-index: 1;
+  }
+  &::after {
+    top: -7px;
+    border-bottom: 8px solid $white;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    z-index: 2;
+  }
+}
+
+.color-picker__swatch {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  border-radius: 2px;
+  margin: 5px;
+  position: relative;
+  cursor: pointer;
+  &.bg--default {
+    border: 1px solid rgba($grey-800, 0.3);
+  }
+}
+
+.color-picker__radio {
+  display: none;
+  margin: auto;
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+}
+
+// Background Colors
+
+.bg--default {
+  background-color: $grey-100;
+  color: $grey-800;
+}
+
+.bg--blue {
+  background-color: $blue;
+  color: $white;
+}
+.bg--green {
+  background-color: $green;
+  color: $white;
+}
+.bg--pink {
+  background-color: $pink;
+  color: $white;
+}
+.bg--orange {
+  background-color: $orange;
+  color: $white;
+}
+.bg--purple {
+  background-color: $purple;
+  color: $white;
+}
+
+.bg--red {
+  background-color: $red;
+  color: $white;
+}
+
+.bg--teal {
+  background-color: $teal;
+  color: $white;
+}
+
+.bg--cyan {
+  background-color: $cyan;
+  color: $white;
+}
+
+.bg--grape {
+  background-color: $grape;
+  color: $white;
+}
+
+.bg--violet {
+  background-color: $violet;
+  color: $white;
+}
+
+.bg--indigo {
+  background-color: $indigo;
+  color: $white;
+}
+
+.bg--yellow {
+  background-color: $yellow;
+  color: $white;
+}
+
+[type='radio']:checked + label {
+  &::after {
+    content: '';
+    font-size: 16px;
+    width: 6px;
+    height: 11px;
+    border-bottom: 2px solid $white;
+    border-right: 2px solid $white;
+    transform: rotate(45deg);
+    position: absolute;
+    top: calc(50% - 6px);
+    left: calc(50% - 3px);
+    cursor: pointer;
+    z-index: 3;
+  }
+  &.bg--default::after {
+    border-color: $grey-800;
+  }
+}

@@ -34,8 +34,12 @@ class BoardContainer extends Component {
       fetchCardsById,
       fetchCardSubtasks,
       firebase,
+      updateBoardsById,
       updateListsById,
-      updateCardsById,
+      addCard,
+      deleteCard,
+      updateCard,
+      updateBoardTags,
       boardId,
       board,
       updateListIds,
@@ -60,6 +64,10 @@ class BoardContainer extends Component {
       const updatedBoard = snapshot.data();
       if (!utils.isEqual(updatedBoard.listIds, board.listIds)) {
         updateListIds(boardId, updatedBoard.listIds);
+      } else if (!utils.isEqual(updatedBoard.tags, board.tags)) {
+        updateBoardTags(boardId, updatedBoard.tags);
+      } else {
+        updateBoardsById(boardId, updatedBoard);
       }
     });
     this.listObserver = firebase.db
@@ -96,13 +104,15 @@ class BoardContainer extends Component {
       .where('boardId', '==', boardId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const card = {
-            [change.doc.id]: {
-              cardId: change.doc.id,
-              ...change.doc.data()
-            }
-          };
-          updateCardsById(card);
+          const cardId = change.doc.id;
+          const cardData = change.doc.data();
+          if (change.type === 'added') {
+            addCard({ cardId, cardData });
+          } else if (change.type === 'removed') {
+            deleteCard(cardId);
+          } else {
+            updateCard({ cardId, cardData });
+          }
         });
       });
     console.log('mounted');
@@ -201,7 +211,7 @@ class BoardContainer extends Component {
 
   render() {
     const { isFetching, isCardEditorOpen } = this.state;
-    const { current, listsArray, cardsById, boardId, board } = this.props;
+    const { current, listsArray, cardsById, boardId, board, userId } = this.props;
     if (isFetching) return null;
     const { cardId } = current;
     const { boardTitle } = board;
@@ -244,6 +254,7 @@ class BoardContainer extends Component {
           <CardEditor
             {...cardsById[cardId]}
             handleCardEditorClose={this.toggleCardEditor}
+            userId={userId}
           />
         )}
       </main>
@@ -272,11 +283,15 @@ const mapDispatchToProps = dispatch => {
     fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
     fetchCardSubtasks: boardId =>
       dispatch(subtaskActions.fetchCardSubtasks(boardId)),
-    updateCardsById: card => dispatch(cardActions.updateCardsById(card)),
     reorderLists: (boardId, listIds) =>
       dispatch(boardActions.reorderLists(boardId, listIds)),
     updateListIds: (boardId, listIds) =>
       dispatch(boardActions.updateListIds(boardId, listIds)),
+    updateBoardTags: (boardId, tags) => dispatch(boardActions.updateBoardTags(boardId, tags)),
+    addCard: ({ cardId, cardData }) => dispatch(cardActions.addCard({ cardId, cardData })),
+    updateCard: ({ cardId, cardData }) =>
+      dispatch(cardActions.updateCard({ cardId, cardData })),
+    deleteCard: cardId => dispatch(cardActions.deleteCard(cardId)),
     addSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
     deleteSubtask: subtaskId =>

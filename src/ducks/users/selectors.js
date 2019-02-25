@@ -28,3 +28,7 @@ export const getMembersArray = (state, memberIds) => {
   if (!memberIds) return [];
   return memberIds.map(memberId => usersById[memberId]);
 };
+
+export const getUserTags = state => {
+  
+}

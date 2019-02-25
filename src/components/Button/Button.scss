@@ -107,37 +107,34 @@ button {
   .feather {
     vertical-align: baseline;
   }
-}
-
-.sm.icon-only {
-  font-size: 18px;
-  line-height: 18px;
-  height: 36px;
-  width: 36px;
-  .feather {
-    width: 18px;
-    height: 18px;
+  &--sm {
+    font-size: 18px;
+    line-height: 18px;
+    height: 36px;
+    width: 36px;
+    .feather {
+      width: 18px;
+      height: 18px;
+    }
   }
-}
-
-.md.icon-only {
-  font-size: 22px;
-  line-height: 22px;
-  height: 40px;
-  width: 40px;
-  .feather {
-    width: 22px;
-    height: 22px;
+  &--md {
+    font-size: 22px;
+    line-height: 22px;
+    height: 40px;
+    width: 40px;
+    .feather {
+      width: 22px;
+      height: 22px;
+    }
   }
-}
-
-.lg.icon-only {
-  font-size: 32px;
-  line-height: 32px;
-  height: 50px;
-  width: 50px;
-  .feather {
-    width: 32px;
-    height: 32px;
+  &--lg {
+    font-size: 32px;
+    line-height: 32px;
+    height: 50px;
+    width: 50px;
+    .feather {
+      width: 32px;
+      height: 32px;
+    }
   }
 }

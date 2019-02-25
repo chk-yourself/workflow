@@ -16,12 +16,13 @@ const Input = ({
   inputRef,
   hideLabel,
   label,
+  labelClass,
   onKeyDown
 }) => {
   return (
     <>
       {!hideLabel && (
-        <label htmlFor={name} className="input__label">
+        <label htmlFor={name} className={`input__label ${labelClass}`}>
           {label}
         </label>
       )}

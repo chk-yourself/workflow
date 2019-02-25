@@ -17,3 +17,12 @@ export const getCurrentCardId = state => {
 export const getCurrent = state => {
   return state.current;
 };
+
+export const getMergedTags = state => {
+  const { boardId, userId } = state.current;
+  const { boardsById, usersById } = state;
+  const { tags: boardTags } = boardsById[boardId];
+  const { tags: userTags } = usersById[userId];
+  const mergedTags = { ...userTags, ...boardTags };
+  return Object.keys(mergedTags).map(tag => mergedTags[tag]);
+};

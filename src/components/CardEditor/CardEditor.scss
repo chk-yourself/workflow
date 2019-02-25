@@ -64,7 +64,6 @@
   min-height: 0;
 }
 
-.card-editor__btn--add-member,
 .card-editor__section-icon {
   height: 40px;
   line-height: 38px;
@@ -81,13 +80,27 @@
 
 .card-editor__btn--add-member {
   min-width: 0;
-  line-height: 30px;
+  min-height: 0;
+  margin: 5px 0 5px 8px;
+  width: 30px;
+  height: 30px;
+  line-height: 16px;
+  vertical-align: middle;
+  text-align: center;
   font-weight: 400;
+  border: 1px dashed $grey-400;
+  border-radius: 50%;
+  padding: 0;
   .feather {
-    color: $grey-600;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    vertical-align: middle;
+    color: $grey-400;
   }
   &:hover,
   &:active {
+    border-color: $primary;
     .feather,
     span {
       color: $primary;
@@ -319,7 +332,9 @@
   width: 30px;
   height: 30px;
   line-height: 30px;
-  margin-right: 4px;
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
 }
 
 .card-editor__avatar-placeholder {

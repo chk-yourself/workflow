@@ -17,8 +17,8 @@ const Button = ({
 }) => (
   // eslint-disable-next-line react/button-has-type
   <button
-    className={`${className} ${color} ${size} ${variant} ${
-      iconOnly ? 'icon-only' : ''
+    className={`${className} ${color} ${variant} ${!iconOnly ? size : ''} ${
+      iconOnly ? `icon-only icon-only--${size}` : ''
     }`}
     type={type}
     onClick={onClick}

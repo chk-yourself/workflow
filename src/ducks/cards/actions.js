@@ -32,6 +32,29 @@ export const fetchCardsById = boardId => {
   };
 };
 
+export const addCard = ({ cardId, cardData }) => {
+  return {
+    type: types.ADD_CARD,
+    cardId,
+    cardData
+  };
+};
+
+export const deleteCard = cardId => {
+  return {
+    type: types.DELETE_CARD,
+    cardId
+  };
+};
+
+export const updateCard = ({ cardId, cardData }) => {
+  return {
+    type: types.UPDATE_CARD,
+    cardId,
+    cardData
+  };
+};
+
 export const updateCardsById = card => {
   return {
     type: types.UPDATE_CARDS_BY_ID,
@@ -39,3 +62,10 @@ export const updateCardsById = card => {
   };
 };
 
+export const addTag = (cardId, tag) => {
+  return {
+    type: types.ADD_TAG,
+    cardId,
+    tag
+  };
+};

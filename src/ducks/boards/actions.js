@@ -29,10 +29,11 @@ export const fetchBoardsById = userId => {
   };
 };
 
-export const updateBoardsById = board => {
+export const updateBoardsById = (boardId, boardData) => {
   return {
     type: types.UPDATE_BOARDS_BY_ID,
-    board
+    boardId,
+    boardData
   };
 };
 
@@ -51,3 +52,12 @@ export const updateListIds = (boardId, listIds) => {
     listIds
   };
 };
+
+export const updateBoardTags = (boardId, tags) => {
+  return {
+    type: types.UPDATE_BOARD_TAGS,
+    boardId,
+    tags
+  };
+};
+

@@ -10,10 +10,13 @@ const boardsById = (state = {}, action) => {
       };
     }
     case types.UPDATE_BOARDS_BY_ID: {
-      const { board } = action;
+      const { boardId, boardData } = action;
       return {
         ...state,
-        ...board
+        [boardId]: {
+          ...state[boardId],
+          ...boardData
+        }
       };
     }
     case types.UPDATE_LIST_IDS:
@@ -24,6 +27,16 @@ const boardsById = (state = {}, action) => {
         [boardId]: {
           ...state[boardId],
           listIds
+        }
+      };
+    }
+    case types.UPDATE_BOARD_TAGS: {
+      const { boardId, tags } = action;
+      return {
+        ...state,
+        [boardId]: {
+          ...state[boardId],
+          tags
         }
       };
     }

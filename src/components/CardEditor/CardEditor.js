@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -20,7 +21,9 @@ import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
 import CardEditorSubtask from './CardEditorSubtask';
 import CardEditorComment from './CardEditorComment';
+import { TagsInput } from '../TagsInput';
 import './CardEditor.scss';
+import { boardSelectors } from '../../ducks/boards';
 
 class CardEditor extends Component {
   constructor(props) {
@@ -41,7 +44,9 @@ class CardEditor extends Component {
       }, {}),
       newComment: '',
       currentFocus: null,
-      subtaskIds: this.props.subtaskIds || []
+      subtaskIds: this.props.subtaskIds || [],
+      isColorPickerActive: false,
+      currentTag: null
     };
     this.membersListButton = React.createRef();
   }
@@ -183,7 +188,8 @@ class CardEditor extends Component {
     if (
       (currentFocus === 'newComment' &&
         !this.commentFormEl.contains(e.target)) ||
-      (currentFocus === 'newSubtask' && !this.newSubtaskFormEl.contains(e.target))
+      (currentFocus === 'newSubtask' &&
+        !this.newSubtaskFormEl.contains(e.target))
     ) {
       this.setState({
         currentFocus: null
@@ -290,8 +296,63 @@ class CardEditor extends Component {
         lastModifiedAt: firebase.getTimestamp()
       });
     } else {
-      firebase.assignCard({ cardId, boardId, userId }); 
+      firebase.assignCard({ cardId, boardId, userId });
     }
+  };
+
+  toggleColorPicker = value => {
+    this.setState({
+      isColorPickerActive: value
+    });
+  };
+
+  addTag = text => {
+    console.log(text);
+    const {
+      firebase,
+      currentUser,
+      boardTags,
+      cardId,
+      boardId,
+      addTag
+    } = this.props;
+    const { userId, tags: userTags } = currentUser;
+    const isBoardTag = boardTags && text in boardTags;
+    const isUserTag = userTags && text in userTags;
+    const tagData =
+      isBoardTag
+        ? boardTags[text]
+        : isUserTag
+        ? userTags[text]
+        : { boardId, text };
+
+    firebase
+      .addTag({
+        userId,
+        cardId,
+        boardId,
+        ...tagData
+      })
+      .then(() => {
+        if (!isUserTag && !isBoardTag) {
+          this.setState({
+            currentTag: text
+          });
+          this.toggleColorPicker(true);
+        }
+      });
+  };
+
+  setTagColor = color => {
+    const { userId, boardId, firebase } = this.props;
+    const { currentTag: tag } = this.state;
+    firebase.setTagColor({ userId, boardId, tag, color });
+  };
+
+  removeTag = tag => {
+    const { cardId, firebase } = this.props;
+    firebase.removeTag({ cardId, tag });
+    this.toggleColorPicker(false);
   };
 
   componentWillUnmount() {
@@ -307,7 +368,9 @@ class CardEditor extends Component {
       commentsArray,
       usersArray,
       membersArray,
-      currentUser
+      currentUser,
+      cardTags,
+      mergedTags
     } = this.props;
     const {
       cardTitle,
@@ -317,7 +380,9 @@ class CardEditor extends Component {
       newSubtask,
       cardSubtasks,
       subtaskIds,
-      isFetching
+      isFetching,
+      isColorPickerActive,
+      currentTag
     } = this.state;
     const hasSubtasks = subtaskIds !== undefined && subtaskIds.length > 0;
     const hasComments = commentIds !== undefined && commentIds.length > 0;
@@ -326,8 +391,6 @@ class CardEditor extends Component {
     const isNewSubtaskInvalid = newSubtask === '';
     const commentFormIsFocused = currentFocus === 'newComment';
     const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
-
-    console.log(this.membersListButton);
 
     if (isFetching) return null;
 
@@ -365,6 +428,20 @@ class CardEditor extends Component {
           />
           <div className="card-editor__section">
             <div className="card-editor__section-icon">
+              <Icon name="tag" />
+            </div>
+            <TagsInput
+              addTag={this.addTag}
+              tagSuggestions={mergedTags}
+              assignedTags={cardTags}
+              isColorPickerActive={isColorPickerActive}
+              setTagColor={this.setTagColor}
+              removeTag={this.removeTag}
+              currentTag={currentTag}
+            />
+          </div>
+          <div className="card-editor__section">
+            <div className="card-editor__section-icon">
               <Icon name="user" />
             </div>
             {isAssigned && (
@@ -387,9 +464,13 @@ class CardEditor extends Component {
                 })}
               </div>
             )}
-            <Button type="button" className="card-editor__btn--add-member" onClick={() => this.membersListButton.current.click()}>
-            <Icon name="plus-circle" />{!isAssigned && <span className="card-editor__placeholder--unassigned">Assign member</span>}
-          </Button>
+            <Button
+              type="button"
+              className="card-editor__btn--add-member"
+              onClick={() => this.membersListButton.current.click()}
+            >
+              <Icon name="plus" />
+            </Button>
           </div>
           <div
             className={`card-editor__section ${
@@ -415,13 +496,13 @@ class CardEditor extends Component {
             newSubtaskFormIsFocused ? 'is-focused' : ''
           }`}
         >
-        <div className="card-editor__section-header">
-        <div className="card-editor__section-icon">
-            <Icon name="check-square" />
+          <div className="card-editor__section-header">
+            <div className="card-editor__section-icon">
+              <Icon name="check-square" />
+            </div>
+            <h3 className="card-editor__section-title">Subtasks</h3>
+            <hr className="card-editor__hr" />
           </div>
-          <h3 className="card-editor__section-title">Subtasks</h3>
-          <hr className="card-editor__hr" />
-        </div>
           {hasSubtasks && (
             <DragDropContext onDragEnd={this.moveSubtask}>
               <Droppable droppableId={cardId} type={droppableTypes.TASK}>
@@ -453,10 +534,11 @@ class CardEditor extends Component {
             </DragDropContext>
           )}
           <div className="card-editor__section-icon">
-          {
-            newSubtaskFormIsFocused ? <div className="card-editor__checkbox"></div>
-            : <Icon name="plus-circle" />
-          }
+            {newSubtaskFormIsFocused ? (
+              <div className="card-editor__checkbox" />
+            ) : (
+              <Icon name="plus-circle" />
+            )}
           </div>
           <form
             name="newSubtaskForm"
@@ -495,15 +577,14 @@ class CardEditor extends Component {
             commentFormIsFocused ? 'is-focused' : ''
           }`}
         >
-        
-        <div className="card-editor__section-header">
-        <div className="card-editor__section-icon">
-            <Icon name="message-circle" />
+          <div className="card-editor__section-header">
+            <div className="card-editor__section-icon">
+              <Icon name="message-circle" />
+            </div>
+            <h3 className="card-editor__section-title">Comments</h3>
+            <hr className="card-editor__hr" />
           </div>
-          <h3 className="card-editor__section-title">Comments</h3>
-          <hr className="card-editor__hr" />
-        </div>
-        
+
           {hasComments && (
             <div className="card-editor__comments">
               {commentsArray.map(comment => {
@@ -519,15 +600,15 @@ class CardEditor extends Component {
             </div>
           )}
           <Avatar
-          classes={{
-            avatar: 'card-editor__avatar',
-            placeholder: 'card-editor__avatar-placeholder'
-          }}
-          fullName={currentUser.name}
-          size="sm"
-          variant="circle"
-          imgSrc={currentUser.photoURL}
-        />
+            classes={{
+              avatar: 'card-editor__avatar',
+              placeholder: 'card-editor__avatar-placeholder'
+            }}
+            fullName={currentUser.name}
+            size="sm"
+            variant="circle"
+            imgSrc={currentUser.photoURL}
+          />
           <form
             name="commentForm"
             className={`card-editor__comment-form ${
@@ -568,16 +649,21 @@ class CardEditor extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentSelectors.getCurrentUserId(state),
     currentUser: userSelectors.getCurrentUserData(state),
-    subtasksArray: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
+    subtasksArray: subtaskSelectors.getSubtasksArray(
+      state,
+      ownProps.subtaskIds
+    ),
     commentsArray: commentSelectors.getCommentsArray(
       state,
       ownProps.commentIds
     ),
     commentsById: commentSelectors.getCommentsById(state),
     usersArray: userSelectors.getUsersArray(state),
-    membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo)
+    membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
+    cardTags: cardSelectors.getCardTags(state, ownProps),
+    mergedTags: currentSelectors.getMergedTags(state),
+    boardTags: boardSelectors.getBoardTags(state, ownProps.boardId)
   };
 };
 
@@ -590,7 +676,8 @@ const mapDispatchToProps = dispatch => {
     deleteComment: commentId =>
       dispatch(commentActions.deleteComment(commentId)),
     updateComment: ({ commentId, commentData }) =>
-      dispatch(commentActions.updateComment({ commentId, commentData }))
+      dispatch(commentActions.updateComment({ commentId, commentData })),
+    addTag: (cardId, tag) => dispatch(cardActions.addTag(cardId, tag))
   };
 };
 

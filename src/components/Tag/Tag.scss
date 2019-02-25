@@ -1,0 +1,120 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.tag {
+  display: inline-block;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 5000px; // allows for pill-shape, without set width or height
+  color: $grey-800;
+  width: auto;
+  vertical-align: middle;
+  position: relative;
+  flex: none;
+  &:first-child {
+    margin-left: 0;
+  }
+  &.is-focused {
+    background-color: $primary;
+    color: #fff;
+    .tag__btn--delete {
+      color: $white;
+    }
+  }
+  .tag__btn--delete {
+    width: 14px;
+    height: 14px;
+    font-size: 12px;
+    line-height: 12px;
+    padding: 0;
+    margin: 0 0 0 4px;
+    vertical-align: middle;
+    color: $white;
+    .feather {
+      width: 12px;
+      height: 12px;
+      font-size: 12px;
+      vertical-align: top;
+    }
+  }
+}
+
+.tag--md {
+  font-size: 14px;
+  line-height: 14px;
+  height: 30px;
+  padding: 0.5em 0.8em 0.5em 1em;
+  margin: 2px 0.175em;
+}
+
+.tag--sm {
+  font-size: 12px;
+  padding: 0.5em 1em;
+}
+
+// Background Colors
+
+.bg--default {
+  background-color: $grey-100;
+  color: $grey-800;
+  border-color: $grey-400;
+  .tag__btn--delete {
+    color: $grey-500;
+  }
+}
+
+.bg--blue {
+  background-color: $blue;
+  color: $white;
+}
+.bg--green {
+  background-color: $green;
+  color: $white;
+}
+.bg--pink {
+  background-color: $pink;
+  color: $white;
+}
+.bg--orange {
+  background-color: $orange;
+  color: $white;
+}
+.bg--purple {
+  background-color: $purple;
+  color: $white;
+}
+
+.bg--red {
+  background-color: $red;
+  color: $white;
+}
+
+.bg--teal {
+  background-color: $teal;
+  color: $white;
+}
+
+.bg--cyan {
+  background-color: $cyan;
+  color: $white;
+}
+
+.bg--grape {
+  background-color: $grape;
+  color: $white;
+}
+
+.bg--violet {
+  background-color: $violet;
+  color: $white;
+}
+
+.bg--indigo {
+  background-color: $indigo;
+  color: $white;
+}
+
+.bg--yellow {
+  background-color: $yellow;
+  color: $white;
+}
