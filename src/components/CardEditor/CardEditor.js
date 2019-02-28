@@ -15,6 +15,7 @@ import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
 import { Avatar } from '../Avatar';
 import CardEditorAssignMember from './CardEditorAssignMember';
+import CardEditorSection from './CardEditorSection';
 import { MemberSearch } from '../MemberSearch';
 import CardEditorMoreActions from './CardEditorMoreActions';
 import * as keys from '../../constants/keys';
@@ -447,47 +448,43 @@ class CardEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
-          <div className="card-editor__section">
-            <Button onClick={this.toggleDatePicker} type="button" className="card-editor__btn--due-date">
-            <div className="card-editor__due-date-icon">
-              <Icon name="calendar" />
-            </div>
-              { !dueDate ? (
-                <span className="card-editor__label--no-due-date">
-                  Set due date
-                </span>
-              ) : (
-                <div className="card-editor__btn--due-date-text">
-                  <div className="card-editor__section-title--sm">Due Date</div>
-                  <div className="card-editor__due-date">{`${MONTHS[cardDueDate.month].short} ${cardDueDate.day}`}</div>
-                </div>
-              )}
+          <CardEditorSection>
+            <Button
+              onClick={this.toggleDatePicker}
+              type="button"
+              className={`card-editor__btn--due-date ${
+                isDatePickerActive ? 'is-active' : ''
+              }`}
+            >
+              <span className="card-editor__due-date-icon">
+                <Icon name="calendar" />
+              </span>
+              <span className="card-editor__due-date-wrapper">
+                {!dueDate ? (
+                  <span className="card-editor__no-due-date">Set due date</span>
+                ) : (
+                  <>
+                    <span className="card-editor__section-title--sm">
+                      Due Date
+                    </span>
+                    <span className="card-editor__due-date">{`${
+                      MONTHS[cardDueDate.month].short
+                    } ${cardDueDate.day}`}</span>
+                  </>
+                )}
+              </span>
             </Button>
-            {isDatePickerActive &&
+            {isDatePickerActive && (
               <DatePicker
-            onClose={this.toggleDatePicker}
-            selectedDay={dueDate ? cardDueDate : null}
-            currentMonth={cardDueDate.month}
-            currentYear={cardDueDate.year}
-            selectDate={this.setDueDate}
-          />
-            }
-          </div>
-          <div className="card-editor__section">
-            <div className="card-editor__section-icon">
-              <Icon name="tag" />
-            </div>
-            <TagsInput
-              addTag={this.addTag}
-              tagSuggestions={mergedTags}
-              assignedTags={cardTags}
-              isColorPickerActive={isColorPickerActive}
-              setTagColor={this.setTagColor}
-              removeTag={this.removeTag}
-              currentTag={currentTag}
-            />
-          </div>
-          <div className="card-editor__section">
+                onClose={this.toggleDatePicker}
+                selectedDay={dueDate ? cardDueDate : null}
+                currentMonth={cardDueDate.month}
+                currentYear={cardDueDate.year}
+                selectDate={this.setDueDate}
+              />
+            )}
+          </CardEditorSection>
+          <CardEditorSection>
             <div className="card-editor__section-icon">
               <Icon name="user" />
             </div>
@@ -518,12 +515,22 @@ class CardEditor extends Component {
             >
               <Icon name="plus" />
             </Button>
-          </div>
-          <div
-            className={`card-editor__section ${
-              currentFocus === 'cardDescription' ? 'is-focused' : ''
-            }`}
-          >
+          </CardEditorSection>
+          <CardEditorSection>
+            <div className="card-editor__section-icon">
+              <Icon name="tag" />
+            </div>
+            <TagsInput
+              addTag={this.addTag}
+              tagSuggestions={mergedTags}
+              assignedTags={cardTags}
+              isColorPickerActive={isColorPickerActive}
+              setTagColor={this.setTagColor}
+              removeTag={this.removeTag}
+              currentTag={currentTag}
+            />
+          </CardEditorSection>
+          <CardEditorSection>
             <div className="card-editor__section-icon">
               <Icon name="edit-3" />
             </div>
@@ -536,13 +543,9 @@ class CardEditor extends Component {
               onBlur={this.onBlur}
               onFocus={this.onFocus}
             />
-          </div>
+          </CardEditorSection>
         </form>
-        <div
-          className={`card-editor__section ${
-            newSubtaskFormIsFocused ? 'is-focused' : ''
-          }`}
-        >
+        <CardEditorSection>
           <div className="card-editor__section-header">
             <div className="card-editor__section-icon">
               <Icon name="check-square" />
@@ -618,12 +621,8 @@ class CardEditor extends Component {
               </Button>
             )}
           </form>
-        </div>
-        <div
-          className={`card-editor__section ${
-            commentFormIsFocused ? 'is-focused' : ''
-          }`}
-        >
+        </CardEditorSection>
+        <CardEditorSection>
           <div className="card-editor__section-header">
             <div className="card-editor__section-icon">
               <Icon name="message-circle" />
@@ -688,7 +687,7 @@ class CardEditor extends Component {
               </Button>
             )}
           </form>
-        </div>
+        </CardEditorSection>
       </Modal>
     );
   }

@@ -5,12 +5,20 @@
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  width: calc(100% - 26px);
-  padding: 4px 8px;
+  align-items: center;
+  width: calc(100% - 34px);
+  margin-left: 4px;
+  padding: 4px 6px;
   border: 1px solid transparent;
   border-radius: 4px;
   &.is-active {
     border-color: $primary;
+  }
+  &.no-tags {
+    .tags-input {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
 
@@ -18,6 +26,8 @@
   position: relative;
   display: inline-block;
   height: 30px;
+  min-width: 100px;
+  flex: 1 1 100px;
 }
 
 .tags-input {
@@ -44,11 +54,19 @@
   border-radius: 4px;
   background-color: $white;
   overflow-x: hidden;
+  max-width: 100%;
   @include box-shadow(2);
 }
 
 .tags-input__item {
   padding: 6px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background-color: transparent;
+  }
   &.is-selected {
     background-color: $primary-lt;
   }

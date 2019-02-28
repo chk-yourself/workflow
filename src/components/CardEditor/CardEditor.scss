@@ -5,7 +5,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0;
   min-height: min-content;
   overflow: visible;
@@ -43,17 +43,16 @@
 }
 
 .card-editor__textarea--description {
-  padding: 8px;
-  width: calc(100% - 26px);
+  padding: 8px 6px;
+  width: calc(100% - 34px);
+  margin-left: 4px;
 }
 
 .card-editor__textarea--comment,
 .card-editor__textarea--new-subtask {
   width: 100%;
   padding: 0;
-  &:focus {
-    border-color: transparent;
-  }
+  border: none;
 }
 
 .is-focused > .card-editor__textarea--comment {
@@ -67,7 +66,7 @@
 .card-editor__section-icon {
   height: 40px;
   line-height: 38px;
-  padding: 4px;
+  padding: 4px 6px;
   vertical-align: middle;
   text-align: center;
   display: inline-block;
@@ -84,6 +83,7 @@
   text-align: center;
   display: inline-block;
   color: $grey-700;
+  line-height: 1;
   .feather {
     width: 18px;
     height: 18px;
@@ -132,10 +132,10 @@
 .card-editor__new-subtask-form {
   display: flex;
   flex-direction: column;
-  width: calc(100% - 26px);
+  width: calc(100% - 34px);
   border: 1px solid transparent;
   border-radius: 4px;
-  padding: 8px;
+  padding: 8px 6px;
   margin-left: auto;
   &:focus,
   &.is-focused {
@@ -146,6 +146,7 @@
 .card-editor__comment-form {
   width: calc(100% - 38px);
   border: 1px solid $grey-300;
+  margin-left: 4px;
 }
 
 .card-editor__btn--submit-comment,
@@ -271,7 +272,7 @@
   width: 18px;
   height: 18px;
   top: 8px;
-  left: 4px;
+  left: 6px;
   border: 1px solid $primary;
   border-radius: 4px;
   display: inline-block;
@@ -279,8 +280,8 @@
 
 .card-editor__checkbox-label {
   vertical-align: top;
-  padding: 8px 4px;
-  width: 26px;
+  padding: 8px 6px;
+  width: 30px;
   height: 34px;
   .feather {
     width: 12px;
@@ -292,7 +293,7 @@
 
 .card-editor__textarea--subtask {
   border-width: 1px;
-  width: calc(100% - 30px);
+  width: calc(100% - 34px);
   margin-left: 4px;
   padding: 8px 6px;
   vertical-align: middle;
@@ -306,13 +307,13 @@
 
 .card-editor__members {
   display: flex;
-  max-width: calc(100% - 34px);
+  width: auto;
   margin-top: 5px;
-  margin-left: 8px;
+  margin-left: 11px;
 }
 
 .card-editor__section-header {
-  margin-bottom: 16px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
   width: 100%;
@@ -321,7 +322,7 @@
 .card-editor__section-title {
   padding: 11px 0;
   font-size: 16px;
-  margin: 0 16px 0 12px;
+  margin: 0 16px 0 11px;
   font-weight: 500;
   color: $grey-700;
   &--sm {
@@ -332,25 +333,36 @@
     padding: 0;
     width: 100%;
     margin: 0 0 3px 0;
+    display: inline-block;
   }
+}
+
+.card-editor__no-due-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: $grey-700;
 }
 
 .card-editor__btn--due-date {
   min-height: 0;
   padding: 4px 0;
   display: flex;
+  align-items: center;
   border: none;
-  &:hover {
-    .card-editor__section-title--sm,
-    .card-editor__due-date,
+  &:focus,
+  &:hover,
+  &:active,
+  &.is-active {
+    span,
     .feather {
       color: $primary;
     }
   }
 }
 
-.card-editor__btn--due-date-text {
-  margin-left: 8px;
+.card-editor__due-date-wrapper {
+  margin-left: 14px;
+  text-align: left;
 }
 
 .card-editor__due-date {
@@ -359,6 +371,8 @@
   color: $grey-900;
   font-weight: 600;
   line-height: 12px;
+  display: inline-block;
+  width: 100%;
 }
 
 .card-editor__placeholder--unassigned {
@@ -373,7 +387,10 @@
   height: 30px;
   line-height: 30px;
   &:not(:last-child) {
-    margin-right: 8px;
+    margin-right: 4px;
+  }
+  &:last-child {
+    margin-right: -3px;
   }
 }
 

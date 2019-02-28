@@ -135,6 +135,7 @@ export default class TagsInput extends Component {
         break;
       }
       case keys.ENTER: {
+        if (selectedTag === '' && value === '') return;
         this.resetForm();
         addTag(selectedTag === '' ? value : selectedTag);
         break;
@@ -196,8 +197,8 @@ export default class TagsInput extends Component {
       hasExactMatch,
       focusedTag
     } = this.state;
-    console.log(assignedTags);
-    console.log({ focusedTag });
+
+    const hasTags = assignedTags && assignedTags.length > 0;
 
     const colorPickerStyle = {};
     if (this.currentTagEl) {
@@ -212,7 +213,7 @@ export default class TagsInput extends Component {
     }
 
     return (
-      <div className={`tags__container ${isActive ? 'is-active' : ''}`} ref={el => (this.el = el)}>
+      <div className={`tags__container ${isActive ? 'is-active' : ''} ${!hasTags ? 'no-tags' : ''}`} ref={el => (this.el = el)}>
         {assignedTags.map(tag => (
           <Tag
             key={tag.text}
