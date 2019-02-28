@@ -18,21 +18,29 @@
   padding-bottom: 6px;
 }
 
-.date-picker__btn--cancel {
-  min-width: 0;
+.date-picker__btn--clear {
   padding-left: 0;
+}
+
+.date-picker__btn--cancel {
   padding-right: 0;
 }
 
+.date-picker__btn--set-due-date,
+.date-picker__btn--clear,
+.date-picker__btn--cancel {
+  font-weight: 600;
+}
+
 .date-picker__calendar {
-  width: 224px;
+  width: 240px;
   margin: 0 auto;
 }
 
 .date-picker__week-day {
   height: 32px;
   line-height: 32px;
-  font-weight: 600;
+  font-weight: 700;
   color: $grey-800;
 }
 
@@ -43,10 +51,19 @@
   align-items: center;
 }
 
-.date-picker__header {
+.date-picker__label--due-date {
   font-size: 12px;
   text-align: center;
   font-weight: 500;
   color: $grey-700;
   margin-bottom: 4px;
+}
+
+.date-picker__input--due-date {
+  height: 30px;
+  display: block;
+  width: 120px;
+  text-align: center;
+  margin: 0 auto;
+  border-width: 1px;
 }

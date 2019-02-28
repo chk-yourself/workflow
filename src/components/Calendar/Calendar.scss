@@ -9,6 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: -4px;
 }
 
 .calendar__week-days {
@@ -73,6 +74,14 @@
 }
 
 .calendar__btn--month {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  &:focus {
+    .feather {
+      color: $grey-700;
+    }
+  }
   &:hover,
   &:active {
     .feather {
@@ -88,7 +97,100 @@
   margin: 0;
 }
 
-.calendar__heading--year {
+.calendar__years-dropdown-wrapper,
+.calendar__months-dropdown-wrapper {
+  display: inline-block;
+}
+
+.calendar__years-dropdown-wrapper {
+  z-index: 4;
+}
+
+.calendar__btn--years-dropdown,
+.calendar__btn--months-dropdown {
+  min-height: 0;
+  line-height: 1;
+  position: relative;
+  text-align: left;
+  .feather {
+    color: transparent;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 6px;
+  }
+  &:hover,
+  &.is-active {
+    border: 1px solid $grey-600;
+    .feather {
+      color: $grey-600;
+    }
+  }
+}
+
+.calendar__btn--months-dropdown {
+  min-width: 128px;
+  font-weight: 600;
+  color: $grey-900;
+}
+
+.calendar__btn--years-dropdown {
+  min-width: 80px;
+  font-size: 12px;
+  font-weight: 600;
+  .feather {
+    top: 5px;
+  }
+}
+
+.calendar__years-dropdown,
+.calendar__months-dropdown {
+  background-color: #fff;
+  border-radius: 4px;
+  width: 100%;
+  max-height: 232px;
+  overflow-y: auto;
+  @include box-shadow(2);
+}
+
+.calendar__years-list,
+.calendar__months-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.calendar__radio {
+  display: none;
+  &:checked + .calendar__radio-label {
+    color: $primary;
+    &:hover {
+      color: $white;
+    }
+  }
+}
+
+.calendar__radio-label {
+  position: relative;
+  display: inline-block;
+  padding: 8px 8px 8px 30px;
+  width: 100%;
+  font-weight: 400;
   font-size: 14px;
-  margin-left: 6px;
+  line-height: 1;
+  &:hover {
+    cursor: pointer;
+    background-color: $primary;
+    color: $white;
+    .feather {
+      color: $white;
+    }
+  }
+  .feather {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 8px;
+    color: $primary;
+  }
 }

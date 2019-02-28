@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { MONTHS } from './constants';
 
 export const isLeapYear = year =>
@@ -19,7 +20,7 @@ export const isYesterday = date => {
 
 export const getMonthDays = (monthIndex, year) => {
   if (monthIndex === 1) {
-    return isLeapYear(year) ? 29 : 29;
+    return isLeapYear(year) ? 29 : 28;
   }
   return MONTHS[monthIndex].daysTotal;
 };
@@ -41,13 +42,15 @@ export const getNextMonth = (monthIndex, year) => {
 export const getMonthDates = (month, year) => {
   const monthDays = getMonthDays(month, year);
   const monthFirstDay = getMonthFirstDay(month, year);
-  const prevMonthDays = getMonthDays(month, year);
+  const { month: prevMonth, year: prevMonthYear } = getPrevMonth(month, year);
+  const prevMonthDays = getMonthDays(prevMonth, prevMonthYear);
   const daysFromPrevMonth = monthFirstDay;
   const daysFromNextMonth = 7 - ((monthFirstDay + monthDays) % 7);
   const prevMonthDates = [...new Array(daysFromPrevMonth)].map((n, i) => {
     return {
       day: prevMonthDays - daysFromPrevMonth + i + 1,
-      ...getPrevMonth(month, year)
+      month: prevMonth,
+      year: prevMonthYear
     };
   });
 
@@ -80,4 +83,73 @@ export const getSimpleDate = date => {
     month: dateObj.getMonth(),
     year: dateObj.getFullYear()
   };
+};
+
+export const isSimpleDate = date => {
+  return date && 'day' in date && 'month' in date && 'year' in date;
+};
+
+export const isSameDate = (date, base = new Date()) => {
+  if (
+    (!isDate(date) && !isSimpleDate(date)) ||
+    (!isDate(base) && !isSimpleDate(base))
+  )
+    return false;
+  const dateDay = date.day || date.getDate();
+  const dateMonth = date.month || date.getMonth();
+  const dateYear = date.year || date.getFullYear();
+  const baseDay = base.day || base.getDate();
+  const baseMonth = base.month || base.getMonth();
+  const baseYear = date.year || base.getFullYear();
+  return (
+    dateDay === baseDay && dateMonth === baseMonth && dateYear === baseYear
+  );
+};
+
+export const getNextYears = (num, startingYear = new Date().getFullYear()) => {
+  return [...new Array(num)].map((item, i) => {
+    return startingYear + i;
+  });
+};
+
+export const zeroPad = (value, length) => {
+  return `${value}`.padStart(length, '0');
+};
+
+/**
+ * Returns string representation of simple date object with format `mm-dd-yy`
+ * @param {Object} date - simple date object
+ */
+export const toSimpleDateString = date => {
+  const simpleDate = isSimpleDate(date)
+    ? date
+    : isDate(date)
+    ? getSimpleDate(date)
+    : undefined;
+  if (!simpleDate) return '';
+  const { day, month, year } = simpleDate;
+  return `${zeroPad(month + 1, 2)}-${zeroPad(day, 2)}-${year - 2000}`;
+};
+
+/**
+ * Converts simple date string back to simple date object
+ * @param {String} dateString
+ */
+export const toSimpleDateObj = dateString => {
+  const dateArr = dateString.split('-');
+  const month = dateArr[0] - 1;
+  const day = +dateArr[1];
+  const year = +dateArr[2] + 2000;
+  if (day > getMonthDays(month, year)) {
+    return getSimpleDate(new Date(year, month, day));
+  }
+  return {
+    month,
+    day,
+    year
+  };
+};
+
+export const isSDSFormat = dateString => {
+  return /^\d{2}-\d{2}-\d{2}$/.test(dateString);
 };

@@ -5,8 +5,10 @@ import { PopoverWrapper } from '../Popover';
 
 const CardEditorMoreActions = ({ onMenuClick }) => (
   <PopoverWrapper
-    wrapperClass="card-editor__popover-wrapper"
-    popoverClass="card-editor__popover"
+    classes={{
+      wrapper: 'card-editor__popover-wrapper',
+      popover: 'card-editor__popover'
+    }}
     alignOuter="right"
     alignInner="right"
     buttonProps={{

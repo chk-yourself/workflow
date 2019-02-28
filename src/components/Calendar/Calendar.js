@@ -3,10 +3,15 @@ import * as dateUtils from './utils';
 import { MONTHS, WEEK_DAYS } from './constants';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
+import { PopoverWrapper } from '../Popover';
+import { Radio } from '../Radio';
 import './Calendar.scss';
 
 export default class Calendar extends Component {
-  state = {};
+  state = {
+    isMonthsDropdownActive: false,
+    isYearsDropdownActive: false
+  };
 
   goToNextMonth = () => {
     const { month, year, onMonthClick } = this.props;
@@ -18,36 +23,161 @@ export default class Calendar extends Component {
     onMonthClick(dateUtils.getPrevMonth(month, year));
   };
 
+  toggleMonthsDropdown = () => {
+    this.setState(prevState => ({
+      isMonthsDropdownActive: !prevState.isMonthsDropdownActive
+    }));
+  };
+
+  toggleYearsDropdown = () => {
+    this.setState(prevState => ({
+      isYearsDropdownActive: !prevState.isYearsDropdownActive
+    }));
+  };
+
+  selectMonth = e => {
+    const month = +e.target.value;
+    const { onMonthClick, year } = this.props;
+    onMonthClick({ month, year });
+    this.toggleMonthsDropdown();
+  };
+
+  selectYear = e => {
+    const year = +e.target.value;
+    const { onYearClick } = this.props;
+    onYearClick(year);
+    this.toggleYearsDropdown();
+  };
+
   render() {
-    const { month, year, selectedDay, today, onDayClick, classes } = this.props;
-    console.log(month, year);
+    const { month, year, selectedDate, today, onDayClick, classes } = this.props;
+    const { isMonthsDropdownActive, isYearsDropdownActive } = this.state;
     const dates = dateUtils.getMonthDates(month, year);
+    const years = dateUtils.getNextYears(4);
 
     return (
       <div className={`calendar ${classes.calendar}`}>
+        <div className="calendar__year">
+          <PopoverWrapper
+            isActive={isYearsDropdownActive}
+            onButtonClick={this.toggleYearsDropdown}
+            onOutsideClick={this.toggleYearsDropdown}
+            alignInner="left"
+            classes={{
+              wrapper: 'calendar__years-dropdown-wrapper',
+              popover: 'calendar__years-dropdown'
+            }}
+            buttonProps={{
+              className: `calendar__btn--years-dropdown ${
+                isYearsDropdownActive ? 'is-active' : ''
+              }`,
+              children: (
+                <>
+                  {year}
+                  <Icon name="chevron-down" />
+                </>
+              )
+            }}
+          >
+            <ul className="calendar__years-list">
+              {years.map(yearOption => (
+                <li className="calendar__years-item" key={yearOption}>
+                  <Radio
+                    name="year"
+                    id={yearOption}
+                    value={yearOption}
+                    isChecked={yearOption === year}
+                    label={
+                      yearOption === year ? (
+                        <>
+                          <Icon name="check" />
+                          {yearOption}
+                        </>
+                      ) : (
+                        yearOption
+                      )
+                    }
+                    onChange={this.selectYear}
+                    classes={{
+                      radio: 'calendar__radio',
+                      label: 'calendar__radio-label'
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          </PopoverWrapper>
+        </div>
         <div className="calendar__month">
-          <Button
-            type="button"
-            className="calendar__btn--month calendar__btn--prev-month"
-            size="sm"
-            iconOnly
-            onClick={this.goToPrevMonth}
+          <PopoverWrapper
+            isActive={isMonthsDropdownActive}
+            onButtonClick={this.toggleMonthsDropdown}
+            onOutsideClick={this.toggleMonthsDropdown}
+            alignInner="left"
+            classes={{
+              wrapper: 'calendar__months-dropdown-wrapper',
+              popover: 'calendar__months-dropdown'
+            }}
+            buttonProps={{
+              className: `calendar__btn--months-dropdown ${
+                isMonthsDropdownActive ? 'is-active' : ''
+              }`,
+              children: (
+                <>
+                  {MONTHS[month].full}
+                  <Icon name="chevron-down" />
+                </>
+              )
+            }}
           >
-            <Icon name="chevron-left" />
-          </Button>
-          <h5 className="calendar__heading--month">
-            {MONTHS[month].full}
-            <span className="calendar__heading--year">{year}</span>
-          </h5>
-          <Button
-            type="button"
-            className="calendar__btn--month calendar__btn--next-month"
-            size="sm"
-            iconOnly
-            onClick={this.goToNextMonth}
-          >
-            <Icon name="chevron-right" />
-          </Button>
+            <ul className="calendar__months-list">
+              {MONTHS.map((monthOption, i) => (
+                <li className="calendar__months-item" key={monthOption.full}>
+                  <Radio
+                    name="month"
+                    id={monthOption.full}
+                    value={i}
+                    isChecked={i === month}
+                    label={
+                      i === month ? (
+                        <>
+                          <Icon name="check" />
+                          {monthOption.full}
+                        </>
+                      ) : (
+                        monthOption.full
+                      )
+                    }
+                    onChange={this.selectMonth}
+                    classes={{
+                      radio: 'calendar__radio',
+                      label: 'calendar__radio-label'
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          </PopoverWrapper>
+          <div className="calendar__month--prev-next">
+            <Button
+              type="button"
+              className="calendar__btn--month calendar__btn--prev-month"
+              size="sm"
+              iconOnly
+              onClick={this.goToPrevMonth}
+            >
+              <Icon name="chevron-left" />
+            </Button>
+            <Button
+              type="button"
+              className="calendar__btn--month calendar__btn--next-month"
+              size="sm"
+              iconOnly
+              onClick={this.goToNextMonth}
+            >
+              <Icon name="chevron-right" />
+            </Button>
+          </div>
         </div>
         <div className="calendar__week-days">
           {WEEK_DAYS.map(day => (
@@ -65,18 +195,18 @@ export default class Calendar extends Component {
               date.day === today.day &&
               date.month === today.month &&
               date.year === today.year;
-            const isSelectedDay =
-              selectedDay &&
-              date.day === selectedDay.day &&
-              date.month === selectedDay.month &&
-              date.year === selectedDay.year;
+            const isSelectedDate =
+              selectedDate &&
+              date.day === selectedDate.day &&
+              date.month === selectedDate.month &&
+              date.year === selectedDate.year;
             return (
               <div
                 key={`${date.month}--${date.day}`}
                 className={`calendar__day ${
                   date.month !== month ? 'calendar__day--prev-next' : ''
                 } ${isToday ? 'is-today' : ''} ${
-                  isSelectedDay ? 'is-selected' : ''
+                  isSelectedDate ? 'is-selected' : ''
                 } ${classes.day}`}
               >
                 <Button

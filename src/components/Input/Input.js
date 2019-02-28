@@ -27,7 +27,7 @@ const Input = ({
         </label>
       )}
       <input
-        className={className}
+        className={`input ${className}`}
         id={name}
         name={name}
         type={type}
@@ -44,6 +44,10 @@ const Input = ({
       />
     </>
   );
+};
+
+Input.defaultProps = {
+  className: ''
 };
 
 export default Input;

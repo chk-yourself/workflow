@@ -477,7 +477,7 @@ class CardEditor extends Component {
             {isDatePickerActive && (
               <DatePicker
                 onClose={this.toggleDatePicker}
-                selectedDay={dueDate ? cardDueDate : null}
+                selectedDate={dueDate ? cardDueDate : null}
                 currentMonth={cardDueDate.month}
                 currentYear={cardDueDate.year}
                 selectDate={this.setDueDate}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Calendar } from '../Calendar';
+import { Calendar, dateUtils } from '../Calendar';
 import { Button } from '../Button';
+import { Input } from '../Input';
 import './DatePicker.scss';
 
 export default class DatePicker extends Component {
@@ -10,17 +11,31 @@ export default class DatePicker extends Component {
       month: new Date().getMonth(),
       year: new Date().getFullYear()
     },
-    selectedDay: this.props.selectedDay,
+    selectedDate: this.props.selectedDate,
     currentMonth: this.props.currentMonth,
-    currentYear: this.props.currentYear
+    currentYear: this.props.currentYear,
+    dateString: dateUtils.toSimpleDateString(this.props.selectedDate) || ''
   };
 
   componentDidMount() {}
 
-  selectDay = date => {
-    this.setState({
-      selectedDay: date
-    });
+  selectDate = date => {
+    if (typeof date === 'string') {
+      const newDate = dateUtils.toSimpleDateObj(date);
+      const { month, year } = newDate;
+      const { currentMonth, currentYear } = this.state;
+      this.setState({
+        selectedDate: newDate
+      });
+      if (month !== currentMonth || year !== currentYear) {
+        this.setCurrentMonth({ month, year });
+      }
+    } else {
+      this.setState({
+        selectedDate: date,
+        dateString: dateUtils.toSimpleDateString(date)
+      });
+    }
   };
 
   setCurrentMonth = ({ month, year }) => {
@@ -36,20 +51,63 @@ export default class DatePicker extends Component {
     });
   };
 
+  updateDateString = e => {
+    const { value } = e.target;
+    this.setState({
+      dateString: value
+    });
+    if (dateUtils.isSDSFormat(value)) {
+      this.selectDate(value);
+    }
+  };
+
   setDate = () => {
-    if (!this.state.selectedDay) return;
-    const { day, month, year } = this.state.selectedDay;
-    const { selectDate } = this.props;
-    const date = new Date(year, month, day);
-    selectDate(date);
+    const { selectedDate: currentDueDate, selectDate, onClose } = this.props;
+    const { selectedDate } = this.state;
+    if (
+      !(currentDueDate === null && selectedDate === null) &&
+      !dateUtils.isSameDate(currentDueDate, selectedDate)
+    ) {
+      const { day, month, year } = selectedDate;
+      const date = new Date(year, month, day);
+      selectDate(date);
+    }
+    onClose();
+  };
+
+  clearDueDate = () => {
+    const { selectedDate, selectDate } = this.props;
+    this.selectDate(null);
+    if (selectedDate !== null) {
+      selectDate(null);
+    }
   };
 
   render() {
     const { onClose } = this.props;
-    const { today, selectedDay, currentMonth, currentYear } = this.state;
+    const {
+      today,
+      selectedDate,
+      currentMonth,
+      currentYear,
+      dateString
+    } = this.state;
     return (
       <div className="date-picker">
-        <div className="date-picker__header">Due Date</div>
+        <div className="date-picker__header">
+          <div className="date-picker__due-date-wrapper">
+            <Input
+              name="dueDate"
+              type="text"
+              label="Due Date"
+              value={dateString}
+              onChange={this.updateDateString}
+              className="date-picker__input--due-date"
+              labelClass="date-picker__label--due-date"
+              placeholder="mm-dd-yy"
+            />
+          </div>
+        </div>
         <Calendar
           classes={{
             calendar: 'date-picker__calendar',
@@ -57,20 +115,21 @@ export default class DatePicker extends Component {
           }}
           month={currentMonth}
           year={currentYear}
-          selectedDay={selectedDay}
+          selectedDate={selectedDate}
           today={today}
-          onDayClick={this.selectDay}
+          onDayClick={this.selectDate}
           onMonthClick={this.setCurrentMonth}
+          onYearClick={this.setCurrentYear}
         />
         <div className="date-picker__footer">
           <Button
             size="sm"
             variant="text"
             color="neutral"
-            className="date-picker__btn--cancel"
-            onClick={onClose}
+            className="date-picker__btn--clear"
+            onClick={this.clearDueDate}
           >
-            Cancel
+            Clear
           </Button>
           <Button
             size="sm"
@@ -79,7 +138,16 @@ export default class DatePicker extends Component {
             className="date-picker__btn--set-due-date"
             onClick={this.setDate}
           >
-            Set Date
+            Done
+          </Button>
+          <Button
+            size="sm"
+            variant="text"
+            color="neutral"
+            className="date-picker__btn--cancel"
+            onClick={onClose}
+          >
+            Cancel
           </Button>
         </div>
       </div>

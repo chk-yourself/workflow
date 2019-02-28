@@ -82,8 +82,10 @@ class List extends Component {
                   onBlur={this.onBlur}
                 />
                 <PopoverWrapper
-                  wrapperClass="list__popover-wrapper"
-                  popoverClass="list__popover"
+                  classes={{
+                    wrapper: 'list__popover-wrapper',
+                    popover: 'list__popover'
+                  }}
                   alignInner="left"
                   buttonProps={{
                     size: 'medium',
