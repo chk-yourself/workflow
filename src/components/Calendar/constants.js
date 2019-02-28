@@ -2,62 +2,62 @@
 // excluding February (depends on leap year)
 export const MONTHS = [
   {
-    full: 'January',
+    long: 'January',
     short: 'Jan',
     daysTotal: 31
   },
   {
-    full: 'February',
+    long: 'February',
     short: 'Feb',
     daysTotal: null
   },
   {
-    full: 'March',
+    long: 'March',
     short: 'Mar',
     daysTotal: 31
   },
   {
-    full: 'April',
+    long: 'April',
     short: 'Apr',
     daysTotal: 30
   },
   {
-    full: 'May',
+    long: 'May',
     short: 'May',
     daysTotal: 31
   },
   {
-    full: 'June',
+    long: 'June',
     short: 'Jun',
     daysTotal: 30
   },
   {
-    full: 'July',
+    long: 'July',
     short: 'Jul',
     daysTotal: 31
   },
   {
-    full: 'August',
+    long: 'August',
     short: 'Aug',
     daysTotal: 31
   },
   {
-    full: 'September',
+    long: 'September',
     short: 'Sep',
     daysTotal: 30
   },
   {
-    full: 'October',
+    long: 'October',
     short: 'Oct',
     daysTotal: 31
   },
   {
-    full: 'November',
+    long: 'November',
     short: 'Nov',
     daysTotal: 30
   },
   {
-    full: 'December',
+    long: 'December',
     short: 'Dec',
     daysTotal: 31
   }
@@ -65,11 +65,11 @@ export const MONTHS = [
 
 // Full names and shortnames of days of week
 export const WEEK_DAYS = [
-  { full: 'Sunday', med: 'Sun', short: 'S' },
-  { full: 'Monday', med: 'Mon', short: 'M' },
-  { full: 'Tuesday', med: 'Tue', short: 'T' },
-  { full: 'Wednesday', med: 'Wed', short: 'W' },
-  { full: 'Thursday', med: 'Thu', short: 'T' },
-  { full: 'Friday', med: 'Fri', short: 'F' },
-  { full: 'Saturday', med: 'Sat', short: 'S' }
+  { long: 'Sunday', short: 'Sun', narrow: 'S' },
+  { long: 'Monday', short: 'Mon', narrow: 'M' },
+  { long: 'Tuesday', short: 'Tue', narrow: 'T' },
+  { long: 'Wednesday', short: 'Wed', narrow: 'W' },
+  { long: 'Thursday', short: 'Thu', narrow: 'T' },
+  { long: 'Friday', short: 'Fri', narrow: 'F' },
+  { long: 'Saturday', short: 'Sat', narrow: 'S' }
 ];

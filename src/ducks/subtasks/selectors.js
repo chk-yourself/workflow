@@ -11,3 +11,13 @@ export const getSubtasksArray = (state, subtaskIds) => {
     return subtasksById[subtaskId];
   });
 };
+
+export const getActiveSubtasks = (state, subtaskIds) => {
+  const subtasks = getSubtasksArray(state, subtaskIds);
+  return subtasks.filter(subtask => !subtask.isCompleted);
+};
+
+export const getCompletedSubtasks = (state, subtaskIds) => {
+  const subtasks = getSubtasksArray(state, subtaskIds);
+  return subtasks.filter(subtask => subtask.isCompleted);
+};

@@ -3,8 +3,13 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import './Tag.scss';
 
-const Tag = ({ text, color, size, onDelete, className, tagRef }) => (
-  <span className={`tag tag--${size} bg--${color} ${className}`} ref={tagRef}>
+const Tag = ({ text, color, size, onDelete, className, tagRef, variant }) => (
+  <span
+    className={`tag tag--${size} bg--${color} ${
+      variant !== 'default' ? `tag--${variant}` : ''
+    } ${className}`}
+    ref={tagRef}
+  >
     {text}
     {size === 'md' && (
       <Button
@@ -21,7 +26,11 @@ const Tag = ({ text, color, size, onDelete, className, tagRef }) => (
 );
 
 Tag.defaultProps = {
-  className: ''
+  className: '',
+  onDelete: () => null,
+  color: 'default',
+  size: 'md',
+  variant: 'default'
 };
 
 export default Tag;

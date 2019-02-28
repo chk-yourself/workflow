@@ -124,7 +124,7 @@ export default class Calendar extends Component {
               }`,
               children: (
                 <>
-                  {MONTHS[month].full}
+                  {MONTHS[month].long}
                   <Icon name="chevron-down" />
                 </>
               )
@@ -132,20 +132,20 @@ export default class Calendar extends Component {
           >
             <ul className="calendar__months-list">
               {MONTHS.map((monthOption, i) => (
-                <li className="calendar__months-item" key={monthOption.full}>
+                <li className="calendar__months-item" key={monthOption.long}>
                   <Radio
                     name="month"
-                    id={monthOption.full}
+                    id={monthOption.long}
                     value={i}
                     isChecked={i === month}
                     label={
                       i === month ? (
                         <>
                           <Icon name="check" />
-                          {monthOption.full}
+                          {monthOption.long}
                         </>
                       ) : (
-                        monthOption.full
+                        monthOption.long
                       )
                     }
                     onChange={this.selectMonth}
@@ -182,10 +182,10 @@ export default class Calendar extends Component {
         <div className="calendar__week-days">
           {WEEK_DAYS.map(day => (
             <div
-              key={day.full}
+              key={day.long}
               className={`calendar__week-day ${classes.weekDay}`}
             >
-              {day.short}
+              {day.narrow}
             </div>
           ))}
         </div>

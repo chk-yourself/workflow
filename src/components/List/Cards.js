@@ -44,16 +44,13 @@ export default class Cards extends Component {
             {...provided.droppableProps}
           >
             {cards.map((card, cardIndex) => {
-              const { cardId, cardTitle } = card;
               return (
                 <Card
-                  key={cardId}
-                  cardTitle={cardTitle}
-                  cardId={cardId}
+                  key={card.cardId}
                   cardIndex={cardIndex}
-                  listId={listId}
                   onCardClick={onCardClick}
                   onCardDelete={onCardDelete}
+                  {...card}
                 />
               );
             })}

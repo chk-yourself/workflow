@@ -52,6 +52,19 @@
   padding: 0.5em 1em;
 }
 
+.tag--pill {
+  width: 40px;
+  height: 6px;
+  padding: 0;
+  flex: auto;
+  &:not(:first-child) {
+    margin-left: 4px;
+  }
+  &:not(:last-child) {
+    margin-right: 4px;
+  }
+}
+
 // Background Colors
 
 .bg--default {

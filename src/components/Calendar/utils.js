@@ -1,5 +1,6 @@
+/* eslint-disable default-case */
 /* eslint-disable no-nested-ternary */
-import { MONTHS } from './constants';
+import { MONTHS, WEEK_DAYS } from './constants';
 
 export const isLeapYear = year =>
   (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -12,10 +13,14 @@ export const isToday = date =>
 
 export const isYesterday = date => {
   const today = new Date();
-  return (
-    new Date(today.setDate(today.getDate() - 1)).setHours(0, 0, 0, 0) ===
-    date.setHours(0, 0, 0, 0)
-  );
+  today.setHours(0, 0, 0, 0);
+  return today.setDate(today.getDate() - 1) === date.setHours(0, 0, 0, 0);
+};
+
+export const isTomorrow = date => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today.setDate(today.getDate() + 1) === date.setHours(0, 0, 0, 0);
 };
 
 export const getMonthDays = (monthIndex, year) => {
@@ -154,4 +159,85 @@ export const isSDSFormat = dateString => {
   return /^\d{2}-\d{2}-\d{2}$/.test(dateString);
 };
 
+/**
+ * Checks if date falls within specified time frame
+ * @param {Date Object} date - Javascript date object
+ * @param {Number} num - The number of days comprising the time frame to check the date against
+ * @param {Date Object} startingDate - The first day of the time frame
+ */
+export const isWithinDays = (date, num, startingDate = new Date()) => {
+  const timeStart = startingDate.setHours(0, 0, 0, 0);
+  const endingDate = new Date(startingDate);
+  const timeEnd = endingDate.setDate(endingDate.getDate() + num);
+  console.log({timeStart, timeEnd}, +date);
+  return +date >= timeStart && +date < timeEnd;
+};
 
+export const toDateString = (
+  date,
+  options = {
+    useRelative: false,
+    format: {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: '2-digit'
+    }
+  }
+) => {
+  const { useRelative, format } = options;
+  if (useRelative) {
+    if (isToday(date)) {
+      return 'Today';
+    }
+    if (isYesterday(date)) {
+      return 'Yesterday';
+    }
+    if (isTomorrow(date)) {
+      return 'Tomorrow';
+    }
+    if (isWithinDays(date, 7)) {
+      return WEEK_DAYS[date.getDay()].long;
+    }
+  }
+  return Object.keys(format)
+    .map(key => {
+      switch (key) {
+        case 'weekday': {
+          const value = format[key];
+          const weekday = date.getDay();
+          return WEEK_DAYS[weekday][value];
+        }
+        case 'month': {
+          const value = format[key];
+          const month = date.getMonth();
+          if (value === 'numeric') {
+            return month + 1;
+          } else if (value === '2-digit') {
+            return zeroPad(month + 1, 2);
+          } else {
+            return MONTHS[month][value];
+          }
+        }
+        case 'day': {
+          const value = format[key];
+          const day = date.getDate();
+          if (value === '2-digit') {
+            return zeroPad(day, 2);
+          } else {
+            return day;
+          }
+        }
+        case 'year': {
+          const value = format[key];
+          const year = date.getFullYear();
+          if (value === '2-digit') {
+            return +year.slice(2);
+          } else {
+            return year;
+          }
+        }
+      }
+    })
+    .join(' ');
+};
