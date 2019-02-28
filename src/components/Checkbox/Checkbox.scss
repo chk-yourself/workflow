@@ -1,5 +1,11 @@
 @import '../../styles/_variables.scss';
 
+input[type='checkbox'] {
+  &:focus {
+    outline: none;
+  }
+}
+
 .checkbox__label {
   width: 20px;
   height: 20px;

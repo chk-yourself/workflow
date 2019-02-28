@@ -6,16 +6,16 @@ import './Modal.scss';
 const Modal = ({
   onModalClose,
   children,
-  className = '',
   onModalClick,
   size = 'md',
+  classes,
   id
 }) => {
   return (
-    <div className="modal" onClick={onModalClick}>
+    <div className={`modal ${classes.modal}`} onClick={onModalClick}>
       <div
         id={id}
-        className={`modal__content ${className} modal__content--${size}`}
+        className={`modal__content ${classes.content} modal__content--${size}`}
       >
         <Button
           type="button"
@@ -29,6 +29,13 @@ const Modal = ({
       </div>
     </div>
   );
+};
+
+Modal.defaultProps = {
+  classes: {
+    modal: '',
+    content: ''
+  }
 };
 
 export default Modal;

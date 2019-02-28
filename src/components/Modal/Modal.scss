@@ -61,7 +61,7 @@
   top: 4px;
   right: 4px;
   padding: 8px;
-  z-index: 99;
+  z-index: 3;
   min-width: 0;
   .feather {
     color: $grey-500;
@@ -101,7 +101,7 @@
 .modal__content--lg {
   border-radius: 0;
   @include sm {
-    max-width: 600px;
+    max-width: 560px;
     height: auto;
     max-height: 90vh;
     border-radius: 4px;
@@ -111,7 +111,7 @@
     align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
-    max-width: 640px;
+    max-width: 600px;
     min-height: 400px;
     height: auto;
     justify-content: space-between;
@@ -120,9 +120,9 @@
     }
   }
   @include lg {
-    max-width: 800px;
+    max-width: 700px;
   }
   @include xl {
-    max-width: 900px;
+    max-width: 800px;
   }
 }

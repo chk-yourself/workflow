@@ -17,7 +17,9 @@ const Input = ({
   hideLabel,
   label,
   labelClass,
-  onKeyDown
+  onKeyDown,
+  maxLength,
+  minLength
 }) => {
   return (
     <>
@@ -41,6 +43,8 @@ const Input = ({
         ref={inputRef}
         onInput={onInput}
         onKeyDown={onKeyDown}
+        maxLength={maxLength}
+        minLength={minLength}
       />
     </>
   );

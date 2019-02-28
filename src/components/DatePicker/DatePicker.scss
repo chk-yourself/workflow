@@ -5,7 +5,7 @@
   background-color: #fff;
   border-radius: 4px;
   padding: 12px;
-  @include box-shadow(2);
+  @include box-shadow(3);
   position: absolute;
   z-index: 99;
   top: 50%;
@@ -44,6 +44,10 @@
   color: $grey-800;
 }
 
+.date-picker__header {
+  margin-bottom: 8px;
+}
+
 .date-picker__footer {
   margin-top: 8px;
   display: flex;
@@ -52,17 +56,24 @@
 }
 
 .date-picker__label--due-date {
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
   font-weight: 500;
   color: $grey-700;
   margin-bottom: 4px;
 }
 
+.date-picker__due-date-wrapper {
+  padding: 0 8px;
+}
+
 .date-picker__input--due-date {
   height: 30px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
   display: block;
-  width: 120px;
+  width: 100%;
   text-align: center;
   margin: 0 auto;
   border-width: 1px;

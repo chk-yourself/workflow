@@ -105,6 +105,7 @@ export default class DatePicker extends Component {
               className="date-picker__input--due-date"
               labelClass="date-picker__label--due-date"
               placeholder="mm-dd-yy"
+              maxLength={8}
             />
           </div>
         </div>

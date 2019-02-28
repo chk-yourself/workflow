@@ -1,6 +1,12 @@
 @import '../../styles/_variables';
 @import '../../styles/_mixins';
 
+.card-editor {
+  @include xl {
+    max-width: 700px;
+  }
+}
+
 .card-editor__section {
   width: 100%;
   display: flex;
@@ -182,7 +188,7 @@
   justify-content: space-between;
   padding: 0 0 0 8px;
   border-bottom: 1px solid $grey-300;
-  z-index: 99;
+  z-index: 4;
   height: 44px;
   &:after {
     content: '';
@@ -349,6 +355,7 @@
   display: flex;
   align-items: center;
   border: none;
+  cursor: pointer;
   &:focus,
   &:hover,
   &:active,

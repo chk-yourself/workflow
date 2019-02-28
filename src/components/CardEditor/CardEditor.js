@@ -419,7 +419,7 @@ class CardEditor extends Component {
     return (
       <Modal
         onModalClose={handleCardEditorClose}
-        className="card-editor"
+        classes={{content: "card-editor"}}
         onModalClick={this.handleModalClick}
         size="lg"
         id="cardEditor"

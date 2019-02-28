@@ -8,8 +8,10 @@ export default class CardEditorAssignMember extends Component {
 
     return (
       <PopoverWrapper
-        wrapperClass="card-editor__popover-wrapper card-editor__member-search-popover-wrapper"
-        popoverClass="card-editor__popover card-editor__member-search-popover"
+        classes={{
+          wrapper: "card-editor__popover-wrapper card-editor__member-search-popover-wrapper",
+          popover: "card-editor__popover card-editor__member-search-popover"
+        }}
         alignOuter="left"
         alignInner="left"
         buttonProps={{

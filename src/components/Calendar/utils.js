@@ -153,3 +153,5 @@ export const toSimpleDateObj = dateString => {
 export const isSDSFormat = dateString => {
   return /^\d{2}-\d{2}-\d{2}$/.test(dateString);
 };
+
+
