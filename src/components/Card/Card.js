@@ -68,6 +68,10 @@ class Card extends Component {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
+            style={{
+              ...provided.draggableProps.style,
+              backgroundColor: '#fff'
+            }}
           >
             <div className="card__header" ref={el => (this.headerEl = el)}>
               <div className="card__tags">
