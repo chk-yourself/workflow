@@ -58,7 +58,7 @@ class Card extends Component {
       : null;
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
-    const wasDueYest = dueDateStr === 'Yesterday';
+    const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
     return (
       <Draggable draggableId={cardId} index={cardIndex}>
         {provided => (
@@ -87,13 +87,15 @@ class Card extends Component {
               {dueDate && (
                 <CardDetail
                   icon="calendar"
-                  className={`card__due-date ${isDueToday
-                      ? 'due--today'
+                  className={`card__due-date ${
+                    isDueToday
+                      ? 'is-due-today'
                       : isDueTmrw
-                      ? 'due--tmrw'
-                      : wasDueYest
-                      ? 'due--yest'
-                      : ''}
+                      ? 'is-due-tmrw'
+                      : isPastDue
+                      ? 'is-past-due'
+                      : ''
+                  }
                   `}
                 >
                   {dueDateStr}

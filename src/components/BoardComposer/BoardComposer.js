@@ -33,6 +33,7 @@ export default class BoardComposer extends Component {
     const { boardTitle } = this.state;
     return (
       <Modal onModalClose={this.props.onClose} size="sm">
+      <h3 className="board-composer__title">Create new board</h3>
         <form onSubmit={this.onSubmit}>
           <Input
             name="boardTitle"

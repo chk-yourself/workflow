@@ -4,7 +4,6 @@ const boardsById = (state = {}, action) => {
   switch (action.type) {
     case types.LOAD_BOARDS_BY_ID: {
       const { boardsById } = action;
-      console.log(boardsById);
       return {
         ...state,
         ...boardsById

@@ -71,13 +71,13 @@
     font-weight: 600;
     color: $grey-900;
   }
-  &.due--today {
+  &.is-due-today {
     color: $secondary;
   }
-  &.due--tmrw {
+  &.is-due-tmrw {
     color: $primary;
   }
-  &.due--yest {
+  &.is-past-due {
     color: $red;
   }
 }

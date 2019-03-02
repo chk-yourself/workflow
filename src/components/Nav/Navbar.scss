@@ -47,6 +47,9 @@
       }
     }
   }
+  @include md {
+    padding: 4px 0;
+  }
 }
 
 .navbar__links {
@@ -82,9 +85,6 @@
   -webkit-font-smoothing: antialiased;
   @include md {
     font-size: 1.4rem;
-  }
-  @include lg {
-    font-size: 1.6rem;
   }
   a {
     color: $primary;

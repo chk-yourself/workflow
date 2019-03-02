@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './App.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { withFirebase } from '../Firebase';
-import { Navbar } from '../Navbar';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';

@@ -1,43 +1,16 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
-import { SignOutButton } from '../SignOut';
 import './Navbar.scss';
-import { AuthUserContext } from '../Session';
+import { Logo } from '../Logo';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 
-const NavLinksAuth = () => (
-  <>
-    <li>
-      <Link to={ROUTES.HOME}>Home</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ADMIN}>Admin</Link>
-    </li>
-    <li>
-      <SignOutButton />
-    </li>
-  </>
-);
-
-const NavLinksNonAuth = () => (
-  <>
-    <li>
-      <Link to={ROUTES.SIGN_IN}>Log In</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.SIGN_UP}>Get Started</Link>
-    </li>
-  </>
-);
-
 export default class Navbar extends Component {
   static defaultProps = {
-    minWidth: 768
+    minWidth: 768,
+    classes: {
+      navbar: '',
+      links: ''
+    }
   };
 
   state = {
@@ -116,21 +89,17 @@ export default class Navbar extends Component {
 
   render() {
     const { viewportWidth, isMobileNavVisible } = this.state;
-    const { minWidth, navRef, navLinksClass } = this.props;
+    const { minWidth, classes, children } = this.props;
     const isMobileView = viewportWidth < minWidth;
 
     return (
       <nav
         className={`navbar ${isMobileView ? 'is-collapsed' : ''} ${
           isMobileView && isMobileNavVisible ? 'show-links' : ''
-        }`}
+        } ${classes.navbar}`}
         ref={el => (this.navEl = el)}
       >
-        <span className="navbar__logo">
-          <Link to={ROUTES.LANDING} onClick={this.handleClick}>
-            workflow
-          </Link>
-        </span>
+        <Logo className="navbar__logo" onClick={this.handleClick} />
         {isMobileView && (
           <Button
             type="button"
@@ -142,13 +111,11 @@ export default class Navbar extends Component {
           </Button>
         )}
         <ul
-          className={`navbar__links ${navLinksClass}`}
+          className={`navbar__links ${classes.links}`}
           onClick={this.handleClick}
           ref={el => (this.navLinksEl = el)}
         >
-          <AuthUserContext.Consumer>
-            {authUser => (authUser ? <NavLinksAuth /> : <NavLinksNonAuth />)}
-          </AuthUserContext.Consumer>
+          {children}
         </ul>
       </nav>
     );

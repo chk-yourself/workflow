@@ -95,8 +95,6 @@ class HomePage extends Component {
   }
 }
 
-const condition = authUser => !!authUser;
-
 const mapStateToProps = (state, ownProps) => {
   return {
     currentBoardId: currentSelectors.getCurrentBoardId(state),
@@ -112,6 +110,8 @@ const mapDispatchToProps = dispatch => {
     selectUser: userId => dispatch(currentActions.selectUser(userId))
   };
 };
+
+const condition = authUser => !!authUser;
 
 export default withAuthorization(condition)(
   connect(

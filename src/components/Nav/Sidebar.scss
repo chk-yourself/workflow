@@ -1,0 +1,129 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.sidebar {
+  position: fixed;
+  min-height: 100%;
+  border-right: 1px solid $grey-300;
+  top: 0;
+  left: 0;
+  background-color: $white;
+  overflow-y: scroll;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 98;
+  width: 0;
+  @include xx {
+    width: 48px;
+  }
+}
+
+.sidebar__list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  height: calc(100vh - 120px);
+  @include md {
+    height: calc(100vh - 140px);
+  }
+  @include lg {
+    height: calc(100vh - 160px);
+  }
+  overflow: scroll;
+}
+
+.sidebar__item {
+  padding: 0;
+  font-size: 1.3rem;
+  font-family: $heading-font;
+  font-weight: 500;
+  border-bottom: 1px solid $grey-300;
+}
+
+.sidebar__link {
+  text-decoration: none;
+  color: $grey-700;
+  padding: 12px 0 12px 12px;
+  display: inline-block;
+  width: 100%;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  &.active {
+    color: $white;
+    background-color: $primary;
+    .sidebar__icon {
+      color: $white;
+    }
+  }
+}
+
+.sidebar__btn--toggle {
+  padding: 0;
+  display: block;
+  z-index: 99;
+  position: absolute;
+  margin: 0;
+  top: calc(50% - 16px);
+  width: 32px;
+  height: 32px;
+  .feather {
+    pointer-events: none;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    width: 24px;
+    transform: rotate(90deg);
+  }
+  span {
+    pointer-events: none;
+  }
+  left: 8px;
+  @include md {
+    left: 12px;
+  }
+  @include lg {
+    left: 16px;
+  }
+  @include xx {
+    left: calc(50% - 48px);
+    top: 0;
+  }
+}
+
+.sidebar__logo {
+  margin: 0;
+  text-align: center;
+  padding: 64px 12px 26px;
+  display: flex;
+  border-bottom: 1px solid $grey-300;
+  height: 140px;
+  flex-flow: column wrap;
+  justify-content: center;
+  @include md {
+    padding-bottom: 28px;
+  }
+  &.active {
+    background-color: $white;
+  }
+}
+
+.sidebar__canvas {
+  width: 0;
+  @include xx {
+    width: 48px;
+    position: relative;
+  }
+}
+
+.sidebar__icon {
+  display: inline;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  color: $grey-400;
+}
+
+.sidebar__section-name {
+  display: none;
+}

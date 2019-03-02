@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
+import { connect } from 'react-redux';
+import { withAuthorization } from '../Session';
+import { userActions, userSelectors } from '../../ducks/users';
+import './Admin.scss';
 
 class AdminPage extends Component {
   constructor(props) {
@@ -13,23 +16,48 @@ class AdminPage extends Component {
   componentDidMount() {
     this.setState({ loading: true });
 
+    /*
     this.props.firebase.users().on('value', snapshot => {
       this.setState({
         users: snapshot.val(),
         loading: false
       });
     });
+    */
   }
 
   componentWillUnmount() {
+    /*
     this.props.firebase.users().off();
+    */
   }
 
   render() {
     return (
-      <div>
+      <main className="admin">
         <h1>Admin</h1>
-      </div>
+      </main>
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    currentUser: userSelectors.getCurrentUserData(state)
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchUsersById: () => dispatch(userActions.fetchUsersById())
+  };
+};
+
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AdminPage)
+);

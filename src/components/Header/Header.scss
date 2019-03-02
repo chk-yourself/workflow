@@ -1,4 +1,5 @@
-@import '../../styles/_mixins.scss';
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
 
 .header {
   width: 100%;
@@ -9,9 +10,89 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
   z-index: 4;
   @include md {
-    padding: 8px 24px;
+    padding: 4px 24px;
   }
   @include lg {
-    padding: 8px 32px;
+    padding: 4px 32px;
+  }
+}
+
+.header {
+  &.expand-nav {
+    .header__title {
+      display: none;
+    }
+    .logo--sm {
+      .logo__text {
+        display: inline;
+        font-size: 1.2rem;
+      }
+    }
+    .sidebar__canvas {
+      position: relative;
+    }
+    .sidebar,
+    .sidebar__canvas {
+      width: 240px;
+      @include md {
+        width: 200px;
+      }
+    }
+    .sidebar__section-name {
+      display: inline-block;
+      margin-left: 1rem;
+    }
+    .sidebar__btn--toggle {
+      top: 2px;
+      right: 32px;
+      left: auto;
+      position: absolute;
+      .feather-arrow-right {
+        transform: rotate(180deg);
+      }
+    }
+    @include md {
+      + .main,
+      + main {
+        width: calc(100% - 200px);
+        left: 200px;
+      }
+    }
+  }
+  + .main,
+  + main {
+    position: relative;
+    @include xx {
+      left: 48px;
+      width: calc(100% - 48px);
+    }
+  }
+}
+
+.header__title {
+  text-align: center;
+  font-weight: 500;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.top-bar {
+  position: relative;
+  padding: 8px;
+  @include xx {
+    left: 48px;
+    width: calc(100% - 48px);
+  }
+}
+
+.header__sub-title {
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 32px;
+  @include sm {
+    font-size: 14px;
+  }
+  @include lg {
+    font-size: 16px;
   }
 }

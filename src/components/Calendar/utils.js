@@ -169,8 +169,11 @@ export const isWithinDays = (date, num, startingDate = new Date()) => {
   const timeStart = startingDate.setHours(0, 0, 0, 0);
   const endingDate = new Date(startingDate);
   const timeEnd = endingDate.setDate(endingDate.getDate() + num);
-  console.log({timeStart, timeEnd}, +date);
   return +date >= timeStart && +date < timeEnd;
+};
+
+export const isPriorDate = (date, baseDate = new Date()) => {
+  return +date < baseDate.setHours(0, 0, 0, 0);
 };
 
 export const toDateString = (
