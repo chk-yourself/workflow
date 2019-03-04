@@ -149,7 +149,7 @@ class Tasks extends Component {
   };
 
   render() {
-    const { filters, view, tasks, userId, taskIds } = this.props;
+    const { filters, view, userId, taskIds } = this.props;
     const { tasks, isFetching } = this.state;
     const hasTasks = taskIds && taskIds.length > 0;
     if (isFetching || !hasTasks) return null;
@@ -164,8 +164,7 @@ class Tasks extends Component {
               {...provided.droppableProps}
             >
               {tasks &&
-                tasks.map((task, index) => {
-                  const { taskId } = task;
+                taskIds.map((taskId, index) => {
                   return (
                     <Task
                       taskId={taskId}

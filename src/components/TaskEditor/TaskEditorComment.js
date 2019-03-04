@@ -53,7 +53,7 @@ class TaskEditorComment extends Component {
     const {
       content,
       createdAt,
-      lastModifiedAt,
+      lastUpdatedAt,
       likes,
       to,
       from,
