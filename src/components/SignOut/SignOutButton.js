@@ -9,7 +9,7 @@ const SignOutButton = ({ firebase, className }) => (
     className={className}
     color="primary"
   >
-    Sign Out
+    Log Out
   </Button>
 );
 

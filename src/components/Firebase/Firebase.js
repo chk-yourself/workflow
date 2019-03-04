@@ -83,13 +83,13 @@ class Firebase {
     name,
     username,
     email,
-    boardIds = [],
+    projectIds = [],
     photoURL = null
   }) =>
     this.db
       .collection('users')
       .doc(userId)
-      .set({ userId, name, username, email, boardIds, photoURL });
+      .set({ userId, name, username, email, projectIds, photoURL });
 
   updateUser = (userId, newValue = {}) =>
     this.db
@@ -99,15 +99,15 @@ class Firebase {
 
   // Tags API
 
-  addTag = ({ cardId, userId, boardId, text, color = 'default' }) => {
+  addTag = ({ taskId, userId, projectId, text, color = 'default' }) => {
     const batch = this.db.batch();
     const userRef = this.getUserDoc(userId);
-    const cardRef = this.getCardDoc(cardId);
-    const boardRef = this.getBoardDoc(boardId);
+    const taskRef = this.getTaskDoc(taskId);
+    const projectRef = this.getProjectDoc(projectId);
 
-    batch.update(cardRef, {
+    batch.update(taskRef, {
       tags: this.addToArray(text),
-      lastModifiedAt: this.getTimestamp()
+      lastUpdatedAt: this.getTimestamp()
     });
 
     batch.set(
@@ -120,13 +120,13 @@ class Firebase {
             lastUsedAt: this.getTimestamp()
           }
         },
-        lastModifiedAt: this.getTimestamp()
+        lastUpdatedAt: this.getTimestamp()
       },
       { merge: true }
     );
 
     batch.set(
-      boardRef,
+      projectRef,
       {
         tags: {
           [text]: {
@@ -135,7 +135,7 @@ class Firebase {
             lastUsedAt: this.getTimestamp()
           }
         },
-        lastModifiedAt: this.getTimestamp()
+        lastUpdatedAt: this.getTimestamp()
       },
       { merge: true }
     );
@@ -150,16 +150,16 @@ class Firebase {
       });
   };
 
-  removeTag = ({ cardId, tag }) => {
-    this.updateCard(cardId, {
+  removeTag = ({ taskId, tag }) => {
+    this.updateTask(taskId, {
       tags: this.removeFromArray(tag)
     });
   };
 
-  setTagColor = ({ userId, boardId, tag, color }) => {
+  setTagColor = ({ userId, projectId, tag, color }) => {
     const batch = this.db.batch();
     const userRef = this.getUserDoc(userId);
-    const boardRef = this.getBoardDoc(boardId);
+    const projectRef = this.getProjectDoc(projectId);
 
     batch.set(
       userRef,
@@ -169,20 +169,20 @@ class Firebase {
             color
           }
         },
-        lastModifiedAt: this.getTimestamp()
+        lastUpdatedAt: this.getTimestamp()
       },
       { merge: true }
     );
 
     batch.set(
-      boardRef,
+      projectRef,
       {
         tags: {
           [tag]: {
             color
           }
         },
-        lastModifiedAt: this.getTimestamp()
+        lastUpdatedAt: this.getTimestamp()
       },
       { merge: true }
     );
@@ -197,30 +197,35 @@ class Firebase {
       });
   };
 
-  // Board API
+  // Project API
 
-  getBoardDoc = boardId => this.db.collection('boards').doc(boardId);
+  getProjectDoc = projectId => this.db.collection('projects').doc(projectId);
 
-  updateBoard = (boardId, newValue = {}) =>
-    this.getBoardDoc(boardId).update({
-      lastModifiedAt: this.getTimestamp(),
+  updateProject = (projectId, newValue = {}) =>
+    this.getProjectDoc(projectId).update({
+      lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
 
-  addBoard = ({ userId, boardTitle }) => {
+  addProject = ({ userId, name, color = 'default', view = 'board', isPrivate = false }) => {
     this.db
-      .collection('boards')
+      .collection('projects')
       .add({
         createdAt: this.getTimestamp(),
-        lastModifiedAt: this.getTimestamp(),
+        lastUpdatedAt: null,
         listIds: [],
         createdBy: userId,
         memberIds: [userId],
-        boardTitle
+        notes: '',
+        isFavorited: false,
+        color,
+        view,
+        isPrivate,
+        name
       })
       .then(ref => {
         this.updateUser(userId, {
-          boardIds: this.addToArray(ref.id)
+          projectIds: this.addToArray(ref.id)
         });
       });
   };
@@ -231,44 +236,44 @@ class Firebase {
 
   updateList = (listId, newValue = {}) =>
     this.getListDoc(listId).update({
-      lastModifiedAt: this.getTimestamp(),
+      lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
 
-  addList = ({ boardId, listTitle }) => {
+  addList = ({ projectId, name }) => {
     this.db
       .collection('lists')
       .add({
         createdAt: this.getTimestamp(),
-        lastModifiedAt: this.getTimestamp(),
-        cardIds: [],
-        boardId,
-        listTitle
+        lastUpdatedAt: null,
+        taskIds: [],
+        projectId,
+        name
       })
       .then(ref => {
-        this.updateBoard(boardId, {
+        this.updateProject(projectId, {
           listIds: this.addToArray(ref.id)
         });
       });
   };
 
-  deleteList = ({ listId, boardId }) => {
+  deleteList = ({ listId, projectId }) => {
     const batch = this.db.batch();
     const listRef = this.getListDoc(listId);
-    const boardRef = this.getBoardDoc(boardId);
+    const projectRef = this.getProjectDoc(projectId);
 
     // Delete list
     batch.delete(listRef);
 
-    // Remove list id from board
-    batch.update(boardRef, {
+    // Remove list id from project
+    batch.update(projectRef, {
       listIds: this.removeFromArray(listId),
-      lastModifiedAt: this.getTimestamp()
+      lastUpdatedAt: this.getTimestamp()
     });
 
-    // Delete cards assigned to list
+    // Delete tasks assigned to list
     this.db
-      .collection('cards')
+      .collection('tasks')
       .where('listId', '==', listId)
       .get()
       .then(snapshot => {
@@ -286,72 +291,116 @@ class Firebase {
       });
   };
 
-  // Card API
+  // Task API
 
-  getCardDoc = cardId => this.db.collection('cards').doc(cardId);
+  getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
 
-  addCard = ({ boardId, listId, cardTitle }) => {
+  addTask = ({ name, projectId, listId, assignedTo = [] }) => {
     this.db
-      .collection('cards')
+      .collection('tasks')
       .add({
         createdAt: this.getTimestamp(),
-        lastModifiedAt: this.getTimestamp(),
-        assignedTo: [],
+        lastUpdatedAt: this.getTimestamp(),
+        commentIds: [],
+        subtaskIds: [],
+        isCompleted: false,
+        completedAt: null,
+        dueDate: null,
+        notes: '',
+        assignedTo,
         listId,
-        boardId,
-        cardTitle
+        projectId,
+        name
       })
       .then(ref => {
         this.updateList(listId, {
-          cardIds: this.addToArray(ref.id),
-          lastModifiedAt: this.getTimestamp()
+          taskIds: this.addToArray(ref.id),
+          lastUpdatedAt: this.getTimestamp()
         });
       });
   };
 
-  updateCard = (cardId, newValue = {}) => {
-    this.getCardDoc(cardId).update({
-      lastModifiedAt: this.getTimestamp(),
+  updateTask = (taskId, newValue = {}) => {
+    this.getTaskDoc(taskId).update({
+      lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
   };
 
-  assignCard = ({ cardId, boardId, userId }) => {
+  removeTaskAssignment = ({ taskId, userId }) => {
     const batch = this.db.batch();
-    const cardRef = this.getCardDoc(cardId);
-    const boardRef = this.getBoardDoc(boardId);
-    batch.update(cardRef, {
-      assignedTo: this.addToArray(userId),
-      lastModifiedAt: this.getTimestamp()
+    const taskRef = this.getTaskDoc(taskId);
+    const userRef = this.getUserDoc(userId);
+
+    batch.update(userRef, {
+      taskIds: this.removeFromArray(taskId),
+      lastUpdatedAt: this.getTimestamp()
     });
-    batch.update(boardRef, {
-      memberIds: this.addToArray(userId),
-      lastModifiedAt: this.getTimestamp()
+
+    batch.update(taskRef, {
+      assignedTo: this.removeFromArray(userId),
+      lastUpdatedAt: this.getTimestamp()
     });
+
     return batch
       .commit()
       .then(() => {
-        console.log('assigned card to member');
+        console.log('Removed member from task');
       })
       .catch(error => {
         console.error(error);
       });
   };
 
-  deleteCard = ({ cardId, listId }) => {
+  assignTask = ({ taskId, projectId, userId }) => {
     const batch = this.db.batch();
-    const cardRef = this.getCardDoc(cardId);
+    const taskRef = this.getTaskDoc(taskId);
+    const projectRef = this.getProjectDoc(projectId);
+    const userRef = this.getUserDoc(userId);
+    batch.update(userRef, {
+      taskIds: this.addToArray(taskId),
+      lastUpdatedAt: this.getTimestamp()
+    });
+    batch.update(taskRef, {
+      assignedTo: this.addToArray(userId),
+      lastUpdatedAt: this.getTimestamp()
+    });
+    batch.update(projectRef, {
+      memberIds: this.addToArray(userId),
+      lastUpdatedAt: this.getTimestamp()
+    });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('assigned task to member');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  deleteTask = ({ taskId, listId, userId = null }) => {
+    const batch = this.db.batch();
+    const taskRef = this.getTaskDoc(taskId);
     const listRef = this.getListDoc(listId);
-    batch.delete(cardRef);
+    batch.delete(taskRef);
     batch.update(listRef, {
-      cardIds: this.removeFromArray(cardId),
-      lastModifiedAt: this.getTimestamp()
+      taskIds: this.removeFromArray(taskId),
+      lastUpdatedAt: this.getTimestamp()
     });
 
-    // Delete subtasks assigned to card
+    if (userId) {
+      const userRef = this.getUserDoc(userId);
+      batch.update(userRef, {
+        taskIds: this.removeFromArray(taskId),
+        lastUpdatedAt: this.getTimestamp()
+      });
+    }
+
+    // Delete subtasks assigned to task
     this.db
       .collection('subtasks')
-      .where('cardId', '==', cardId)
+      .where('taskId', '==', taskId)
       .get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
@@ -361,7 +410,7 @@ class Firebase {
       .then(() => {
         this.db
           .collection('comments')
-          .where('cardId', '==', cardId)
+          .where('taskId', '==', taskId)
           .get()
           .then(snapshot => {
             snapshot.docs.forEach(doc => {
@@ -370,7 +419,7 @@ class Firebase {
             return batch
               .commit()
               .then(() => {
-                console.log('card deleted');
+                console.log('task deleted');
               })
               .catch(error => {
                 console.error(error);
@@ -379,27 +428,27 @@ class Firebase {
       });
   };
 
-  moveCardToList = ({ cardId, origListId, newListId, updatedCardIds }) => {
+  moveTaskToList = ({ taskId, origListId, newListId, updatedTaskIds }) => {
     const batch = this.db.batch();
-    const cardRef = this.getCardDoc(cardId);
+    const taskRef = this.getTaskDoc(taskId);
     const origListRef = this.getListDoc(origListId);
     const newListRef = this.getListDoc(newListId);
-    batch.update(cardRef, {
+    batch.update(taskRef, {
       listId: newListId,
-      lastModifiedAt: this.getTimestamp()
+      lastUpdatedAt: this.getTimestamp()
     });
     batch.update(origListRef, {
-      cardIds: this.removeFromArray(cardId),
-      lastModifiedAt: this.getTimestamp()
+      taskIds: this.removeFromArray(taskId),
+      lastUpdatedAt: this.getTimestamp()
     });
     batch.update(newListRef, {
-      cardIds: updatedCardIds,
-      lastModifiedAt: this.getTimestamp()
+      taskIds: updatedTaskIds,
+      lastUpdatedAt: this.getTimestamp()
     });
     return batch
       .commit()
       .then(() => {
-        console.log('card moved');
+        console.log('task moved');
       })
       .catch(error => {
         console.error(error);
@@ -412,28 +461,29 @@ class Firebase {
 
   addSubtask = ({
     userId,
+    name,
     memberIds = [],
-    boardId = null,
-    cardId = null,
-    dueDate = null,
-    text
+    projectId = null,
+    taskId = null,
+    dueDate = null
   }) => {
     this.db
       .collection('subtasks')
       .add({
         createdAt: this.getTimestamp(),
-        lastModifiedAt: this.getTimestamp(),
+        lastUpdatedAt: this.getTimestamp(),
         isCompleted: false,
         createdBy: userId,
         assignedTo: [userId, ...memberIds],
+        completedAt: null,
         dueDate,
-        boardId,
-        cardId,
-        text
+        projectId,
+        taskId,
+        name
       })
       .then(ref => {
-        if (cardId === null) return;
-        this.updateCard(cardId, {
+        if (taskId === null) return;
+        this.updateTask(taskId, {
           subtaskIds: this.addToArray(ref.id)
         });
       });
@@ -441,21 +491,21 @@ class Firebase {
 
   updateSubtask = (subtaskId, newValue = {}) => {
     this.getSubtaskDoc(subtaskId).update({
-      lastModifiedAt: this.getTimestamp(),
+      lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
   };
 
-  deleteSubtask = ({ subtaskId, cardId = null }) => {
+  deleteSubtask = ({ subtaskId, taskId = null }) => {
     const batch = this.db.batch();
     const subtaskRef = this.getSubtaskDoc(subtaskId);
     batch.delete(subtaskRef);
 
-    if (cardId) {
-      const cardRef = this.getCardDoc(cardId);
-      batch.update(cardRef, {
+    if (taskId) {
+      const taskRef = this.getTaskDoc(taskId);
+      batch.update(taskRef, {
         subtaskIds: this.removeFromArray(subtaskId),
-        lastModifiedAt: this.getTimestamp()
+        lastUpdatedAt: this.getTimestamp()
       });
     }
     return batch
@@ -471,22 +521,22 @@ class Firebase {
   // Comment API
   getCommentDoc = commentId => this.db.collection('comments').doc(commentId);
 
-  addComment = ({ userId, memberIds = [], boardId, cardId, text }) => {
+  addComment = ({ userId, memberIds = [], projectId, taskId, content }) => {
     this.db
       .collection('comments')
       .add({
         createdAt: this.getTimestamp(),
-        lastModifiedAt: this.getTimestamp(),
+        lastUpdatedAt: this.getTimestamp(),
         isPinned: false,
         from: userId,
         to: memberIds,
         likes: [],
-        boardId,
-        cardId,
-        text
+        projectId,
+        taskId,
+        content
       })
       .then(ref => {
-        this.updateCard(cardId, {
+        this.updateTask(taskId, {
           commentIds: this.addToArray(ref.id)
         });
       });
@@ -494,7 +544,7 @@ class Firebase {
 
   updateComment = (commentId, newValue = {}) => {
     this.getCommentDoc(commentId).update({
-      lastModifiedAt: this.getTimestamp(),
+      lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
   };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
-import { cardActions, cardSelectors } from '../../ducks/cards';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
@@ -15,14 +15,14 @@ class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listTitle: this.props.listTitle
+      name: this.props.name
     };
   }
 
   handleListDelete = e => {
     e.preventDefault();
-    const { listId, boardId, firebase } = this.props;
-    firebase.deleteList({ listId, boardId });
+    const { listId, projectId, firebase } = this.props;
+    firebase.deleteList({ listId, projectId });
   };
 
   onChange = e => {
@@ -32,30 +32,30 @@ class List extends Component {
   };
 
   onBlur = e => {
-    const { listTitle, listId, firebase } = this.props;
-    const { listTitle: newListTitle } = this.state;
+    const { name, listId, firebase } = this.props;
+    const { name: newName} = this.state;
 
     // When field loses focus, update list title if change is detected
 
-    if (newListTitle !== listTitle) {
+    if (newName !== name) {
       firebase.updateList(listId, {
-        listTitle: newListTitle
+        name: newName
       });
-      console.log('updated!');
+      console.log('updated list name!');
     }
   };
 
   render() {
     const {
-      cards,
-      onCardClick,
+      tasks,
+      onTaskClick,
       listId,
       listIndex,
-      isFetchingCards
+      isFetchingTasks
     } = this.props;
-    if (isFetchingCards) return null;
+    if (isFetchingTasks) return null;
 
-    const { listTitle, viewportHeight } = this.state;
+    const { name, viewportHeight } = this.state;
 
     return (
       <Draggable draggableId={listId} index={listIndex}>
@@ -73,9 +73,9 @@ class List extends Component {
               >
                 <Input
                   className="list__input--title"
-                  name="listTitle"
+                  name="name"
                   type="text"
-                  value={listTitle}
+                  value={name}
                   onChange={this.onChange}
                   required
                   hideLabel
@@ -103,12 +103,14 @@ class List extends Component {
                   </Menu>
                 </PopoverWrapper>
               </header>
+              <div className="list__content">
               <Cards
-                cards={cards}
+                tasks={tasks}
                 listId={listId}
-                onCardClick={onCardClick}
-                onCardDelete={this.handleCardDelete}
+                onCardClick={onTaskClick}
+                onCardDelete={this.handleTaskDelete}
               />
+              </div>
               {provided.placeholder}
               <CardComposer listId={listId} />
             </section>
@@ -124,7 +126,7 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cards: cardSelectors.getCardsArray(state, ownProps)
+    tasks: taskSelectors.getListTasks(state, ownProps.taskIds)
   };
 };
 

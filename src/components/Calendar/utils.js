@@ -23,6 +23,10 @@ export const isTomorrow = date => {
   return today.setDate(today.getDate() + 1) === date.setHours(0, 0, 0, 0);
 };
 
+export const isThisYear = date => {
+  return date.getFullYear() === new Date().getFullYear();
+};
+
 export const getMonthDays = (monthIndex, year) => {
   if (monthIndex === 1) {
     return isLeapYear(year) ? 29 : 28;
@@ -216,7 +220,7 @@ export const toDateString = (
           const month = date.getMonth();
           if (value === 'numeric') {
             return month + 1;
-          } else if (value === '2-digit') {
+          } if (value === '2-digit') {
             return zeroPad(month + 1, 2);
           } else {
             return MONTHS[month][value];
@@ -234,13 +238,17 @@ export const toDateString = (
         case 'year': {
           const value = format[key];
           const year = date.getFullYear();
+          if (useRelative && isThisYear(date)) {
+            return null;
+          }
           if (value === '2-digit') {
-            return +year.slice(2);
+            return `'${+year.slice(2)}`;
           } else {
             return year;
           }
         }
       }
     })
-    .join(' ');
+    .join(' ')
+    .trim();
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
-import { boardActions, boardSelectors } from '../../ducks/boards';
+import { projectActions, projectSelectors } from '../../ducks/projects';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
@@ -10,7 +10,7 @@ import * as keys from '../../constants/keys';
 import './CardComposer.scss';
 
 const INITIAL_STATE = {
-  cardTitle: '',
+  name: '',
   isActive: false
 };
 
@@ -21,15 +21,15 @@ class CardComposer extends Component {
   }
 
   resetForm = () => {
-    this.setState({ cardTitle: '' });
+    this.setState({ name: '' });
   };
 
   onSubmit = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { cardTitle } = this.state;
-    const { boardId } = this.props.current;
-    const { listId } = this.props;
-    this.props.firebase.addCard({ boardId, listId, cardTitle });
+    const { name } = this.state;
+    const { projectId } = this.props.current;
+    const { listId, firebase } = this.props;
+    firebase.addTask({ projectId, listId, name });
     this.resetForm();
     e.preventDefault();
   };
@@ -58,7 +58,7 @@ class CardComposer extends Component {
   };
 
   render() {
-    const { cardTitle, isActive } = this.state;
+    const { name, isActive } = this.state;
 
     return (
       <div
@@ -69,10 +69,10 @@ class CardComposer extends Component {
         <form className="card-composer__form" onSubmit={this.onSubmit}>
           <Textarea
             onChange={this.onChange}
-            value={cardTitle}
+            value={name}
             placeholder={isActive ? 'Enter card title...' : 'Add a card'}
             isRequired
-            name="cardTitle"
+            name="name"
             className="card-composer__textarea"
             isAutoHeightResizeEnabled={false}
             onKeyDown={this.onSubmit}
@@ -107,14 +107,14 @@ class CardComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    boardsArray: boardSelectors.getBoardsArray(state),
+    projectsArray: projectSelectors.getProjectsArray(state),
     current: currentSelectors.getCurrent(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board))
+    updateProjectsById: project => dispatch(projectActions.updateProjectsById(project))
   };
 };
 

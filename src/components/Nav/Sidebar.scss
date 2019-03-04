@@ -66,11 +66,13 @@
   top: calc(50% - 16px);
   width: 32px;
   height: 32px;
+  line-height: 0;
   .feather {
     pointer-events: none;
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
-    width: 24px;
+    width: 20px;
+    height: 20px;
     transform: rotate(90deg);
   }
   span {
@@ -78,9 +80,6 @@
   }
   left: 8px;
   @include md {
-    left: 12px;
-  }
-  @include lg {
     left: 16px;
   }
   @include xx {

@@ -1,41 +1,65 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
+import { Button } from '../Button';
+import { Input } from '../Input';
+import { Icon } from '../Icon';
 import './SearchBar.scss';
 
 export default class SearchBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isExpanded: false
+      isExpanded: false,
+      query: ''
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.inputEl = createRef();
   }
 
-  handleClick(e) {
+  handleClick = e => {
+    const { query } = this.state;
+    const { name } = e.target;
     e.stopPropagation();
-    const searchFormInput = document.querySelector('.search-form__input');
-    if (e.target.classList.contains('search-form__input') || searchFormInput.value !== '') return;
+    if (name === 'search' || query !== '') return;
+    if (name === 'toggle') {
+      this.inputEl.current.focus();
+    }
     this.setState(state => ({
       isExpanded: !state.isExpanded
     }));
-  }
+  };
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault();
-  }
+  };
 
   render() {
     return (
       <div
-        onClick={e => this.handleClick(e)}
+        onClick={this.handleClick}
         className={`search-bar${this.state.isExpanded ? ' is-expanded' : ''}`}
       >
-        <form className="search-form" onSubmit={e => this.handleSubmit(e)}>
-          <input className="search-form__input" type="text" />
-          <input className="search-form__submit" type="submit" value="" />
-          <button type="button" className="btn search-form__btn">
-            <FeatherIcon name="search" />
-          </button>
+        <form className="search-form" onSubmit={this.handleSubmit}>
+          <Input
+            name="search"
+            className="search-form__input"
+            type="text"
+            inputRef={this.inputEl}
+            hideLabel
+          />
+          <Input
+            name="submit"
+            className="search-form__submit"
+            type="submit"
+            hideLabel
+          />
+          <Button
+            type="button"
+            onClick={this.handleClick}
+            className="search-form__btn"
+            name="toggle"
+            iconOnly
+          >
+            <Icon name="search" />
+          </Button>
         </form>
       </div>
     );

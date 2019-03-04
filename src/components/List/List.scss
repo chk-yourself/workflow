@@ -72,7 +72,11 @@
 }
 
 .list__content {
-  overflow-x: hidden;
+  position: relative;
+}
+
+.list__cards {
+  overflow-x: visible;
   overflow-y: auto;
   min-height: 16px;
   max-height: calc(100vh - 274px);

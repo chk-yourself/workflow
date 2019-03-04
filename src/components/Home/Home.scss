@@ -1,7 +1,6 @@
 @import '../../styles/_variables';
 @import '../../styles/_mixins';
 
-
 .main {
   width: 100%;
   height: 100%;
@@ -12,4 +11,11 @@
   @include lg {
     padding: 8px 32px;
   }
+}
+
+.main__header {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: $grey-900;
 }

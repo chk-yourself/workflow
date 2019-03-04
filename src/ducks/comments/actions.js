@@ -38,12 +38,12 @@ export const updateCommentsById = comment => {
   };
 };
 
-export const fetchCardComments = cardId => {
+export const fetchTaskComments = taskId => {
   return async dispatch => {
     try {
       const commentsById = await firebase.db
         .collection('comments')
-        .where('cardId', '==', cardId)
+        .where('taskId', '==', taskId)
         .get()
         .then(snapshot => {
           const comments = {};

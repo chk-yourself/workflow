@@ -20,7 +20,7 @@ const withAuthentication = Component => {
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
         if (authUser) {
           this.setState({ authUser });
-          history.push(ROUTES.HOME);
+          history.push(`/0/home/${authUser.uid}`);
         } else {
           this.setState({ authUser: null });
         }

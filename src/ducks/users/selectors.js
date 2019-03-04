@@ -6,6 +6,12 @@ export const getUserData = (state, userId) => {
   return state.usersById[userId];
 };
 
+export const getUserTaskIds = (state, userId) => {
+  const { taskIds } = state.usersById[userId];
+  if (!taskIds) return [];
+  return taskIds;
+};
+
 export const getCurrentUserData = state => {
   const currentUserId = state.current.userId;
   return state.usersById[currentUserId];
@@ -28,7 +34,3 @@ export const getMembersArray = (state, memberIds) => {
   if (!memberIds) return [];
   return memberIds.map(memberId => usersById[memberId]);
 };
-
-export const getUserTags = state => {
-  
-}

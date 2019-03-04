@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
-import { boardActions, boardSelectors } from '../../ducks/boards';
+import { projectActions, projectSelectors } from '../../ducks/projects';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { listActions, listSelectors } from '../../ducks/lists';
-import { cardActions, cardSelectors } from '../../ducks/cards';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
 import * as ROUTES from '../../constants/routes';
 import Board from './Board';
 import { Input } from '../Input';
 import { List } from '../List';
-import { CardEditor } from '../CardEditor';
+import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { utils } from '../../utils';
 import './Board.scss';
@@ -22,8 +22,8 @@ class BoardContainer extends Component {
     this.state = {
       isFetching: true,
       isDragging: false,
-      isCardEditorOpen: false,
-      boardTitle: this.props.boardTitle
+      isTaskEditorOpen: false,
+      projectName: this.props.projectName
     };
   }
 
@@ -31,48 +31,48 @@ class BoardContainer extends Component {
     const {
       current,
       fetchListsById,
-      fetchCardsById,
-      fetchCardSubtasks,
+      fetchProjectTasks,
+      fetchTaskSubtasks,
       firebase,
-      updateBoard,
+      updateProject,
       updateListsById,
-      addCard,
-      deleteCard,
-      updateCard,
-      updateBoardTags,
-      boardId,
-      board,
+      addTask,
+      deleteTask,
+      updateTask,
+      updateProjectTags,
+      projectId,
+      project,
       updateListIds,
       addSubtask,
       updateSubtask,
       deleteSubtask,
-      selectBoard
+      selectProject
     } = this.props;
 
-    if (current.boardId !== boardId) {
-      selectBoard(boardId);
+    if (current.projectId !== projectId) {
+      selectProject(projectId);
     }
 
-    fetchListsById(boardId);
-    fetchCardsById(boardId);
-    fetchCardSubtasks(boardId).then(() => {
+    fetchListsById(projectId);
+    fetchProjectTasks(projectId);
+    fetchTaskSubtasks(projectId).then(() => {
       this.setState({
         isFetching: false
       });
     });
-    this.boardObserver = firebase.getBoardDoc(boardId).onSnapshot(snapshot => {
-      const updatedBoard = snapshot.data();
-      if (!utils.isEqual(updatedBoard.listIds, board.listIds)) {
-        updateListIds(boardId, updatedBoard.listIds);
-      } else if (!utils.isEqual(updatedBoard.tags, board.tags)) {
-        updateBoardTags(boardId, updatedBoard.tags);
+    this.projectObserver = firebase.getProjectDoc(projectId).onSnapshot(snapshot => {
+      const updatedProject = snapshot.data();
+      if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
+        updateListIds(projectId, updatedProject.listIds);
+      } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
+        updateProjectTags(projectId, updatedProject.tags);
       } else {
-        updateBoard(boardId, updatedBoard);
+        updateProject(projectId, updatedProject);
       }
     });
     this.listObserver = firebase.db
       .collection('lists')
-      .where('boardId', '==', boardId)
+      .where('projectId', '==', projectId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
           const list = {
@@ -83,7 +83,7 @@ class BoardContainer extends Component {
       });
     this.subtaskObserver = firebase.db
       .collection('subtasks')
-      .where('boardId', '==', boardId)
+      .where('projectId', '==', projectId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
           const subtaskId = change.doc.id;
@@ -99,19 +99,19 @@ class BoardContainer extends Component {
           }
         });
       });
-    this.cardObserver = firebase.db
-      .collection('cards')
-      .where('boardId', '==', boardId)
+    this.taskObserver = firebase.db
+      .collection('tasks')
+      .where('projectId', '==', projectId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const cardId = change.doc.id;
-          const cardData = change.doc.data();
+          const taskId = change.doc.id;
+          const taskData = change.doc.data();
           if (change.type === 'added') {
-            addCard({ cardId, cardData });
+            addTask({ taskId, taskData });
           } else if (change.type === 'removed') {
-            deleteCard(cardId);
+            deleteTask(taskId);
           } else {
-            updateCard({ cardId, cardData });
+            updateTask({ taskId, taskData });
           }
         });
       });
@@ -119,9 +119,9 @@ class BoardContainer extends Component {
   }
 
   componentWillUnmount() {
-    this.boardObserver();
+    this.projectObserver();
     this.listObserver();
-    this.cardObserver();
+    this.taskObserver();
     this.subtaskObserver();
   }
 
@@ -143,34 +143,33 @@ class BoardContainer extends Component {
     if (type === droppableTypes.CARD) {
       const { listsById } = this.props;
       const isMovedWithinList = source.droppableId === destination.droppableId;
-      const updatedCardIds = [...listsById[destination.droppableId].cardIds];
+      const updatedTaskIds = [...listsById[destination.droppableId].taskIds];
       if (isMovedWithinList) {
-        updatedCardIds.splice(source.index, 1);
-        updatedCardIds.splice(destination.index, 0, draggableId);
+        updatedTaskIds.splice(source.index, 1);
+        updatedTaskIds.splice(destination.index, 0, draggableId);
         firebase.updateList(source.droppableId, {
-          cardIds: updatedCardIds
+          taskIds: updatedTaskIds
         });
       } else {
-        updatedCardIds.splice(destination.index, 0, draggableId);
-        firebase.moveCardToList({
-          cardId: draggableId,
+        updatedTaskIds.splice(destination.index, 0, draggableId);
+        firebase.moveTaskToList({
+          taskId: draggableId,
           origListId: source.droppableId,
           newListId: destination.droppableId,
-          updatedCardIds
+          updatedTaskIds
         });
       }
     }
 
     if (type === droppableTypes.LIST) {
-      const { boardsById, current, reorderLists } = this.props;
-      const { boardId } = current;
-      const updatedListIds = [...boardsById[boardId].listIds];
+      const { projectsById, projectId, reorderLists } = this.props;
+      const updatedListIds = [...projectsById[projectId].listIds];
       updatedListIds.splice(source.index, 1);
       updatedListIds.splice(destination.index, 0, draggableId);
-      firebase.updateBoard(boardId, {
+      firebase.updateProject(projectId, {
         listIds: updatedListIds
       });
-      reorderLists(boardId, updatedListIds);
+      reorderLists(projectId, updatedListIds);
     }
 
     this.setState({
@@ -178,62 +177,55 @@ class BoardContainer extends Component {
     });
   };
 
-  toggleCardEditor = () => {
+  toggleTaskEditor = () => {
     this.setState(prevState => ({
-      isCardEditorOpen: !prevState.isCardEditorOpen
+      isTaskEditorOpen: !prevState.isTaskEditorOpen
     }));
   };
 
-  handleCardClick = cardId => {
-    this.props.selectCard(cardId);
-    this.toggleCardEditor();
+  handleTaskClick = taskId => {
+    const { selectTask } = this.props;
+    selectTask(taskId);
+    this.toggleTaskEditor();
   };
 
-  onTitleChange = e => {
+  onNameChange = e => {
     this.setState({
-      boardTitle: e.target.value
+      projectName: e.target.value
     });
   };
 
-  onTitleBlur = e => {
-    const { boardTitle, boardId, firebase } = this.props;
-    const { boardTitle: newBoardTitle } = this.state;
+  onNameBlur = e => {
+    const { projectName, projectId, firebase } = this.props;
+    const { projectName: newProjectName } = this.state;
 
     // When field loses focus, update list title if change is detected
 
-    if (newBoardTitle !== boardTitle) {
-      firebase.updateBoard(boardId, {
-        boardTitle: newBoardTitle
+    if (newProjectName !== projectName) {
+      firebase.updateProject(projectId, {
+        name: newProjectName
       });
-      console.log('updated!');
+      console.log('updated project name!');
     }
   };
 
   render() {
-    const { isFetching, isCardEditorOpen, boardTitle } = this.state;
-    const {
-      current,
-      listsArray,
-      cardsById,
-      boardId,
-      board,
-      userId
-    } = this.props;
+    const { isFetching, isTaskEditorOpen, projectName } = this.state;
+    const { current, listsArray, tasksById, projectId, userId } = this.props;
     if (isFetching) return null;
-    const { cardId } = current;
+    const { taskId } = current;
     const lists = listsArray.map((list, listIndex) => {
-      const { listId, listTitle, cardIds } = list;
+      const { listId, name: listName, taskIds } = list;
       return (
         <List
           listId={listId}
           key={listId}
           listIndex={listIndex}
-          listTitle={listTitle}
-          cardIds={cardIds}
-          isFetchingCards={isFetching}
-          isDragging={this.state.isDragging}
-          onCardClick={this.handleCardClick}
-          boardId={boardId}
+          name={listName}
+          taskIds={taskIds}
+          isFetchingTasks={isFetching}
+          onTaskClick={this.handleTaskClick}
+          projectId={projectId}
         />
       );
     });
@@ -242,24 +234,24 @@ class BoardContainer extends Component {
       <main className="board-container">
         <Input
           className="board__input--title"
-          name="boardTitle"
+          name="projectName"
           type="text"
-          value={boardTitle}
-          onChange={this.onTitleChange}
+          value={projectName}
+          onChange={this.onNameChange}
           required
           hideLabel
-          onBlur={this.onTitleBlur}
+          onBlur={this.onNameBlur}
         />
         <DragDropContext
           onDragEnd={this.onDragEnd}
           onDragStart={this.onDragStart}
         >
-          <Board boardId={boardId}>{lists}</Board>
+          <Board projectId={projectId}>{lists}</Board>
         </DragDropContext>
-        {isCardEditorOpen && (
-          <CardEditor
-            {...cardsById[cardId]}
-            handleCardEditorClose={this.toggleCardEditor}
+        {isTaskEditorOpen && (
+          <TaskEditor
+            {...tasksById[taskId]}
+            handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
           />
         )}
@@ -270,36 +262,37 @@ class BoardContainer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    boardsById: boardSelectors.getBoardsById(state),
+    projectsById: projectSelectors.getProjectsById(state),
     current: currentSelectors.getCurrent(state),
     listsById: listSelectors.getListsById(state),
     listsArray: listSelectors.getListsArray(state),
-    cardsById: cardSelectors.getCardsById(state),
-    board: boardSelectors.getBoard(state, ownProps.boardId)
+    tasksById: taskSelectors.getTasksById(state),
+    project: projectSelectors.getProject(state, ownProps.projectId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateBoard: (boardId, boardData) => dispatch(boardActions.updateBoard(boardId, boardData)),
-    selectBoard: boardId => dispatch(currentActions.selectBoard(boardId)),
-    selectCard: cardId => dispatch(currentActions.selectCard(cardId)),
-    fetchListsById: boardId => dispatch(listActions.fetchListsById(boardId)),
+    updateProject: (projectId, projectData) =>
+      dispatch(projectActions.updateProject(projectId, projectData)),
+    selectProject: projectId => dispatch(currentActions.selectProject(projectId)),
+    selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
+    fetchListsById: projectId => dispatch(listActions.fetchListsById(projectId)),
     updateListsById: list => dispatch(listActions.updateListsById(list)),
-    fetchCardsById: boardId => dispatch(cardActions.fetchCardsById(boardId)),
-    fetchCardSubtasks: boardId =>
-      dispatch(subtaskActions.fetchCardSubtasks(boardId)),
-    reorderLists: (boardId, listIds) =>
-      dispatch(boardActions.reorderLists(boardId, listIds)),
-    updateListIds: (boardId, listIds) =>
-      dispatch(boardActions.updateListIds(boardId, listIds)),
-    updateBoardTags: (boardId, tags) =>
-      dispatch(boardActions.updateBoardTags(boardId, tags)),
-    addCard: ({ cardId, cardData }) =>
-      dispatch(cardActions.addCard({ cardId, cardData })),
-    updateCard: ({ cardId, cardData }) =>
-      dispatch(cardActions.updateCard({ cardId, cardData })),
-    deleteCard: cardId => dispatch(cardActions.deleteCard(cardId)),
+    fetchProjectTasks: projectId => dispatch(taskActions.fetchProjectTasks(projectId)),
+    fetchTaskSubtasks: projectId =>
+      dispatch(subtaskActions.fetchTaskSubtasks(projectId)),
+    reorderLists: (projectId, listIds) =>
+      dispatch(projectActions.reorderLists(projectId, listIds)),
+    updateListIds: (projectId, listIds) =>
+      dispatch(projectActions.updateListIds(projectId, listIds)),
+    updateProjectTags: (projectId, tags) =>
+      dispatch(projectActions.updateProjectTags(projectId, tags)),
+    addTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.addTask({ taskId, taskData })),
+    updateTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.updateTask({ taskId, taskData })),
+    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
     addSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
     deleteSubtask: subtaskId =>

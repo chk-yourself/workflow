@@ -19,7 +19,7 @@ export default class Cards extends Component {
   }
 */
   componentDidUpdate(prevProps) {
-    if (this.props.cards.length > prevProps.cards.length) {
+    if (this.props.tasks.length > prevProps.tasks.length) {
       this.scrollToBottom();
     }
   }
@@ -29,28 +29,25 @@ export default class Cards extends Component {
   };
 
   render() {
-    const { listId, cards, style, onCardClick, onCardDelete } = this.props;
+    const { listId, tasks, onCardClick, onCardDelete } = this.props;
 
     return (
       <Droppable droppableId={listId} type={droppableTypes.CARD}>
         {(provided, snapshot) => (
           <div
-            className="list__content"
+            className="list__cards"
             ref={provided.innerRef}
-            style={{
-              ...style,
-              minHeight: snapshot.isDraggingOver ? 80 : 16
-            }}
+            style={{ minHeight: snapshot.isDraggingOver ? 80 : 16 }}
             {...provided.droppableProps}
           >
-            {cards.map((card, cardIndex) => {
+            {tasks.map((task, taskIndex) => {
               return (
                 <Card
-                  key={card.cardId}
-                  cardIndex={cardIndex}
+                  key={task.taskId}
+                  taskIndex={taskIndex}
                   onCardClick={onCardClick}
                   onCardDelete={onCardDelete}
-                  {...card}
+                  {...task}
                 />
               );
             })}

@@ -2,16 +2,16 @@ export const getCurrentUserId = state => {
   return state.current.userId;
 };
 
-export const getCurrentBoardId = state => {
-  return state.current.boardId;
+export const getCurrentProjectId = state => {
+  return state.current.projectId;
 };
 
 export const getCurrentListId = state => {
   return state.current.listId;
 };
 
-export const getCurrentCardId = state => {
-  return state.current.cardId;
+export const getCurrentTaskId = state => {
+  return state.current.taskId;
 };
 
 export const getCurrent = state => {
@@ -19,10 +19,10 @@ export const getCurrent = state => {
 };
 
 export const getMergedTags = state => {
-  const { boardId, userId } = state.current;
-  const { boardsById, usersById } = state;
-  const { tags: boardTags } = boardsById[boardId];
+  const { projectId, userId } = state.current;
+  const { projectsById, usersById } = state;
+  const { tags: projectTags } = projectsById[projectId];
   const { tags: userTags } = usersById[userId];
-  const mergedTags = { ...userTags, ...boardTags };
+  const mergedTags = { ...userTags, ...projectTags };
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);
 };

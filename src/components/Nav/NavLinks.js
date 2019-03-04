@@ -14,12 +14,24 @@ export const NavLinksNonAuth = () => (
   </>
 );
 
-export const NavLinksAuth = () => (
+export const NavLinksAuth = ({ userId }) => (
   <>
     <li className="sidebar__item">
-      <NavLink className="sidebar__link" to={ROUTES.HOME}>
+      <NavLink className="sidebar__link" to={`/0/home/${userId}`}>
         <SidebarIcon name="home" />
         <span className="sidebar__section-name">Home</span>
+      </NavLink>
+    </li>
+    <li className="sidebar__item">
+      <NavLink className="sidebar__link" to={`/0/${userId}/projects`}>
+        <SidebarIcon name="grid" />
+        <span className="sidebar__section-name">Projects</span>
+      </NavLink>
+    </li>
+    <li className="sidebar__item">
+      <NavLink className="sidebar__link" to={`/0/${userId}/tasks`}>
+        <SidebarIcon name="check-square" />
+        <span className="sidebar__section-name">Tasks</span>
       </NavLink>
     </li>
     <li className="sidebar__item">

@@ -4,10 +4,10 @@ import * as droppableTypes from '../../constants/droppableTypes';
 import { ListComposer } from '../ListComposer';
 
 const Board = props => {
-  const { boardId, children } = props;
+  const { projectId, children } = props;
   return (
     <Droppable
-      droppableId={boardId}
+      droppableId={projectId}
       type={droppableTypes.LIST}
       direction="horizontal"
     >
@@ -19,7 +19,7 @@ const Board = props => {
         >
           {children}
           {provided.placeholder}
-          <ListComposer boardId={boardId} />
+          <ListComposer projectId={projectId} />
         </div>
       )}
     </Droppable>

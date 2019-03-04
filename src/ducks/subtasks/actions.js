@@ -38,12 +38,12 @@ export const updateSubtasksById = subtask => {
   };
 };
 
-export const fetchCardSubtasks = boardId => {
+export const fetchTaskSubtasks = projectId => {
   return async dispatch => {
     try {
       const subtasksById = await firebase.db
         .collection('subtasks')
-        .where('boardId', '==', boardId)
+        .where('projectId', '==', projectId)
         .get()
         .then(snapshot => {
           const subtasks = {};

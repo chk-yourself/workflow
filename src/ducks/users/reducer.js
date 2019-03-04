@@ -16,6 +16,16 @@ const usersById = (state = {}, action) => {
         ...user
       };
     }
+    case types.LOAD_USER_TASKS: {
+      const { userId, tasksById } = action;
+      return {
+        ...state,
+        [userId]: {
+          ...state[userId],
+          tasksById
+        }
+      };
+    }
     case types.ADD_USER: {
       const { userId, userData } = action;
       return {

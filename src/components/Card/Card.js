@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
-import { cardActions, cardSelectors } from '../../ducks/cards';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { userActions, userSelectors } from '../../ducks/users';
 import { subtaskSelectors } from '../../ducks/subtasks';
 import './Card.scss';
@@ -25,7 +25,7 @@ class Card extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.cardTags.indexOf(undefined) !== -1) {
+    if (nextProps.taskTags.indexOf(undefined) !== -1) {
       return false;
     }
     return true;
@@ -33,21 +33,21 @@ class Card extends Component {
 
   handleCardClick = e => {
     if (e.target.matches('button') || e.target.matches('a')) return;
-    const { cardId, onCardClick } = this.props;
-    onCardClick(cardId);
+    const { taskId, onCardClick } = this.props;
+    onCardClick(taskId);
   };
 
   render() {
     const {
-      cardTitle,
-      cardId,
-      cardIndex,
-      cardTags,
+      name,
+      taskId,
+      taskIndex,
+      taskTags,
       commentIds,
       dueDate,
       subtaskIds,
       completedSubtasks,
-      cardMembers
+      taskMembers
     } = this.props;
 
     const dueDateStr = dueDate
@@ -60,7 +60,7 @@ class Card extends Component {
     const isDueTmrw = dueDateStr === 'Tomorrow';
     const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
     return (
-      <Draggable draggableId={cardId} index={cardIndex}>
+      <Draggable draggableId={taskId} index={taskIndex}>
         {provided => (
           <div
             className="card"
@@ -75,17 +75,17 @@ class Card extends Component {
           >
             <div className="card__header" ref={el => (this.headerEl = el)}>
               <div className="card__tags">
-                {cardTags.map(cardTag => (
+                {taskTags.map(taskTag => (
                   <Tag
-                    key={cardTag.text}
+                    key={taskTag.text}
                     size="sm"
-                    color={cardTag.color}
+                    color={taskTag.color}
                     variant="pill"
                     className="card__tag"
                   />
                 ))}
               </div>
-              <h3 className="card__title">{cardTitle}</h3>
+              <h3 className="card__title">{name}</h3>
             </div>
             <div className="card__body">
               {dueDate && (
@@ -117,10 +117,10 @@ class Card extends Component {
               )}
             </div>
             <div className="card__footer">
-              {cardMembers && cardMembers.length > 0 && (
+              {taskMembers && taskMembers.length > 0 && (
                 <div className="card__members-wrapper">
                   <div className="card__members">
-                    {cardMembers.map(member => {
+                    {taskMembers.map(member => {
                       const { name, photoURL, userId } = member;
                       return (
                         <Avatar
@@ -149,12 +149,12 @@ class Card extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cardTags: cardSelectors.getCardTags(state, ownProps),
+    taskTags: taskSelectors.getTaskTags(state, ownProps),
     completedSubtasks: subtaskSelectors.getCompletedSubtasks(
       state,
       ownProps.subtaskIds
     ),
-    cardMembers: userSelectors.getMembersArray(state, ownProps.assignedTo)
+    taskMembers: userSelectors.getMembersArray(state, ownProps.assignedTo)
   };
 };
 

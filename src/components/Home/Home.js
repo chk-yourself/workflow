@@ -5,33 +5,35 @@ import { withAuthorization } from '../Session';
 import * as ROUTES from '../../constants/routes';
 import { userActions, userSelectors } from '../../ducks/users';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import { BoardGridContainer } from '../BoardGrid';
-import { BoardComposer } from '../BoardComposer';
+import { ProjectGridContainer } from '../ProjectGrid';
+import { ProjectComposer } from '../ProjectComposer';
 import { BoardContainer } from '../Board';
-import { boardActions, boardSelectors } from '../../ducks/boards';
+import { projectActions, projectSelectors } from '../../ducks/projects';
+import { Icon } from '../Icon';
+import { Dashboard } from '../Dashboard';
+import { Tasks } from '../Tasks';
 import './Home.scss';
 
 class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isBoardComposerOpen: false,
+      isProjectComposerOpen: false,
       isFetching: true
     };
   }
 
   componentDidMount() {
     const {
-      firebase,
       selectUser,
       fetchUsersById,
-      fetchBoardsById
+      fetchProjectsById,
+      userId
     } = this.props;
-    const userId = firebase.auth.currentUser.uid;
     selectUser(userId);
     console.log('mounted home');
     fetchUsersById()
-      .then(() => fetchBoardsById(userId))
+      .then(() => fetchProjectsById(userId))
       .then(() =>
         this.setState({
           isFetching: false
@@ -39,54 +41,71 @@ class HomePage extends Component {
       );
   }
 
-  toggleBoardComposer = () => {
+  toggleProjectComposer = () => {
     this.setState(prevState => ({
-      isBoardComposerOpen: !prevState.isBoardComposerOpen
+      isProjectComposerOpen: !prevState.isProjectComposerOpen
     }));
   };
 
-  createBoard = boardTitle => {
+  createProject = name => {
     const { userId, firebase } = this.props;
-    firebase.addBoard({ userId, boardTitle });
+    firebase.addProject({ userId, name });
   };
 
   render() {
-    const { isBoardComposerOpen, isFetching } = this.state;
+    const { isProjectComposerOpen, isFetching } = this.state;
     if (isFetching) return null;
-    const { userId, boardsById } = this.props;
+    const { userId, projectsById } = this.props;
     return (
       <>
-        {isBoardComposerOpen && (
-          <BoardComposer
-            onClose={this.toggleBoardComposer}
-            handleSubmit={this.createBoard}
+        {isProjectComposerOpen && (
+          <ProjectComposer
+            onClose={this.toggleProjectComposer}
+            handleSubmit={this.createProject}
           />
         )}
         <Switch>
           <Route
             exact
             path={ROUTES.HOME}
-            render={() => (
+            render={props => (
+              <Dashboard
+                toggleProjectComposer={this.toggleProjectComposer}
+                {...props}
+              />
+            )}
+          />
+          <Route
+            path={'/0/project/:id'}
+            render={props => (
+              <BoardContainer
+                userId={userId}
+                projectId={props.match.params.id}
+                projectName={projectsById[props.match.params.id].name}
+                {...props}
+              />
+            )}
+          />
+          <Route
+            path={ROUTES.USER_PROJECTS}
+            render={props => (
               <main className="main">
-                <h1>Home</h1>
-                {userId && (
-                  <BoardGridContainer
-                    userId={userId}
-                    openBoardComposer={this.toggleBoardComposer}
-                  />
-                )}
+                <h1 className="main__header">Projects</h1>
+                <ProjectGridContainer
+                  userId={userId}
+                  openProjectComposer={this.toggleProjectComposer}
+                  {...props}
+                />
               </main>
             )}
           />
           <Route
-            path={ROUTES.BOARD}
-            render={props => (
-              <BoardContainer
-                userId={userId}
-                boardId={props.match.params.id}
-                boardTitle={boardsById[props.match.params.id].boardTitle}
-                {...props}
-              />
+            path={ROUTES.USER_TASKS}
+            render={() => (
+              <main className="main">
+                <h1 className="main__header">Tasks</h1>
+                <Tasks userId={userId} />
+              </main>
             )}
           />
         </Switch>
@@ -97,16 +116,16 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentBoardId: currentSelectors.getCurrentBoardId(state),
-    userId: currentSelectors.getCurrentUserId(state),
-    boardsById: boardSelectors.getBoardsById(state)
+    currentProjectId: currentSelectors.getCurrentProjectId(state),
+    projectsById: projectSelectors.getProjectsById(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
-    fetchBoardsById: userId => dispatch(boardActions.fetchBoardsById(userId)),
+    fetchProjectsById: userId =>
+      dispatch(projectActions.fetchProjectsById(userId)),
     selectUser: userId => dispatch(currentActions.selectUser(userId))
   };
 };

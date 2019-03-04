@@ -6,6 +6,7 @@ import { PopoverWrapper } from '../Popover';
 import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
 import { SignOutButton } from '../SignOut';
+import { SearchBar } from '../SearchBar';
 import * as ROUTES from '../../constants/routes';
 import './Topbar.scss';
 
@@ -14,6 +15,7 @@ class Topbar extends Component {
     const { currentUser } = this.props;
     return (
       <div className="topbar">
+      <SearchBar />
         {currentUser && (
           <PopoverWrapper
             classes={{

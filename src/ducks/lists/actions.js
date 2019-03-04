@@ -8,12 +8,12 @@ export const loadListsById = listsById => {
   };
 };
 
-export const fetchListsById = boardId => {
+export const fetchListsById = projectId => {
   return async dispatch => {
     try {
       const listsById = await firebase.db
         .collection('lists')
-        .where('boardId', '==', boardId)
+        .where('projectId', '==', projectId)
         .get()
         .then(snapshot => {
           const listsById = {};

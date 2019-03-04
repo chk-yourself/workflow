@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import './App.scss';
-import { Route, Switch, withRouter } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
@@ -11,6 +10,7 @@ import { AccountPage } from '../Account';
 import { AdminPage } from '../Admin';
 import { withAuthentication } from '../Session';
 import { Header } from '../Header';
+import './App.scss';
 
 class App extends Component {
   render() {
@@ -22,7 +22,7 @@ class App extends Component {
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
           <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-          <Route path={ROUTES.HOME} render={props => <HomePage {...props} />} />
+          <Route path={ROUTES.APP} render={props => <HomePage {...props} />} />
           <Route path={ROUTES.ACCOUNT} component={AccountPage} />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
         </Switch>

@@ -1,0 +1,48 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.dashboard {
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  @include md {
+    padding: 8px 24px;
+  }
+  @include lg {
+    padding: 8px 32px;
+  }
+}
+
+.dashboard__header {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: $grey-900;
+}
+
+.dashboard__section-header {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 400;
+  padding: 16px 16px 8px 16px;
+  text-transform: uppercase;
+  color: $grey-600;
+}
+
+.dashboard__section {
+  background-color: $white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 8px;
+  border: 1px solid $grey-200;
+  margin-bottom: 24px;
+}
+
+.dashboard__section-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}

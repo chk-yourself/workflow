@@ -1,8 +1,11 @@
 export const LANDING = '/';
 export const SIGN_UP = '/signup';
 export const SIGN_IN = '/signin';
-export const HOME = '/home';
+export const APP = '/0/';
+export const HOME = '/0/home/:id';
 export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
-export const BOARD = '/home/board/:id';
+export const PROJECT = '/0/project/:id';
+export const USER_PROJECTS = '/0/:id/projects';
+export const USER_TASKS = '/0/:id/tasks';

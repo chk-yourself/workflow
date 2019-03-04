@@ -9,11 +9,11 @@ const current = (state = {}, action) => {
         userId
       };
     }
-    case types.SELECT_BOARD: {
-      const { boardId } = action;
+    case types.SELECT_PROJECT: {
+      const { projectId } = action;
       return {
         ...state,
-        boardId
+        projectId
       };
     }
     case types.SELECT_LIST: {
@@ -23,11 +23,11 @@ const current = (state = {}, action) => {
         listId
       };
     }
-    case types.SELECT_CARD: {
-      const { cardId } = action;
+    case types.SELECT_TASK: {
+      const { taskId } = action;
       return {
         ...state,
-        cardId
+        taskId
       };
     }
     default:

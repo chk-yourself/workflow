@@ -1,0 +1,736 @@
+/* eslint-disable no-nested-ternary */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { withFirebase } from '../Firebase';
+import { currentActions, currentSelectors } from '../../ducks/current';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
+import { userSelectors } from '../../ducks/users';
+import { commentActions, commentSelectors } from '../../ducks/comments';
+import { Textarea } from '../Textarea';
+import { Button } from '../Button';
+import { Icon } from '../Icon';
+import { Modal } from '../Modal';
+import { Toolbar } from '../Toolbar';
+import { Avatar } from '../Avatar';
+import TaskEditorAssignMember from './TaskEditorAssignMember';
+import TaskEditorSection from './TaskEditorSection';
+import { MemberSearch } from '../MemberSearch';
+import TaskEditorMoreActions from './TaskEditorMoreActions';
+import * as keys from '../../constants/keys';
+import * as droppableTypes from '../../constants/droppableTypes';
+import TaskEditorSubtask from './TaskEditorSubtask';
+import TaskEditorComment from './TaskEditorComment';
+import { TagsInput } from '../TagsInput';
+import './TaskEditor.scss';
+import { projectSelectors } from '../../ducks/projects';
+import { DatePicker } from '../DatePicker';
+import { MONTHS, dateUtils } from '../Calendar';
+
+class TaskEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isFetching:
+        this.props.commentIds !== undefined && this.props.commentIds.length > 0,
+      name: this.props.name,
+      notes: this.props.notes || '',
+      newSubtask: '',
+      subtasks: this.props.subtasksArray.reduce((subtasks, subtask) => {
+        const { subtaskId, name, isCompleted } = subtask;
+        subtasks[subtaskId] = {
+          name,
+          isCompleted
+        };
+        return subtasks;
+      }, {}),
+      newComment: '',
+      currentFocus: null,
+      subtaskIds: this.props.subtaskIds || [],
+      isColorPickerActive: false,
+      currentTag: null,
+      isDatePickerActive: false
+    };
+    this.membersListButton = React.createRef();
+  }
+
+  componentDidMount() {
+    const {
+      taskId,
+      commentIds,
+      firebase,
+      fetchTaskComments,
+      addComment,
+      deleteComment,
+      updateComment
+    } = this.props;
+
+    if (commentIds && commentIds.length > 0) {
+      fetchTaskComments(taskId).then(() => {
+        this.setState({
+          isFetching: false
+        });
+      });
+    }
+
+    this.commentObserver = firebase.db
+      .collection('comments')
+      .where('taskId', '==', taskId)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          const commentId = change.doc.id;
+          const commentData = change.doc.data();
+          if (change.type === 'added') {
+            addComment({ commentId, commentData });
+          }
+          if (change.type === 'modified') {
+            updateComment({ commentId, commentData });
+          }
+          if (change.type === 'removed') {
+            deleteComment(commentId);
+          }
+        });
+      });
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if ('subtaskIds' in props === false) return null;
+    if (props.subtaskIds.length !== state.subtaskIds.length) {
+      return {
+        subtasks: props.subtasksArray.reduce((subtasks, subtask) => {
+          const { subtaskId, name, isCompleted } = subtask;
+          subtasks[subtaskId] = {
+            name,
+            isCompleted
+          };
+          return subtasks;
+        }, {}),
+        subtaskIds: props.subtaskIds
+      };
+    }
+    return null;
+  }
+
+  updateTaskSubtasks = () => {
+    const { subtasksArray } = this.props;
+    this.setState({
+      subtasks: subtasksArray.reduce((subtasks, subtask) => {
+        const { subtaskId, name, isCompleted } = subtask;
+        subtasks[subtaskId] = {
+          name,
+          isCompleted
+        };
+        return subtasks;
+      }, {})
+    });
+  };
+
+  onChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  deleteTask = () => {
+    const { taskId, listId, firebase, handleTaskEditorClose } = this.props;
+    firebase.deleteTask({ taskId, listId });
+    handleTaskEditorClose();
+  };
+
+  onBlur = e => {
+    const { [taskKey]: currentValue, taskId, firebase } = this.props;
+    const taskKey = e.target.name;
+    const { [taskKey]: updatedValue } = this.state;
+
+    // When field loses focus, update task if change is detected
+
+    if (updatedValue !== currentValue) {
+      firebase.updateTask(taskId, {
+        [taskKey]: updatedValue
+      });
+      console.log('updated task!');
+    }
+
+    this.setState({
+      currentFocus: null
+    });
+  };
+
+  addComment = e => {
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { userId, firebase, taskId, projectId } = this.props;
+    const { newComment: content } = this.state;
+    firebase.addComment({ userId, content, taskId, projectId });
+    this.resetForm('newComment');
+    e.preventDefault();
+  };
+
+  resetForm = key => {
+    this.setState({
+      [key]: ''
+    });
+  };
+
+  addSubtask = e => {
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { userId, firebase, taskId, projectId } = this.props;
+    const { newSubtask: name } = this.state;
+    firebase.addSubtask({ userId, name, taskId, projectId });
+    this.resetForm('newSubtask');
+    e.preventDefault();
+  };
+
+  onFocus = e => {
+    this.setState({
+      currentFocus: e.target.name
+    });
+  };
+
+  handleModalClick = e => {
+    const { currentFocus } = this.state;
+    if (
+      (currentFocus === 'newComment' &&
+        !this.commentFormEl.contains(e.target)) ||
+      (currentFocus === 'newSubtask' &&
+        !this.newSubtaskFormEl.contains(e.target))
+    ) {
+      this.setState({
+        currentFocus: null
+      });
+    }
+  };
+
+  handleMoreActions = e => {
+    if (!e.target.matches('a')) return;
+    const { action } = e.target.dataset;
+    switch (action) {
+      case 'delete':
+        this.deleteTask();
+        break;
+    }
+    e.preventDefault(); // prevents page reload
+  };
+
+  onSubtaskChange = e => {
+    const { subtasks } = this.state;
+    this.setState({
+      subtasks: {
+        ...subtasks,
+        [e.target.name]: {
+          ...subtasks[e.target.name],
+          name: e.target.value
+        }
+      }
+    });
+  };
+
+  handleCheckboxChange = e => {
+    const subtaskId = e.target.name;
+    this.toggleSubtaskCompleted(subtaskId);
+  };
+
+  toggleSubtaskCompleted = subtaskId => {
+    const { isCompleted } = this.state.subtasks[subtaskId];
+    this.setState(prevState => ({
+      subtasks: {
+        ...prevState.subtasks,
+        [subtaskId]: {
+          ...prevState.subtasks[subtaskId],
+          isCompleted: !prevState.subtasks[subtaskId].isCompleted
+        }
+      }
+    }));
+    const { firebase } = this.props;
+    firebase.updateSubtask(subtaskId, {
+      isCompleted: !isCompleted,
+      completedAt: !isCompleted ? firebase.getTimestamp() : null
+    });
+    console.log(!isCompleted);
+  };
+
+  updateSubtaskName = e => {
+    const subtaskId = e.target.name;
+    const { subtasks } = this.state;
+    const { name } = subtasks[subtaskId];
+    const { firebase } = this.props;
+    firebase.updateSubtask(subtaskId, { name });
+  };
+
+  deleteSubtask = e => {
+    if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
+    const { taskId, firebase } = this.props;
+    const subtaskId = e.target.name;
+    firebase.deleteSubtask({ subtaskId, taskId });
+  };
+
+  moveSubtask = ({ destination, draggableId, source }) => {
+    if (!destination) return;
+    if (destination.index === source.index) return;
+    const { firebase } = this.props;
+    const { subtaskIds } = this.state;
+    const updatedSubtaskIds = [...subtaskIds];
+    updatedSubtaskIds.splice(source.index, 1);
+    updatedSubtaskIds.splice(destination.index, 0, draggableId);
+    this.setState({
+      subtaskIds: updatedSubtaskIds
+    });
+    firebase.updateTask(source.droppableId, {
+      subtaskIds: updatedSubtaskIds
+    });
+  };
+
+  handleCommentLike = commentId => {
+    const { firebase, userId, commentsById } = this.props;
+    const { likes } = commentsById[commentId];
+
+    if (likes.indexOf(userId) === -1) {
+      firebase.updateComment(commentId, {
+        likes: firebase.addToArray(userId)
+      });
+    } else {
+      firebase.updateComment(commentId, {
+        likes: firebase.removeFromArray(userId)
+      });
+    }
+  };
+
+  assignMember = userId => {
+    const { taskId, projectId, assignedTo, firebase } = this.props;
+
+    if (assignedTo.indexOf(userId) !== -1) {
+      firebase.removeTaskAssignment({ taskId, userId });
+    } else {
+      firebase.assignTask({ taskId, projectId, userId });
+    }
+  };
+
+  toggleColorPicker = value => {
+    this.setState({
+      isColorPickerActive: value
+    });
+  };
+
+  addTag = text => {
+    console.log(text);
+    const {
+      firebase,
+      currentUser,
+      projectTags,
+      taskId,
+      projectId,
+      addTag
+    } = this.props;
+    const { userId, tags: userTags } = currentUser;
+    const isProjectTag = projectTags && text in projectTags;
+    const isUserTag = userTags && text in userTags;
+    const tagData = isProjectTag
+      ? projectTags[text]
+      : isUserTag
+      ? userTags[text]
+      : { projectId, text };
+
+    firebase
+      .addTag({
+        userId,
+        taskId,
+        projectId,
+        ...tagData
+      })
+      .then(() => {
+        if (!isUserTag && !isProjectTag) {
+          this.setState({
+            currentTag: text
+          });
+          this.toggleColorPicker(true);
+        }
+      });
+  };
+
+  setTagColor = color => {
+    const { userId, projectId, firebase } = this.props;
+    const { currentTag: tag } = this.state;
+    firebase.setTagColor({ userId, projectId, tag, color });
+  };
+
+  removeTag = tag => {
+    const { taskId, firebase } = this.props;
+    firebase.removeTag({ taskId, tag });
+    this.toggleColorPicker(false);
+  };
+
+  setDueDate = date => {
+    const { firebase, taskId } = this.props;
+
+    firebase.updateTask(taskId, {
+      dueDate: date
+    });
+  };
+
+  toggleDatePicker = () => {
+    this.setState(prevState => ({
+      isDatePickerActive: !prevState.isDatePickerActive
+    }));
+  };
+
+  componentWillUnmount() {
+    this.commentObserver();
+  }
+
+  render() {
+    const {
+      handleTaskEditorClose,
+      taskId,
+      commentIds,
+      assignedTo,
+      commentsArray,
+      usersArray,
+      membersArray,
+      currentUser,
+      taskTags,
+      mergedTags,
+      dueDate
+    } = this.props;
+    const {
+      name,
+      notes,
+      newComment,
+      currentFocus,
+      newSubtask,
+      subtasks,
+      subtaskIds,
+      isFetching,
+      isColorPickerActive,
+      isDatePickerActive,
+      currentTag
+    } = this.state;
+    const hasSubtasks = subtaskIds && subtaskIds.length > 0;
+    const hasComments = commentIds && commentIds.length > 0;
+    const isAssigned = !!assignedTo && assignedTo.length > 0;
+    const isNewCommentInvalid = newComment === '';
+    const isNewSubtaskInvalid = newSubtask === '';
+    const commentFormIsFocused = currentFocus === 'newComment';
+    const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
+    const taskDueDate = dueDate
+      ? dateUtils.getSimpleDate(dueDate.toDate())
+      : dateUtils.getSimpleDate(new Date());
+
+    if (isFetching) return null;
+
+    return (
+      <Modal
+        onModalClose={handleTaskEditorClose}
+        classes={{ content: 'task-editor' }}
+        onModalClick={this.handleModalClick}
+        size="lg"
+        id="taskEditor"
+      >
+        <Toolbar className="task-editor__toolbar">
+          <TaskEditorAssignMember buttonRef={this.membersListButton}>
+            <MemberSearch
+              users={usersArray}
+              assignedMembers={assignedTo}
+              onMemberClick={this.assignMember}
+            />
+          </TaskEditorAssignMember>
+          <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
+        </Toolbar>
+        <form
+          name="editTaskForm"
+          onFocus={this.onFocus}
+          className="task-editor__edit-task-form"
+        >
+          <Textarea
+            className="task-editor__textarea--title"
+            name="name"
+            value={name}
+            onChange={this.onChange}
+            required
+            onBlur={this.onBlur}
+            onFocus={this.onFocus}
+          />
+          <TaskEditorSection>
+            <Button
+              onClick={this.toggleDatePicker}
+              type="button"
+              className={`task-editor__btn--due-date ${
+                isDatePickerActive ? 'is-active' : ''
+              }`}
+            >
+              <span className="task-editor__due-date-icon">
+                <Icon name="calendar" />
+              </span>
+              <span className="task-editor__due-date-wrapper">
+                {!dueDate ? (
+                  <span className="task-editor__no-due-date">Set due date</span>
+                ) : (
+                  <>
+                    <span className="task-editor__section-title--sm">
+                      Due Date
+                    </span>
+                    <span className="task-editor__due-date">{`${
+                      MONTHS[taskDueDate.month].short
+                    } ${taskDueDate.day}`}</span>
+                  </>
+                )}
+              </span>
+            </Button>
+            {isDatePickerActive && (
+              <DatePicker
+                onClose={this.toggleDatePicker}
+                selectedDate={dueDate ? taskDueDate : null}
+                currentMonth={taskDueDate.month}
+                currentYear={taskDueDate.year}
+                selectDate={this.setDueDate}
+              />
+            )}
+          </TaskEditorSection>
+          <TaskEditorSection>
+            <div className="task-editor__section-icon">
+              <Icon name="user" />
+            </div>
+            {isAssigned && (
+              <div className="task-editor__members">
+                {membersArray.map(member => {
+                  const { name, photoURL, userId } = member;
+                  return (
+                    <Avatar
+                      classes={{
+                        avatar: 'task-editor__avatar',
+                        placeholder: 'task-editor__avatar-placeholder'
+                      }}
+                      fullName={name}
+                      size="sm"
+                      variant="circle"
+                      imgSrc={photoURL}
+                      key={userId}
+                    />
+                  );
+                })}
+              </div>
+            )}
+            <Button
+              type="button"
+              className="task-editor__btn--add-member"
+              onClick={() => this.membersListButton.current.click()}
+            >
+              <Icon name="plus" />
+            </Button>
+          </TaskEditorSection>
+          <TaskEditorSection>
+            <div className="task-editor__section-icon">
+              <Icon name="tag" />
+            </div>
+            <TagsInput
+              addTag={this.addTag}
+              tagSuggestions={mergedTags}
+              assignedTags={taskTags}
+              isColorPickerActive={isColorPickerActive}
+              setTagColor={this.setTagColor}
+              removeTag={this.removeTag}
+              currentTag={currentTag}
+            />
+          </TaskEditorSection>
+          <TaskEditorSection>
+            <div className="task-editor__section-icon">
+              <Icon name="edit-3" />
+            </div>
+            <Textarea
+              className="task-editor__textarea task-editor__textarea--description"
+              name="notes"
+              value={notes}
+              onChange={this.onChange}
+              placeholder="Add a description"
+              onBlur={this.onBlur}
+              onFocus={this.onFocus}
+            />
+          </TaskEditorSection>
+        </form>
+        <TaskEditorSection>
+          <div className="task-editor__section-header">
+            <div className="task-editor__section-icon">
+              <Icon name="check-square" />
+            </div>
+            <h3 className="task-editor__section-title">Subtasks</h3>
+            <hr className="task-editor__hr" />
+          </div>
+          {hasSubtasks && (
+            <DragDropContext onDragEnd={this.moveSubtask}>
+              <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
+                {provided => (
+                  <ul
+                    className="task-editor__subtasks"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {subtaskIds.map((subtaskId, index) => {
+                      return (
+                        <TaskEditorSubtask
+                          subtaskId={subtaskId}
+                          index={index}
+                          name={subtasks[subtaskId].name}
+                          isCompleted={subtasks[subtaskId].isCompleted}
+                          toggleCompleted={this.handleCheckboxChange}
+                          onChange={this.onSubtaskChange}
+                          onBlur={this.updateSubtaskName}
+                          onKeyDown={this.deleteSubtask}
+                          key={subtaskId}
+                        />
+                      );
+                    })}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
+          )}
+          <div className="task-editor__section-icon">
+            {newSubtaskFormIsFocused ? (
+              <div className="task-editor__checkbox" />
+            ) : (
+              <Icon name="plus-circle" />
+            )}
+          </div>
+          <form
+            name="newSubtaskForm"
+            className={`task-editor__new-subtask-form ${
+              currentFocus === 'newSubtask' ? 'is-focused' : ''
+            }`}
+            ref={el => (this.newSubtaskFormEl = el)}
+            onSubmit={this.addSubtask}
+          >
+            <Textarea
+              className="task-editor__textarea task-editor__textarea--new-subtask"
+              name="newSubtask"
+              value={newSubtask}
+              onChange={this.onChange}
+              placeholder="Add a subtask"
+              onFocus={this.onFocus}
+              onKeyDown={this.addSubtask}
+            />
+            {currentFocus === 'newSubtask' && (
+              <Button
+                type="submit"
+                color="primary"
+                size="small"
+                variant="contained"
+                disabled={isNewSubtaskInvalid}
+                onClick={this.addSubtask}
+                className="task-editor__btn--add-subtask"
+              >
+                Add subtask
+              </Button>
+            )}
+          </form>
+        </TaskEditorSection>
+        <TaskEditorSection>
+          <div className="task-editor__section-header">
+            <div className="task-editor__section-icon">
+              <Icon name="message-circle" />
+            </div>
+            <h3 className="task-editor__section-title">Comments</h3>
+            <hr className="task-editor__hr" />
+          </div>
+
+          {hasComments && (
+            <div className="task-editor__comments">
+              {commentsArray.map(comment => {
+                const { commentId } = comment;
+                return (
+                  <TaskEditorComment
+                    key={commentId}
+                    comment={comment}
+                    handleLike={this.handleCommentLike}
+                  />
+                );
+              })}
+            </div>
+          )}
+          <Avatar
+            classes={{
+              avatar: 'task-editor__avatar',
+              placeholder: 'task-editor__avatar-placeholder'
+            }}
+            fullName={currentUser.name}
+            size="sm"
+            variant="circle"
+            imgSrc={currentUser.photoURL}
+          />
+          <form
+            name="commentForm"
+            className={`task-editor__comment-form ${
+              commentFormIsFocused ? 'is-focused' : ''
+            }`}
+            ref={el => (this.commentFormEl = el)}
+            onSubmit={this.addComment}
+          >
+            <Textarea
+              className="task-editor__textarea task-editor__textarea--comment"
+              name="newComment"
+              value={newComment}
+              onChange={this.onChange}
+              placeholder="Write a comment..."
+              onFocus={this.onFocus}
+              onKeyDown={this.addComment}
+            />
+            {commentFormIsFocused && (
+              <Button
+                type="submit"
+                color="primary"
+                size="small"
+                variant="contained"
+                disabled={isNewCommentInvalid}
+                onClick={this.addComment}
+                name="newCommentSubmit"
+                className="task-editor__btn--submit-comment"
+              >
+                Send
+              </Button>
+            )}
+          </form>
+        </TaskEditorSection>
+      </Modal>
+    );
+  }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    currentUser: userSelectors.getCurrentUserData(state),
+    subtasksArray: subtaskSelectors.getSubtasksArray(
+      state,
+      ownProps.subtaskIds
+    ),
+    commentsArray: commentSelectors.getCommentsArray(
+      state,
+      ownProps.commentIds
+    ),
+    commentsById: commentSelectors.getCommentsById(state),
+    usersArray: userSelectors.getUsersArray(state),
+    membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
+    taskTags: taskSelectors.getTaskTags(state, ownProps),
+    mergedTags: currentSelectors.getMergedTags(state),
+    projectTags: projectSelectors.getProjectTags(state, ownProps.projectId)
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchTaskComments: taskId =>
+      dispatch(commentActions.fetchTaskComments(taskId)),
+    addComment: ({ commentId, commentData }) =>
+      dispatch(commentActions.addComment({ commentId, commentData })),
+    deleteComment: commentId =>
+      dispatch(commentActions.deleteComment(commentId)),
+    updateComment: ({ commentId, commentData }) =>
+      dispatch(commentActions.updateComment({ commentId, commentData })),
+    addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag))
+  };
+};
+
+export default withFirebase(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TaskEditor)
+);

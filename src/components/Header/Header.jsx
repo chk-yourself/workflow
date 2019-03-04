@@ -31,7 +31,7 @@ export default class Header extends Component {
             authUser ? (
               <>
                 <Sidebar onToggle={this.toggleNav}>
-                  <NavLinksAuth />
+                  <NavLinksAuth userId={authUser.uid} />
                 </Sidebar>
                 <Topbar />
               </>

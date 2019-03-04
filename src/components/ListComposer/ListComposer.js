@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { boardActions, boardSelectors } from '../../ducks/boards';
+import { projectActions, projectSelectors } from '../../ducks/projects';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { Button } from '../Button';
 import './ListComposer.scss';
 
 const INITIAL_STATE = {
-  listTitle: '',
+  name: '',
   isActive: false
 };
 
@@ -20,7 +20,7 @@ class ListComposer extends Component {
   }
 
   resetForm = () => {
-    this.setState({ listTitle: '' });
+    this.setState({ name: '' });
   };
 
   onReset = e => {
@@ -29,9 +29,9 @@ class ListComposer extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { listTitle } = this.state;
-    const { boardId } = this.props;
-    this.props.firebase.addList({ boardId, listTitle });
+    const { name } = this.state;
+    const { projectId } = this.props;
+    this.props.firebase.addList({ projectId, name });
     this.resetForm();
   };
 
@@ -56,7 +56,7 @@ class ListComposer extends Component {
   };
 
   render() {
-    const { listTitle, isActive } = this.state;
+    const { name, isActive } = this.state;
     return (
       <div
         className={`list-composer${isActive ? ' is-active' : ''}`}
@@ -66,10 +66,10 @@ class ListComposer extends Component {
         <form className="list-composer__form" onSubmit={this.onSubmit}>
           <Input
             onChange={this.onChange}
-            value={listTitle}
+            value={name}
             placeholder={isActive ? 'Enter list title...' : 'Add a list'}
             required
-            name="listTitle"
+            name="name"
             hideLabel
             className="list-composer__input"
           />
@@ -105,16 +105,16 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = state => {
   return {
-    boardsById: boardSelectors.getBoardsById(state),
-    boardsArray: boardSelectors.getBoardsArray(state),
+    projectsById: projectSelectors.getProjectsById(state),
+    projectsArray: projectSelectors.getProjectsArray(state),
     current: currentSelectors.getCurrent(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateBoardsById: board => dispatch(boardActions.updateBoardsById(board)),
-    selectBoard: boardId => dispatch(currentActions.selectBoard(boardId))
+    updateProjectsById: project => dispatch(projectActions.updateProjectsById(project)),
+    selectProject: projectId => dispatch(currentActions.selectProject(projectId))
   };
 };
 

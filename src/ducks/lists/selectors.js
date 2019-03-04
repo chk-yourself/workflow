@@ -3,11 +3,11 @@ export const getListsById = state => {
 };
 
 export const getListsArray = state => {
-  const { listsById, boardsById, current } = state;
-  const { boardId } = current;
-  const board = boardsById[boardId];
-  if (!board) return null;
-  const { listIds } = board;
+  const { listsById, projectsById, current } = state;
+  const { projectId } = current;
+  const project = projectsById[projectId];
+  if (!project) return null;
+  const { listIds } = project;
 
   return listIds.map(listId => {
     return {

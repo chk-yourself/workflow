@@ -8,10 +8,10 @@ export const selectUser = userId => {
   };
 };
 
-export const selectBoard = boardId => {
+export const selectProject = projectId => {
   return {
-    type: types.SELECT_BOARD,
-    boardId
+    type: types.SELECT_PROJECT,
+    projectId
   };
 };
 
@@ -22,9 +22,9 @@ export const selectList = listId => {
   };
 };
 
-export const selectCard = cardId => {
+export const selectTask = taskId => {
   return {
-    type: types.SELECT_CARD,
-    cardId
+    type: types.SELECT_TASK,
+    taskId
   };
 };
