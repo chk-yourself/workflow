@@ -18,7 +18,7 @@ export default class Task extends Component {
     const {
       taskId,
       index,
-      text,
+      name,
       isCompleted,
       toggleCompleted,
       onChange,
@@ -45,7 +45,7 @@ export default class Task extends Component {
               labelClass="task__checkbox-label"
             />
             <Textarea
-              value={text}
+              value={name}
               onChange={onChange}
               onBlur={onBlur}
               name={taskId}

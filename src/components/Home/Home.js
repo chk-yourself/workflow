@@ -76,7 +76,7 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={'/0/project/:id'}
+            path={ROUTES.PROJECT}
             render={props => (
               <BoardContainer
                 userId={userId}

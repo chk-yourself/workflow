@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { userSelectors } from '../../ducks/users';
-import { cardSelectors, cardActions } from '../../ducks/cards';
+import { taskSelectors, taskActions } from '../../ducks/tasks';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
@@ -14,10 +14,10 @@ class Tasks extends Component {
   state = {
     isFetching: true,
     taskIds: this.props.taskIds || [],
-    tasks: this.props.cards.reduce((tasksById, card) => {
-      const { cardId, cardTitle: text, isCompleted } = card;
-      tasksById[cardId] = {
-        text,
+    tasks: this.props.tasks.reduce((tasksById, task) => {
+      const { taskId, name, isCompleted } = task;
+      tasksById[taskId] = {
+        name,
         isCompleted
       };
       return tasksById;
@@ -26,14 +26,14 @@ class Tasks extends Component {
 
   static getDerivedStateFromProps(props, state) {
     if (
-      Object.keys(state.tasks).length !== props.cards.length ||
+      Object.keys(state.tasks).length !== props.tasks.length ||
       props.taskIds.length !== state.taskIds.length
     ) {
       return {
-        tasks: props.cards.reduce((tasksById, card) => {
-          const { cardId, cardTitle: text, isCompleted } = card;
-          tasksById[cardId] = {
-            text,
+        tasks: props.tasks.reduce((tasksById, task) => {
+          const { taskId, name, isCompleted } = task;
+          tasksById[taskId] = {
+            name,
             isCompleted
           };
           return tasksById;
@@ -47,39 +47,39 @@ class Tasks extends Component {
   componentDidMount() {
     const {
       userId,
-      fetchUserCards,
-      addCard,
-      updateCard,
-      deleteCard,
+      fetchUserTasks,
+      addTask,
+      updateTask,
+      deleteTask,
       firebase
     } = this.props;
     console.log(this.props.taskIds);
-    fetchUserCards(userId).then(() => {
+    fetchUserTasks(userId).then(() => {
       this.setState({
         isFetching: false
       });
     });
 
-    this.cardObserver = firebase.db
-      .collection('cards')
+    this.taskObserver = firebase.db
+      .collection('tasks')
       .where('assignedTo', 'array-contains', userId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const cardId = change.doc.id;
-          const cardData = change.doc.data();
+          const taskId = change.doc.id;
+          const taskData = change.doc.data();
           if (change.type === 'added') {
-            addCard({ cardId, cardData });
+            addTask({ taskId, taskData });
           } else if (change.type === 'removed') {
-            deleteCard(cardId);
+            deleteTask(taskId);
           } else {
-            updateCard({ cardId, cardData });
+            updateTask({ taskId, taskData });
           }
         });
       });
   }
 
   componentWillUnmount() {
-    this.cardObserver();
+    this.taskObserver();
   }
 
   moveTask = ({ destination, draggableId, source }) => {
@@ -93,25 +93,25 @@ class Tasks extends Component {
     this.setState({
       taskIds: updatedTaskIds
     });
-    firebase.updateCard(source.droppableId, {
+    firebase.updateTask(source.droppableId, {
       taskIds: updatedTaskIds
     });
   };
 
-  updateTaskText = e => {
-    const cardId = e.target.name;
+  updateTaskName = e => {
+    const taskId = e.target.name;
     const { tasks } = this.state;
-    const { text: cardTitle } = tasks[cardId];
+    const { name } = tasks[taskId];
     const { firebase } = this.props;
-    firebase.updateCard(cardId, { cardTitle });
+    firebase.updateTask(taskId, { name });
   };
 
   deleteTask = e => {
     /*
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { cardId, firebase } = this.props;
+    const { taskId, firebase } = this.props;
     const subtaskId = e.target.name;
-    firebase.deleteSubtask({ subtaskId, cardId });
+    firebase.deleteSubtask({ subtaskId, taskId });
     */
   };
 
@@ -122,7 +122,7 @@ class Tasks extends Component {
         ...tasks,
         [e.target.name]: {
           ...tasks[e.target.name],
-          text: e.target.value
+          name: e.target.value
         }
       }
     });
@@ -140,7 +140,7 @@ class Tasks extends Component {
       }
     }));
     const { firebase } = this.props;
-    firebase.updateCard(taskId, { isCompleted: !isCompleted });
+    firebase.updateTask(taskId, { isCompleted: !isCompleted });
   };
 
   handleCheckboxChange = e => {
@@ -149,11 +149,11 @@ class Tasks extends Component {
   };
 
   render() {
-    const { filters, view, cards, userId, taskIds } = this.props;
+    const { filters, view, tasks, userId, taskIds } = this.props;
     const { tasks, isFetching } = this.state;
     const hasTasks = taskIds && taskIds.length > 0;
     if (isFetching || !hasTasks) return null;
-    console.log({ cards, tasks });
+    console.log({ tasks, tasks });
     return (
       <DragDropContext onDragEnd={this.moveTask}>
         <Droppable droppableId={userId} type={droppableTypes.TASK}>
@@ -163,20 +163,20 @@ class Tasks extends Component {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {cards &&
-                cards.map((card, index) => {
-                  const { cardId } = card;
+              {tasks &&
+                tasks.map((task, index) => {
+                  const { taskId } = task;
                   return (
                     <Task
-                      taskId={cardId}
+                      taskId={taskId}
                       index={index}
-                      text={tasks[cardId].text}
-                      isCompleted={tasks[cardId].isCompleted}
+                      name={tasks[taskId].name}
+                      isCompleted={tasks[taskId].isCompleted}
                       toggleCompleted={this.handleCheckboxChange}
                       onChange={this.onTaskChange}
-                      onBlur={this.updateTaskText}
+                      onBlur={this.updateTaskName}
                       onKeyDown={this.deleteTask}
-                      key={cardId}
+                      key={taskId}
                     />
                   );
                 })}
@@ -193,19 +193,19 @@ const mapStateToProps = (state, ownProps) => {
   return {
     user: userSelectors.getUserData(state, ownProps.userId),
     taskIds: userSelectors.getUserTaskIds(state, ownProps.userId),
-    cards: cardSelectors.getUserCards(state, ownProps.userId)
+    tasks: taskSelectors.getUserTasks(state, ownProps.userId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     selectUser: userId => dispatch(currentActions.selectUser(userId)),
-    fetchUserCards: userId => dispatch(cardActions.fetchUserCards(userId)),
-    addCard: ({ cardId, cardData }) =>
-      dispatch(cardActions.addCard({ cardId, cardData })),
-    updateCard: ({ cardId, cardData }) =>
-      dispatch(cardActions.updateCard({ cardId, cardData })),
-    deleteCard: cardId => dispatch(cardActions.deleteCard(cardId))
+    fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
+    addTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.addTask({ taskId, taskData })),
+    updateTask: ({ taskId, taskData }) =>
+      dispatch(taskActions.updateTask({ taskId, taskData })),
+    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId))
   };
 };
 
