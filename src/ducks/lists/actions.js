@@ -29,6 +29,27 @@ export const fetchListsById = projectId => {
   };
 };
 
+export const fetchUserLists = userId => {
+  return async dispatch => {
+    try {
+      const listsById = await firebase.db
+        .collection('lists')
+        .where('userId', '==', userId)
+        .get()
+        .then(snapshot => {
+          const listsById = {};
+          snapshot.forEach(doc => {
+            listsById[doc.id] = doc.data();
+          });
+          return listsById;
+        });
+      dispatch(loadListsById(listsById));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const updateListsById = list => {
   return {
     type: types.UPDATE_LISTS_BY_ID,

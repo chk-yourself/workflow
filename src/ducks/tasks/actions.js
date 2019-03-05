@@ -57,7 +57,7 @@ export const fetchUserTasks = userId => {
           });
           return tasks;
         });
-      dispatch(loadUserTasks(userId, tasksById));
+      dispatch(loadTasksById(tasksById));
     } catch (error) {
       console.log(error);
     }

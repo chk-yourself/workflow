@@ -8,7 +8,7 @@ import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
 import { Input } from '../Input';
-import Cards from './Cards';
+import Tasks from './Tasks';
 import './List.scss';
 
 class List extends Component {
@@ -33,7 +33,7 @@ class List extends Component {
 
   onBlur = e => {
     const { name, listId, firebase } = this.props;
-    const { name: newName} = this.state;
+    const { name: newName } = this.state;
 
     // When field loses focus, update list title if change is detected
 
@@ -51,7 +51,8 @@ class List extends Component {
       onTaskClick,
       listId,
       listIndex,
-      isFetchingTasks
+      isFetchingTasks,
+      view
     } = this.props;
     if (isFetchingTasks) return null;
 
@@ -104,12 +105,12 @@ class List extends Component {
                 </PopoverWrapper>
               </header>
               <div className="list__content">
-              <Cards
-                tasks={tasks}
-                listId={listId}
-                onCardClick={onTaskClick}
-                onCardDelete={this.handleTaskDelete}
-              />
+                <Tasks
+                  tasks={tasks}
+                  listId={listId}
+                  onTaskClick={onTaskClick}
+                  view={view}
+                />
               </div>
               {provided.placeholder}
               <CardComposer listId={listId} />

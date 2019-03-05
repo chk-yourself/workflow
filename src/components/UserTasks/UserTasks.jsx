@@ -3,46 +3,17 @@ import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { userSelectors } from '../../ducks/users';
+import { listActions, listSelectors } from '../../ducks/lists';
 import { taskSelectors, taskActions } from '../../ducks/tasks';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
-import Task from './Task';
-import './Tasks.scss';
+import { List } from '../List';
 
-class Tasks extends Component {
+class UserTasks extends Component {
   state = {
-    isFetching: true,
-    taskIds: this.props.taskIds || [],
-    tasks: this.props.tasks.reduce((tasksById, task) => {
-      const { taskId, name, isCompleted } = task;
-      tasksById[taskId] = {
-        name,
-        isCompleted
-      };
-      return tasksById;
-    }, {})
+    isFetching: true
   };
-
-  static getDerivedStateFromProps(props, state) {
-    if (
-      Object.keys(state.tasks).length !== props.tasks.length ||
-      props.taskIds.length !== state.taskIds.length
-    ) {
-      return {
-        tasks: props.tasks.reduce((tasksById, task) => {
-          const { taskId, name, isCompleted } = task;
-          tasksById[taskId] = {
-            name,
-            isCompleted
-          };
-          return tasksById;
-        }, {}),
-        taskIds: props.taskIds
-      };
-    }
-    return null;
-  }
 
   componentDidMount() {
     const {
@@ -53,7 +24,6 @@ class Tasks extends Component {
       deleteTask,
       firebase
     } = this.props;
-    console.log(this.props.taskIds);
     fetchUserTasks(userId).then(() => {
       this.setState({
         isFetching: false
@@ -149,38 +119,65 @@ class Tasks extends Component {
   };
 
   render() {
-    const { filters, view, userId, taskIds } = this.props;
+    const { filters, view, userId, taskIds, taskLists, user } = this.props;
     const { tasks, isFetching } = this.state;
-    const hasTasks = taskIds && taskIds.length > 0;
-    if (isFetching || !hasTasks) return null;
-    console.log({ tasks, tasks });
+    const { tasksNew, tasksToday, tasksUpcoming, tasksLater } = user;
+    if (isFetching) return null;
     return (
       <DragDropContext onDragEnd={this.moveTask}>
         <Droppable droppableId={userId} type={droppableTypes.TASK}>
           {provided => (
-            <ul
-              className="tasks"
+            <div
+              className="user-tasks"
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {tasks &&
-                taskIds.map((taskId, index) => {
-                  return (
-                    <Task
-                      taskId={taskId}
-                      index={index}
-                      name={tasks[taskId].name}
-                      isCompleted={tasks[taskId].isCompleted}
-                      toggleCompleted={this.handleCheckboxChange}
-                      onChange={this.onTaskChange}
-                      onBlur={this.updateTaskName}
-                      onKeyDown={this.deleteTask}
-                      key={taskId}
-                    />
-                  );
-                })}
+              {
+                <>
+                <List
+                  listId="tasksNew"
+                  listIndex={0}
+                  name="New Tasks"
+                  taskIds={tasksNew}
+                  onTaskClick={this.handleTaskClick}
+                  projectId={null}
+                  view="list"
+                  isRestricted={true}
+                />
+                <List
+                  listId="tasksToday"
+                  listIndex={1}
+                  name="Today"
+                  taskIds={tasksToday}
+                  onTaskClick={this.handleTaskClick}
+                  projectId={null}
+                  view="list"
+                  isRestricted={true}
+                />
+                <List
+                  listId="tasksUpcoming"
+                  listIndex={2}
+                  name="Upcoming"
+                  taskIds={tasksUpcoming}
+                  onTaskClick={this.handleTaskClick}
+                  projectId={null}
+                  view="list"
+                  isRestricted={true}
+                />
+                <List
+                  listId="tasksLater"
+                  listIndex={3}
+                  name="Later"
+                  taskIds={tasksLater}
+                  onTaskClick={this.handleTaskClick}
+                  projectId={null}
+                  view="list"
+                  isRestricted={true}
+                />
+                </>
+              }
               {provided.placeholder}
-            </ul>
+            </div>
           )}
         </Droppable>
       </DragDropContext>
@@ -190,16 +187,15 @@ class Tasks extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.userId),
-    taskIds: userSelectors.getUserTaskIds(state, ownProps.userId),
-    tasks: taskSelectors.getUserTasks(state, ownProps.userId)
-  };
+    user: userSelectors.getUserData(state, ownProps.userId)
+  }; 
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     selectUser: userId => dispatch(currentActions.selectUser(userId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
+    fetchUserLists: userId => dispatch(listActions.fetchUserLists(userId)),
     addTask: ({ taskId, taskData }) =>
       dispatch(taskActions.addTask({ taskId, taskData })),
     updateTask: ({ taskId, taskData }) =>
@@ -214,5 +210,5 @@ export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Tasks)
+  )(UserTasks)
 );

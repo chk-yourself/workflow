@@ -140,7 +140,7 @@ class BoardContainer extends Component {
     )
       return;
     const { firebase } = this.props;
-    if (type === droppableTypes.CARD) {
+    if (type === droppableTypes.TASK) {
       const { listsById } = this.props;
       const isMovedWithinList = source.droppableId === destination.droppableId;
       const updatedTaskIds = [...listsById[destination.droppableId].taskIds];
@@ -214,21 +214,6 @@ class BoardContainer extends Component {
     const { current, listsArray, tasksById, projectId, userId } = this.props;
     if (isFetching) return null;
     const { taskId } = current;
-    const lists = listsArray.map((list, listIndex) => {
-      const { listId, name: listName, taskIds } = list;
-      return (
-        <List
-          listId={listId}
-          key={listId}
-          listIndex={listIndex}
-          name={listName}
-          taskIds={taskIds}
-          isFetchingTasks={isFetching}
-          onTaskClick={this.handleTaskClick}
-          projectId={projectId}
-        />
-      );
-    });
 
     return (
       <main className="board-container">
@@ -246,7 +231,25 @@ class BoardContainer extends Component {
           onDragEnd={this.onDragEnd}
           onDragStart={this.onDragStart}
         >
-          <Board projectId={projectId}>{lists}</Board>
+          <Board projectId={projectId}>
+          {listsArray.map((list, listIndex) => {
+      const { listId, name: listName, taskIds } = list;
+      return (
+        <List
+          listId={listId}
+          key={listId}
+          listIndex={listIndex}
+          name={listName}
+          taskIds={taskIds}
+          isFetchingTasks={isFetching}
+          onTaskClick={this.handleTaskClick}
+          projectId={projectId}
+          view="board"
+          isRestricted={false}
+        />
+      );
+    })}
+    </Board>
         </DragDropContext>
         {isTaskEditorOpen && (
           <TaskEditor

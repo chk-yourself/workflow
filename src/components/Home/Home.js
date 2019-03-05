@@ -11,7 +11,7 @@ import { BoardContainer } from '../Board';
 import { projectActions, projectSelectors } from '../../ducks/projects';
 import { Icon } from '../Icon';
 import { Dashboard } from '../Dashboard';
-import { Tasks } from '../Tasks';
+import { UserTasks } from '../UserTasks';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -104,7 +104,7 @@ class HomePage extends Component {
             render={() => (
               <main className="main">
                 <h1 className="main__header">Tasks</h1>
-                <Tasks userId={userId} />
+                <UserTasks userId={userId} />
               </main>
             )}
           />

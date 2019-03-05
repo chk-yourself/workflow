@@ -16,7 +16,6 @@ class ProjectGridContainer extends Component {
 
   componentDidMount() {
     const { userId, firebase, updateProject } = this.props;
-    console.log('project grid container mounted');
     this.projectObserver = firebase.db
       .collection('projects')
       .where('memberIds', 'array-contains', userId)

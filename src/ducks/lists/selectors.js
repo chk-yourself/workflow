@@ -2,6 +2,11 @@ export const getListsById = state => {
   return state.listsById;
 };
 
+export const getUserLists = (state, userId) => {
+  const { usersById, listsById } = state;
+  
+};
+
 export const getListsArray = state => {
   const { listsById, projectsById, current } = state;
   const { projectId } = current;

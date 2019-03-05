@@ -33,24 +33,22 @@ class TaskEditor extends Component {
     super(props);
     this.state = {
       isFetching:
-        this.props.commentIds !== undefined && this.props.commentIds.length > 0,
+        this.props.commentIds && this.props.commentIds.length > 0,
       name: this.props.name,
-      notes: this.props.notes || '',
+      notes: this.props.notes,
       newSubtask: '',
-      subtasks: this.props.subtasksArray.reduce((subtasks, subtask) => {
-        const { subtaskId, name, isCompleted } = subtask;
-        subtasks[subtaskId] = {
-          name,
-          isCompleted
-        };
-        return subtasks;
-      }, {}),
+      subtasks: this.props.subtasks,
       newComment: '',
       currentFocus: null,
-      subtaskIds: this.props.subtaskIds || [],
+      subtaskIds: this.props.subtaskIds,
       isColorPickerActive: false,
       currentTag: null,
-      isDatePickerActive: false
+      isDatePickerActive: false,
+      prevProps: {
+        name: this.props.name,
+        notes: this.props.notes,
+        subtasks: this.props.subtasks
+      }
     };
     this.membersListButton = React.createRef();
   }
@@ -95,19 +93,33 @@ class TaskEditor extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if ('subtaskIds' in props === false) return null;
-    if (props.subtaskIds.length !== state.subtaskIds.length) {
+    if (props.name !== state.prevProps.name) {
       return {
-        subtasks: props.subtasksArray.reduce((subtasks, subtask) => {
-          const { subtaskId, name, isCompleted } = subtask;
-          subtasks[subtaskId] = {
-            name,
-            isCompleted
-          };
-          return subtasks;
-        }, {}),
-        subtaskIds: props.subtaskIds
+        name: props.name,
+        prevProps: {
+          ...state.prevProps,
+          name: props.name
+        }
       };
+    };
+    if (props.notes !== state.prevProps.notes) {
+      return {
+        notes: props.notes,
+        prevProps: {
+          ...state.prevProps,
+          notes: props.notes
+        }
+      };
+    };
+    if (props.subtasks !== state.prevProps.subtasks) {
+      return {
+        subtasks: props.subtasks,
+        subtaskIds: props.subtaskIds,
+        prevProps: {
+          ...state.prevProps,
+          subtasks: props.subtasks
+        }
+      }
     }
     return null;
   }
@@ -246,7 +258,6 @@ class TaskEditor extends Component {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
     });
-    console.log(!isCompleted);
   };
 
   updateSubtaskName = e => {
@@ -299,9 +310,9 @@ class TaskEditor extends Component {
     const { taskId, projectId, assignedTo, firebase } = this.props;
 
     if (assignedTo.indexOf(userId) !== -1) {
-      firebase.removeTaskAssignment({ taskId, userId });
+      firebase.removeAssignee({ taskId, userId });
     } else {
-      firebase.assignTask({ taskId, projectId, userId });
+      firebase.assignMember({ taskId, projectId, userId });
     }
   };
 
@@ -701,6 +712,7 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.subtaskIds
     ),
+    subtasks: subtaskSelectors.getSimpleSubtasks(state, ownProps.subtaskIds),
     commentsArray: commentSelectors.getCommentsArray(
       state,
       ownProps.commentIds
