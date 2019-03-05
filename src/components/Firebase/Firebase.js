@@ -334,28 +334,36 @@ class Firebase {
 
   getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
 
-  addTask = ({ name, projectId, listId, assignedTo = [] }) => {
+  addTask = ({ name, projectId, listId, userId = null, defaultKey = null }) => {
+    const isDefaultListItem = defaultKey && userId;
+    
     this.db
       .collection('tasks')
       .add({
         createdAt: this.getTimestamp(),
-        lastUpdatedAt: this.getTimestamp(),
+        lastUpdatedAt: null,
         commentIds: [],
         subtaskIds: [],
         isCompleted: false,
         completedAt: null,
         dueDate: null,
         notes: '',
-        assignedTo,
+        assignedTo: isDefaultListItem ? [userId] : [],
+        ownerId: isDefaultListItem ? userId : null,
         listId,
         projectId,
         name
       })
       .then(ref => {
-        this.updateList(listId, {
-          taskIds: this.addToArray(ref.id),
-          lastUpdatedAt: this.getTimestamp()
-        });
+        if (isDefaultListItem) {
+          this.updateUser(userId, {
+            [`defaultLists.${defaultKey}.taskIds`]: this.addToArray(ref.id)
+          });
+        } else {
+          this.updateList(listId, {
+            taskIds: this.addToArray(ref.id),
+          });
+        };
       });
   };
 

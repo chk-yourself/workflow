@@ -13,6 +13,7 @@ export const getProject = (state, projectId) => {
 };
 
 export const getProjectTags = (state, projectId) => {
+  if (!projectId) return {};
   const { projectsById } = state;
   return projectsById[projectId].tags;
 };

@@ -71,3 +71,22 @@ export const windowDebouncer = callback => {
     });
   };
 };
+
+
+/**
+ * Returns a function that executes the first callback on its initial call
+ * then the second callback on subsequent calls
+ * @param {Function} first - The function executed only on its initial call
+ * @param {Function} after - The function executed on subsequent calls
+ */
+export const firstThen = (first, after) => {
+  let count = 0;
+  return (...args) => {
+    count++;
+    if (count === 1) {
+      return first.apply(this, args);
+    } else {
+      return after.apply(this, args);
+    }
+  }
+};

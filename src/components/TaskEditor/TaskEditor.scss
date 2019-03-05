@@ -76,7 +76,7 @@
   vertical-align: middle;
   text-align: center;
   display: inline-block;
-  color: $grey-700;
+  color: $grey-600;
   .feather {
     width: 18px;
     height: 18px;
@@ -88,7 +88,7 @@
   vertical-align: middle;
   text-align: center;
   display: inline-block;
-  color: $grey-700;
+  color: $grey-600;
   line-height: 1;
   .feather {
     width: 18px;
@@ -279,7 +279,7 @@
   height: 18px;
   top: 8px;
   left: 6px;
-  border: 1px solid $primary;
+  border: 2px solid $grey-500;
   border-radius: 4px;
   display: inline-block;
 }
@@ -294,6 +294,7 @@
     height: 12px;
     left: calc(50% - 6px);
     top: calc(50% - 6px);
+    stroke-width: 4px;
   }
 }
 

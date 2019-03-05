@@ -20,6 +20,7 @@ export const getCurrent = state => {
 
 export const getMergedTags = state => {
   const { projectId, userId } = state.current;
+  if (!projectId) return [];
   const { projectsById, usersById } = state;
   const { tags: projectTags } = projectsById[projectId];
   const { tags: userTags } = usersById[userId];

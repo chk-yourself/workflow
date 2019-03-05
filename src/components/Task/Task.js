@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
+import { currentActions, currentSelectors } from '../../ducks/current';
 import './Task.scss';
 
 class Task extends Component {
@@ -43,10 +45,10 @@ class Task extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    /*
-    const { taskId, firebase, listId, defaultKey } = this.props;
-    firebase.deleteTask({ taskId, listId, defaultKey });
-    */
+    
+    const { userId, taskId, firebase, listId, defaultKey } = this.props;
+    console.log({userId, taskId, listId, defaultKey});
+    firebase.deleteTask({ taskId, listId, defaultKey, userId });
   };
 
   toggleCompleted = () => {
@@ -55,6 +57,12 @@ class Task extends Component {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
     });
+  };
+
+  handleTaskClick = e => {
+    if (e.target.matches('button') || e.target.matches('a')) return;
+    const { taskId, onTaskClick } = this.props;
+    onTaskClick(taskId);
   };
 
   render() {
@@ -69,6 +77,7 @@ class Task extends Component {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            onClick={this.handleTaskClick}
           >
             <Checkbox
               id={`cb-${taskId}`}
@@ -96,4 +105,17 @@ class Task extends Component {
   }
 }
 
-export default withFirebase(Task);
+const mapStateToProps = (state) => {
+  return {
+    userId: currentSelectors.getCurrentUserId(state),
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default withFirebase(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Task));

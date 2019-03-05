@@ -18,7 +18,7 @@
   height: 18px;
   top: 8px;
   left: 6px;
-  border: 2px solid $primary-lt;
+  border: 2px solid $grey-500;
   border-radius: 4px;
   display: inline-block;
 }
@@ -33,6 +33,7 @@
     height: 12px;
     left: calc(50% - 6px);
     top: calc(50% - 6px);
+    stroke-width: 4px;
   }
 }
 

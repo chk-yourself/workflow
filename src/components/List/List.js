@@ -60,6 +60,7 @@ class List extends Component {
       listIndex,
       isFetchingTasks,
       isRestricted,
+      projectId,
       view
     } = this.props;
     if (isFetchingTasks) return null;
@@ -124,9 +125,9 @@ class List extends Component {
               </div>
               {provided.placeholder}
               {view === 'board' ? (
-                <CardComposer listId={listId} />
+                <CardComposer listId={listId} projectId={projectId} />
               ) : (
-                <TaskComposer listId={listId} />
+                <TaskComposer listId={listId} projectId={projectId} defaultKey={defaultKey} />
               )}
             </section>
             {provided.placeholder}

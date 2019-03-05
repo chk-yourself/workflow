@@ -4,6 +4,8 @@ const commentsById = (state = {}, action) => {
   switch (action.type) {
     case types.LOAD_COMMENTS_BY_ID: {
       const { commentsById } = action;
+      console.log(commentsById);
+      console.log('comments loaded');
       return {
         ...state,
         ...commentsById

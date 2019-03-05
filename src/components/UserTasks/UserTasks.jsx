@@ -10,11 +10,13 @@ import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { List } from '../List';
 import { Main } from '../Main';
+import { TaskEditor } from '../TaskEditor';
 import './UserTasks.scss';
 
 class UserTasks extends Component {
   state = {
-    isFetching: true
+    isFetching: true,
+    isTaskEditorOpen: false
   };
 
   componentDidMount() {
@@ -40,6 +42,7 @@ class UserTasks extends Component {
           const taskId = change.doc.id;
           const taskData = change.doc.data();
           if (change.type === 'added') {
+            console.log('added task');
             addTask({ taskId, taskData });
           } else if (change.type === 'removed') {
             deleteTask(taskId);
@@ -53,6 +56,18 @@ class UserTasks extends Component {
   componentWillUnmount() {
     this.taskObserver();
   }
+
+  toggleTaskEditor = () => {
+    this.setState(prevState => ({
+      isTaskEditorOpen: !prevState.isTaskEditorOpen
+    }));
+  };
+
+  handleTaskClick = taskId => {
+    const { selectTask } = this.props;
+    selectTask(taskId);
+    this.toggleTaskEditor();
+  };
 
   moveTask = ({ destination, draggableId, source }) => {
     if (!destination) return;
@@ -71,8 +86,8 @@ class UserTasks extends Component {
   };
 
   render() {
-    const { filters, userId, taskIds, user, lists } = this.props;
-    const { isFetching } = this.state;
+    const { filters, userId, user, lists, taskId, tasksById } = this.props;
+    const { isFetching, isTaskEditorOpen } = this.state;
     if (isFetching) return null;
     return (
       <Main title="All Tasks">
@@ -104,6 +119,13 @@ class UserTasks extends Component {
             )}
           </Droppable>
         </DragDropContext>
+        {isTaskEditorOpen && (
+          <TaskEditor
+            {...tasksById[taskId]}
+            handleTaskEditorClose={this.toggleTaskEditor}
+            userId={userId}
+          />
+        )}
       </Main>
     );
   }
@@ -112,13 +134,16 @@ class UserTasks extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     user: userSelectors.getUserData(state, ownProps.userId),
-    lists: listSelectors.getUserLists(state, ownProps.userId)
+    lists: listSelectors.getUserLists(state, ownProps.userId),
+    tasksById: taskSelectors.getTasksById(state),
+    taskId: currentSelectors.getCurrentTaskId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     selectUser: userId => dispatch(currentActions.selectUser(userId)),
+    selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
     fetchUserLists: userId => dispatch(listActions.fetchUserLists(userId)),
     addTask: ({ taskId, taskData }) =>

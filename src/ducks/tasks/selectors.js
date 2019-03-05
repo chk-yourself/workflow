@@ -22,6 +22,7 @@ export const getSimpleTasks = (state, taskIds) => {
 };
 
 export const getTaskTags = (state, ownProps) => {
+  if (!ownProps.projectId) return [];
   const { projectsById } = state;
   const { projectId, tags: taskTags } = ownProps;
   const { tags: projectTags } = projectsById[projectId];

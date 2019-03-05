@@ -22,6 +22,7 @@ export default class Tasks extends Component {
   }
 
   scrollToBottom = () => {
+    if (!this.listEnd) return;
     this.listEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -32,8 +33,6 @@ export default class Tasks extends Component {
       onTaskClick,
       onTaskDelete,
       defaultKey,
-      onToggleCompleted,
-      onTaskChange,
       view
     } = this.props;
     const isBoardView = view === 'board';

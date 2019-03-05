@@ -29,7 +29,9 @@ class HomePage extends Component {
       selectUser,
       fetchUsersById,
       fetchProjectsById,
-      userId
+      updateUser,
+      userId,
+      firebase
     } = this.props;
     selectUser(userId);
     console.log('mounted home');
@@ -40,6 +42,10 @@ class HomePage extends Component {
           isFetching: false
         })
       );
+      this.userObserver = firebase.getUserDoc(userId).onSnapshot(snapshot => {
+        const userData = snapshot.data();
+        updateUser({userId, userData});
+      });
   }
 
   toggleProjectComposer = () => {
@@ -118,6 +124,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    updateUser: ({userId, userData}) => dispatch(userActions.updateUser({userId, userData})),
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
     fetchProjectsById: userId =>
       dispatch(projectActions.fetchProjectsById(userId)),

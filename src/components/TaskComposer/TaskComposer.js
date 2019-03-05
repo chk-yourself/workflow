@@ -27,9 +27,8 @@ class TaskComposer extends Component {
   onSubmit = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
-    const { projectId } = this.props.current;
-    const { listId, firebase } = this.props;
-    firebase.addTask({ projectId, listId, name });
+    const { listId, defaultKey, firebase, projectId, userId } = this.props;
+    firebase.addTask({ name, projectId, listId, userId, defaultKey });
     this.resetForm();
     e.preventDefault();
   };
@@ -67,13 +66,9 @@ class TaskComposer extends Component {
         onBlur={this.onBlur}
       >
         <form className="task-composer__form" onSubmit={this.onSubmit}>
-          <div className="task-composer__icon">
-            {isActive ? (
-              <div className="task-composer__checkbox" />
-            ) : (
-              <Icon name="plus-circle" />
-            )}
-          </div>
+          <Button className="task-composer__btn--submit" type="submit" onClick={this.onSubmit} iconOnly>
+            <Icon name="plus-circle" />
+          </Button>
           <Input
             onChange={this.onChange}
             value={name}
@@ -92,16 +87,12 @@ class TaskComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    projectsArray: projectSelectors.getProjectsArray(state),
-    current: currentSelectors.getCurrent(state)
+    userId: currentSelectors.getCurrentUserId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    updateProjectsById: project =>
-      dispatch(projectActions.updateProjectsById(project))
-  };
+  return {};
 };
 
 export default withFirebase(

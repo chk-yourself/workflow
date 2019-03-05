@@ -75,8 +75,8 @@ class TaskEditor extends Component {
     this.commentObserver = firebase.db
       .collection('comments')
       .where('taskId', '==', taskId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
           const commentId = change.doc.id;
           const commentData = change.doc.data();
           if (change.type === 'added') {
@@ -730,6 +730,8 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchTaskComments: taskId =>
       dispatch(commentActions.fetchTaskComments(taskId)),
+    syncTaskComments: taskId =>
+      dispatch(commentActions.syncTaskComments(taskId)),
     addComment: ({ commentId, commentData }) =>
       dispatch(commentActions.addComment({ commentId, commentData })),
     deleteComment: commentId =>

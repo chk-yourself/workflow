@@ -2,6 +2,13 @@
 
 .task-composer {
   padding: 0 8px;
+  &.is-active {
+    .task-composer__btn--submit {
+      .feather {
+        color: $primary;
+      }
+    }
+  }
 }
 
 .task-composer__form {
@@ -27,25 +34,26 @@
   }
 }
 
-.task-composer__icon {
+.task-composer__btn--submit {
   display: inline-block;
   width: 30px;
   height: 32px;
-  line-height: 32px;
+  line-height: 0;
   font-size: 0;
   text-align: center;
-  color: $grey-500;
+  padding: 0;
   .feather {
     width: 20px;
     height: 20px;
     vertical-align: middle;
+    color: $grey-500;
   }
 }
 
 .task-composer__checkbox {
   width: 18px;
   height: 18px;
-  border: 2px solid $primary-lt;
+  border: 2px solid $grey-500;
   border-radius: 4px;
   display: inline-block;
   vertical-align: middle;
