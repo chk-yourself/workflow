@@ -6,10 +6,6 @@ import { Card } from '../Card';
 import { Task } from '../Task';
 
 export default class Tasks extends Component {
-  static propTypes = {
-    listId: PropTypes.string.isRequired
-  };
-
   /*
 
   shouldComponentUpdate(nextProps) {
@@ -35,6 +31,7 @@ export default class Tasks extends Component {
       tasks,
       onTaskClick,
       onTaskDelete,
+      defaultKey,
       onToggleCompleted,
       onTaskChange,
       view
@@ -47,7 +44,6 @@ export default class Tasks extends Component {
           key={task.taskId}
           taskIndex={taskIndex}
           onCardClick={onTaskClick}
-          onCardDelete={onTaskDelete}
           {...task}
         />
       ) : (
@@ -56,13 +52,15 @@ export default class Tasks extends Component {
           index={taskIndex}
           onTaskClick={onTaskClick}
           onDelete={onTaskDelete}
+          listId={listId}
+          defaultKey={defaultKey}
           {...task}
         />
       );
     });
 
     return (
-      <Droppable droppableId={listId} type={droppableTypes.TASK}>
+      <Droppable droppableId={listId || defaultKey} type={droppableTypes.TASK}>
         {(provided, snapshot) =>
           isBoardView ? (
             <div

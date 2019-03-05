@@ -19,6 +19,9 @@
   &:focus {
     border-color: $primary;
   }
+  &:read-only {
+    border-color: transparent;
+  }
 }
 
 .input__label {

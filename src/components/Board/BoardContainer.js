@@ -35,7 +35,7 @@ class BoardContainer extends Component {
       fetchTaskSubtasks,
       firebase,
       updateProject,
-      updateListsById,
+      updateList,
       addTask,
       deleteTask,
       updateTask,
@@ -75,10 +75,9 @@ class BoardContainer extends Component {
       .where('projectId', '==', projectId)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
-          const list = {
-            [change.doc.id]: change.doc.data()
-          };
-          updateListsById(list);
+          const listId = change.doc.id;
+          const listData = change.doc.data();
+          updateList(listId, listData);
         });
       });
     this.subtaskObserver = firebase.db
@@ -281,7 +280,7 @@ const mapDispatchToProps = dispatch => {
     selectProject: projectId => dispatch(currentActions.selectProject(projectId)),
     selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
     fetchListsById: projectId => dispatch(listActions.fetchListsById(projectId)),
-    updateListsById: list => dispatch(listActions.updateListsById(list)),
+    updateList: (listId, listData) => dispatch(listActions.updateList(listId, listData)),
     fetchProjectTasks: projectId => dispatch(taskActions.fetchProjectTasks(projectId)),
     fetchTaskSubtasks: projectId =>
       dispatch(subtaskActions.fetchTaskSubtasks(projectId)),

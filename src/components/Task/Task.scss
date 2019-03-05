@@ -1,20 +1,16 @@
 @import '../../styles/_variables';
 @import '../../styles/_mixins';
 
-.tasks {
-  width: 100%;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow: visible;
-}
-
 .task {
   width: 100%;
-  padding: 0;
+  padding: 8px;
   list-style: none;
   margin-left: auto;
   overflow: visible;
+  box-shadow: 0px 1px 0 0 $grey-200;
+  &.is-focused {
+    box-shadow: 0px 1px 0 0 rgba($primary, 0.8);
+  }
 }
 
 .task__checkbox {
@@ -22,7 +18,7 @@
   height: 18px;
   top: 8px;
   left: 6px;
-  border: 1px solid $primary;
+  border: 2px solid $primary-lt;
   border-radius: 4px;
   display: inline-block;
 }
@@ -48,4 +44,8 @@
   vertical-align: middle;
   font-size: 14px;
   overflow: visible;
+  &:active,
+  &:focus {
+    border-color: transparent;
+  }
 }

@@ -19,7 +19,8 @@ const Input = ({
   labelClass,
   onKeyDown,
   maxLength,
-  minLength
+  minLength,
+  isReadOnly
 }) => {
   return (
     <>
@@ -45,6 +46,8 @@ const Input = ({
         onKeyDown={onKeyDown}
         maxLength={maxLength}
         minLength={minLength}
+        readOnly={isReadOnly}
+        tabIndex={isReadOnly ? -1 : 0}
       />
     </>
   );

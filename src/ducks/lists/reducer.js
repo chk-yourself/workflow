@@ -9,11 +9,14 @@ const listsById = (state = {}, action) => {
         ...listsById
       };
     }
-    case types.UPDATE_LISTS_BY_ID: {
-      const { list } = action;
+    case types.UPDATE_LIST: {
+      const { listId, listData } = action;
       return {
         ...state,
-        ...list
+        [listId]: {
+          ...state[listId],
+          ...listData
+        }
       };
     }
     default:

@@ -16,11 +16,14 @@ export const fetchListsById = projectId => {
         .where('projectId', '==', projectId)
         .get()
         .then(snapshot => {
-          const listsById = {};
+          const lists = {};
           snapshot.forEach(doc => {
-            listsById[doc.id] = doc.data();
+            lists[doc.id] = {
+              listId: doc.id,
+              ...doc.data()
+            };
           });
-          return listsById;
+          return lists;
         });
       dispatch(loadListsById(listsById));
     } catch (error) {
@@ -37,11 +40,14 @@ export const fetchUserLists = userId => {
         .where('userId', '==', userId)
         .get()
         .then(snapshot => {
-          const listsById = {};
+          const lists = {};
           snapshot.forEach(doc => {
-            listsById[doc.id] = doc.data();
+            lists[doc.id] = {
+              listId: doc.id,
+              ...doc.data()
+            };
           });
-          return listsById;
+          return lists;
         });
       dispatch(loadListsById(listsById));
     } catch (error) {
@@ -50,9 +56,10 @@ export const fetchUserLists = userId => {
   };
 };
 
-export const updateListsById = list => {
+export const updateList = (listId, listData) => {
   return {
-    type: types.UPDATE_LISTS_BY_ID,
-    list
+    type: types.UPDATE_LIST,
+    listId,
+    listData
   };
 };

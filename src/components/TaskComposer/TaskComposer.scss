@@ -1,0 +1,52 @@
+@import '../../styles/_variables';
+
+.task-composer {
+  padding: 0 8px;
+}
+
+.task-composer__form {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.task-composer__input {
+  border: 1px solid transparent;
+  width: calc(100% - 34px);
+  padding: 8px 6px;
+  font-size: 14px;
+  margin-left: 4px;
+  height: 32px;
+  &:active,
+  &:focus {
+    outline: none;
+    border-color: transparent;
+  }
+  &::placeholder {
+    color: $grey-500;
+  }
+}
+
+.task-composer__icon {
+  display: inline-block;
+  width: 30px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 0;
+  text-align: center;
+  color: $grey-500;
+  .feather {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+}
+
+.task-composer__checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $primary-lt;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}

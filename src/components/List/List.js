@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
@@ -12,6 +13,11 @@ import Tasks from './Tasks';
 import './List.scss';
 
 class List extends Component {
+  static defaultProps = {
+    isRestricted: false,
+    defaultKey: null
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -50,8 +56,10 @@ class List extends Component {
       tasks,
       onTaskClick,
       listId,
+      defaultKey,
       listIndex,
       isFetchingTasks,
+      isRestricted,
       view
     } = this.props;
     if (isFetchingTasks) return null;
@@ -59,11 +67,11 @@ class List extends Component {
     const { name, viewportHeight } = this.state;
 
     return (
-      <Draggable draggableId={listId} index={listIndex}>
+      <Draggable draggableId={listId || defaultKey} index={listIndex}>
         {provided => (
           <>
             <section
-              className="list"
+              className={`list is-${view}-view`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -78,8 +86,9 @@ class List extends Component {
                   type="text"
                   value={name}
                   onChange={this.onChange}
-                  required
+                  required={!isRestricted}
                   hideLabel
+                  isReadOnly={isRestricted}
                   onBlur={this.onBlur}
                 />
                 <PopoverWrapper
@@ -108,12 +117,17 @@ class List extends Component {
                 <Tasks
                   tasks={tasks}
                   listId={listId}
+                  defaultKey={defaultKey}
                   onTaskClick={onTaskClick}
                   view={view}
                 />
               </div>
               {provided.placeholder}
-              <CardComposer listId={listId} />
+              {view === 'board' ? (
+                <CardComposer listId={listId} />
+              ) : (
+                <TaskComposer listId={listId} />
+              )}
             </section>
             {provided.placeholder}
           </>

@@ -98,19 +98,19 @@ class Firebase {
         photoURL,
         listIds: [],
         defaultLists: {
-          new: {
+          '0': {
             name: 'New Tasks',
             taskIds: []
           },
-          today: {
+          '1': {
             name: 'Today',
             taskIds: []
           },
-          upcoming: {
+          '2': {
             name: 'Upcoming',
             taskIds: []
           },
-          later: {
+          '3': {
             name: 'Later',
             taskIds: []
           }
@@ -371,10 +371,10 @@ class Firebase {
     const taskRef = this.getTaskDoc(taskId);
     const userRef = this.getUserDoc(userId);
     batch.update(userRef, {
-      'defaultLists.new.taskIds': this.removeFromArray(taskId),
-      'defaultLists.today.taskIds': this.removeFromArray(taskId),
-      'defaultLists.upcoming.taskIds': this.removeFromArray(taskId),
-      'defaultLists.later.taskIds': this.removeFromArray(taskId),
+      'defaultLists.0.taskIds': this.removeFromArray(taskId),
+      'defaultLists.1.taskIds': this.removeFromArray(taskId),
+      'defaultLists.2.taskIds': this.removeFromArray(taskId),
+      'defaultLists.3.taskIds': this.removeFromArray(taskId),
       lastUpdatedAt: this.getTimestamp()
     });
 
@@ -399,7 +399,7 @@ class Firebase {
     const projectRef = this.getProjectDoc(projectId);
     const userRef = this.getUserDoc(userId);
     batch.update(userRef, {
-      'defaultLists.new.taskIds': this.addToArray(taskId),
+      'defaultLists.0.taskIds': this.addToArray(taskId),
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(taskRef, {
@@ -420,20 +420,29 @@ class Firebase {
       });
   };
 
-  deleteTask = ({ taskId, listId, userId = null }) => {
+  deleteTask = ({
+    taskId,
+    listId,
+    assignedTo = [],
+    defaultKey = null,
+    userId = null
+  }) => {
     const batch = this.db.batch();
     const taskRef = this.getTaskDoc(taskId);
-    const listRef = this.getListDoc(listId);
     batch.delete(taskRef);
-    batch.update(listRef, {
-      taskIds: this.removeFromArray(taskId),
-      lastUpdatedAt: this.getTimestamp()
-    });
 
-    if (userId) {
+    if (listId) {
+      const listRef = this.getListDoc(listId);
+      batch.update(listRef, {
+        taskIds: this.removeFromArray(taskId),
+        lastUpdatedAt: this.getTimestamp()
+      });
+    }
+
+    if (defaultKey) {
       const userRef = this.getUserDoc(userId);
       batch.update(userRef, {
-        taskIds: this.removeFromArray(taskId),
+        [`defaultLists.${defaultKey}.taskIds`]: this.removeFromArray(taskId),
         lastUpdatedAt: this.getTimestamp()
       });
     }
@@ -446,6 +455,19 @@ class Firebase {
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
           batch.delete(doc.ref);
+        });
+      })
+      .then(() => {
+        assignedTo.forEach(memberId => {
+          if (userId && memberId === userId) return;
+          const memberRef = this.getUserDoc(memberId);
+          batch.update(memberRef, {
+            'defaultLists.0.taskIds': this.removeFromArray(taskId),
+            'defaultLists.1.taskIds': this.removeFromArray(taskId),
+            'defaultLists.2.taskIds': this.removeFromArray(taskId),
+            'defaultLists.3.taskIds': this.removeFromArray(taskId),
+            lastUpdatedAt: this.getTimestamp()
+          });
         });
       })
       .then(() => {

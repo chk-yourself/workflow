@@ -10,6 +10,7 @@ import { ProjectComposer } from '../ProjectComposer';
 import { BoardContainer } from '../Board';
 import { projectActions, projectSelectors } from '../../ducks/projects';
 import { Icon } from '../Icon';
+import { Main } from '../Main';
 import { Dashboard } from '../Dashboard';
 import { UserTasks } from '../UserTasks';
 import './Home.scss';
@@ -89,24 +90,18 @@ class HomePage extends Component {
           <Route
             path={ROUTES.USER_PROJECTS}
             render={props => (
-              <main className="main">
-                <h1 className="main__header">Projects</h1>
+              <Main title="Projects">
                 <ProjectGridContainer
                   userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
                   {...props}
                 />
-              </main>
+              </Main>
             )}
           />
           <Route
             path={ROUTES.USER_TASKS}
-            render={() => (
-              <main className="main">
-                <h1 className="main__header">Tasks</h1>
-                <UserTasks userId={userId} />
-              </main>
-            )}
+            render={props => <UserTasks userId={userId} {...props} />}
           />
         </Switch>
       </>

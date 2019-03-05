@@ -9,6 +9,8 @@ import { currentActions, currentSelectors } from '../../ducks/current';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { List } from '../List';
+import { Main } from '../Main';
+import './UserTasks.scss';
 
 class UserTasks extends Component {
   state = {
@@ -68,127 +70,50 @@ class UserTasks extends Component {
     });
   };
 
-  updateTaskName = e => {
-    const taskId = e.target.name;
-    const { tasks } = this.state;
-    const { name } = tasks[taskId];
-    const { firebase } = this.props;
-    firebase.updateTask(taskId, { name });
-  };
-
-  deleteTask = e => {
-    /*
-    if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { taskId, firebase } = this.props;
-    const subtaskId = e.target.name;
-    firebase.deleteSubtask({ subtaskId, taskId });
-    */
-  };
-
-  onTaskChange = e => {
-    const { tasks } = this.state;
-    this.setState({
-      tasks: {
-        ...tasks,
-        [e.target.name]: {
-          ...tasks[e.target.name],
-          name: e.target.value
-        }
-      }
-    });
-  };
-
-  toggleTaskCompleted = taskId => {
-    const { isCompleted } = this.state.tasks[taskId];
-    this.setState(prevState => ({
-      tasks: {
-        ...prevState.tasks,
-        [taskId]: {
-          ...prevState.tasks[taskId],
-          isCompleted: !prevState.tasks[taskId].isCompleted
-        }
-      }
-    }));
-    const { firebase } = this.props;
-    firebase.updateTask(taskId, { isCompleted: !isCompleted });
-  };
-
-  handleCheckboxChange = e => {
-    const taskId = e.target.name;
-    this.toggleTaskCompleted(taskId);
-  };
-
   render() {
-    const { filters, view, userId, taskIds, taskLists, user } = this.props;
-    const { tasks, isFetching } = this.state;
-    const { tasksNew, tasksToday, tasksUpcoming, tasksLater } = user;
+    const { filters, userId, taskIds, user, lists } = this.props;
+    const { isFetching } = this.state;
     if (isFetching) return null;
     return (
-      <DragDropContext onDragEnd={this.moveTask}>
-        <Droppable droppableId={userId} type={droppableTypes.TASK}>
-          {provided => (
-            <div
-              className="user-tasks"
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {
-                <>
-                <List
-                  listId="tasksNew"
-                  listIndex={0}
-                  name="New Tasks"
-                  taskIds={tasksNew}
-                  onTaskClick={this.handleTaskClick}
-                  projectId={null}
-                  view="list"
-                  isRestricted={true}
-                />
-                <List
-                  listId="tasksToday"
-                  listIndex={1}
-                  name="Today"
-                  taskIds={tasksToday}
-                  onTaskClick={this.handleTaskClick}
-                  projectId={null}
-                  view="list"
-                  isRestricted={true}
-                />
-                <List
-                  listId="tasksUpcoming"
-                  listIndex={2}
-                  name="Upcoming"
-                  taskIds={tasksUpcoming}
-                  onTaskClick={this.handleTaskClick}
-                  projectId={null}
-                  view="list"
-                  isRestricted={true}
-                />
-                <List
-                  listId="tasksLater"
-                  listIndex={3}
-                  name="Later"
-                  taskIds={tasksLater}
-                  onTaskClick={this.handleTaskClick}
-                  projectId={null}
-                  view="list"
-                  isRestricted={true}
-                />
-                </>
-              }
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <Main title="All Tasks">
+        <DragDropContext onDragEnd={this.moveTask}>
+          <Droppable droppableId={userId} type={droppableTypes.TASK}>
+            {provided => (
+              <div
+                className="user-tasks"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {lists.map(list => (
+                  <List
+                    key={list.listId || list.defaultKey}
+                    userId={userId}
+                    listId={list.listId}
+                    defaultKey={list.defaultKey}
+                    listIndex={0}
+                    name={list.name}
+                    taskIds={list.taskIds}
+                    onTaskClick={this.handleTaskClick}
+                    projectId={null}
+                    view="list"
+                    isRestricted={list.isDefault}
+                  />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Main>
     );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.userId)
-  }; 
+    user: userSelectors.getUserData(state, ownProps.userId),
+    lists: listSelectors.getUserLists(state, ownProps.userId)
+  };
 };
 
 const mapDispatchToProps = dispatch => {
