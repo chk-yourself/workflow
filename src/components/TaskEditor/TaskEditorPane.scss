@@ -1,0 +1,42 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.task-editor-pane {
+  background-color: $white;
+  transition: .2s ease-out;
+  padding: 8px;
+  max-width: 100%;
+  width: 100%;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.15);
+  overflow-y: visible;
+  position: fixed;
+  top: 0;
+  z-index: 5;
+  min-height: 100vh;
+  @include md {
+    height: auto;
+    min-height: auto;
+    align-self: flex-start;
+    max-width: 400px;
+    position: relative;
+  }
+}
+
+.task-editor-pane__btn--close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 8px;
+  z-index: 3;
+  min-width: 0;
+  .feather {
+    color: $grey-500;
+    width: 22px;
+    height: 22px;
+  }
+  &:hover {
+    .feather {
+      color: $grey-800;
+    }
+  }
+}

@@ -32,7 +32,7 @@ class BoardContainer extends Component {
       current,
       fetchListsById,
       fetchProjectTasks,
-      fetchTaskSubtasks,
+      fetchProjectSubtasks,
       firebase,
       updateProject,
       updateList,
@@ -55,7 +55,7 @@ class BoardContainer extends Component {
 
     fetchListsById(projectId);
     fetchProjectTasks(projectId);
-    fetchTaskSubtasks(projectId).then(() => {
+    fetchProjectSubtasks(projectId).then(() => {
       this.setState({
         isFetching: false
       });
@@ -255,6 +255,7 @@ class BoardContainer extends Component {
             {...tasksById[taskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
+            view={'board'}
           />
         )}
       </main>
@@ -282,8 +283,8 @@ const mapDispatchToProps = dispatch => {
     fetchListsById: projectId => dispatch(listActions.fetchListsById(projectId)),
     updateList: (listId, listData) => dispatch(listActions.updateList(listId, listData)),
     fetchProjectTasks: projectId => dispatch(taskActions.fetchProjectTasks(projectId)),
-    fetchTaskSubtasks: projectId =>
-      dispatch(subtaskActions.fetchTaskSubtasks(projectId)),
+    fetchProjectSubtasks: projectId =>
+      dispatch(subtaskActions.fetchProjectSubtasks(projectId)),
     reorderLists: (projectId, listIds) =>
       dispatch(projectActions.reorderLists(projectId, listIds)),
     updateListIds: (projectId, listIds) =>

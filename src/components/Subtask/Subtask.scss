@@ -1,0 +1,52 @@
+@import '../../styles/_variables';
+@import '../../styles/_mixins';
+
+.task-editor__subtasks {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.subtask {
+  width: 100%;
+  padding: 0;
+  list-style: none;
+  margin-left: auto;
+  overflow: visible;
+}
+
+.subtask__checkbox {
+  width: 18px;
+  height: 18px;
+  top: 8px;
+  left: 6px;
+  border: 2px solid $grey-500;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.subtask__checkbox-label {
+  vertical-align: top;
+  padding: 8px 6px;
+  width: 30px;
+  height: 34px;
+  .feather {
+    width: 12px;
+    height: 12px;
+    left: calc(50% - 6px);
+    top: calc(50% - 6px);
+    stroke-width: 4px;
+  }
+}
+
+.subtask__textarea {
+  border-width: 1px;
+  width: calc(100% - 34px);
+  margin-left: 4px;
+  padding: 8px 6px;
+  vertical-align: middle;
+  font-size: 14px;
+  overflow: visible;
+}

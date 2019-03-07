@@ -91,6 +91,7 @@ class UserTasks extends Component {
     if (isFetching) return null;
     return (
       <Main title="All Tasks">
+        <div className={`user-tasks__wrapper ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
         <DragDropContext onDragEnd={this.moveTask}>
           <Droppable droppableId={userId} type={droppableTypes.TASK}>
             {provided => (
@@ -124,8 +125,10 @@ class UserTasks extends Component {
             {...tasksById[taskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
+            view="list"
           />
         )}
+        </div>
       </Main>
     );
   }

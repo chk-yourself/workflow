@@ -1,35 +1,48 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
+import { withOutsideClick } from '../withOutsideClick';
 import './Modal.scss';
 
-const Modal = ({
-  onModalClose,
-  children,
-  onModalClick,
-  size = 'md',
-  classes,
-  id
-}) => {
-  return (
-    <div className={`modal ${classes.modal}`} onClick={onModalClick}>
-      <div
-        id={id}
-        className={`modal__content ${classes.content} modal__content--${size}`}
-      >
-        <Button
-          type="button"
-          className="modal__btn--close"
-          onClick={onModalClose}
-          iconOnly
+class Modal extends Component {
+  onOutsideClick = e => {
+    const { onModalClose } = this.props;
+    onModalClose(e);
+  };
+
+  render() {
+    const {
+      onModalClose,
+      children,
+      onModalClick,
+      size = 'md',
+      classes,
+      id,
+      innerRef
+    } = this.props;
+    return (
+      <div className={`modal ${classes.modal}`} onClick={onModalClick}>
+        <div
+          id={id}
+          ref={innerRef}
+          className={`modal__content ${
+            classes.content
+          } modal__content--${size}`}
         >
-          <Icon name="x" />
-        </Button>
-        {children}
+          <Button
+            type="button"
+            className="modal__btn--close"
+            onClick={onModalClose}
+            iconOnly
+          >
+            <Icon name="x" />
+          </Button>
+          {children}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 Modal.defaultProps = {
   classes: {
@@ -38,4 +51,4 @@ Modal.defaultProps = {
   }
 };
 
-export default Modal;
+export default withOutsideClick(Modal);

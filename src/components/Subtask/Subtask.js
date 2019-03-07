@@ -3,13 +3,19 @@ import ReactDOM from 'react-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
+import { withFirebase } from '../Firebase';
+import * as keys from '../../constants/keys';
+import './Subtask.scss';
 
 const appRoot = document.getElementById('root');
 
-export default class TaskEditorSubtask extends Component {
+class Subtask extends Component {
   constructor(props) {
     super(props);
     this.portal = document.createElement('div');
+    this.state = {
+      name: this.props.name
+    }
   }
 
   componentDidMount() {
@@ -23,6 +29,36 @@ export default class TaskEditorSubtask extends Component {
     });
   };
 
+  onChange = e => {
+    this.setState({
+      name: e.target.value
+    });
+  };
+
+  onBlur = () => {
+    const { name, firebase, subtaskId } = this.props;
+    const { name: newName } = this.state;
+    if (name !== newName) {
+      firebase.updateSubtask(subtaskId, {
+        name: newName
+      });
+    }
+  };
+
+  deleteSubtask = e => {
+    if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
+    const { subtaskId, taskId, firebase } = this.props;
+    firebase.deleteSubtask({ subtaskId, taskId });
+  };
+
+  toggleCompleted = () => {
+    const { subtaskId, isCompleted, firebase } = this.props;
+    firebase.updateSubtask(subtaskId, {
+      isCompleted: !isCompleted,
+      completedAt: !isCompleted ? firebase.getTimestamp() : null
+    });
+  };
+
   componentWillUnmount() {
     appRoot.removeChild(this.portal);
   }
@@ -31,20 +67,17 @@ export default class TaskEditorSubtask extends Component {
     const {
       subtaskId,
       index,
-      name,
-      isCompleted,
-      toggleCompleted,
-      onChange,
-      onBlur,
-      onKeyDown
+      isCompleted
     } = this.props;
+
+    const { name } = this.state;
 
     return (
       <Draggable draggableId={subtaskId} index={index}>
         {(provided, snapshot) => {
           const inner = (
             <li
-              className="task-editor__subtask"
+              className="subtask"
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -54,17 +87,17 @@ export default class TaskEditorSubtask extends Component {
                 value={subtaskId}
                 name={subtaskId}
                 isChecked={isCompleted}
-                onChange={toggleCompleted}
-                className="task-editor__checkbox"
-                labelClass="task-editor__checkbox-label"
+                onChange={this.toggleCompleted}
+                className="subtask__checkbox"
+                labelClass="subtask__checkbox-label"
               />
               <Textarea
                 value={name}
-                onChange={onChange}
-                onBlur={onBlur}
+                onChange={this.onChange}
+                onBlur={this.onBlur}
                 name={subtaskId}
-                className="task-editor__textarea--subtask"
-                onKeyDown={onKeyDown}
+                className="subtask__textarea"
+                onKeyDown={this.deleteSubtask}
                 onDragStart={this.onDragStart}
               />
             </li>
@@ -77,3 +110,5 @@ export default class TaskEditorSubtask extends Component {
     );
   }
 }
+
+export default withFirebase(Subtask);

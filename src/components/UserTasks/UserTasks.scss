@@ -8,3 +8,19 @@
   width: 100%;
   padding: 16px;
 }
+
+.user-tasks__wrapper {
+  display: flex;
+  justify-content: center;
+  &.show-task-editor {
+    .user-tasks {
+      display: none;
+    }
+    @include md {
+      .user-tasks {
+        display: block;
+        margin-right: 16px;
+      }
+    }
+  }
+}

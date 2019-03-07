@@ -20,13 +20,27 @@ import { MemberSearch } from '../MemberSearch';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
-import TaskEditorSubtask from './TaskEditorSubtask';
+import { Subtasks } from '../Subtasks';
 import TaskEditorComment from './TaskEditorComment';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
 import { projectSelectors } from '../../ducks/projects';
 import { DatePicker } from '../DatePicker';
 import { MONTHS, dateUtils } from '../Calendar';
+import TaskEditorPane from './TaskEditorPane';
+
+const TaskEditorWrapper = ({view, handleTaskEditorClose, handleClick, children}) => {
+  return view === 'board' ? (
+  <Modal 
+    onModalClose={handleTaskEditorClose}
+    classes={{ content: 'task-editor' }}
+    onModalClick={handleClick}
+    size="lg"
+    id="taskEditor">
+    {children}
+    </Modal> )
+  : (<TaskEditorPane onClose={handleTaskEditorClose} onClick={handleClick}>{children}</TaskEditorPane>)
+  };
 
 class TaskEditor extends Component {
   constructor(props) {
@@ -37,17 +51,14 @@ class TaskEditor extends Component {
       name: this.props.name,
       notes: this.props.notes,
       newSubtask: '',
-      subtasks: this.props.subtasks,
       newComment: '',
       currentFocus: null,
-      subtaskIds: this.props.subtaskIds,
       isColorPickerActive: false,
       currentTag: null,
       isDatePickerActive: false,
       prevProps: {
         name: this.props.name,
         notes: this.props.notes,
-        subtasks: this.props.subtasks
       }
     };
     this.membersListButton = React.createRef();
@@ -64,13 +75,11 @@ class TaskEditor extends Component {
       updateComment
     } = this.props;
 
-    if (commentIds && commentIds.length > 0) {
       fetchTaskComments(taskId).then(() => {
         this.setState({
           isFetching: false
         });
       });
-    }
 
     this.commentObserver = firebase.db
       .collection('comments')
@@ -111,32 +120,8 @@ class TaskEditor extends Component {
         }
       };
     };
-    if (props.subtasks !== state.prevProps.subtasks) {
-      return {
-        subtasks: props.subtasks,
-        subtaskIds: props.subtaskIds,
-        prevProps: {
-          ...state.prevProps,
-          subtasks: props.subtasks
-        }
-      }
-    }
     return null;
   }
-
-  updateTaskSubtasks = () => {
-    const { subtasksArray } = this.props;
-    this.setState({
-      subtasks: subtasksArray.reduce((subtasks, subtask) => {
-        const { subtaskId, name, isCompleted } = subtask;
-        subtasks[subtaskId] = {
-          name,
-          isCompleted
-        };
-        return subtasks;
-      }, {})
-    });
-  };
 
   onChange = e => {
     this.setState({
@@ -184,22 +169,13 @@ class TaskEditor extends Component {
     });
   };
 
-  addSubtask = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { userId, firebase, taskId, projectId } = this.props;
-    const { newSubtask: name } = this.state;
-    firebase.addSubtask({ userId, name, taskId, projectId });
-    this.resetForm('newSubtask');
-    e.preventDefault();
-  };
-
   onFocus = e => {
     this.setState({
       currentFocus: e.target.name
     });
   };
 
-  handleModalClick = e => {
+  handleClick = e => {
     const { currentFocus } = this.state;
     if (
       (currentFocus === 'newComment' &&
@@ -222,73 +198,6 @@ class TaskEditor extends Component {
         break;
     }
     e.preventDefault(); // prevents page reload
-  };
-
-  onSubtaskChange = e => {
-    const { subtasks } = this.state;
-    this.setState({
-      subtasks: {
-        ...subtasks,
-        [e.target.name]: {
-          ...subtasks[e.target.name],
-          name: e.target.value
-        }
-      }
-    });
-  };
-
-  handleCheckboxChange = e => {
-    const subtaskId = e.target.name;
-    this.toggleSubtaskCompleted(subtaskId);
-  };
-
-  toggleSubtaskCompleted = subtaskId => {
-    const { isCompleted } = this.state.subtasks[subtaskId];
-    this.setState(prevState => ({
-      subtasks: {
-        ...prevState.subtasks,
-        [subtaskId]: {
-          ...prevState.subtasks[subtaskId],
-          isCompleted: !prevState.subtasks[subtaskId].isCompleted
-        }
-      }
-    }));
-    const { firebase } = this.props;
-    firebase.updateSubtask(subtaskId, {
-      isCompleted: !isCompleted,
-      completedAt: !isCompleted ? firebase.getTimestamp() : null
-    });
-  };
-
-  updateSubtaskName = e => {
-    const subtaskId = e.target.name;
-    const { subtasks } = this.state;
-    const { name } = subtasks[subtaskId];
-    const { firebase } = this.props;
-    firebase.updateSubtask(subtaskId, { name });
-  };
-
-  deleteSubtask = e => {
-    if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { taskId, firebase } = this.props;
-    const subtaskId = e.target.name;
-    firebase.deleteSubtask({ subtaskId, taskId });
-  };
-
-  moveSubtask = ({ destination, draggableId, source }) => {
-    if (!destination) return;
-    if (destination.index === source.index) return;
-    const { firebase } = this.props;
-    const { subtaskIds } = this.state;
-    const updatedSubtaskIds = [...subtaskIds];
-    updatedSubtaskIds.splice(source.index, 1);
-    updatedSubtaskIds.splice(destination.index, 0, draggableId);
-    this.setState({
-      subtaskIds: updatedSubtaskIds
-    });
-    firebase.updateTask(source.droppableId, {
-      subtaskIds: updatedSubtaskIds
-    });
   };
 
   handleCommentLike = commentId => {
@@ -384,6 +293,16 @@ class TaskEditor extends Component {
     }));
   };
 
+  addSubtask = e => {
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { userId, firebase, taskId, projectId } = this.props;
+    console.log({ userId, projectId });
+    const { newSubtask: name } = this.state;
+    firebase.addSubtask({ userId, name, taskId, projectId });
+    this.resetForm('newSubtask');
+    e.preventDefault();
+  };
+
   componentWillUnmount() {
     this.commentObserver();
   }
@@ -400,7 +319,10 @@ class TaskEditor extends Component {
       currentUser,
       taskTags,
       mergedTags,
-      dueDate
+      dueDate,
+      subtaskIds,
+      projectId,
+      view
     } = this.props;
     const {
       name,
@@ -409,7 +331,6 @@ class TaskEditor extends Component {
       currentFocus,
       newSubtask,
       subtasks,
-      subtaskIds,
       isFetching,
       isColorPickerActive,
       isDatePickerActive,
@@ -429,12 +350,10 @@ class TaskEditor extends Component {
     if (isFetching) return null;
 
     return (
-      <Modal
-        onModalClose={handleTaskEditorClose}
-        classes={{ content: 'task-editor' }}
-        onModalClick={this.handleModalClick}
-        size="lg"
-        id="taskEditor"
+      <TaskEditorWrapper
+        handleTaskEditorClose={handleTaskEditorClose}
+        handleClick={this.handleClick}
+        view={view}
       >
         <Toolbar className="task-editor__toolbar">
           <TaskEditorAssignMember buttonRef={this.membersListButton}>
@@ -566,34 +485,7 @@ class TaskEditor extends Component {
             <hr className="task-editor__hr" />
           </div>
           {hasSubtasks && (
-            <DragDropContext onDragEnd={this.moveSubtask}>
-              <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
-                {provided => (
-                  <ul
-                    className="task-editor__subtasks"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {subtaskIds.map((subtaskId, index) => {
-                      return (
-                        <TaskEditorSubtask
-                          subtaskId={subtaskId}
-                          index={index}
-                          name={subtasks[subtaskId].name}
-                          isCompleted={subtasks[subtaskId].isCompleted}
-                          toggleCompleted={this.handleCheckboxChange}
-                          onChange={this.onSubtaskChange}
-                          onBlur={this.updateSubtaskName}
-                          onKeyDown={this.deleteSubtask}
-                          key={subtaskId}
-                        />
-                      );
-                    })}
-                    {provided.placeholder}
-                  </ul>
-                )}
-              </Droppable>
-            </DragDropContext>
+            <Subtasks taskId={taskId} subtaskIds={subtaskIds} />
           )}
           <div className="task-editor__section-icon">
             {newSubtaskFormIsFocused ? (
@@ -700,7 +592,7 @@ class TaskEditor extends Component {
             )}
           </form>
         </TaskEditorSection>
-      </Modal>
+      </TaskEditorWrapper>
     );
   }
 }
@@ -708,11 +600,6 @@ class TaskEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: userSelectors.getCurrentUserData(state),
-    subtasksArray: subtaskSelectors.getSubtasksArray(
-      state,
-      ownProps.subtaskIds
-    ),
-    subtasks: subtaskSelectors.getSimpleSubtasks(state, ownProps.subtaskIds),
     commentsArray: commentSelectors.getCommentsArray(
       state,
       ownProps.commentIds
@@ -728,6 +615,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchTaskSubtasks: taskId =>
+      dispatch(subtaskActions.fetchTaskSubtasks(taskId)),
     fetchTaskComments: taskId =>
       dispatch(commentActions.fetchTaskComments(taskId)),
     syncTaskComments: taskId =>

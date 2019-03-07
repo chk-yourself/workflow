@@ -1,16 +1,13 @@
-import React, { Component, forwardRef } from 'react';
+import React, { Component, createRef } from 'react';
 
 const withOutsideClick = WrappedComponent => {
   class WithOutsideClick extends Component {
-    static defaultProps = {
-      onOutsideClick: () => null
-    };
-
     constructor(props) {
       super(props);
       this.state = {
         isTouchEnabled: false
       };
+      this.componentInstance = createRef();
     }
 
     componentDidMount() {
@@ -43,34 +40,40 @@ const withOutsideClick = WrappedComponent => {
     };
 
     handleOutsideClick = e => {
-      const { onOutsideClick } = this.props;
-      console.log(this.props.forwardedRef.current);
-      /*
-      if (!this.ref) {
-        throw new Error(`No ref for component ${WrappedComponent.name}.`);
+      if (!this.componentEl) {
+        throw new Error('Must set component ref to prop innerRef!');
       }
-      if (this.forwardedRef.contains(e.target)) return;
-      */
-      onOutsideClick(e);
+
+      if (
+        this.componentEl.contains(e.target) ||
+        !this.componentInstance.current.onOutsideClick
+      )
+        return;
+      this.componentInstance.current.onOutsideClick(e);
+
+      const { onOutsideClick } = this.props;
+      if (onOutsideClick) {
+        onOutsideClick(e);
+      }
     };
 
     render() {
-      const { forwardedRef, ...rest } = this.props;
-      console.log(forwardedRef);
       return (
         <WrappedComponent
-          ref={forwardedRef}
-          {...rest}
-          onOutsideClick={this.handleOutsideClick}
+          ref={this.componentInstance}
+          innerRef={el => (this.componentEl = el)}
+          {...this.props}
         />
       );
     }
   }
 
+  /*
   return forwardRef((props, ref) => {
-    console.log(ref.current);
     return <WithOutsideClick {...props} forwardedRef={ref} />;
   });
+  */
+  return WithOutsideClick;
 };
 
 export default withOutsideClick;

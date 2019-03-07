@@ -42,10 +42,10 @@ class HomePage extends Component {
           isFetching: false
         })
       );
-      this.userObserver = firebase.getUserDoc(userId).onSnapshot(snapshot => {
-        const userData = snapshot.data();
-        updateUser({userId, userData});
-      });
+    this.userObserver = firebase.getUserDoc(userId).onSnapshot(snapshot => {
+      const userData = snapshot.data();
+      updateUser({ userId, userData });
+    });
   }
 
   toggleProjectComposer = () => {
@@ -76,10 +76,10 @@ class HomePage extends Component {
             exact
             path={ROUTES.HOME}
             render={props => (
-              <Dashboard
-                toggleProjectComposer={this.toggleProjectComposer}
-                {...props}
-              />
+                <Dashboard
+                  toggleProjectComposer={this.toggleProjectComposer}
+                  {...props}
+                />
             )}
           />
           <Route
@@ -124,7 +124,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateUser: ({userId, userData}) => dispatch(userActions.updateUser({userId, userData})),
+    updateUser: ({ userId, userData }) =>
+      dispatch(userActions.updateUser({ userId, userData })),
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
     fetchProjectsById: userId =>
       dispatch(projectActions.fetchProjectsById(userId)),

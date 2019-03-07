@@ -38,12 +38,36 @@ export const updateSubtasksById = subtask => {
   };
 };
 
-export const fetchTaskSubtasks = projectId => {
+export const fetchProjectSubtasks = projectId => {
   return async dispatch => {
     try {
       const subtasksById = await firebase.db
         .collection('subtasks')
         .where('projectId', '==', projectId)
+        .get()
+        .then(snapshot => {
+          const subtasks = {};
+          snapshot.forEach(doc => {
+            subtasks[doc.id] = {
+              subtaskId: doc.id,
+              ...doc.data()
+            };
+          });
+          return subtasks;
+        });
+      dispatch(loadSubtasksById(subtasksById));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const fetchTaskSubtasks = taskId => {
+  return async dispatch => {
+    try {
+      const subtasksById = await firebase.db
+        .collection('subtasks')
+        .where('taskId', '==', taskId)
         .get()
         .then(snapshot => {
           const subtasks = {};
