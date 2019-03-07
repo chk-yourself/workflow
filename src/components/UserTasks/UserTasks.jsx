@@ -65,8 +65,11 @@ class UserTasks extends Component {
 
   handleTaskClick = taskId => {
     const { selectTask } = this.props;
+    const { isTaskEditorOpen } = this.state;
     selectTask(taskId);
-    this.toggleTaskEditor();
+    if (!isTaskEditorOpen) {
+      this.toggleTaskEditor();
+    }
   };
 
   moveTask = ({ destination, draggableId, source }) => {
@@ -126,6 +129,7 @@ class UserTasks extends Component {
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
             view="list"
+            key={taskId}
           />
         )}
         </div>
@@ -147,6 +151,7 @@ const mapDispatchToProps = dispatch => {
   return {
     selectUser: userId => dispatch(currentActions.selectUser(userId)),
     selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
+    syncUserTasks: userId => dispatch(taskActions.syncUserTasks(userId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
     fetchUserLists: userId => dispatch(listActions.fetchUserLists(userId)),
     addTask: ({ taskId, taskData }) =>

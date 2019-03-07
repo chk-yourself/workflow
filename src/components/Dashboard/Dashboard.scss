@@ -5,6 +5,8 @@
   width: 100%;
   height: 100%;
   padding: 8px 16px;
+  flex-flow: row wrap;
+  display: flex;
   @include md {
     padding: 8px 24px;
   }
@@ -18,6 +20,7 @@
   font-weight: 600;
   margin: 0 0 24px 0;
   color: $grey-900;
+  width: 100%;
 }
 
 .dashboard__section-header {
@@ -35,7 +38,16 @@
   border-radius: 4px;
   padding: 8px;
   border: 1px solid $grey-200;
-  margin-bottom: 24px;
+  margin: 0 8px 16px 8px;
+  &--lg {
+    width: 100%;
+  }
+  &--md {
+    width: calc(60% - 16px);
+  }
+  &--sm {
+    width: calc(40% - 16px);
+  }
 }
 
 .dashboard__section-icon {

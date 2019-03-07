@@ -69,7 +69,6 @@ class Subtasks extends Component {
   render() {
     const { taskId, subtasks } = this.props;
     const { isFetching } = this.state;
-    console.log(subtasks);
     return (
       <DragDropContext onDragEnd={this.moveSubtask}>
         <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>

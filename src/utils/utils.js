@@ -90,3 +90,15 @@ export const firstThen = (first, after) => {
     }
   }
 };
+
+export const count = (fn, invokeBeforeExecution) => {
+  let count = 0;
+  return (args) => {
+    count++;
+    if (count <= invokeBeforeExecution) {
+      return true;
+    } else {
+      return fn(args, count);
+    }
+  };
+}

@@ -14,10 +14,11 @@ class Dashboard extends Component {
     return (
       <main className="dashboard">
         <h1 className="dashboard__header">Home</h1>
+        <DashboardSection title="Tasks Due Soon" icon="check-square" size="md" />
+        <DashboardSection title="Notifications" icon="bell" size="sm" />
         <DashboardSection title="Projects" icon="grid">
           <ProjectGridContainer openProjectComposer={toggleProjectComposer} />
         </DashboardSection>
-        <DashboardSection title="Tasks" icon="check-square" />
       </main>
     );
   }

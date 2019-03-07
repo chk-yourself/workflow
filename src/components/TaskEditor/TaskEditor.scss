@@ -331,6 +331,15 @@
   line-height: 12px;
   display: inline-block;
   width: 100%;
+  &.is-due-today {
+    color: $secondary;
+  }
+  &.is-due-tmrw {
+    color: $primary;
+  }
+  &.is-past-due {
+    color: $red;
+  }
 }
 
 .task-editor__placeholder--unassigned {

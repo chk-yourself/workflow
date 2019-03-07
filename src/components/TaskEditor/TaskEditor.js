@@ -27,7 +27,7 @@ import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
 import { projectSelectors } from '../../ducks/projects';
 import { DatePicker } from '../DatePicker';
-import { MONTHS, dateUtils } from '../Calendar';
+import { dateUtils } from '../Calendar';
 import TaskEditorPane from './TaskEditorPane';
 import { ProjectIcon } from '../ProjectIcon';
 
@@ -354,8 +354,13 @@ class TaskEditor extends Component {
     const taskDueDate = dueDate
       ? dateUtils.getSimpleDate(dueDate.toDate())
       : dateUtils.getSimpleDate(new Date());
-
-    if (isFetching) return null;
+    const dueDateStr = dueDate ? dateUtils.toDateString(dueDate.toDate(), {
+      useRelative: true,
+      format: { month: 'short', day: 'numeric' }
+      }) : null;
+      const isDueToday = dueDateStr === 'Today';
+      const isDueTmrw = dueDateStr === 'Tomorrow';
+      const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
 
     return (
       <TaskEditorWrapper
@@ -418,9 +423,17 @@ class TaskEditor extends Component {
                     <span className="task-editor__section-title--sm">
                       Due Date
                     </span>
-                    <span className="task-editor__due-date">{`${
-                      MONTHS[taskDueDate.month].short
-                    } ${taskDueDate.day}`}</span>
+                    <span className={`task-editor__due-date ${
+                    isDueToday
+                      ? 'is-due-today'
+                      : isDueTmrw
+                      ? 'is-due-tmrw'
+                      : isPastDue
+                      ? 'is-past-due'
+                      : ''
+                  }`}>
+                    {dueDateStr}
+                      </span>
                   </>
                 )}
               </span>
@@ -568,7 +581,7 @@ class TaskEditor extends Component {
             <hr className="task-editor__hr" />
           </div>
 
-          {hasComments && (
+          {!isFetching && hasComments && (
             <div className="task-editor__comments">
               {commentsArray.map(comment => {
                 const { commentId } = comment;

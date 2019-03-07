@@ -1,5 +1,6 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
+import { utils } from '../../utils';
 
 export const loadTasksById = tasksById => {
   return {
@@ -34,6 +35,94 @@ export const fetchProjectTasks = projectId => {
           return tasks;
         });
       dispatch(loadTasksById(tasksById));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const handleInitialPayload = async (snapshot) => {
+          const tasks = await snapshot.docChanges().map(change => {
+            tasks[change.doc.id] = {
+              taskId: change.doc.id,
+              ...change.doc.data()
+            };
+          });
+          console.log(tasks);
+          return tasks;
+}
+
+
+
+const syncTasks = (snapshot) => {
+  snapshot.docChanges().forEach(change => {
+    const taskId = change.doc.id;
+    const taskData = change.doc.data();
+    if (change.type === 'added') {
+      console.log('added task');
+      return dispatch => {
+        dispatch(addTask({ taskId, taskData }));
+      }
+    } else if (change.type === 'removed') {
+      return dispatch => {
+        dispatch(deleteTask(taskId));
+      }
+    } else {
+      return dispatch => {
+        dispatch(updateTask({ taskId, taskData }));
+      }
+    }
+  });
+};
+
+let count = 0;
+const handleTaskSubscription = (snapshot) => {
+  count++;
+  const initialLoad = count === 1;
+  const tasks = {};
+    if (initialLoad) {
+      console.log('is initial load');
+
+      snapshot.docChanges().forEach(change => {
+        tasks[change.doc.id] = {
+          taskId: change.doc.id,
+          ...change.doc.data()
+        };
+      });
+      console.log(tasks);
+      return tasks;
+    } else {
+      snapshot.docChanges().forEach(change => {
+        const taskId = change.doc.id;
+        const taskData = change.doc.data();
+        if (change.type === 'added') {
+          console.log('added task');
+          return dispatch => {
+            dispatch(addTask({ taskId, taskData }));
+          }
+        } else if (change.type === 'removed') {
+          return dispatch => {
+            dispatch(deleteTask(taskId));
+          }
+        } else {
+          return dispatch => {
+            dispatch(updateTask({ taskId, taskData }));
+          }
+        }
+      });
+    }
+}
+
+/*const handleTaskSubscription = utils.firstThen(handleInitialPayload, syncTasks);*/
+
+export const syncUserTasks = userId => {
+  return async dispatch => {
+    try {
+      const tasksById = await firebase.db
+        .collection('tasks')
+        .where('assignedTo', 'array-contains', userId)
+        .onSnapshot(handleTaskSubscription);
+     dispatch(loadTasksById(tasksById));
     } catch (error) {
       console.log(error);
     }

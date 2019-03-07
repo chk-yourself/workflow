@@ -55,7 +55,6 @@ export const fetchTaskComments = taskId => {
           });
           return comments;
         });
-      console.log(commentsById);
       dispatch(loadCommentsById(commentsById));
     } catch (error) {
       console.log(error);
