@@ -2,6 +2,12 @@ export const getListsById = state => {
   return state.listsById;
 };
 
+export const getListName = (state, listId) => {
+  if (!listId) return '';
+  const { listsById } = state;
+  return listsById[listId].name;
+};
+
 export const getUserLists = (state, userId) => {
   const { usersById, listsById } = state;
   const { defaultLists, listIds } = usersById[userId];

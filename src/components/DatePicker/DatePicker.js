@@ -84,7 +84,7 @@ export default class DatePicker extends Component {
   };
 
   render() {
-    const { onClose } = this.props;
+    const { onClose, isActive, innerRef } = this.props;
     const {
       today,
       selectedDate,
@@ -93,7 +93,7 @@ export default class DatePicker extends Component {
       dateString
     } = this.state;
     return (
-      <div className="date-picker">
+      <div className="date-picker" ref={innerRef} style={{display: !isActive ? 'none' : 'block'}}>
         <div className="date-picker__header">
           <div className="date-picker__due-date-wrapper">
             <Input

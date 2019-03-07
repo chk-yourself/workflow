@@ -233,6 +233,38 @@ class Firebase {
       ...newValue
     });
 
+    updateProjectName = ({ projectId, name }) => {
+      const batch = this.db.batch();
+      const projectRef = this.getProjectDoc(projectId);
+  
+      // Delete list
+      batch.update(projectRef, {
+        name,
+        lastUpdatedAt: this.getTimestamp()
+      });
+  
+      // Update tasks assigned to list
+      this.db
+        .collection('tasks')
+        .where('projectId', '==', projectId)
+        .get()
+        .then(snapshot => {
+          snapshot.docs.forEach(doc => {
+            batch.update(doc.ref, {
+              projectName: name
+            });
+          });
+          return batch
+            .commit()
+            .then(() => {
+              console.log('project name updated');
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        });
+    };
+
   addProject = ({
     userId,
     name,
@@ -271,6 +303,38 @@ class Firebase {
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
+
+    updateListName = ({ listId, name }) => {
+      const batch = this.db.batch();
+      const listRef = this.getListDoc(listId);
+  
+      // Delete list
+      batch.update(listRef, {
+        name,
+        lastUpdatedAt: this.getTimestamp()
+      });
+  
+      // Update tasks assigned to list
+      this.db
+        .collection('tasks')
+        .where('listId', '==', listId)
+        .get()
+        .then(snapshot => {
+          snapshot.docs.forEach(doc => {
+            batch.update(doc.ref, {
+              listName: name
+            });
+          });
+          return batch
+            .commit()
+            .then(() => {
+              console.log('list name updated');
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        });
+    };
 
   addList = ({ name, projectId = null, userId = null }) => {
     this.db
@@ -334,7 +398,7 @@ class Firebase {
 
   getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
 
-  addTask = ({ name, projectId, listId, userId = null, defaultKey = null }) => {
+  addTask = ({ name, projectId, projectName, listId, listName, userId = null, defaultKey = null }) => {
     const isDefaultListItem = defaultKey && userId;
     
     this.db
@@ -351,7 +415,9 @@ class Firebase {
         assignedTo: isDefaultListItem ? [userId] : [],
         ownerId: isDefaultListItem ? userId : null,
         listId,
+        listName,
         projectId,
+        projectName,
         name
       })
       .then(ref => {

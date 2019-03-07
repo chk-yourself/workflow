@@ -33,5 +33,6 @@ export const getActiveSubtasks = (state, subtaskIds) => {
 
 export const getCompletedSubtasks = (state, subtaskIds) => {
   const subtasks = getSubtasksArray(state, subtaskIds);
+  if (subtasks.includes(undefined)) return [];
   return subtasks.filter(subtask => subtask.isCompleted);
 };

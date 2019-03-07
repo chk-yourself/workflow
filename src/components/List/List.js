@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { projectSelectors } from '../../ducks/projects';
 import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
@@ -44,9 +45,7 @@ class List extends Component {
     // When field loses focus, update list title if change is detected
 
     if (newName !== name) {
-      firebase.updateList(listId, {
-        name: newName
-      });
+      firebase.updateListName({ listId, name: newName})
       console.log('updated list name!');
     }
   };
@@ -65,7 +64,9 @@ class List extends Component {
     } = this.props;
     if (isFetchingTasks) return null;
 
-    const { name, viewportHeight } = this.state;
+    const isBoardView = view === 'board';
+
+    const { name } = this.state;
 
     return (
       <Draggable draggableId={listId || defaultKey} index={listIndex}>
@@ -97,7 +98,7 @@ class List extends Component {
                     wrapper: 'list__popover-wrapper',
                     popover: 'list__popover'
                   }}
-                  alignInner="left"
+                  alignInner={isBoardView ? 'left' : 'right'}
                   buttonProps={{
                     size: 'medium',
                     iconOnly: true,
@@ -107,9 +108,11 @@ class List extends Component {
                 >
                   <Menu>
                     <MenuItem>
+                     {!isRestricted &&
                       <a href="" onClick={this.handleListDelete}>
                         Delete
                       </a>
+                     }
                     </MenuItem>
                   </Menu>
                 </PopoverWrapper>
@@ -124,10 +127,10 @@ class List extends Component {
                 />
               </div>
               {provided.placeholder}
-              {view === 'board' ? (
-                <CardComposer listId={listId} projectId={projectId} />
+              {isBoardView ? (
+                <CardComposer listId={listId} listName={this.props.name} projectId={projectId} projectName={this.props.projectName} />
               ) : (
-                <TaskComposer listId={listId} projectId={projectId} defaultKey={defaultKey} />
+                <TaskComposer listId={listId} listName={this.props.name} projectId={projectId} defaultKey={defaultKey} projectName={this.props.projectName} />
               )}
             </section>
             {provided.placeholder}
@@ -142,7 +145,8 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasks: taskSelectors.getListTasks(state, ownProps.taskIds)
+    tasks: taskSelectors.getListTasks(state, ownProps.taskIds),
+    projectName: projectSelectors.getProjectName(state, ownProps.projectId)
   };
 };
 

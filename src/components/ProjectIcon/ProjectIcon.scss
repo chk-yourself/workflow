@@ -1,0 +1,71 @@
+@import '../../styles/_variables';
+
+.project-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// Background Colors
+
+.bg--default {
+  background-color: $grey-500;
+}
+
+.bg--blue {
+  background-color: $blue;
+  color: $white;
+}
+.bg--green {
+  background-color: $green;
+  color: $white;
+}
+.bg--pink {
+  background-color: $pink;
+  color: $white;
+}
+.bg--orange {
+  background-color: $orange;
+  color: $white;
+}
+.bg--purple {
+  background-color: $purple;
+  color: $white;
+}
+
+.bg--red {
+  background-color: $red;
+  color: $white;
+}
+
+.bg--teal {
+  background-color: $teal;
+  color: $white;
+}
+
+.bg--cyan {
+  background-color: $cyan;
+  color: $white;
+}
+
+.bg--grape {
+  background-color: $grape;
+  color: $white;
+}
+
+.bg--violet {
+  background-color: $violet;
+  color: $white;
+}
+
+.bg--indigo {
+  background-color: $indigo;
+  color: $white;
+}
+
+.bg--yellow {
+  background-color: $yellow;
+  color: $white;
+}

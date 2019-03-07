@@ -5,6 +5,7 @@ import { withOutsideClick } from '../withOutsideClick';
 import './Modal.scss';
 
 class Modal extends Component {
+  
   onOutsideClick = e => {
     const { onModalClose } = this.props;
     onModalClose(e);

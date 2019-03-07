@@ -27,8 +27,8 @@ class TaskComposer extends Component {
   onSubmit = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
-    const { listId, defaultKey, firebase, projectId, userId } = this.props;
-    firebase.addTask({ name, projectId, listId, userId, defaultKey });
+    const { listId, defaultKey, firebase, projectId, userId, projectName, listName } = this.props;
+    firebase.addTask({ name, projectId, listId, userId, defaultKey, projectName, listName });
     this.resetForm();
     e.preventDefault();
   };

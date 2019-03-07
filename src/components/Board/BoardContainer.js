@@ -201,9 +201,7 @@ class BoardContainer extends Component {
     // When field loses focus, update list title if change is detected
 
     if (newProjectName !== projectName) {
-      firebase.updateProject(projectId, {
-        name: newProjectName
-      });
+      firebase.updateProjectName({ projectId, name: newProjectName });
       console.log('updated project name!');
     }
   };

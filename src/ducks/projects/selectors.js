@@ -17,3 +17,15 @@ export const getProjectTags = (state, projectId) => {
   const { projectsById } = state;
   return projectsById[projectId].tags;
 };
+
+export const getProjectName = (state, projectId) => {
+  if (!projectId) return '';
+  const { projectsById } = state;
+  return projectsById[projectId].name;
+};
+
+export const getProjectColor = (state, projectId) => {
+  if (!projectId) return '';
+  const { projectsById } = state;
+  return projectsById[projectId].color;
+};

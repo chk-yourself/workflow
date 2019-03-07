@@ -6,6 +6,7 @@ import { withFirebase } from '../Firebase';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
+import { listSelectors } from '../../ducks/lists';
 import { userSelectors } from '../../ducks/users';
 import { commentActions, commentSelectors } from '../../ducks/comments';
 import { Textarea } from '../Textarea';
@@ -28,10 +29,11 @@ import { projectSelectors } from '../../ducks/projects';
 import { DatePicker } from '../DatePicker';
 import { MONTHS, dateUtils } from '../Calendar';
 import TaskEditorPane from './TaskEditorPane';
+import { ProjectIcon } from '../ProjectIcon';
 
 const TaskEditorWrapper = ({view, handleTaskEditorClose, handleClick, children}) => {
   return view === 'board' ? (
-  <Modal 
+  <Modal
     onModalClose={handleTaskEditorClose}
     classes={{ content: 'task-editor' }}
     onModalClick={handleClick}
@@ -69,6 +71,7 @@ class TaskEditor extends Component {
       taskId,
       commentIds,
       firebase,
+      fetchTaskSubtasks,
       fetchTaskComments,
       addComment,
       deleteComment,
@@ -218,7 +221,8 @@ class TaskEditor extends Component {
   assignMember = userId => {
     const { taskId, projectId, assignedTo, firebase } = this.props;
 
-    if (assignedTo.indexOf(userId) !== -1) {
+    if (assignedTo.includes(userId)) {
+      if (!projectId) return;
       firebase.removeAssignee({ taskId, userId });
     } else {
       firebase.assignMember({ taskId, projectId, userId });
@@ -322,7 +326,11 @@ class TaskEditor extends Component {
       dueDate,
       subtaskIds,
       projectId,
-      view
+      completedSubtasks,
+      view,
+      projectName,
+      listName,
+      projectColor
     } = this.props;
     const {
       name,
@@ -356,6 +364,7 @@ class TaskEditor extends Component {
         view={view}
       >
         <Toolbar className="task-editor__toolbar">
+        {projectId &&
           <TaskEditorAssignMember buttonRef={this.membersListButton}>
             <MemberSearch
               users={usersArray}
@@ -363,6 +372,7 @@ class TaskEditor extends Component {
               onMemberClick={this.assignMember}
             />
           </TaskEditorAssignMember>
+        }
           <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
         <form
@@ -379,6 +389,16 @@ class TaskEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
+          {projectId &&
+          <TaskEditorSection>
+            <div className="task-editor__project-name">
+              <ProjectIcon color={projectColor} className="task-editor__project-icon" />
+              {projectName}
+            </div>
+            <div className="task-editor__list-name">
+            <Icon name="chevron-right" />{listName}</div>
+          </TaskEditorSection>
+          }
           <TaskEditorSection>
             <Button
               onClick={this.toggleDatePicker}
@@ -405,15 +425,15 @@ class TaskEditor extends Component {
                 )}
               </span>
             </Button>
-            {isDatePickerActive && (
               <DatePicker
+                innerRef={el => this.datePickerEl = el}
                 onClose={this.toggleDatePicker}
                 selectedDate={dueDate ? taskDueDate : null}
                 currentMonth={taskDueDate.month}
                 currentYear={taskDueDate.year}
                 selectDate={this.setDueDate}
+                isActive={isDatePickerActive}
               />
-            )}
           </TaskEditorSection>
           <TaskEditorSection>
             <div className="task-editor__section-icon">
@@ -439,6 +459,7 @@ class TaskEditor extends Component {
                 })}
               </div>
             )}
+            {projectId &&
             <Button
               type="button"
               className="task-editor__btn--add-member"
@@ -446,6 +467,7 @@ class TaskEditor extends Component {
             >
               <Icon name="plus" />
             </Button>
+            }
           </TaskEditorSection>
           <TaskEditorSection>
             <div className="task-editor__section-icon">
@@ -481,11 +503,15 @@ class TaskEditor extends Component {
             <div className="task-editor__section-icon">
               <Icon name="check-square" />
             </div>
-            <h3 className="task-editor__section-title">Subtasks</h3>
+            <h3 className="task-editor__section-title">
+            {hasSubtasks && (
+              <span className="task-editor__section-detail">{completedSubtasks.length}/{subtaskIds.length}</span>
+            )}
+            Subtasks</h3>
             <hr className="task-editor__hr" />
           </div>
           {hasSubtasks && (
-            <Subtasks taskId={taskId} subtaskIds={subtaskIds} />
+            <Subtasks taskId={taskId} subtaskIds={subtaskIds} projectId={projectId} />
           )}
           <div className="task-editor__section-icon">
             {newSubtaskFormIsFocused ? (
@@ -531,7 +557,14 @@ class TaskEditor extends Component {
             <div className="task-editor__section-icon">
               <Icon name="message-circle" />
             </div>
-            <h3 className="task-editor__section-title">Comments</h3>
+            <h3 className="task-editor__section-title">
+            {hasComments &&
+            <span className="task-editor__section-detail">
+            {commentIds.length}
+            </span>
+            }
+              {hasComments && commentIds.length === 1 ? 'Comment' : 'Comments'}
+              </h3>
             <hr className="task-editor__hr" />
           </div>
 
@@ -609,7 +642,12 @@ const mapStateToProps = (state, ownProps) => {
     membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
     mergedTags: currentSelectors.getMergedTags(state),
-    projectTags: projectSelectors.getProjectTags(state, ownProps.projectId)
+    projectTags: projectSelectors.getProjectTags(state, ownProps.projectId),
+    completedSubtasks: subtaskSelectors.getCompletedSubtasks(
+      state,
+      ownProps.subtaskIds
+    ),
+    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId)
   };
 };
 

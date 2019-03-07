@@ -6,20 +6,23 @@ import { Subtask } from '../Subtask';
 import * as droppableTypes from '../../constants/droppableTypes';
 import * as keys from '../../constants/keys';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
+import { currentSelectors } from '../../ducks/current';
 import './Subtasks.scss';
 
 class Subtasks extends Component {
   state = {
-    isFetching: true
+    isFetching: !this.props.currentProject || !this.props.projectId
   };
 
   componentDidMount() {
-    const { firebase, fetchTaskSubtasks, addSubtask, updateSubtask, deleteSubtask, taskId } = this.props;
-    fetchTaskSubtasks(taskId).then(() => {
-      this.setState({
-        isFetching: false
+    const { firebase, fetchTaskSubtasks, addSubtask, updateSubtask, deleteSubtask, taskId, projectId, currentProject } = this.props;
+    if (!currentProject || !projectId) {
+      fetchTaskSubtasks(taskId).then(() => {
+        this.setState({
+          isFetching: false
+        });
       });
-    });
+    }
     this.subtaskObserver = firebase.db
       .collection('subtasks')
       .where('taskId', '==', taskId)
@@ -66,7 +69,7 @@ class Subtasks extends Component {
   render() {
     const { taskId, subtasks } = this.props;
     const { isFetching } = this.state;
-
+    console.log(subtasks);
     return (
       <DragDropContext onDragEnd={this.moveSubtask}>
         <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
@@ -99,7 +102,8 @@ class Subtasks extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds)
+    subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
+    currentProject: currentSelectors.getCurrentProjectId(state)
   };
 };
 

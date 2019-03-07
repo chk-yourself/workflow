@@ -28,8 +28,8 @@ class CardComposer extends Component {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
     const { projectId } = this.props.current;
-    const { listId, firebase } = this.props;
-    firebase.addTask({ projectId, listId, name });
+    const { listId, firebase, projectName, listName } = this.props;
+    firebase.addTask({ projectId, listId, name, projectName, listName });
     this.resetForm();
     e.preventDefault();
   };
