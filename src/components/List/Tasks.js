@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Droppable } from 'react-beautiful-dnd';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { Card } from '../Card';
-import { Task } from '../Task';
+import { DraggableTask } from '../Task';
 
 export default class Tasks extends Component {
   /*
@@ -46,14 +46,14 @@ export default class Tasks extends Component {
           {...task}
         />
       ) : (
-        <Task
+        <DraggableTask
           key={task.taskId}
           index={taskIndex}
           onTaskClick={onTaskClick}
-          onDelete={onTaskDelete}
           listId={listId}
           defaultKey={defaultKey}
-          {...task}
+          taskId={task.taskId}
+          task={task}
         />
       );
     });

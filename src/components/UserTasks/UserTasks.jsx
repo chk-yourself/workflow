@@ -72,19 +72,52 @@ class UserTasks extends Component {
     }
   };
 
-  moveTask = ({ destination, draggableId, source }) => {
+  onDragEnd = ({ destination, draggableId, source, type }) => {
+    /* FIX ME! */
     if (!destination) return;
-    if (destination.index === source.index) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
     const { firebase } = this.props;
-    const { taskIds } = this.state;
-    const updatedTaskIds = [...taskIds];
-    updatedTaskIds.splice(source.index, 1);
-    updatedTaskIds.splice(destination.index, 0, draggableId);
+    if (type === droppableTypes.TASK) {
+      const { listsById } = this.props;
+      const isMovedWithinList = source.droppableId === destination.droppableId;
+      const updatedTaskIds = [...listsById[destination.droppableId].taskIds];
+      if (isMovedWithinList) {
+        updatedTaskIds.splice(source.index, 1);
+        updatedTaskIds.splice(destination.index, 0, draggableId);
+        firebase.updateList(source.droppableId, {
+          taskIds: updatedTaskIds
+        });
+      } else {
+        updatedTaskIds.splice(destination.index, 0, draggableId);
+        firebase.moveTaskToList({
+          taskId: draggableId,
+          origListId: source.droppableId,
+          newListId: destination.droppableId,
+          updatedTaskIds
+        });
+      }
+    }
+
+    if (type === droppableTypes.LIST) {
+      const { projectsById, projectId, reorderLists } = this.props;
+      const updatedListIds = [...projectsById[projectId].listIds];
+      updatedListIds.splice(source.index, 1);
+      updatedListIds.splice(destination.index, 0, draggableId);
+      firebase.updateProject(projectId, {
+        listIds: updatedListIds
+      });
+      reorderLists(projectId, updatedListIds);
+    }
+  };
+
+  onDragStart = () => {
     this.setState({
-      taskIds: updatedTaskIds
-    });
-    firebase.updateTask(source.droppableId, {
-      taskIds: updatedTaskIds
+      isDragging: true
     });
   };
 
@@ -94,44 +127,51 @@ class UserTasks extends Component {
     if (isFetching) return null;
     return (
       <Main title="All Tasks">
-        <div className={`user-tasks__wrapper ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
-        <DragDropContext onDragEnd={this.moveTask}>
-          <Droppable droppableId={userId} type={droppableTypes.TASK}>
-            {provided => (
-              <div
-                className="user-tasks"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                {lists.map(list => (
-                  <List
-                    key={list.listId || list.defaultKey}
-                    userId={userId}
-                    listId={list.listId}
-                    defaultKey={list.defaultKey}
-                    listIndex={0}
-                    name={list.name}
-                    taskIds={list.taskIds}
-                    onTaskClick={this.handleTaskClick}
-                    projectId={null}
-                    view="list"
-                    isRestricted={list.isDefault}
-                  />
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-        {isTaskEditorOpen && (
-          <TaskEditor
-            {...tasksById[taskId]}
-            handleTaskEditorClose={this.toggleTaskEditor}
-            userId={userId}
-            view="list"
-            key={taskId}
-          />
-        )}
+        <div
+          className={`user-tasks__wrapper ${
+            isTaskEditorOpen ? 'show-task-editor' : ''
+          }`}
+        >
+          <DragDropContext
+            onDragEnd={this.onDragEnd}
+            onDragStart={this.onDragStart}
+          >
+            <Droppable droppableId={userId} type={droppableTypes.TASK}>
+              {provided => (
+                <div
+                  className="user-tasks"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {lists.map((list, i) => (
+                    <List
+                      key={list.listId || list.defaultKey}
+                      userId={userId}
+                      listId={list.listId}
+                      defaultKey={list.defaultKey}
+                      listIndex={i}
+                      name={list.name}
+                      taskIds={list.taskIds}
+                      onTaskClick={this.handleTaskClick}
+                      projectId={null}
+                      view="list"
+                      isRestricted={list.isDefault}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          {isTaskEditorOpen && (
+            <TaskEditor
+              {...tasksById[taskId]}
+              handleTaskEditorClose={this.toggleTaskEditor}
+              userId={userId}
+              view="list"
+              key={taskId}
+            />
+          )}
         </div>
       </Main>
     );

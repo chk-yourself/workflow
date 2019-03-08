@@ -22,17 +22,19 @@ class Modal extends Component {
       innerRef
     } = this.props;
     return (
-      <div className={`modal ${classes.modal}`} onClick={onModalClick}>
+      <div className={`modal ${classes.modal || ''}`} onClick={onModalClick}>
         <div
           id={id}
           ref={innerRef}
           className={`modal__content ${
-            classes.content
+            classes.content || ''
           } modal__content--${size}`}
         >
           <Button
             type="button"
-            className="modal__btn--close"
+            className={`modal__btn--close ${
+            classes.button || ''
+          }`}
             onClick={onModalClose}
             iconOnly
           >
@@ -48,7 +50,8 @@ class Modal extends Component {
 Modal.defaultProps = {
   classes: {
     modal: '',
-    content: ''
+    content: '',
+    button: ''
   }
 };
 

@@ -35,7 +35,7 @@ const TaskEditorWrapper = ({view, handleTaskEditorClose, handleClick, children})
   return view === 'board' ? (
   <Modal
     onModalClose={handleTaskEditorClose}
-    classes={{ content: 'task-editor' }}
+    classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
     onModalClick={handleClick}
     size="lg"
     id="taskEditor">
@@ -78,6 +78,7 @@ class TaskEditor extends Component {
       updateComment
     } = this.props;
 
+    console.log(taskId);
       fetchTaskComments(taskId).then(() => {
         this.setState({
           isFetching: false
@@ -368,7 +369,7 @@ class TaskEditor extends Component {
         handleClick={this.handleClick}
         view={view}
       >
-        <Toolbar className="task-editor__toolbar">
+        <Toolbar className={`task-editor__toolbar`}>
         {projectId &&
           <TaskEditorAssignMember buttonRef={this.membersListButton}>
             <MemberSearch

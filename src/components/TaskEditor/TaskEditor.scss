@@ -2,8 +2,20 @@
 @import '../../styles/_mixins';
 
 .task-editor {
+  @include md {
+    padding: 16px;
+  }
+  @include lg {
+    padding: 24px;
+  }
   @include xl {
     max-width: 700px;
+  }
+}
+
+.task-editor__btn--close {
+  @include md {
+    right: 8px;
   }
 }
 
@@ -130,7 +142,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 46px;
+  margin-top: 42px;
   min-height: min-content;
 }
 
@@ -179,10 +191,10 @@
   top: 4px;
   width: calc(100% - 44px);
   justify-content: space-between;
-  padding: 0 0 0 8px;
+  padding: 0 0 0 5px;
   border-bottom: 1px solid $grey-300;
   z-index: 4;
-  height: 44px;
+  height: 40px;
   &:after {
     content: '';
     position: absolute;
@@ -191,9 +203,16 @@
     left: 100%;
     top: 100%;
   }
+  @include md {
+    padding-left: 9px;
+  }
 }
 
 .task-editor__popover-wrapper {
+  line-height: 1;
+  &:last-child {
+    margin-left: auto;
+  }
   &.is-active {
     .feather {
       color: $primary;
@@ -239,8 +258,16 @@
 }
 
 .task-editor__toolbar-btn {
+  width: 38px;
+  height: 38px;
+  line-height: 0;
   .feather {
     color: $grey-500;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    vertical-align: middle;
   }
   &:hover {
     .feather {
