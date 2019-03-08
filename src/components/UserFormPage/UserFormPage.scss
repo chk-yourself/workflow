@@ -5,7 +5,7 @@
   max-width: 400px;
   margin-right: auto;
   margin-left: auto;
-  padding: 4px 8px;
+  padding: 4px 24px;
   @include md {
     padding: 8px;
   }
@@ -16,12 +16,17 @@
 }
 
 .user-form__title {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  margin: 1rem 0 1.5rem;
   color: $grey-900;
+  font-weight: 600;
   @include md {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
+  }
+  @include lg {
+    font-size: 2rem;
   }
   @include xl {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 }

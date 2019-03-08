@@ -125,11 +125,10 @@ class Firebase {
 
   // Tags API
 
-  addTag = ({ taskId, userId, projectId, text, color = 'default' }) => {
+  addTag = ({ taskId, userId, text, projectId = null, color = 'default' }) => {
     const batch = this.db.batch();
     const userRef = this.getUserDoc(userId);
     const taskRef = this.getTaskDoc(taskId);
-    const projectRef = this.getProjectDoc(projectId);
 
     batch.update(taskRef, {
       tags: this.addToArray(text),
@@ -151,6 +150,9 @@ class Firebase {
       { merge: true }
     );
 
+    if (projectId) {
+      const projectRef = this.getProjectDoc(projectId);
+
     batch.set(
       projectRef,
       {
@@ -165,6 +167,8 @@ class Firebase {
       },
       { merge: true }
     );
+    }
+
 
     return batch
       .commit()
@@ -530,6 +534,7 @@ class Firebase {
         snapshot.docs.forEach(doc => {
           batch.delete(doc.ref);
         });
+        console.log('1. delete task subtasks');
       })
       .then(() => {
         assignedTo.forEach(memberId => {
@@ -543,6 +548,7 @@ class Firebase {
             lastUpdatedAt: this.getTimestamp()
           });
         });
+        console.log('2. remove task assignment');
       })
       .then(() => {
         this.db
@@ -553,6 +559,7 @@ class Firebase {
             snapshot.docs.forEach(doc => {
               batch.delete(doc.ref);
             });
+            console.log('3. delete task comments');
             return batch
               .commit()
               .then(() => {

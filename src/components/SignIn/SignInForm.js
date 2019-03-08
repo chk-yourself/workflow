@@ -43,14 +43,14 @@ class SignInForm extends Component {
     const { signInWithGoogle } = this.props.firebase;
     signInWithGoogle();
     e.preventDefault();
-  }
+  };
 
   render() {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
       <form className="user-form">
-      {/*
+        {/*
         <Button
           type="click"
           size="lg"
