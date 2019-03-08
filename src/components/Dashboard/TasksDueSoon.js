@@ -35,7 +35,6 @@ class TasksDueSoon extends Component {
     this.taskObserver = firebase.db
       .collection('tasks')
       .where('assignedTo', 'array-contains', userId)
-      .where('dueDate', '>=', timeStart)
       .where('dueDate', '<=', timeEnd)
       .orderBy('dueDate', 'asc')
       .onSnapshot(querySnapshot => {
