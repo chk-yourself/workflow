@@ -12,11 +12,6 @@ export const getUserTaskIds = (state, userId) => {
   return taskIds;
 };
 
-export const getCurrentUserData = state => {
-  const currentUserId = state.current.userId;
-  return state.usersById[currentUserId];
-};
-
 // returns array of all users
 export const getUsersArray = state => {
   const { usersById } = state;

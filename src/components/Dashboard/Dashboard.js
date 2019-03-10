@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
-import { currentActions, currentSelectors } from '../../ducks/current';
 import {
-  currentUserSelectors,
-  currentUserActions
-} from '../../ducks/currentUser';
+  selectTask as selectTaskAction,
+  getSelectedTaskId
+} from '../../ducks/selectedTask';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { ProjectGridContainer } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
 import DashboardPanel from './DashboardPanel';
@@ -18,6 +18,11 @@ class Dashboard extends Component {
   };
 
   toggleTaskEditor = () => {
+    const { isTaskEditorOpen } = this.state;
+    if (isTaskEditorOpen) {
+      const { selectTask } = this.props;
+      selectTask(null);
+    }
     this.setState(prevState => ({
       isTaskEditorOpen: !prevState.isTaskEditorOpen
     }));
@@ -34,7 +39,7 @@ class Dashboard extends Component {
       tasksDueSoon,
       toggleProjectComposer,
       userId,
-      currentTaskId
+      selectedTaskId
     } = this.props;
     const { isTaskEditorOpen } = this.state;
     return (
@@ -47,7 +52,7 @@ class Dashboard extends Component {
         </DashboardPanel>
         {isTaskEditorOpen && (
           <TaskEditor
-            {...tasksDueSoon[currentTaskId]}
+            {...tasksDueSoon[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
             view="board"
@@ -60,15 +65,14 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentTaskId: currentSelectors.getCurrentTaskId(state),
-    tasksDueSoon: currentUserSelectors.getTasksDueSoonById(state),
-    store: state
+    selectedTaskId: getSelectedTaskId(state),
+    tasksDueSoon: currentUserSelectors.getTasksDueSoonById(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectTask: taskId => dispatch(currentActions.selectTask(taskId))
+    selectTask: taskId => dispatch(selectTaskAction(taskId))
   };
 };
 

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
-import { withFirebase } from '../Firebase';
+import { withFirebase } from '../../components/Firebase';
 import * as ROUTES from '../../constants/routes';
-import { Input } from '../Input';
-import { Button } from '../Button';
+import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
 
 const INITIAL_STATE = {
   username: '',

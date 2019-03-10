@@ -4,7 +4,7 @@ import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import './Task.scss';
 
 class Task extends Component {
@@ -51,7 +51,7 @@ class Task extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { userId, taskId, firebase, listId, folderId, assignedTo, folders } = this.props;
+    const { taskId, firebase, listId, assignedTo, folders } = this.props;
     firebase.deleteTask({ taskId, listId, assignedTo, folders });
   };
 
@@ -118,7 +118,7 @@ class Task extends Component {
 
 const mapStateToProps = state => {
   return {
-    userId: currentSelectors.getCurrentUserId(state)
+    userId: currentUserSelectors.getCurrentUserId(state)
   };
 };
 

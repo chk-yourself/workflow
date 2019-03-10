@@ -17,7 +17,12 @@ const withAuthentication = Component => {
     }
 
     componentDidMount() {
-      const { firebase, history, fetchCurrentUserData, setCurrentUser } = this.props;
+      const {
+        firebase,
+        history,
+        fetchCurrentUserData,
+        setCurrentUser
+      } = this.props;
 
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
         if (authUser) {
@@ -47,7 +52,8 @@ const withAuthentication = Component => {
   const mapDispatchToProps = dispatch => ({
     fetchCurrentUserData: userId =>
       dispatch(currentUserActions.fetchCurrentUserData(userId)),
-    setCurrentUser: currentUser => dispatch(currentUserActions.setCurrentUser(currentUser))
+    setCurrentUser: currentUser =>
+      dispatch(currentUserActions.setCurrentUser(currentUser))
   });
 
   return compose(

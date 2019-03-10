@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/users';
-import { currentActions, currentSelectors } from '../../ducks/current';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { commentActions, commentSelectors } from '../../ducks/comments';
 import { Icon } from '../Icon';
@@ -131,8 +130,7 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.comment.from),
-    current: currentSelectors.getCurrent(state)
+    user: userSelectors.getUserData(state, ownProps.comment.from)
   };
 };
 

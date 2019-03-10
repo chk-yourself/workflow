@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import { withAuthorization } from '../Session';
+import { withAuthorization } from '../../components/Session';
 import * as ROUTES from '../../constants/routes';
 import { userActions } from '../../ducks/users';
-import { currentActions, currentSelectors } from '../../ducks/current';
-import { ProjectGridContainer } from '../ProjectGrid';
-import { ProjectComposer } from '../ProjectComposer';
-import { BoardContainer } from '../Board';
+import { ProjectGridContainer } from '../../components/ProjectGrid';
+import { ProjectComposer } from '../../components/ProjectComposer';
+import { BoardContainer } from '../../components/Board';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import { Main } from '../Main';
-import { Dashboard } from '../Dashboard';
-import { UserTasks } from '../UserTasks';
+import { Main } from '../../components/Main';
+import { Dashboard } from '../../components/Dashboard';
+import { UserTasks } from '../../components/UserTasks';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -25,14 +24,12 @@ class HomePage extends Component {
 
   componentDidMount() {
     const {
-      selectUser,
       fetchUsersById,
       fetchProjectsById,
       updateUser,
       userId,
       firebase
     } = this.props;
-    selectUser(userId);
     console.log('mounted home');
     fetchUsersById()
       .then(() => fetchProjectsById(userId))
@@ -75,10 +72,10 @@ class HomePage extends Component {
             exact
             path={ROUTES.HOME}
             render={props => (
-                <Dashboard
-                  toggleProjectComposer={this.toggleProjectComposer}
-                  {...props}
-                />
+              <Dashboard
+                toggleProjectComposer={this.toggleProjectComposer}
+                {...props}
+              />
             )}
           />
           <Route
@@ -116,7 +113,6 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentProjectId: currentSelectors.getCurrentProjectId(state),
     projectsById: projectSelectors.getProjectsById(state)
   };
 };
@@ -127,8 +123,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(userActions.updateUser({ userId, userData })),
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
     fetchProjectsById: userId =>
-      dispatch(projectActions.fetchProjectsById(userId)),
-    selectUser: userId => dispatch(currentActions.selectUser(userId))
+      dispatch(projectActions.fetchProjectsById(userId))
   };
 };
 

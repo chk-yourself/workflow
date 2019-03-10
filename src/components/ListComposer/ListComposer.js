@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { projectActions, projectSelectors } from '../../ducks/projects';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import { projectSelectors } from '../../ducks/projects';
 import { Button } from '../Button';
 import './ListComposer.scss';
 
@@ -106,16 +105,12 @@ const condition = authUser => !!authUser;
 const mapStateToProps = state => {
   return {
     projectsById: projectSelectors.getProjectsById(state),
-    projectsArray: projectSelectors.getProjectsArray(state),
-    current: currentSelectors.getCurrent(state)
+    projectsArray: projectSelectors.getProjectsArray(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    updateProjectsById: project => dispatch(projectActions.updateProjectsById(project)),
-    selectProject: projectId => dispatch(currentActions.selectProject(projectId))
-  };
+  return {};
 };
 
 export default withAuthorization(condition)(

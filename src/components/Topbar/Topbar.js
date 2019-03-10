@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { userSelectors } from '../../ducks/users';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { PopoverWrapper } from '../Popover';
 import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
-import { SignOutButton } from '../SignOut';
+import { SignOutButton } from '../SignOutButton';
 import { SearchBar } from '../SearchBar';
 import * as ROUTES from '../../constants/routes';
 import './Topbar.scss';
@@ -15,7 +15,7 @@ class Topbar extends Component {
     const { currentUser } = this.props;
     return (
       <div className="topbar">
-      <SearchBar />
+        <SearchBar />
         {currentUser && (
           <PopoverWrapper
             classes={{
@@ -61,7 +61,7 @@ class Topbar extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentUser: userSelectors.getCurrentUserData(state)
+    currentUser: currentUserSelectors.getCurrentUser(state)
   };
 };
 

@@ -8,8 +8,8 @@ import { PasswordForgetPage } from '../PasswordForget';
 import { HomePage } from '../Home';
 import { AccountPage } from '../Account';
 import { AdminPage } from '../Admin';
-import { withAuthentication } from '../Session';
-import { Header } from '../Header';
+import { withAuthentication } from '../../components/Session';
+import { Header } from '../../components/Header';
 import './App.scss';
 
 class App extends Component {

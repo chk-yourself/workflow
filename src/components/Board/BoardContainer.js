@@ -3,7 +3,14 @@ import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import {
+  selectTask as selectTaskAction,
+  getSelectedTaskId
+} from '../../ducks/selectedTask';
+import {
+  selectProject as selectProjectAction,
+  getSelectedProjectId
+} from '../../ducks/selectedProject';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
@@ -29,7 +36,6 @@ class BoardContainer extends Component {
 
   componentDidMount() {
     const {
-      current,
       fetchListsById,
       fetchProjectTasks,
       fetchProjectSubtasks,
@@ -46,10 +52,11 @@ class BoardContainer extends Component {
       addSubtask,
       updateSubtask,
       deleteSubtask,
-      selectProject
+      selectProject,
+      selectedProjectId
     } = this.props;
 
-    if (current.projectId !== projectId) {
+    if (selectedProjectId !== projectId) {
       selectProject(projectId);
     }
 
@@ -60,16 +67,18 @@ class BoardContainer extends Component {
         isFetching: false
       });
     });
-    this.projectObserver = firebase.getProjectDoc(projectId).onSnapshot(snapshot => {
-      const updatedProject = snapshot.data();
-      if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
-        updateListIds(projectId, updatedProject.listIds);
-      } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
-        updateProjectTags(projectId, updatedProject.tags);
-      } else {
-        updateProject(projectId, updatedProject);
-      }
-    });
+    this.projectObserver = firebase
+      .getProjectDoc(projectId)
+      .onSnapshot(snapshot => {
+        const updatedProject = snapshot.data();
+        if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
+          updateListIds(projectId, updatedProject.listIds);
+        } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
+          updateProjectTags(projectId, updatedProject.tags);
+        } else {
+          updateProject(projectId, updatedProject);
+        }
+      });
     this.listObserver = firebase.db
       .collection('lists')
       .where('projectId', '==', projectId)
@@ -118,6 +127,8 @@ class BoardContainer extends Component {
   }
 
   componentWillUnmount() {
+    const { selectProject } = this.props;
+    selectProject(null);
     this.projectObserver();
     this.listObserver();
     this.taskObserver();
@@ -177,6 +188,11 @@ class BoardContainer extends Component {
   };
 
   toggleTaskEditor = () => {
+    const { isTaskEditorOpen } = this.state;
+    if (isTaskEditorOpen) {
+      const { selectTask } = this.props;
+      selectTask(null);
+    }
     this.setState(prevState => ({
       isTaskEditorOpen: !prevState.isTaskEditorOpen
     }));
@@ -208,9 +224,8 @@ class BoardContainer extends Component {
 
   render() {
     const { isFetching, isTaskEditorOpen, projectName } = this.state;
-    const { current, listsArray, tasksById, projectId, userId } = this.props;
+    const { lists, tasksById, projectId, userId, selectedTaskId } = this.props;
     if (isFetching) return null;
-    const { taskId } = current;
 
     return (
       <main className="board-container">
@@ -229,28 +244,28 @@ class BoardContainer extends Component {
           onDragStart={this.onDragStart}
         >
           <Board projectId={projectId}>
-          {listsArray.map((list, listIndex) => {
-      const { listId, name: listName, taskIds } = list;
-      return (
-        <List
-          listId={listId}
-          key={listId}
-          listIndex={listIndex}
-          name={listName}
-          taskIds={taskIds}
-          isFetchingTasks={isFetching}
-          onTaskClick={this.handleTaskClick}
-          projectId={projectId}
-          view="board"
-          isRestricted={false}
-        />
-      );
-    })}
-    </Board>
+            {lists.map((list, listIndex) => {
+              const { listId, name: listName, taskIds } = list;
+              return (
+                <List
+                  listId={listId}
+                  key={listId}
+                  listIndex={listIndex}
+                  name={listName}
+                  taskIds={taskIds}
+                  isFetchingTasks={isFetching}
+                  onTaskClick={this.handleTaskClick}
+                  projectId={projectId}
+                  view="board"
+                  isRestricted={false}
+                />
+              );
+            })}
+          </Board>
         </DragDropContext>
         {isTaskEditorOpen && (
           <TaskEditor
-            {...tasksById[taskId]}
+            {...tasksById[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
             view={'board'}
@@ -264,9 +279,10 @@ class BoardContainer extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     projectsById: projectSelectors.getProjectsById(state),
-    current: currentSelectors.getCurrent(state),
+    selectedProjectId: getSelectedProjectId(state),
+    selectedTaskId: getSelectedTaskId(state),
     listsById: listSelectors.getListsById(state),
-    listsArray: listSelectors.getListsArray(state),
+    lists: listSelectors.getSelectedProjectLists(state),
     tasksById: taskSelectors.getTasksById(state),
     project: projectSelectors.getProject(state, ownProps.projectId)
   };
@@ -276,11 +292,14 @@ const mapDispatchToProps = dispatch => {
   return {
     updateProject: (projectId, projectData) =>
       dispatch(projectActions.updateProject(projectId, projectData)),
-    selectProject: projectId => dispatch(currentActions.selectProject(projectId)),
-    selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
-    fetchListsById: projectId => dispatch(listActions.fetchListsById(projectId)),
-    updateList: (listId, listData) => dispatch(listActions.updateList(listId, listData)),
-    fetchProjectTasks: projectId => dispatch(taskActions.fetchProjectTasks(projectId)),
+    selectProject: projectId => dispatch(selectProjectAction(projectId)),
+    selectTask: taskId => dispatch(selectTaskAction(taskId)),
+    fetchListsById: projectId =>
+      dispatch(listActions.fetchListsById(projectId)),
+    updateList: (listId, listData) =>
+      dispatch(listActions.updateList(listId, listData)),
+    fetchProjectTasks: projectId =>
+      dispatch(taskActions.fetchProjectTasks(projectId)),
     fetchProjectSubtasks: projectId =>
       dispatch(subtaskActions.fetchProjectSubtasks(projectId)),
     reorderLists: (projectId, listIds) =>

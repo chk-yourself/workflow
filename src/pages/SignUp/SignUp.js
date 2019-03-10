@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SignUpForm from './SignUpForm';
-import { UserFormPage } from '../UserFormPage';
+import { UserFormPage } from '../../components/UserFormPage';
 import * as ROUTES from '../../constants/routes';
 import './SignUp.scss';
 

@@ -144,24 +144,3 @@ export const updateTaskDueSoon = ({ taskId, taskData }) => {
     taskData
   };
 };
-
-export const selectProject = projectId => {
-  return {
-    type: types.SELECT_PROJECT,
-    projectId
-  };
-};
-
-export const selectList = listId => {
-  return {
-    type: types.SELECT_LIST,
-    listId
-  };
-};
-
-export const selectTask = taskId => {
-  return {
-    type: types.SELECT_TASK,
-    taskId
-  };
-};

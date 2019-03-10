@@ -7,7 +7,7 @@ import {
   currentUserSelectors
 } from '../../ducks/currentUser';
 import { taskSelectors, taskActions } from '../../ducks/tasks';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import { selectTask as selectTaskAction, getSelectedTaskId } from '../../ducks/selectedTask';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../Folder';
 import { Main } from '../Main';
@@ -82,6 +82,13 @@ class UserTasks extends Component {
   }
 
   toggleTaskEditor = () => {
+    const { isTaskEditorOpen } = this.state;
+    const { selectTask } = this.props;
+
+    if (isTaskEditorOpen) {
+      selectTask(null);
+    }
+
     this.setState(prevState => ({
       isTaskEditorOpen: !prevState.isTaskEditorOpen
     }));
@@ -148,7 +155,7 @@ class UserTasks extends Component {
   };
 
   render() {
-    const { filters, userId, taskId, tasksById, folders } = this.props;
+    const { filters, userId, selectedTaskId, tasksById, folders } = this.props;
     const { isFetching, isTaskEditorOpen } = this.state;
     if (isFetching) return null;
     return (
@@ -188,11 +195,11 @@ class UserTasks extends Component {
           </DragDropContext>
           {isTaskEditorOpen && (
             <TaskEditor
-              {...tasksById[taskId]}
+              {...tasksById[selectedTaskId]}
               handleTaskEditorClose={this.toggleTaskEditor}
               userId={userId}
               view="list"
-              key={taskId}
+              key={selectedTaskId}
             />
           )}
         </div>
@@ -208,13 +215,13 @@ const mapStateToProps = state => {
     folders: currentUserSelectors.getFoldersArray(state),
     folderIds: currentUserSelectors.getFolderIds(state),
     tasksById: taskSelectors.getTasksById(state),
-    taskId: currentSelectors.getCurrentTaskId(state)
+    selectedTaskId: getSelectedTaskId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
+    selectTask: taskId => dispatch(selectTaskAction(taskId)),
     syncUserTasks: userId => dispatch(taskActions.syncUserTasks(userId)),
     fetchFolders: userId => dispatch(currentUserActions.fetchFolders(userId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),

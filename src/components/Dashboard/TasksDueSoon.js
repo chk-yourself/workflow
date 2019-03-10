@@ -3,25 +3,26 @@ import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
 import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
-import { currentActions, currentSelectors } from '../../ducks/current';
-import { currentUserActions, currentUserSelectors } from '../../ducks/currentUser';
+import {
+  currentUserActions,
+  currentUserSelectors
+} from '../../ducks/currentUser';
 
 class TasksDueSoon extends Component {
   state = {
-    isFetching: true,
-    isTaskEditorOpen: false
+    isFetching: true
   };
 
   componentDidMount() {
     const {
-      userId,
+      currentUserId,
       fetchTasksDueWithinDays,
       addTaskDueSoon,
       deleteTaskDueSoon,
       updateTaskDueSoon,
       firebase
     } = this.props;
-    fetchTasksDueWithinDays(userId, 7).then(() => {
+    fetchTasksDueWithinDays(currentUserId, 7).then(() => {
       this.setState({
         isFetching: false
       });
@@ -34,7 +35,7 @@ class TasksDueSoon extends Component {
 
     this.taskObserver = firebase.db
       .collection('tasks')
-      .where('assignedTo', 'array-contains', userId)
+      .where('assignedTo', 'array-contains', currentUserId)
       .where('dueDate', '<=', timeEnd)
       .orderBy('dueDate', 'asc')
       .onSnapshot(querySnapshot => {
@@ -78,16 +79,13 @@ class TasksDueSoon extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentSelectors.getCurrentUserId(state),
-    tasksDueSoon: currentUserSelectors.getTasksDueSoonArr(state),
-    taskId: currentSelectors.getCurrentTaskId(state)
+    currentUserId: currentUserSelectors.getCurrentUserId(state),
+    tasksDueSoon: currentUserSelectors.getTasksDueSoonArr(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectUser: userId => dispatch(currentActions.selectUser(userId)),
-    selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
     fetchTasksDueWithinDays: (userId, days) =>
       dispatch(currentUserActions.fetchTasksDueWithinDays(userId, days)),
     addTaskDueSoon: ({ taskId, taskData }) =>

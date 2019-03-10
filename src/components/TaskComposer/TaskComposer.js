@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
-import { projectActions, projectSelectors } from '../../ducks/projects';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { Input } from '../Input';
 import { Button } from '../Button';

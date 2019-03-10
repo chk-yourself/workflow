@@ -8,26 +8,18 @@ export const getListName = (state, listId) => {
   return listsById[listId].name;
 };
 
-export const getUserLists = (state, userId) => {
-  const { usersById, listsById } = state;
-  const { defaultLists, listIds } = usersById[userId];
-  return [
-    ...Object.keys(defaultLists).map(defaultKey => ({
-      listId: null,
-      defaultKey,
-      ...defaultLists[defaultKey],
-      isDefault: true
-    })),
-    ...listIds.map(listId => listsById[listId])
-  ];
-};
-
-export const getListsArray = state => {
-  const { listsById, projectsById, current } = state;
-  const { projectId } = current;
-  const project = projectsById[projectId];
+export const getSelectedProjectLists = state => {
+  const { listsById, projectsById, selectedProject } = state;
+  const project = projectsById[selectedProject];
   if (!project) return null;
   const { listIds } = project;
+
+  return listIds.map(listId => listsById[listId]);
+};
+
+export const getProjectLists = (state, listIds) => {
+  const { listsById } = state;
+  if (!listIds) return [];
 
   return listIds.map(listId => listsById[listId]);
 };

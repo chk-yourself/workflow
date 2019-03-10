@@ -45,3 +45,18 @@ export const getTasksDueSoonArr = state => {
   if (!tasksDueSoon) return [];
   return Object.keys(tasksDueSoon).map(taskId => tasksDueSoon[taskId]);
 };
+
+export const getMergedTags = state => {
+  const {
+    selectedProject: projectId,
+    projectsById,
+    usersById,
+    currentUser
+  } = state;
+  const { userId } = currentUser;
+  if (!projectId) return [];
+  const { tags: projectTags } = projectsById[projectId];
+  const { tags: userTags } = usersById[userId];
+  const mergedTags = { ...userTags, ...projectTags };
+  return Object.keys(mergedTags).map(tag => mergedTags[tag]);
+};

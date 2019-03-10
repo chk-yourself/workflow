@@ -1,12 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import {
+  currentUserActions,
+  currentUserSelectors
+} from '../../ducks/currentUser';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
-import { listSelectors } from '../../ducks/lists';
 import { userSelectors } from '../../ducks/users';
 import { commentActions, commentSelectors } from '../../ducks/comments';
 import { Textarea } from '../Textarea';
@@ -20,7 +21,6 @@ import TaskEditorSection from './TaskEditorSection';
 import { MemberSearch } from '../MemberSearch';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
 import * as keys from '../../constants/keys';
-import * as droppableTypes from '../../constants/droppableTypes';
 import { Subtasks } from '../Subtasks';
 import TaskEditorComment from './TaskEditorComment';
 import { TagsInput } from '../TagsInput';
@@ -31,20 +31,30 @@ import { dateUtils } from '../Calendar';
 import TaskEditorPane from './TaskEditorPane';
 import { ProjectIcon } from '../ProjectIcon';
 
-const TaskEditorWrapper = ({view, handleTaskEditorClose, handleClick, children}) => {
+const TaskEditorWrapper = ({
+  view,
+  handleTaskEditorClose,
+  handleClick,
+  children
+}) => {
   return view === 'board' ? (
-  <Modal
-    onModalClose={handleTaskEditorClose}
-    classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
-    onModalClick={handleClick}
-    size="lg"
-    id="taskEditor">
-    {children}
-    </Modal> )
-  : (<TaskEditorPane onClose={handleTaskEditorClose} onClick={handleClick}>{children}</TaskEditorPane>)
-  };
+    <Modal
+      onModalClose={handleTaskEditorClose}
+      classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
+      onModalClick={handleClick}
+      size="lg"
+      id="taskEditor"
+    >
+      {children}
+    </Modal>
+  ) : (
+    <TaskEditorPane onClose={handleTaskEditorClose} onClick={handleClick}>
+      {children}
+    </TaskEditorPane>
+  );
+};
 
-  /*
+/*
   TODO: Break up logic in child components
   */
 
@@ -52,8 +62,7 @@ class TaskEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isFetching:
-        this.props.commentIds && this.props.commentIds.length > 0,
+      isFetching: this.props.commentIds && this.props.commentIds.length > 0,
       name: this.props.name,
       notes: this.props.notes,
       newSubtask: '',
@@ -64,7 +73,7 @@ class TaskEditor extends Component {
       isDatePickerActive: false,
       prevProps: {
         name: this.props.name,
-        notes: this.props.notes,
+        notes: this.props.notes
       }
     };
     this.membersListButton = React.createRef();
@@ -73,9 +82,7 @@ class TaskEditor extends Component {
   componentDidMount() {
     const {
       taskId,
-      commentIds,
       firebase,
-      fetchTaskSubtasks,
       fetchTaskComments,
       addComment,
       deleteComment,
@@ -83,11 +90,11 @@ class TaskEditor extends Component {
     } = this.props;
 
     console.log(taskId);
-      fetchTaskComments(taskId).then(() => {
-        this.setState({
-          isFetching: false
-        });
+    fetchTaskComments(taskId).then(() => {
+      this.setState({
+        isFetching: false
       });
+    });
 
     this.commentObserver = firebase.db
       .collection('comments')
@@ -118,7 +125,7 @@ class TaskEditor extends Component {
           name: props.name
         }
       };
-    };
+    }
     if (props.notes !== state.prevProps.notes) {
       return {
         notes: props.notes,
@@ -127,7 +134,7 @@ class TaskEditor extends Component {
           notes: props.notes
         }
       };
-    };
+    }
     return null;
   }
 
@@ -138,7 +145,14 @@ class TaskEditor extends Component {
   };
 
   deleteTask = () => {
-    const { taskId, listId, assignedTo, folders, firebase, handleTaskEditorClose } = this.props;
+    const {
+      taskId,
+      listId,
+      assignedTo,
+      folders,
+      firebase,
+      handleTaskEditorClose
+    } = this.props;
     firebase.deleteTask({ taskId, listId, assignedTo, folders });
     handleTaskEditorClose();
   };
@@ -360,13 +374,15 @@ class TaskEditor extends Component {
     const taskDueDate = dueDate
       ? dateUtils.getSimpleDate(dueDate.toDate())
       : dateUtils.getSimpleDate(new Date());
-    const dueDateStr = dueDate ? dateUtils.toDateString(dueDate.toDate(), {
-      useRelative: true,
-      format: { month: 'short', day: 'numeric' }
-      }) : null;
-      const isDueToday = dueDateStr === 'Today';
-      const isDueTmrw = dueDateStr === 'Tomorrow';
-      const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
+    const dueDateStr = dueDate
+      ? dateUtils.toDateString(dueDate.toDate(), {
+          useRelative: true,
+          format: { month: 'short', day: 'numeric' }
+        })
+      : null;
+    const isDueToday = dueDateStr === 'Today';
+    const isDueTmrw = dueDateStr === 'Tomorrow';
+    const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
 
     return (
       <TaskEditorWrapper
@@ -375,15 +391,15 @@ class TaskEditor extends Component {
         view={view}
       >
         <Toolbar className={`task-editor__toolbar`}>
-        {projectId &&
-          <TaskEditorAssignMember buttonRef={this.membersListButton}>
-            <MemberSearch
-              users={usersArray}
-              assignedMembers={assignedTo}
-              onMemberClick={this.assignMember}
-            />
-          </TaskEditorAssignMember>
-        }
+          {projectId && (
+            <TaskEditorAssignMember buttonRef={this.membersListButton}>
+              <MemberSearch
+                users={usersArray}
+                assignedMembers={assignedTo}
+                onMemberClick={this.assignMember}
+              />
+            </TaskEditorAssignMember>
+          )}
           <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
         <form
@@ -400,16 +416,21 @@ class TaskEditor extends Component {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
           />
-          {projectId &&
-          <TaskEditorSection>
-            <div className="task-editor__project-name">
-              <ProjectIcon color={projectColor} className="task-editor__project-icon" />
-              {projectName}
-            </div>
-            <div className="task-editor__list-name">
-            <Icon name="chevron-right" />{listName}</div>
-          </TaskEditorSection>
-          }
+          {projectId && (
+            <TaskEditorSection>
+              <div className="task-editor__project-name">
+                <ProjectIcon
+                  color={projectColor}
+                  className="task-editor__project-icon"
+                />
+                {projectName}
+              </div>
+              <div className="task-editor__list-name">
+                <Icon name="chevron-right" />
+                {listName}
+              </div>
+            </TaskEditorSection>
+          )}
           <TaskEditorSection>
             <Button
               onClick={this.toggleDatePicker}
@@ -429,30 +450,32 @@ class TaskEditor extends Component {
                     <span className="task-editor__section-title--sm">
                       Due Date
                     </span>
-                    <span className={`task-editor__due-date ${
-                    isDueToday
-                      ? 'is-due-today'
-                      : isDueTmrw
-                      ? 'is-due-tmrw'
-                      : isPastDue
-                      ? 'is-past-due'
-                      : ''
-                  }`}>
-                    {dueDateStr}
-                      </span>
+                    <span
+                      className={`task-editor__due-date ${
+                        isDueToday
+                          ? 'is-due-today'
+                          : isDueTmrw
+                          ? 'is-due-tmrw'
+                          : isPastDue
+                          ? 'is-past-due'
+                          : ''
+                      }`}
+                    >
+                      {dueDateStr}
+                    </span>
                   </>
                 )}
               </span>
             </Button>
-              <DatePicker
-                innerRef={el => this.datePickerEl = el}
-                onClose={this.toggleDatePicker}
-                selectedDate={dueDate ? taskDueDate : null}
-                currentMonth={taskDueDate.month}
-                currentYear={taskDueDate.year}
-                selectDate={this.setDueDate}
-                isActive={isDatePickerActive}
-              />
+            <DatePicker
+              innerRef={el => (this.datePickerEl = el)}
+              onClose={this.toggleDatePicker}
+              selectedDate={dueDate ? taskDueDate : null}
+              currentMonth={taskDueDate.month}
+              currentYear={taskDueDate.year}
+              selectDate={this.setDueDate}
+              isActive={isDatePickerActive}
+            />
           </TaskEditorSection>
           <TaskEditorSection>
             <div className="task-editor__section-icon">
@@ -478,15 +501,15 @@ class TaskEditor extends Component {
                 })}
               </div>
             )}
-            {projectId &&
-            <Button
-              type="button"
-              className="task-editor__btn--add-member"
-              onClick={() => this.membersListButton.current.click()}
-            >
-              <Icon name="plus" />
-            </Button>
-            }
+            {projectId && (
+              <Button
+                type="button"
+                className="task-editor__btn--add-member"
+                onClick={() => this.membersListButton.current.click()}
+              >
+                <Icon name="plus" />
+              </Button>
+            )}
           </TaskEditorSection>
           <TaskEditorSection>
             <div className="task-editor__section-icon">
@@ -523,14 +546,21 @@ class TaskEditor extends Component {
               <Icon name="check-square" />
             </div>
             <h3 className="task-editor__section-title">
-            {hasSubtasks && (
-              <span className="task-editor__section-detail">{completedSubtasks.length}/{subtaskIds.length}</span>
-            )}
-            Subtasks</h3>
+              {hasSubtasks && (
+                <span className="task-editor__section-detail">
+                  {completedSubtasks.length}/{subtaskIds.length}
+                </span>
+              )}
+              Subtasks
+            </h3>
             <hr className="task-editor__hr" />
           </div>
           {hasSubtasks && (
-            <Subtasks taskId={taskId} subtaskIds={subtaskIds} projectId={projectId} />
+            <Subtasks
+              taskId={taskId}
+              subtaskIds={subtaskIds}
+              projectId={projectId}
+            />
           )}
           <div className="task-editor__section-icon">
             {newSubtaskFormIsFocused ? (
@@ -577,13 +607,13 @@ class TaskEditor extends Component {
               <Icon name="message-circle" />
             </div>
             <h3 className="task-editor__section-title">
-            {hasComments &&
-            <span className="task-editor__section-detail">
-            {commentIds.length}
-            </span>
-            }
+              {hasComments && (
+                <span className="task-editor__section-detail">
+                  {commentIds.length}
+                </span>
+              )}
               {hasComments && commentIds.length === 1 ? 'Comment' : 'Comments'}
-              </h3>
+            </h3>
             <hr className="task-editor__hr" />
           </div>
 
@@ -651,7 +681,7 @@ class TaskEditor extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentUser: userSelectors.getCurrentUserData(state),
+    currentUser: currentUserSelectors.getCurrentUser(state),
     commentsArray: commentSelectors.getCommentsArray(
       state,
       ownProps.commentIds
@@ -660,7 +690,7 @@ const mapStateToProps = (state, ownProps) => {
     usersArray: userSelectors.getUsersArray(state),
     membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
-    mergedTags: currentSelectors.getMergedTags(state),
+    mergedTags: currentUserSelectors.getMergedTags(state),
     projectTags: projectSelectors.getProjectTags(state, ownProps.projectId),
     completedSubtasks: subtaskSelectors.getCompletedSubtasks(
       state,
@@ -672,8 +702,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchTaskSubtasks: taskId =>
-      dispatch(subtaskActions.fetchTaskSubtasks(taskId)),
     fetchTaskComments: taskId =>
       dispatch(commentActions.fetchTaskComments(taskId)),
     syncTaskComments: taskId =>

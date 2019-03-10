@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
-import { Input } from '../Input';
-import { Button } from '../Button';
+import { withFirebase } from '../../components/Firebase';
+import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
 
 const INITIAL_STATE = {
   passwordOne: '',

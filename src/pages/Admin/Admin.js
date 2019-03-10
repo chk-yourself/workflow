@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withAuthorization } from '../Session';
+import { withAuthorization } from '../../components/Session';
 import { userActions, userSelectors } from '../../ducks/users';
 import './Admin.scss';
 

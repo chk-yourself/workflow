@@ -4,9 +4,8 @@ import { ProjectGrid, ProjectTile } from './ProjectGrid';
 import './ProjectGrid.scss';
 import { withAuthorization } from '../Session';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import { Icon } from '../Icon';
-import { userSelectors } from '../../ducks/users';
 
 class ProjectGridContainer extends Component {
   constructor(props) {
@@ -65,7 +64,6 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.userId),
     projectsById: projectSelectors.getProjectsById(state),
     projectsArray: projectSelectors.getProjectsArray(state)
   };
@@ -73,10 +71,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProjectsById: userId => dispatch(projectActions.fetchProjectsById(userId)),
+    fetchProjectsById: userId =>
+      dispatch(projectActions.fetchProjectsById(userId)),
     updateProject: (projectId, projectData) =>
       dispatch(projectActions.updateProject(projectId, projectData)),
-    selectProject: projectId => dispatch(currentActions.selectProject(projectId))
+    selectProject: projectId => dispatch(selectProjectAction(projectId))
   };
 };
 

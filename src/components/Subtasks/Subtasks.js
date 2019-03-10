@@ -4,19 +4,27 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
 import { Subtask } from '../Subtask';
 import * as droppableTypes from '../../constants/droppableTypes';
-import * as keys from '../../constants/keys';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
-import { currentSelectors } from '../../ducks/current';
+import { getSelectedProjectId } from '../../ducks/selectedProject';
 import './Subtasks.scss';
 
 class Subtasks extends Component {
   state = {
-    isFetching: !this.props.currentProject || !this.props.projectId
+    isFetching: !this.props.selectedProjectId || !this.props.projectId
   };
 
   componentDidMount() {
-    const { firebase, fetchTaskSubtasks, addSubtask, updateSubtask, deleteSubtask, taskId, projectId, currentProject } = this.props;
-    if (!currentProject || !projectId) {
+    const {
+      firebase,
+      fetchTaskSubtasks,
+      addSubtask,
+      updateSubtask,
+      deleteSubtask,
+      taskId,
+      projectId,
+      selectedProjectId
+    } = this.props;
+    if (!selectedProjectId || !projectId) {
       fetchTaskSubtasks(taskId).then(() => {
         this.setState({
           isFetching: false
@@ -42,7 +50,7 @@ class Subtasks extends Component {
         });
       });
   }
-  
+
   shouldComponentUpdate(nextProps) {
     if (nextProps.subtasks.includes(undefined)) {
       return false;
@@ -78,18 +86,19 @@ class Subtasks extends Component {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {!isFetching && subtasks.map((subtask, index) => {
-                return (
-                  <Subtask
-                    subtaskId={subtask.subtaskId}
-                    taskId={taskId}
-                    index={index}
-                    name={subtask.name}
-                    isCompleted={subtask.isCompleted}
-                    key={subtask.subtaskId}
-                  />
-                );
-              })}
+              {!isFetching &&
+                subtasks.map((subtask, index) => {
+                  return (
+                    <Subtask
+                      subtaskId={subtask.subtaskId}
+                      taskId={taskId}
+                      index={index}
+                      name={subtask.name}
+                      isCompleted={subtask.isCompleted}
+                      key={subtask.subtaskId}
+                    />
+                  );
+                })}
               {provided.placeholder}
             </ul>
           )}
@@ -102,7 +111,7 @@ class Subtasks extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
-    currentProject: currentSelectors.getCurrentProjectId(state)
+    selectedProjectId: getSelectedProjectId(state)
   };
 };
 
@@ -110,7 +119,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchTaskSubtasks: taskId =>
       dispatch(subtaskActions.fetchTaskSubtasks(taskId)),
-      addSubtask: ({ subtaskId, subtaskData }) =>
+    addSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
     deleteSubtask: subtaskId =>
       dispatch(subtaskActions.deleteSubtask(subtaskId)),
@@ -125,4 +134,3 @@ export default withFirebase(
     mapDispatchToProps
   )(Subtasks)
 );
-

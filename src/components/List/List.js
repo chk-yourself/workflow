@@ -52,12 +52,14 @@ class List extends Component {
   render() {
     const {
       tasks,
+      name: listName,
       onTaskClick,
       listId,
       listIndex,
       isFetchingTasks,
       isRestricted,
       projectId,
+      projectName,
       view
     } = this.props;
     if (isFetchingTasks) return null;
@@ -124,16 +126,16 @@ class List extends Component {
               {isBoardView ? (
                 <CardComposer
                   listId={listId}
-                  listName={this.props.name}
+                  listName={listName}
                   projectId={projectId}
-                  projectName={this.props.projectName}
+                  projectName={projectName}
                 />
               ) : (
                 <TaskComposer
                   listId={listId}
-                  listName={this.props.name}
+                  listName={listName}
                   projectId={projectId}
-                  projectName={this.props.projectName}
+                  projectName={projectName}
                 />
               )}
             </section>
