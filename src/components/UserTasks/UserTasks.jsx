@@ -4,10 +4,12 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { userSelectors } from '../../ducks/users';
 import { listActions, listSelectors } from '../../ducks/lists';
+import { authUserActions, authUserSelectors } from '../../ducks/authUser';
 import { taskSelectors, taskActions } from '../../ducks/tasks';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import * as keys from '../../constants/keys';
 import * as droppableTypes from '../../constants/droppableTypes';
+import { Folder } from '../Folder';
 import { List } from '../List';
 import { Main } from '../Main';
 import { TaskEditor } from '../TaskEditor';
@@ -22,12 +24,17 @@ class UserTasks extends Component {
   componentDidMount() {
     const {
       userId,
+      fetchFolders,
       fetchUserTasks,
       addTask,
       updateTask,
       deleteTask,
+      addFolder,
+      updateFolder,
+      deleteFolder,
       firebase
     } = this.props;
+    fetchFolders(userId);
     fetchUserTasks(userId).then(() => {
       this.setState({
         isFetching: false
@@ -51,10 +58,28 @@ class UserTasks extends Component {
           }
         });
       });
+
+    this.folderObserver = firebase
+      .getDocRef(`users/${userId}`)
+      .collection('folders')
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          const folderId = change.doc.id;
+          const folderData = change.doc.data();
+          if (change.type === 'added') {
+            addFolder({ folderId, folderData });
+          } else if (change.type === 'removed') {
+            deleteFolder(folderId);
+          } else {
+            updateFolder({ folderId, folderData });
+          }
+        });
+      });
   }
 
   componentWillUnmount() {
     this.taskObserver();
+    this.folderObserver();
   }
 
   toggleTaskEditor = () => {
@@ -73,7 +98,6 @@ class UserTasks extends Component {
   };
 
   onDragEnd = ({ destination, draggableId, source, type }) => {
-    /* FIX ME! */
     if (!destination) return;
 
     if (
@@ -81,37 +105,43 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase } = this.props;
+    const { firebase, authUserId } = this.props;
     if (type === droppableTypes.TASK) {
-      const { listsById } = this.props;
-      const isMovedWithinList = source.droppableId === destination.droppableId;
-      const updatedTaskIds = [...listsById[destination.droppableId].taskIds];
-      if (isMovedWithinList) {
-        updatedTaskIds.splice(source.index, 1);
-        updatedTaskIds.splice(destination.index, 0, draggableId);
-        firebase.updateList(source.droppableId, {
-          taskIds: updatedTaskIds
-        });
+      const { foldersById } = this.props;
+      const { droppableId: origFolderId, index: origIndex } = source;
+      const { droppableId: newFolderId, index: newIndex } = destination;
+      const isMovedWithinFolder = origFolderId === newFolderId;
+      const updatedTaskIds = [...foldersById[newFolderId].taskIds];
+      if (isMovedWithinFolder) {
+        updatedTaskIds.splice(origIndex, 1);
+        updatedTaskIds.splice(newIndex, 0, draggableId);
+        firebase.updateDoc(
+          `users/${authUserId}/folders/${newFolderId}`,
+          {
+            taskIds: updatedTaskIds
+          }
+        );
       } else {
-        updatedTaskIds.splice(destination.index, 0, draggableId);
-        firebase.moveTaskToList({
+        updatedTaskIds.splice(newIndex, 0, draggableId);
+        firebase.moveTaskToFolder({
+          userId: authUserId,
           taskId: draggableId,
-          origListId: source.droppableId,
-          newListId: destination.droppableId,
+          origFolderId,
+          newFolderId,
           updatedTaskIds
         });
       }
     }
 
-    if (type === droppableTypes.LIST) {
-      const { projectsById, projectId, reorderLists } = this.props;
-      const updatedListIds = [...projectsById[projectId].listIds];
-      updatedListIds.splice(source.index, 1);
-      updatedListIds.splice(destination.index, 0, draggableId);
-      firebase.updateProject(projectId, {
-        listIds: updatedListIds
+    if (type === droppableTypes.FOLDER) {
+      const { folderIds, reorderFolders } = this.props;
+      const updatedFolderIds = [...folderIds];
+      updatedFolderIds.splice(source.index, 1);
+      updatedFolderIds.splice(destination.index, 0, draggableId);
+      firebase.updateDoc(`users/${authUserId}`, {
+        folderIds: updatedFolderIds
       });
-      reorderLists(projectId, updatedListIds);
+      reorderFolders(authUserId, updatedFolderIds);
     }
   };
 
@@ -122,7 +152,7 @@ class UserTasks extends Component {
   };
 
   render() {
-    const { filters, userId, user, lists, taskId, tasksById } = this.props;
+    const { filters, userId, taskId, tasksById, folders } = this.props;
     const { isFetching, isTaskEditorOpen } = this.state;
     if (isFetching) return null;
     return (
@@ -136,26 +166,23 @@ class UserTasks extends Component {
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}
           >
-            <Droppable droppableId={userId} type={droppableTypes.TASK}>
+            <Droppable droppableId={userId} type={droppableTypes.FOLDER}>
               {provided => (
                 <div
                   className="user-tasks"
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  {lists.map((list, i) => (
-                    <List
-                      key={list.listId || list.defaultKey}
+                  {folders.map((folder, i) => (
+                    <Folder
+                      key={folder.folderId}
                       userId={userId}
-                      listId={list.listId}
-                      defaultKey={list.defaultKey}
-                      listIndex={i}
-                      name={list.name}
-                      taskIds={list.taskIds}
+                      folderId={folder.folderId}
+                      index={i}
+                      name={folder.name}
+                      taskIds={folder.taskIds}
                       onTaskClick={this.handleTaskClick}
-                      projectId={null}
-                      view="list"
-                      isRestricted={list.isDefault}
+                      isRestricted={folder.isDefault}
                     />
                   ))}
                   {provided.placeholder}
@@ -178,10 +205,12 @@ class UserTasks extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    user: userSelectors.getUserData(state, ownProps.userId),
-    lists: listSelectors.getUserLists(state, ownProps.userId),
+    authUserId: authUserSelectors.getAuthUserId(state),
+    foldersById: authUserSelectors.getFolders(state),
+    folders: authUserSelectors.getFoldersArray(state),
+    folderIds: authUserSelectors.getFolderIds(state),
     tasksById: taskSelectors.getTasksById(state),
     taskId: currentSelectors.getCurrentTaskId(state)
   };
@@ -189,16 +218,21 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectUser: userId => dispatch(currentActions.selectUser(userId)),
     selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
     syncUserTasks: userId => dispatch(taskActions.syncUserTasks(userId)),
+    fetchFolders: userId => dispatch(authUserActions.fetchFolders(userId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
-    fetchUserLists: userId => dispatch(listActions.fetchUserLists(userId)),
     addTask: ({ taskId, taskData }) =>
       dispatch(taskActions.addTask({ taskId, taskData })),
     updateTask: ({ taskId, taskData }) =>
       dispatch(taskActions.updateTask({ taskId, taskData })),
-    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId))
+    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
+    addFolder: ({ folderId, folderData }) =>
+      dispatch(authUserActions.addFolder({ folderId, folderData })),
+    updateFolder: ({ folderId, folderData }) =>
+      dispatch(authUserActions.updateFolder({ folderId, folderData })),
+    deleteFolder: folderId => dispatch(authUserActions.deleteFolder(folderId)),
+    reorderFolders: (userId, folderIds) => dispatch(authUserActions.reorderFolders(userId, folderIds))
   };
 };
 

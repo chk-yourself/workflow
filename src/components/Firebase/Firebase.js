@@ -74,6 +74,14 @@ class Firebase {
 
   deleteField = () => firebase.firestore.FieldValue.delete();
 
+  getDocRef = path => this.db.doc(path);
+
+  updateDoc = (path, newValue = {}) =>
+    this.getDocRef(path).update({
+      lastUpdatedAt: this.getTimestamp(),
+      ...newValue
+    });
+
   // User API
 
   getUserDoc = userId => this.db.collection('users').doc(userId);
@@ -85,37 +93,53 @@ class Firebase {
     email,
     projectIds = [],
     photoURL = null
-  }) =>
-    this.db
-      .collection('users')
-      .doc(userId)
-      .set({
-        userId,
-        name,
-        username,
-        email,
-        projectIds,
-        photoURL,
-        listIds: [],
-        defaultLists: {
-          '0': {
-            name: 'New Tasks',
-            taskIds: []
-          },
-          '1': {
-            name: 'Today',
-            taskIds: []
-          },
-          '2': {
-            name: 'Upcoming',
-            taskIds: []
-          },
-          '3': {
-            name: 'Later',
-            taskIds: []
-          }
-        }
+  }) => {
+    const batch = this.db.batch();
+    const userRef = this.getDocRef(`users/${userId}`);
+    const newFolderRef = this.getDocRef(`users/${userId}/folders/0`);
+    const todayFolderRef = this.getDocRef(`users/${userId}/folders/1`);
+    const upcomingFolderRef = this.getDocRef(`users/${userId}/folders/2`);
+    const laterFolderRef = this.getDocRef(`users/${userId}/folders/3`);
+
+    batch.set(userRef, {
+      userId,
+      name,
+      username,
+      email,
+      projectIds,
+      photoURL,
+      folderIds: [0, 1, 2, 3]
+    });
+
+    batch.set(newFolderRef, {
+      name: 'New Tasks',
+      taskIds: []
+    });
+
+    batch.set(todayFolderRef, {
+      name: 'Today',
+      taskIds: []
+    });
+
+    batch.set(upcomingFolderRef, {
+      name: 'Upcoming',
+      taskIds: []
+    });
+
+    batch.set(laterFolderRef, {
+      name: 'Later',
+      taskIds: []
+    });
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('User added');
+      })
+      .catch(error => {
+        console.error(error);
       });
+  };
 
   updateUser = (userId, newValue = {}) =>
     this.db
@@ -153,22 +177,21 @@ class Firebase {
     if (projectId) {
       const projectRef = this.getProjectDoc(projectId);
 
-    batch.set(
-      projectRef,
-      {
-        tags: {
-          [text]: {
-            text,
-            color,
-            lastUsedAt: this.getTimestamp()
-          }
+      batch.set(
+        projectRef,
+        {
+          tags: {
+            [text]: {
+              text,
+              color,
+              lastUsedAt: this.getTimestamp()
+            }
+          },
+          lastUpdatedAt: this.getTimestamp()
         },
-        lastUpdatedAt: this.getTimestamp()
-      },
-      { merge: true }
-    );
+        { merge: true }
+      );
     }
-
 
     return batch
       .commit()
@@ -237,37 +260,37 @@ class Firebase {
       ...newValue
     });
 
-    updateProjectName = ({ projectId, name }) => {
-      const batch = this.db.batch();
-      const projectRef = this.getProjectDoc(projectId);
-  
-      // Delete list
-      batch.update(projectRef, {
-        name,
-        lastUpdatedAt: this.getTimestamp()
-      });
-  
-      // Update tasks assigned to list
-      this.db
-        .collection('tasks')
-        .where('projectId', '==', projectId)
-        .get()
-        .then(snapshot => {
-          snapshot.docs.forEach(doc => {
-            batch.update(doc.ref, {
-              projectName: name
-            });
+  updateProjectName = ({ projectId, name }) => {
+    const batch = this.db.batch();
+    const projectRef = this.getProjectDoc(projectId);
+
+    // Delete list
+    batch.update(projectRef, {
+      name,
+      lastUpdatedAt: this.getTimestamp()
+    });
+
+    // Update tasks assigned to list
+    this.db
+      .collection('tasks')
+      .where('projectId', '==', projectId)
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          batch.update(doc.ref, {
+            projectName: name
           });
-          return batch
-            .commit()
-            .then(() => {
-              console.log('project name updated');
-            })
-            .catch(error => {
-              console.error(error);
-            });
         });
-    };
+        return batch
+          .commit()
+          .then(() => {
+            console.log('project name updated');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+  };
 
   addProject = ({
     userId,
@@ -308,37 +331,37 @@ class Firebase {
       ...newValue
     });
 
-    updateListName = ({ listId, name }) => {
-      const batch = this.db.batch();
-      const listRef = this.getListDoc(listId);
-  
-      // Delete list
-      batch.update(listRef, {
-        name,
-        lastUpdatedAt: this.getTimestamp()
-      });
-  
-      // Update tasks assigned to list
-      this.db
-        .collection('tasks')
-        .where('listId', '==', listId)
-        .get()
-        .then(snapshot => {
-          snapshot.docs.forEach(doc => {
-            batch.update(doc.ref, {
-              listName: name
-            });
+  updateListName = ({ listId, name }) => {
+    const batch = this.db.batch();
+    const listRef = this.getListDoc(listId);
+
+    // Delete list
+    batch.update(listRef, {
+      name,
+      lastUpdatedAt: this.getTimestamp()
+    });
+
+    // Update tasks assigned to list
+    this.db
+      .collection('tasks')
+      .where('listId', '==', listId)
+      .get()
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          batch.update(doc.ref, {
+            listName: name
           });
-          return batch
-            .commit()
-            .then(() => {
-              console.log('list name updated');
-            })
-            .catch(error => {
-              console.error(error);
-            });
         });
-    };
+        return batch
+          .commit()
+          .then(() => {
+            console.log('list name updated');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+  };
 
   addList = ({ name, projectId = null, userId = null }) => {
     this.db
@@ -402,12 +425,21 @@ class Firebase {
 
   getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
 
-  addTask = ({ name, projectId, projectName, listId, listName, userId = null, defaultKey = null }) => {
-    const isDefaultListItem = defaultKey && userId;
-    
+  addTask = ({
+    name,
+    projectId,
+    projectName,
+    listId,
+    listName,
+    userId = null,
+    folderId = null
+  }) => {
+    const isFolderItem = folderId && userId;
+
     this.db
       .collection('tasks')
       .add({
+        createdBy: userId,
         createdAt: this.getTimestamp(),
         lastUpdatedAt: null,
         commentIds: [],
@@ -416,8 +448,13 @@ class Firebase {
         completedAt: null,
         dueDate: null,
         notes: '',
-        assignedTo: isDefaultListItem ? [userId] : [],
-        ownerId: isDefaultListItem ? userId : null,
+        assignedTo: isFolderItem ? [userId] : [],
+        folders: isFolderItem
+          ? {
+              [userId]: folderId
+            }
+          : {},
+        ownerId: isFolderItem ? userId : null,
         listId,
         listName,
         projectId,
@@ -425,15 +462,15 @@ class Firebase {
         name
       })
       .then(ref => {
-        if (isDefaultListItem) {
-          this.updateUser(userId, {
-            [`defaultLists.${defaultKey}.taskIds`]: this.addToArray(ref.id)
+        if (isFolderItem) {
+          this.updateDoc(`users/${userId}/folders/${folderId}`, {
+            taskIds: this.addToArray(ref.id)
           });
         } else {
-          this.updateList(listId, {
-            taskIds: this.addToArray(ref.id),
+          this.updateDoc(`lists/${listId}`, {
+            taskIds: this.addToArray(ref.id)
           });
-        };
+        }
       });
   };
 
@@ -444,20 +481,18 @@ class Firebase {
     });
   };
 
-  removeAssignee = ({ taskId, userId }) => {
+  removeAssignee = ({ taskId, userId, folderId }) => {
     const batch = this.db.batch();
-    const taskRef = this.getTaskDoc(taskId);
-    const userRef = this.getUserDoc(userId);
-    batch.update(userRef, {
-      'defaultLists.0.taskIds': this.removeFromArray(taskId),
-      'defaultLists.1.taskIds': this.removeFromArray(taskId),
-      'defaultLists.2.taskIds': this.removeFromArray(taskId),
-      'defaultLists.3.taskIds': this.removeFromArray(taskId),
+    const taskRef = this.getDocRef(`tasks/${taskId}`);
+    const folderRef = this.getDocRef(`users/${userId}/folders/${folderId}`);
+    batch.update(folderRef, {
+      taskIds: this.removeFromArray(taskId),
       lastUpdatedAt: this.getTimestamp()
     });
 
     batch.update(taskRef, {
       assignedTo: this.removeFromArray(userId),
+      [`folders.${userId}`]: this.deleteField(),
       lastUpdatedAt: this.getTimestamp()
     });
 
@@ -471,17 +506,18 @@ class Firebase {
       });
   };
 
-  assignMember = ({ taskId, projectId, userId }) => {
+  addAssignee = ({ taskId, projectId, userId }) => {
     const batch = this.db.batch();
-    const taskRef = this.getTaskDoc(taskId);
-    const projectRef = this.getProjectDoc(projectId);
-    const userRef = this.getUserDoc(userId);
-    batch.update(userRef, {
-      'defaultLists.0.taskIds': this.addToArray(taskId),
+    const taskRef = this.getDocRef(`tasks/${taskId}`);
+    const projectRef = this.getDocRef(`projects/${projectId}`);
+    const newFolderRef = this.getDocRef(`users/${userId}/folders/0`);
+    batch.update(newFolderRef, {
+      taskIds: this.addToArray(taskId),
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(taskRef, {
       assignedTo: this.addToArray(userId),
+      [`folders.${userId}`]: 0,
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(projectRef, {
@@ -491,36 +527,22 @@ class Firebase {
     return batch
       .commit()
       .then(() => {
-        console.log('assigned task to member');
+        console.log('Assigned task to member');
       })
       .catch(error => {
         console.error(error);
       });
   };
 
-  deleteTask = ({
-    taskId,
-    listId,
-    assignedTo = [],
-    defaultKey = null,
-    userId = null
-  }) => {
+  deleteTask = ({ taskId, listId, assignedTo = [], folders = null }) => {
     const batch = this.db.batch();
-    const taskRef = this.getTaskDoc(taskId);
+    const taskRef = this.getDocRef(`tasks/${taskId}`);
     batch.delete(taskRef);
 
     if (listId) {
-      const listRef = this.getListDoc(listId);
+      const listRef = this.getDocRef(`lists/${listId}`);
       batch.update(listRef, {
         taskIds: this.removeFromArray(taskId),
-        lastUpdatedAt: this.getTimestamp()
-      });
-    }
-
-    if (defaultKey) {
-      const userRef = this.getUserDoc(userId);
-      batch.update(userRef, {
-        [`defaultLists.${defaultKey}.taskIds`]: this.removeFromArray(taskId),
         lastUpdatedAt: this.getTimestamp()
       });
     }
@@ -538,13 +560,12 @@ class Firebase {
       })
       .then(() => {
         assignedTo.forEach(memberId => {
-          if (userId && memberId === userId) return;
-          const memberRef = this.getUserDoc(memberId);
-          batch.update(memberRef, {
-            'defaultLists.0.taskIds': this.removeFromArray(taskId),
-            'defaultLists.1.taskIds': this.removeFromArray(taskId),
-            'defaultLists.2.taskIds': this.removeFromArray(taskId),
-            'defaultLists.3.taskIds': this.removeFromArray(taskId),
+          const folderId = folders[memberId];
+          const folderRef = this.getDocRef(
+            `users/${memberId}/folders/${folderId}`
+          );
+          batch.update(folderRef, {
+            taskIds: this.removeFromArray(taskId),
             lastUpdatedAt: this.getTimestamp()
           });
         });
@@ -593,6 +614,33 @@ class Firebase {
       .commit()
       .then(() => {
         console.log('task moved');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  moveTaskToFolder = ({ userId, taskId, origFolderId, newFolderId, updatedTaskIds }) => {
+    const batch = this.db.batch();
+    const taskRef = this.getDocRef(`tasks/${taskId}`);
+    const origFolderRef = this.getDocRef(`users/${userId}/folders/${origFolderId}`);
+    const newFolderRef = this.getDocRef(`users/${userId}/folders/${newFolderId}`);
+    batch.update(taskRef, {
+      [`folders.${userId}`]: newFolderId,
+      lastUpdatedAt: this.getTimestamp()
+    });
+    batch.update(origFolderRef, {
+      taskIds: this.removeFromArray(taskId),
+      lastUpdatedAt: this.getTimestamp()
+    });
+    batch.update(newFolderRef, {
+      taskIds: updatedTaskIds,
+      lastUpdatedAt: this.getTimestamp()
+    });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Task moved to new folder');
       })
       .catch(error => {
         console.error(error);

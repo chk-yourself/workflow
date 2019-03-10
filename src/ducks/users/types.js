@@ -5,3 +5,4 @@ export const UPDATE_USER = 'UPDATE_USER';
 export const DELETE_USER = 'DELETE_USER';
 export const LOAD_USER_TASKS = 'LOAD_USER_TASKS';
 export const ADD_TASK = 'ADD_TASK';
+export const REORDER_FOLDERS = 'REORDER_FOLDERS';

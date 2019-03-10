@@ -1,0 +1,7 @@
+export const SET_AUTH_USER = 'SET_AUTH_USER';
+export const LOAD_FOLDERS = 'LOAD_FOLDERS';
+export const ADD_FOLDER = 'ADD_FOLDER';
+export const DELETE_FOLDER = 'DELETE_FOLDER';
+export const UPDATE_FOLDER = 'UPDATE_FOLDER';
+export const REORDER_FOLDERS = 'REORDER_FOLDERS';
+export const UPDATE_FOLDER_IDS = 'UPDATE_FOLDER_IDS';

@@ -7,6 +7,11 @@ export const getListTasks = (state, taskIds) => {
   return taskIds.map(taskId => tasksById[taskId]);
 };
 
+export const getFolderTasks = (state, taskIds) => {
+  const { tasksById } = state;
+  return taskIds.map(taskId => tasksById[taskId]);
+};
+
 export const getSimpleTasks = (state, taskIds) => {
   const { tasksById } = state;
   if (!taskIds) return {};

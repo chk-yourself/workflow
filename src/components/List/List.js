@@ -10,13 +10,12 @@ import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
 import { Input } from '../Input';
-import Tasks from './Tasks';
+import { Tasks } from '../Tasks';
 import './List.scss';
 
 class List extends Component {
   static defaultProps = {
-    isRestricted: false,
-    defaultKey: null
+    isRestricted: false
   };
 
   constructor(props) {
@@ -45,7 +44,7 @@ class List extends Component {
     // When field loses focus, update list title if change is detected
 
     if (newName !== name) {
-      firebase.updateListName({ listId, name: newName})
+      firebase.updateListName({ listId, name: newName });
       console.log('updated list name!');
     }
   };
@@ -55,7 +54,6 @@ class List extends Component {
       tasks,
       onTaskClick,
       listId,
-      defaultKey,
       listIndex,
       isFetchingTasks,
       isRestricted,
@@ -69,7 +67,7 @@ class List extends Component {
     const { name } = this.state;
 
     return (
-      <Draggable draggableId={listId || defaultKey} index={listIndex}>
+      <Draggable draggableId={listId} index={listIndex}>
         {provided => (
           <>
             <section
@@ -78,10 +76,7 @@ class List extends Component {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <header
-                className="list__header"
-                ref={el => (this.listHeaderEl = el)}
-              >
+              <header className="list__header">
                 <Input
                   className="list__input--title"
                   name="name"
@@ -108,11 +103,11 @@ class List extends Component {
                 >
                   <Menu>
                     <MenuItem>
-                     {!isRestricted &&
-                      <a href="" onClick={this.handleListDelete}>
-                        Delete
-                      </a>
-                     }
+                      {!isRestricted && (
+                        <a href="" onClick={this.handleListDelete}>
+                          Delete
+                        </a>
+                      )}
                     </MenuItem>
                   </Menu>
                 </PopoverWrapper>
@@ -121,16 +116,25 @@ class List extends Component {
                 <Tasks
                   tasks={tasks}
                   listId={listId}
-                  defaultKey={defaultKey}
                   onTaskClick={onTaskClick}
                   view={view}
                 />
               </div>
               {provided.placeholder}
               {isBoardView ? (
-                <CardComposer listId={listId} listName={this.props.name} projectId={projectId} projectName={this.props.projectName} />
+                <CardComposer
+                  listId={listId}
+                  listName={this.props.name}
+                  projectId={projectId}
+                  projectName={this.props.projectName}
+                />
               ) : (
-                <TaskComposer listId={listId} listName={this.props.name} projectId={projectId} defaultKey={defaultKey} projectName={this.props.projectName} />
+                <TaskComposer
+                  listId={listId}
+                  listName={this.props.name}
+                  projectId={projectId}
+                  projectName={this.props.projectName}
+                />
               )}
             </section>
             {provided.placeholder}

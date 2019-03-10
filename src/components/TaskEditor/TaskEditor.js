@@ -44,6 +44,10 @@ const TaskEditorWrapper = ({view, handleTaskEditorClose, handleClick, children})
   : (<TaskEditorPane onClose={handleTaskEditorClose} onClick={handleClick}>{children}</TaskEditorPane>)
   };
 
+  /*
+  TODO: Break up logic in child components
+  */
+
 class TaskEditor extends Component {
   constructor(props) {
     super(props);
@@ -134,8 +138,8 @@ class TaskEditor extends Component {
   };
 
   deleteTask = () => {
-    const { taskId, listId, firebase, handleTaskEditorClose } = this.props;
-    firebase.deleteTask({ taskId, listId });
+    const { taskId, listId, assignedTo, folders, firebase, handleTaskEditorClose } = this.props;
+    firebase.deleteTask({ taskId, listId, assignedTo, folders });
     handleTaskEditorClose();
   };
 
@@ -224,9 +228,10 @@ class TaskEditor extends Component {
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
-      firebase.removeAssignee({ taskId, userId });
+      const folderId = this.props.folders[userId];
+      firebase.removeAssignee({ taskId, userId, folderId });
     } else {
-      firebase.assignMember({ taskId, projectId, userId });
+      firebase.addAssignee({ taskId, projectId, userId });
     }
   };
 

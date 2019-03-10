@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
-import DashboardSection from './DashboardSection';
+import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
 import { currentActions, currentSelectors } from '../../ducks/current';
 import { dashboardActions, dashboardSelectors } from '../../ducks/dashboard';
@@ -60,10 +60,9 @@ class TasksDueSoon extends Component {
   render() {
     const { isFetching } = this.state;
     const { tasksDueSoon, onTaskClick } = this.props;
-    console.log(tasksDueSoon);
     if (isFetching) return null;
     return (
-      <DashboardSection icon="check-square" size="md" title="Tasks Due Soon">
+      <DashboardPanel icon="check-square" size="md" name="Tasks Due Soon">
         {tasksDueSoon.map((task, i) => (
           <Task
             index={i}
@@ -72,7 +71,7 @@ class TasksDueSoon extends Component {
             {...task}
           />
         ))}
-      </DashboardSection>
+      </DashboardPanel>
     );
   }
 }

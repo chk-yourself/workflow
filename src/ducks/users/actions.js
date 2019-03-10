@@ -1,7 +1,6 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 
-
 export const loadUserData = user => {
   return {
     type: types.LOAD_USER_DATA,

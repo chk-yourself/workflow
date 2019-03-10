@@ -51,6 +51,16 @@ const usersById = (state = {}, action) => {
         }
       };
     }
+    case types.REORDER_FOLDERS: {
+      const { userId, folderIds } = action;
+      return {
+        ...state,
+        [userId]: {
+          ...state[userId],
+          folderIds
+        }
+      };
+    }
     default:
       return state;
   }

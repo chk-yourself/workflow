@@ -7,8 +7,10 @@ import { current } from '../ducks/current';
 import { subtasksById } from '../ducks/subtasks';
 import { commentsById } from '../ducks/comments';
 import { dashboard } from '../ducks/dashboard';
+import { authUser } from '../ducks/authUser';
 
 export default combineReducers({
+  authUser,
   projectsById,
   tasksById,
   listsById,

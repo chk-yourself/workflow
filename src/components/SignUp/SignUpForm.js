@@ -23,12 +23,13 @@ class SignUpForm extends Component {
 
   onSubmit = e => {
     const { username, email, name, passwordOne } = this.state;
-    this.props.firebase
+    const { firebase, history } = this.props;
+    firebase
       .createUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         const userId = authUser.user.uid;
         const photoURL = authUser.user.photoURL || null;
-        return this.props.firebase.addUser({
+        return firebase.addUser({
           userId,
           name,
           username,
@@ -38,7 +39,7 @@ class SignUpForm extends Component {
       })
       .then(authUser => {
         this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.HOME);
+        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });

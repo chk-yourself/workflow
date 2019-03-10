@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import { currentActions, currentSelectors } from '../../ducks/current';
+import { authUserSelectors } from '../../ducks/authUser';
 import { Input } from '../Input';
 import { Button } from '../Button';
 import * as keys from '../../constants/keys';
@@ -27,8 +27,24 @@ class TaskComposer extends Component {
   onSubmit = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
-    const { listId, defaultKey, firebase, projectId, userId, projectName, listName } = this.props;
-    firebase.addTask({ name, projectId, listId, userId, defaultKey, projectName, listName });
+    const {
+      userId,
+      folderId,
+      firebase,
+      projectId,
+      projectName,
+      listId,
+      listName
+    } = this.props;
+    firebase.addTask({
+      name,
+      userId,
+      folderId,
+      projectId,
+      projectName,
+      listId,
+      listName
+    });
     this.resetForm();
     e.preventDefault();
   };
@@ -66,7 +82,12 @@ class TaskComposer extends Component {
         onBlur={this.onBlur}
       >
         <form className="task-composer__form" onSubmit={this.onSubmit}>
-          <Button className="task-composer__btn--submit" type="submit" onClick={this.onSubmit} iconOnly>
+          <Button
+            className="task-composer__btn--submit"
+            type="submit"
+            onClick={this.onSubmit}
+            iconOnly
+          >
             <Icon name="plus-circle" />
           </Button>
           <Input
@@ -87,7 +108,7 @@ class TaskComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    userId: currentSelectors.getCurrentUserId(state)
+    userId: authUserSelectors.getAuthUserId(state)
   };
 };
 

@@ -1,0 +1,92 @@
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
+
+.folder {
+  box-sizing: border-box;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: visible;
+  position: relative;
+  width: 100%;
+    margin: 0 0 8px 0;
+  .folder__popover-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 48px;
+    z-index: 4;
+  }
+}
+
+.folder__header {
+  padding: 8px;
+  position: relative;
+}
+
+.folder__popover {
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  background-color: #fff;
+  min-width: 200px;
+  line-height: 1.15;
+  @include box-shadow(2);
+  a {
+    color: $grey-900;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 8px 12px;
+    &:hover {
+      background-color: $primary;
+      color: #fff;
+    }
+  }
+}
+
+.folder__btn--more-actions {
+  vertical-align: middle;
+  .feather {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.folder__input--title {
+  border: 2px solid transparent;
+  font-weight: 700;
+  padding: 8px;
+  background-color: transparent;
+  width: calc(100% - 32px);
+  height: 38px;
+  font-size: 18px;
+  &:focus:not(:read-only) {
+    border-color: $primary;
+    background-color: rgba($white, 0.6);
+  }
+}
+
+.folder__content {
+  position: relative;
+}
+
+.folder__cards {
+  overflow-x: visible;
+  overflow-y: auto;
+  min-height: 16px;
+  max-height: calc(100vh - 274px);
+  @include md {
+    max-height: calc(100vh - 290px);
+  }
+  @include xl {
+    max-height: calc(100vh - 300px);
+  }
+}
+
+.folder__tasks {
+  padding: 0 8px;
+  margin: 0;
+  folder-style-type: none;
+}

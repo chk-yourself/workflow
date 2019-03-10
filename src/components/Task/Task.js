@@ -51,10 +51,8 @@ class Task extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-
-    const { userId, taskId, firebase, listId, defaultKey } = this.props;
-    console.log({ userId, taskId, listId, defaultKey });
-    firebase.deleteTask({ taskId, listId, defaultKey, userId });
+    const { userId, taskId, firebase, listId, folderId, assignedTo, folders } = this.props;
+    firebase.deleteTask({ taskId, listId, assignedTo, folders });
   };
 
   toggleCompleted = () => {

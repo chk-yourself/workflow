@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { userActions, userSelectors } from '../../ducks/users';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import { projectActions, projectSelectors } from '../../ducks/projects';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { dashboardSelectors } from '../../ducks/dashboard';
 import { ProjectGridContainer } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
-import DashboardSection from './DashboardSection';
+import DashboardPanel from './DashboardPanel';
 import { TaskEditor } from '../TaskEditor';
 import './Dashboard.scss';
 
@@ -42,10 +41,10 @@ class Dashboard extends Component {
       <main className="dashboard">
         <h1 className="dashboard__header">Home</h1>
         <TasksDueSoon onTaskClick={this.handleTaskClick} />
-        <DashboardSection title="Notifications" icon="bell" size="sm" />
-        <DashboardSection title="Projects" icon="grid">
+        <DashboardPanel name="Notifications" icon="bell" size="sm" />
+        <DashboardPanel name="Projects" icon="grid">
           <ProjectGridContainer openProjectComposer={toggleProjectComposer} />
-        </DashboardSection>
+        </DashboardPanel>
         {isTaskEditorOpen && (
           <TaskEditor
             {...tasksDueSoon[currentTaskId]}
@@ -61,8 +60,6 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentProjectId: currentSelectors.getCurrentProjectId(state),
-    projectsById: projectSelectors.getProjectsById(state),
     currentTaskId: currentSelectors.getCurrentTaskId(state),
     tasksDueSoon: dashboardSelectors.getTasksDueSoonById(state)
   };
