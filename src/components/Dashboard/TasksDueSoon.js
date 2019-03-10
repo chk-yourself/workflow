@@ -4,7 +4,7 @@ import { withFirebase } from '../Firebase';
 import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import { dashboardActions, dashboardSelectors } from '../../ducks/dashboard';
+import { currentUserActions, currentUserSelectors } from '../../ducks/currentUser';
 
 class TasksDueSoon extends Component {
   state = {
@@ -79,7 +79,7 @@ class TasksDueSoon extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentSelectors.getCurrentUserId(state),
-    tasksDueSoon: dashboardSelectors.getTasksDueSoonArr(state),
+    tasksDueSoon: currentUserSelectors.getTasksDueSoonArr(state),
     taskId: currentSelectors.getCurrentTaskId(state)
   };
 };
@@ -89,13 +89,13 @@ const mapDispatchToProps = dispatch => {
     selectUser: userId => dispatch(currentActions.selectUser(userId)),
     selectTask: taskId => dispatch(currentActions.selectTask(taskId)),
     fetchTasksDueWithinDays: (userId, days) =>
-      dispatch(dashboardActions.fetchTasksDueWithinDays(userId, days)),
+      dispatch(currentUserActions.fetchTasksDueWithinDays(userId, days)),
     addTaskDueSoon: ({ taskId, taskData }) =>
-      dispatch(dashboardActions.addTaskDueSoon({ taskId, taskData })),
+      dispatch(currentUserActions.addTaskDueSoon({ taskId, taskData })),
     updateTaskDueSoon: ({ taskId, taskData }) =>
-      dispatch(dashboardActions.updateTaskDueSoon({ taskId, taskData })),
+      dispatch(currentUserActions.updateTaskDueSoon({ taskId, taskData })),
     deleteTaskDueSoon: taskId =>
-      dispatch(dashboardActions.deleteTaskDueSoon(taskId))
+      dispatch(currentUserActions.deleteTaskDueSoon(taskId))
   };
 };
 

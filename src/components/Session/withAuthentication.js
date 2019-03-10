@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { authUserActions } from '../../ducks/authUser';
+import { currentUserActions } from '../../ducks/currentUser';
 
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
@@ -17,15 +17,15 @@ const withAuthentication = Component => {
     }
 
     componentDidMount() {
-      const { firebase, history, fetchAuthUserData, setAuthUser } = this.props;
+      const { firebase, history, fetchCurrentUserData, setCurrentUser } = this.props;
 
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
         if (authUser) {
-          fetchAuthUserData(authUser.uid);
+          fetchCurrentUserData(authUser.uid);
           this.setState({ authUser });
           history.push(`/0/home/${authUser.uid}`);
         } else {
-          setAuthUser(null);
+          setCurrentUser(null);
           this.setState({ authUser: null });
         }
       });
@@ -45,9 +45,9 @@ const withAuthentication = Component => {
   }
 
   const mapDispatchToProps = dispatch => ({
-    fetchAuthUserData: userId =>
-      dispatch(authUserActions.fetchAuthUserData(userId)),
-    setAuthUser: authUser => dispatch(authUserActions.setAuthUser(authUser))
+    fetchCurrentUserData: userId =>
+      dispatch(currentUserActions.fetchCurrentUserData(userId)),
+    setCurrentUser: currentUser => dispatch(currentUserActions.setCurrentUser(currentUser))
   });
 
   return compose(

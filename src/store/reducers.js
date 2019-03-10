@@ -6,17 +6,15 @@ import { usersById } from '../ducks/users';
 import { current } from '../ducks/current';
 import { subtasksById } from '../ducks/subtasks';
 import { commentsById } from '../ducks/comments';
-import { dashboard } from '../ducks/dashboard';
-import { authUser } from '../ducks/authUser';
+import { currentUser } from '../ducks/currentUser';
 
 export default combineReducers({
-  authUser,
+  currentUser,
   projectsById,
   tasksById,
   listsById,
   usersById,
   current,
   subtasksById,
-  commentsById,
-  dashboard
+  commentsById
 });

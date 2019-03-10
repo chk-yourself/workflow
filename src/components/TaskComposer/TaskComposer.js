@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import { authUserSelectors } from '../../ducks/authUser';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { Input } from '../Input';
 import { Button } from '../Button';
 import * as keys from '../../constants/keys';
@@ -108,7 +108,7 @@ class TaskComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    userId: authUserSelectors.getAuthUserId(state)
+    userId: currentUserSelectors.getCurrentUserId(state)
   };
 };
 

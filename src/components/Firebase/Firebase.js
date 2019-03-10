@@ -18,6 +18,10 @@ class Firebase {
 
   // Auth API
 
+  get currentUser() {
+    return this.auth.currentUser;
+  }
+
   signInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');

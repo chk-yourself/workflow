@@ -1,10 +1,10 @@
 import * as types from './types';
 
-const authUser = (state = null, action) => {
+const currentUser = (state = null, action) => {
   switch (action.type) {
-    case types.SET_AUTH_USER: {
-      const { authUser } = action;
-      return authUser;
+    case types.SET_CURRENT_USER: {
+      const { currentUser } = action;
+      return currentUser;
     }
     case types.LOAD_FOLDERS: {
       const { folders } = action;
@@ -55,9 +55,50 @@ const authUser = (state = null, action) => {
         folderIds
       };
     }
+    case types.LOAD_TASKS_DUE_SOON: {
+      const { tasksDueSoon } = action;
+      return {
+        ...state,
+        tasksDueSoon
+      };
+    }
+    case types.ADD_TASK_DUE_SOON: {
+      const { taskId, taskData } = action;
+      return {
+        ...state,
+        tasksDueSoon: {
+          ...state.tasksDueSoon,
+          [taskId]: {
+            taskId,
+            ...taskData
+          }
+        }
+      };
+    }
+    case types.DELETE_TASK_DUE_SOON: {
+      const { taskId } = action;
+      const { [taskId]: deletedTask, ...restOfTasks } = state.tasksDueSoon;
+      return {
+        ...state,
+        tasksDueSoon: restOfTasks
+      };
+    }
+    case types.UPDATE_TASK_DUE_SOON: {
+      const { taskId, taskData } = action;
+      return {
+        ...state,
+        tasksDueSoon: {
+          ...state.tasksDueSoon,
+          [taskId]: {
+            ...state[taskId],
+            ...taskData
+          }
+        }
+      };
+    }
     default:
       return state;
   }
 };
 
-export default authUser;
+export default currentUser;

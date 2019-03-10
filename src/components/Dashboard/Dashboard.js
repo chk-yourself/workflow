@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/users';
 import { currentActions, currentSelectors } from '../../ducks/current';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
-import { dashboardSelectors } from '../../ducks/dashboard';
+import {
+  currentUserSelectors,
+  currentUserActions
+} from '../../ducks/currentUser';
 import { ProjectGridContainer } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
 import DashboardPanel from './DashboardPanel';
@@ -24,7 +25,6 @@ class Dashboard extends Component {
 
   handleTaskClick = taskId => {
     const { selectTask } = this.props;
-    console.log(taskId);
     selectTask(taskId);
     this.toggleTaskEditor();
   };
@@ -61,7 +61,8 @@ class Dashboard extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     currentTaskId: currentSelectors.getCurrentTaskId(state),
-    tasksDueSoon: dashboardSelectors.getTasksDueSoonById(state)
+    tasksDueSoon: currentUserSelectors.getTasksDueSoonById(state),
+    store: state
   };
 };
 
