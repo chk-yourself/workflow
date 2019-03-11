@@ -51,7 +51,8 @@ class BoardContainer extends Component {
       deleteSubtask,
       selectProject,
       selectedProjectId,
-      fetchProjectContent
+      fetchProjectContent,
+      handleListSubscription
     } = this.props;
 
     if (selectedProjectId !== projectId) {
@@ -69,7 +70,7 @@ class BoardContainer extends Component {
 
       const { tasksById, subtasksById } = this.props;
 
-      this.listObserver = this.props.handleListSubscription(projectId);
+      this.listObserver = () => handleListSubscription(projectId);
 
       this.projectObserver = firebase
         .getProjectDoc(projectId)
