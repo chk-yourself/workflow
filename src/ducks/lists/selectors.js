@@ -11,8 +11,9 @@ export const getListName = (state, listId) => {
 export const getSelectedProjectLists = state => {
   const { listsById, projectsById, selectedProject } = state;
   const project = projectsById[selectedProject];
-  if (!project) return null;
+  if (!project) return [];
   const { listIds } = project;
+  if (!listIds) return [];
 
   return listIds.map(listId => listsById[listId]);
 };

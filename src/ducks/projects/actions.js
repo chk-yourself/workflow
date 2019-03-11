@@ -1,10 +1,21 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
+import { loadListsById } from '../lists/actions';
+import { loadTasksById } from '../tasks/actions';
+import { loadSubtasksById } from '../subtasks/actions';
 
 export const loadProjectsById = projectsById => {
   return {
     type: types.LOAD_PROJECTS_BY_ID,
     projectsById
+  };
+};
+
+export const loadProject = (projectId, projectData) => {
+  return {
+    type: types.LOAD_PROJECT,
+    projectId,
+    projectData
   };
 };
 
@@ -32,21 +43,94 @@ export const fetchProjectsById = userId => {
   };
 };
 
-export const fetchProject = projectId => {
-  return async dispatch => {
-    try {
-      const projectsById = await firebase.db
-        .getProjectDoc(projectId)
-        .get()
-        .then(doc => {
-          const projects = {};
-          projects[doc.id] = {
-            projectId: doc.id,
+export const fetchProjectDetails = async projectId => {
+  try {
+    const project = await firebase.getDocRef(`projects/${projectId}`).get();
+    return {
+      projectId,
+      ...project.data()
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchProjectLists = async projectId => {
+  try {
+    const projectLists = await firebase.db
+      .collection('lists')
+      .where('projectId', '==', projectId)
+      .get()
+      .then(snapshot => {
+        const lists = {};
+        snapshot.forEach(doc => {
+          lists[doc.id] = {
+            listId: doc.id,
             ...doc.data()
           };
-          return projects;
         });
-      dispatch(loadProjectsById(projectsById));
+        return lists;
+      });
+    return projectLists;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchProjectTasks = async projectId => {
+  try {
+    const projectTasks = await firebase.db
+      .collection('tasks')
+      .where('projectId', '==', projectId)
+      .get()
+      .then(snapshot => {
+        const tasks = {};
+        snapshot.forEach(doc => {
+          tasks[doc.id] = {
+            taskId: doc.id,
+            ...doc.data()
+          };
+        });
+        return tasks;
+      });
+    return projectTasks;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchProjectSubtasks = async projectId => {
+  try {
+    const projectSubtasks = await firebase.db
+      .collection('subtasks')
+      .where('projectId', '==', projectId)
+      .get()
+      .then(snapshot => {
+        const subtasks = {};
+        snapshot.forEach(doc => {
+          subtasks[doc.id] = {
+            subtaskId: doc.id,
+            ...doc.data()
+          };
+        });
+        return subtasks;
+      });
+    return projectSubtasks;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchProjectContent = projectId => {
+  return async dispatch => {
+    try {
+      const subtasks = fetchProjectSubtasks(projectId);
+      const tasks = fetchProjectTasks(projectId);
+      const lists = fetchProjectLists(projectId);
+      const project = await Promise.all([subtasks, tasks, lists]);
+      dispatch(loadSubtasksById(project[0]));
+      dispatch(loadTasksById(project[1]));
+      dispatch(loadListsById(project[2]));
     } catch (error) {
       console.log(error);
     }

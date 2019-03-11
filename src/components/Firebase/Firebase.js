@@ -435,7 +435,7 @@ class Firebase {
     projectName,
     listId,
     listName,
-    userId = null,
+    userId,
     folderId = null
   }) => {
     const isFolderItem = folderId && userId;

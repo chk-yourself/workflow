@@ -14,7 +14,6 @@ import {
 import { listActions, listSelectors } from '../../ducks/lists';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
-import * as ROUTES from '../../constants/routes';
 import Board from './Board';
 import { Input } from '../Input';
 import { List } from '../List';
@@ -28,7 +27,6 @@ class BoardContainer extends Component {
     super(props);
     this.state = {
       isFetching: true,
-      isDragging: false,
       isTaskEditorOpen: false,
       projectName: this.props.projectName
     };
@@ -41,7 +39,6 @@ class BoardContainer extends Component {
       fetchProjectSubtasks,
       firebase,
       updateProject,
-      updateList,
       addTask,
       deleteTask,
       updateTask,
@@ -53,76 +50,79 @@ class BoardContainer extends Component {
       updateSubtask,
       deleteSubtask,
       selectProject,
-      selectedProjectId
+      selectedProjectId,
+      fetchProjectContent
     } = this.props;
 
     if (selectedProjectId !== projectId) {
       selectProject(projectId);
     }
-
+    /*
     fetchListsById(projectId);
     fetchProjectTasks(projectId);
-    fetchProjectSubtasks(projectId).then(() => {
+    fetchProjectSubtasks(projectId)
+    */
+    fetchProjectContent(projectId).then(() => {
       this.setState({
         isFetching: false
       });
-    });
-    this.projectObserver = firebase
-      .getProjectDoc(projectId)
-      .onSnapshot(snapshot => {
-        const updatedProject = snapshot.data();
-        if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
-          updateListIds(projectId, updatedProject.listIds);
-        } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
-          updateProjectTags(projectId, updatedProject.tags);
-        } else {
-          updateProject(projectId, updatedProject);
-        }
-      });
-    this.listObserver = firebase.db
-      .collection('lists')
-      .where('projectId', '==', projectId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const listId = change.doc.id;
-          const listData = change.doc.data();
-          updateList(listId, listData);
-        });
-      });
-    this.subtaskObserver = firebase.db
-      .collection('subtasks')
-      .where('projectId', '==', projectId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const subtaskId = change.doc.id;
-          const subtaskData = change.doc.data();
-          if (change.type === 'added') {
-            addSubtask({ subtaskId, subtaskData });
-          }
-          if (change.type === 'modified') {
-            updateSubtask({ subtaskId, subtaskData });
-          }
-          if (change.type === 'removed') {
-            deleteSubtask(subtaskId);
-          }
-        });
-      });
-    this.taskObserver = firebase.db
-      .collection('tasks')
-      .where('projectId', '==', projectId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const taskId = change.doc.id;
-          const taskData = change.doc.data();
-          if (change.type === 'added') {
-            addTask({ taskId, taskData });
-          } else if (change.type === 'removed') {
-            deleteTask(taskId);
+
+      const { tasksById, subtasksById } = this.props;
+
+      this.listObserver = this.props.handleListSubscription(projectId);
+
+      this.projectObserver = firebase
+        .getProjectDoc(projectId)
+        .onSnapshot(snapshot => {
+          const updatedProject = snapshot.data();
+          if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
+            updateListIds(projectId, updatedProject.listIds);
+          } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
+            updateProjectTags(projectId, updatedProject.tags);
           } else {
-            updateTask({ taskId, taskData });
+            updateProject(projectId, updatedProject);
           }
         });
-      });
+
+      this.subtaskObserver = firebase.db
+        .collection('subtasks')
+        .where('projectId', '==', projectId)
+        .onSnapshot(querySnapshot => {
+          querySnapshot.docChanges().forEach(change => {
+            const subtaskId = change.doc.id;
+            const subtaskData = change.doc.data();
+            if (change.type === 'added') {
+              if (subtaskId in subtasksById) return;
+              addSubtask({ subtaskId, subtaskData });
+            }
+            if (change.type === 'modified') {
+              updateSubtask({ subtaskId, subtaskData });
+            }
+            if (change.type === 'removed') {
+              deleteSubtask(subtaskId);
+            }
+          });
+        });
+
+      this.taskObserver = firebase.db
+        .collection('tasks')
+        .where('projectId', '==', projectId)
+        .onSnapshot(querySnapshot => {
+          querySnapshot.docChanges().forEach(change => {
+            const taskId = change.doc.id;
+            const taskData = change.doc.data();
+            if (change.type === 'added') {
+              if (tasksById && taskId in tasksById) return;
+              console.log(`task added: ${taskId}`);
+              addTask({ taskId, taskData });
+            } else if (change.type === 'removed') {
+              deleteTask(taskId);
+            } else {
+              updateTask({ taskId, taskData });
+            }
+          });
+        });
+    });
     console.log('mounted');
   }
 
@@ -181,10 +181,6 @@ class BoardContainer extends Component {
       });
       reorderLists(projectId, updatedListIds);
     }
-
-    this.setState({
-      isDragging: false
-    });
   };
 
   toggleTaskEditor = () => {
@@ -226,7 +222,6 @@ class BoardContainer extends Component {
     const { isFetching, isTaskEditorOpen, projectName } = this.state;
     const { lists, tasksById, projectId, userId, selectedTaskId } = this.props;
     if (isFetching) return null;
-
     return (
       <main className="board-container">
         <Input
@@ -268,7 +263,7 @@ class BoardContainer extends Component {
             {...tasksById[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
-            view={'board'}
+            view="board"
           />
         )}
       </main>
@@ -283,6 +278,7 @@ const mapStateToProps = (state, ownProps) => {
     selectedTaskId: getSelectedTaskId(state),
     listsById: listSelectors.getListsById(state),
     lists: listSelectors.getSelectedProjectLists(state),
+    subtasksById: subtaskSelectors.getSubtasksById(state),
     tasksById: taskSelectors.getTasksById(state),
     project: projectSelectors.getProject(state, ownProps.projectId)
   };
@@ -290,14 +286,19 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchProjectContent: projectId =>
+      dispatch(projectActions.fetchProjectContent(projectId)),
     updateProject: (projectId, projectData) =>
       dispatch(projectActions.updateProject(projectId, projectData)),
     selectProject: projectId => dispatch(selectProjectAction(projectId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
     fetchListsById: projectId =>
       dispatch(listActions.fetchListsById(projectId)),
-    updateList: (listId, listData) =>
+    updateList: ({ listId, listData }) =>
       dispatch(listActions.updateList(listId, listData)),
+    addList: ({ listId, listData }) =>
+      dispatch(listActions.addList({ listId, listData })),
+    deleteList: listId => dispatch(listActions.deleteList(listId)),
     fetchProjectTasks: projectId =>
       dispatch(taskActions.fetchProjectTasks(projectId)),
     fetchProjectSubtasks: projectId =>
@@ -318,7 +319,9 @@ const mapDispatchToProps = dispatch => {
     deleteSubtask: subtaskId =>
       dispatch(subtaskActions.deleteSubtask(subtaskId)),
     updateSubtask: ({ subtaskId, subtaskData }) =>
-      dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData }))
+      dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData })),
+    handleListSubscription: projectId =>
+      dispatch(listActions.handleListSubscription(projectId))
   };
 };
 

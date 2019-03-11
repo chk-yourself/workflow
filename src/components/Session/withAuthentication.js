@@ -30,6 +30,7 @@ const withAuthentication = Component => {
           this.setState({ authUser });
           history.push(`/0/home/${authUser.uid}`);
         } else {
+          history.push(ROUTES.SIGN_IN);
           setCurrentUser(null);
           this.setState({ authUser: null });
         }

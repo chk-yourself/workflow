@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import { projectActions, projectSelectors } from '../../ducks/projects';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import * as keys from '../../constants/keys';
@@ -26,8 +27,22 @@ class CardComposer extends Component {
   onSubmit = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
-    const { firebase, projectId, projectName, listId, listName } = this.props;
-    firebase.addTask({ projectId, listId, name, projectName, listName });
+    const {
+      firebase,
+      projectId,
+      projectName,
+      listId,
+      listName,
+      userId
+    } = this.props;
+    firebase.addTask({
+      projectId,
+      listId,
+      name,
+      projectName,
+      listName,
+      userId
+    });
     this.resetForm();
     e.preventDefault();
   };
@@ -104,7 +119,9 @@ class CardComposer extends Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    userId: currentUserSelectors.getCurrentUserId(state)
+  };
 };
 
 const mapDispatchToProps = dispatch => {

@@ -56,10 +56,56 @@ export const fetchUserLists = userId => {
   };
 };
 
-export const updateList = (listId, listData) => {
+export const updateList = ({ listId, listData }) => {
   return {
     type: types.UPDATE_LIST,
     listId,
     listData
+  };
+};
+
+export const addList = ({ listId, listData }) => {
+  return {
+    type: types.ADD_LIST,
+    listId,
+    listData
+  };
+};
+
+export const deleteList = listId => {
+  return {
+    type: types.DELETE_LIST,
+    listId
+  };
+};
+
+export const handleListSubscription = projectId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase.db
+        .collection('lists')
+        .where('projectId', '==', projectId)
+        .onSnapshot(async querySnapshot => {
+          querySnapshot.docChanges().forEach(async change => {
+            const [listId, listData, changeType] = await Promise.all([
+              change.doc.id,
+              change.doc.data(),
+              change.type
+            ]);
+            if (changeType === 'added') {
+              if (listId in getState().listsById) return;
+              dispatch(addList({ listId, listData }));
+              console.log('list added');
+            } else if (changeType === 'removed') {
+              dispatch(deleteList(listId));
+            } else {
+              dispatch(updateList({ listId, listData }));
+              console.log(`Updated List: ${listData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };

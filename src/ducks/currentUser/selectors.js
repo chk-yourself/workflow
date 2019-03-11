@@ -3,21 +3,27 @@ export const getCurrentUser = state => {
 };
 
 export const getCurrentUserId = state => {
-  return state.currentUser.userId;
+  const { currentUser } = state;
+  if (!currentUser) return null;
+  return currentUser.userId;
 };
 
 export const getFolders = state => {
   const { currentUser } = state;
+  if (!currentUser) return null;
   return currentUser.folders;
 };
 
 export const getFolderIds = state => {
   const { currentUser } = state;
+  if (!currentUser) return [];
   return currentUser.folderIds;
 };
 
 export const getFoldersArray = state => {
-  const { folders } = state.currentUser;
+  const { currentUser } = state;
+  if (!currentUser) return [];
+  const { folders } = currentUser;
   if (!folders) return [];
   return Object.keys(folders).map(folderId => {
     return {
@@ -33,11 +39,14 @@ export const getFoldersArray = state => {
 
 export const getFolder = (state, folderId) => {
   const { currentUser } = state;
+  if (!currentUser) return null;
   return currentUser.folders[folderId];
 };
 
 export const getTasksDueSoonById = state => {
-  return state.currentUser.tasksDueSoon;
+  const { currentUser } = state;
+  if (!currentUser) return {};
+  return currentUser.tasksDueSoon;
 };
 
 export const getTasksDueSoonArr = state => {

@@ -19,6 +19,21 @@ const listsById = (state = {}, action) => {
         }
       };
     }
+    case types.ADD_LIST: {
+      const { listId, listData } = action;
+      return {
+        ...state,
+        [listId]: {
+          listId,
+          ...listData
+        }
+      };
+    }
+    case types.DELETE_LIST: {
+      const { listId } = action;
+      const { [listId]: deletedList, ...restOfLists } = state;
+      return restOfLists;
+    }
     default:
       return state;
   }

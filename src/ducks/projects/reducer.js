@@ -9,6 +9,16 @@ const projectsById = (state = {}, action) => {
         ...projectsById
       };
     }
+    case types.LOAD_PROJECT: {
+      const { projectId, projectData } = action;
+      return {
+        ...state,
+        [projectId]: {
+          projectId,
+          ...projectData
+        }
+      };
+    }
     case types.UPDATE_PROJECT: {
       const { projectId, projectData } = action;
       return {
