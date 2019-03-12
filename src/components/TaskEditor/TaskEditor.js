@@ -145,21 +145,14 @@ class TaskEditor extends Component {
   };
 
   deleteTask = () => {
-    const {
-      taskId,
-      listId,
-      assignedTo,
-      folders,
-      firebase,
-      handleTaskEditorClose
-    } = this.props;
-    firebase.deleteTask({ taskId, listId, assignedTo, folders });
+    const { taskId, listId, handleTaskEditorClose, deleteTask } = this.props;
+    deleteTask({ taskId, listId });
     handleTaskEditorClose();
   };
 
   onBlur = e => {
-    const { [taskKey]: currentValue, taskId, firebase } = this.props;
     const taskKey = e.target.name;
+    const { [taskKey]: currentValue, taskId, firebase } = this.props;
     const { [taskKey]: updatedValue } = this.state;
 
     // When field loses focus, update task if change is detected
@@ -241,6 +234,7 @@ class TaskEditor extends Component {
     const { taskId, projectId, assignedTo, firebase } = this.props;
 
     if (assignedTo.includes(userId)) {
+      console.log(projectId);
       if (!projectId) return;
       const folderId = this.props.folders[userId];
       firebase.removeAssignee({ taskId, userId, folderId });
@@ -390,7 +384,7 @@ class TaskEditor extends Component {
         handleClick={this.handleClick}
         view={view}
       >
-        <Toolbar className={`task-editor__toolbar`}>
+        <Toolbar className="task-editor__toolbar">
           {projectId && (
             <TaskEditorAssignMember buttonRef={this.membersListButton}>
               <MemberSearch
@@ -702,6 +696,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    deleteTask: ({ taskId, listId }) =>
+      dispatch(taskActions.deleteTask({ taskId, listId })),
     fetchTaskComments: taskId =>
       dispatch(commentActions.fetchTaskComments(taskId)),
     syncTaskComments: taskId =>

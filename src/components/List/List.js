@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { listActions } from '../../ducks/lists';
 import { projectSelectors } from '../../ducks/projects';
 import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
@@ -27,8 +28,8 @@ class List extends Component {
 
   handleListDelete = e => {
     e.preventDefault();
-    const { listId, projectId, firebase } = this.props;
-    firebase.deleteList({ listId, projectId });
+    const { listId, projectId, deleteList } = this.props;
+    deleteList({ listId, projectId });
   };
 
   onChange = e => {
@@ -157,7 +158,9 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    deleteList: ({ listId, projectId }) => dispatch(listActions.deleteList({ listId, projectId }))
+  };
 };
 
 export default withAuthorization(condition)(

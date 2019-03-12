@@ -27,7 +27,7 @@ const tasksById = (state = {}, action) => {
         }
       };
     }
-    case types.DELETE_TASK: {
+    case types.REMOVE_TASK: {
       const { taskId } = action;
       const { [taskId]: deletedTask, ...restOfTasks } = state;
       return restOfTasks;

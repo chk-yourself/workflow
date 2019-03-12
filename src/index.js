@@ -2,18 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import 'normalize.css';
 import './index.scss';
 import { App } from './pages/App';
 import * as serviceWorker from './serviceWorker';
 import { FirebaseContext } from './components/Firebase';
-import reducers from './store/reducers';
-import firebase from './store/firebase';
-import history from './store/history';
-
-const store = createStore(reducers, {}, applyMiddleware(thunk));
+import store, { firebase, history } from './store';
 
 ReactDOM.render(
   <Provider store={store}>

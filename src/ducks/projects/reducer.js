@@ -1,4 +1,5 @@
 import * as types from './types';
+import { ADD_LIST, REMOVE_LIST } from '../lists/types';
 
 const projectsById = (state = {}, action) => {
   switch (action.type) {
@@ -39,7 +40,7 @@ const projectsById = (state = {}, action) => {
         }
       };
     }
-    case types.ADD_LIST: {
+    case ADD_LIST: {
       const { listId, listData } = action;
       const { projectId } = listData;
       return {
@@ -50,7 +51,7 @@ const projectsById = (state = {}, action) => {
         }
       };
     }
-    case types.DELETE_LIST: {
+    case REMOVE_LIST: {
       const { listId, projectId } = action;
       return {
         ...state,

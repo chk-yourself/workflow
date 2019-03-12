@@ -1,5 +1,6 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
+import { removeTask } from '../tasks/actions';
 
 export const loadListsById = listsById => {
   return {
@@ -25,15 +26,60 @@ export const addList = ({ listId, listData }) => {
   };
 };
 
-export const deleteList = ({ listId, projectId }) => {
+export const removeList = ({ listId, projectId }) => {
   return {
-    type: types.DELETE_LIST,
+    type: types.REMOVE_LIST,
     listId,
     projectId
   };
 };
 
 // Thunks
+
+export const deleteList = ({ listId, projectId }) => {
+  return async (dispatch, getStore) => {
+    try {
+      const batch = firebase.createBatch();
+      const listRef = firebase.getDocRef('lists', listId);
+      const projectRef = firebase.getDocRef('projects', projectId);
+      const { taskIds } = getStore().listsById[listId];
+      const { tasksById } = getStore();
+      // Delete list
+      batch.delete(listRef);
+
+      // Remove list id from project
+      firebase.updateBatch(batch, projectRef, {
+        listIds: firebase.removeFromArray(listId)
+      });
+
+      return batch
+        .commit()
+        .then(() => {
+          dispatch(removeList({ listId, projectId }));
+          if (taskIds.length > 0) {
+            taskIds.forEach(async taskId => {
+              const { assignedTo, folders, subtaskIds, commentIds } = tasksById[
+                taskId
+              ];
+              await firebase.deleteTask({
+                taskId,
+                assignedTo,
+                folders,
+                subtaskIds,
+                commentIds
+              });
+              dispatch(removeTask({ taskId, listId: null }));
+            });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
 
 export const fetchListsById = projectId => {
   return async dispatch => {
@@ -98,14 +144,12 @@ export const syncProjectLists = projectId => {
             ]);
             if (changeType === 'added') {
               if (listId in getState().listsById) return;
-              console.log(listId, listData);
               dispatch(addList({ listId, listData }));
               console.log('list added');
             } else if (changeType === 'removed') {
               dispatch(deleteList({ listId, projectId }));
             } else {
               dispatch(updateList({ listId, listData }));
-              console.log(listId, listData);
               console.log(`Updated List: ${listData.name}`);
             }
           });

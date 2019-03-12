@@ -17,6 +17,72 @@ export const loadUserTasks = (userId, tasksById) => {
   };
 };
 
+export const addTask = ({ taskId, taskData }) => {
+  return {
+    type: types.ADD_TASK,
+    taskId,
+    taskData
+  };
+};
+
+export const removeTask = ({ taskId, listId }) => {
+  console.log(taskId, ' removed');
+  return {
+    type: types.REMOVE_TASK,
+    taskId,
+    listId
+  };
+};
+
+export const updateTask = ({ taskId, taskData }) => {
+  return {
+    type: types.UPDATE_TASK,
+    taskId,
+    taskData
+  };
+};
+
+export const updateTasksById = task => {
+  return {
+    type: types.UPDATE_TASKS_BY_ID,
+    task
+  };
+};
+
+export const addTag = (taskId, tag) => {
+  return {
+    type: types.ADD_TAG,
+    taskId,
+    tag
+  };
+};
+
+// Thunks
+
+export const deleteTask = ({ taskId, listId = null }) => {
+  return async (dispatch, getStore) => {
+    try {
+      const {
+        folders,
+        subtaskIds,
+        commentIds,
+        assignedTo
+      } = getStore().tasksById[taskId];
+      await firebase.deleteTask({
+        taskId,
+        listId,
+        assignedTo,
+        folders,
+        subtaskIds,
+        commentIds
+      });
+      dispatch(removeTask({ taskId, listId }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
 export const fetchProjectTasks = projectId => {
   return async dispatch => {
     try {
@@ -41,20 +107,18 @@ export const fetchProjectTasks = projectId => {
   };
 };
 
-const handleInitialPayload = async (snapshot) => {
-          const tasks = await snapshot.docChanges().map(change => {
-            tasks[change.doc.id] = {
-              taskId: change.doc.id,
-              ...change.doc.data()
-            };
-          });
-          console.log(tasks);
-          return tasks;
-}
+const handleInitialPayload = async snapshot => {
+  const tasks = await snapshot.docChanges().map(change => {
+    tasks[change.doc.id] = {
+      taskId: change.doc.id,
+      ...change.doc.data()
+    };
+  });
+  console.log(tasks);
+  return tasks;
+};
 
-
-
-const syncTasks = (snapshot) => {
+const syncTasks = snapshot => {
   snapshot.docChanges().forEach(change => {
     const taskId = change.doc.id;
     const taskData = change.doc.data();
@@ -62,72 +126,58 @@ const syncTasks = (snapshot) => {
       console.log('added task');
       return dispatch => {
         dispatch(addTask({ taskId, taskData }));
-      }
-    } else if (change.type === 'removed') {
+      };
+    }
+    if (change.type === 'removed') {
       return dispatch => {
         dispatch(deleteTask(taskId));
-      }
-    } else {
+      };
+    } 
       return dispatch => {
         dispatch(updateTask({ taskId, taskData }));
-      }
-    }
+      };
+    
   });
 };
 
 let count = 0;
-const handleTaskSubscription = (snapshot) => {
+const handleTaskSubscription = snapshot => {
   count++;
   const initialLoad = count === 1;
   const tasks = {};
-    if (initialLoad) {
-      console.log('is initial load');
+  if (initialLoad) {
+    console.log('is initial load');
 
-      snapshot.docChanges().forEach(change => {
-        tasks[change.doc.id] = {
-          taskId: change.doc.id,
-          ...change.doc.data()
-        };
-      });
-      console.log(tasks);
-      return tasks;
+    snapshot.docChanges().forEach(change => {
+      tasks[change.doc.id] = {
+        taskId: change.doc.id,
+        ...change.doc.data()
+      };
+    });
+    console.log(tasks);
+    return tasks;
+  }
+  snapshot.docChanges().forEach(change => {
+    const taskId = change.doc.id;
+    const taskData = change.doc.data();
+    if (change.type === 'added') {
+      console.log('added task');
+      return dispatch => {
+        dispatch(addTask({ taskId, taskData }));
+      };
+    } if (change.type === 'removed') {
+      return dispatch => {
+        dispatch(deleteTask(taskId));
+      };
     } else {
-      snapshot.docChanges().forEach(change => {
-        const taskId = change.doc.id;
-        const taskData = change.doc.data();
-        if (change.type === 'added') {
-          console.log('added task');
-          return dispatch => {
-            dispatch(addTask({ taskId, taskData }));
-          }
-        } else if (change.type === 'removed') {
-          return dispatch => {
-            dispatch(deleteTask(taskId));
-          }
-        } else {
-          return dispatch => {
-            dispatch(updateTask({ taskId, taskData }));
-          }
-        }
-      });
+      return dispatch => {
+        dispatch(updateTask({ taskId, taskData }));
+      };
     }
-}
-
-/*const handleTaskSubscription = utils.firstThen(handleInitialPayload, syncTasks);*/
-
-export const syncUserTasks = userId => {
-  return async dispatch => {
-    try {
-      const tasksById = await firebase.db
-        .collection('tasks')
-        .where('assignedTo', 'array-contains', userId)
-        .onSnapshot(handleTaskSubscription);
-     dispatch(loadTasksById(tasksById));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  });
 };
+
+/* const handleTaskSubscription = utils.firstThen(handleInitialPayload, syncTasks); */
 
 export const fetchUserTasks = userId => {
   return async dispatch => {
@@ -153,40 +203,85 @@ export const fetchUserTasks = userId => {
   };
 };
 
-export const addTask = ({ taskId, taskData }) => {
-  return {
-    type: types.ADD_TASK,
-    taskId,
-    taskData
+/*
+
+export const syncUserTasks = userId => {
+  return async dispatch => {
+    try {
+      const tasksById = await firebase.db
+        .collection('tasks')
+        .where('assignedTo', 'array-contains', userId)
+        .onSnapshot(handleTaskSubscription);
+      dispatch(loadTasksById(tasksById));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+*/
+
+export const syncUserTasks = userId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase
+        .queryCollection('tasks', ['assignedTo', 'array-contains', userId])
+        .onSnapshot(async querySnapshot => {
+          querySnapshot.docChanges().forEach(async change => {
+            const [taskId, taskData, changeType] = await Promise.all([
+              change.doc.id,
+              change.doc.data(),
+              change.type
+            ]);
+            if (changeType === 'added') {
+              if (taskId in getState().tasksById) return;
+              dispatch(addTask({ taskId, taskData }));
+              console.log('task added');
+            } else if (changeType === 'removed') {
+              const { listId } = taskData;
+              dispatch(removeTask({ taskId, listId }));
+            } else {
+              dispatch(updateTask({ taskId, taskData }));
+              console.log(`Updated Task: ${taskData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 
-export const deleteTask = taskId => {
-  return {
-    type: types.DELETE_TASK,
-    taskId
-  };
-};
+export const syncProjectTasks = projectId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase
+        .queryCollection('tasks', ['projectId', '==', projectId])
+        .onSnapshot(async querySnapshot => {
+          querySnapshot.docChanges().forEach(async change => {
+            const [taskId, taskData, changeType] = await Promise.all([
+              change.doc.id,
+              change.doc.data(),
+              change.type
+            ]);
 
-export const updateTask = ({ taskId, taskData }) => {
-  return {
-    type: types.UPDATE_TASK,
-    taskId,
-    taskData
-  };
-};
-
-export const updateTasksById = task => {
-  return {
-    type: types.UPDATE_TASKS_BY_ID,
-    task
-  };
-};
-
-export const addTag = (taskId, tag) => {
-  return {
-    type: types.ADD_TAG,
-    taskId,
-    tag
+            const { tasksById } = getState();
+            if (!tasksById) return;
+            if (changeType === 'added') {
+              if (taskId in tasksById) return;
+              dispatch(addTask({ taskId, taskData }));
+              console.log('task added');
+            } else if (changeType === 'removed') {
+              if (taskId in tasksById === false) return;
+              const { listId } = taskData;
+              dispatch(removeTask({ taskId, listId }));
+            } else {
+              dispatch(updateTask({ taskId, taskData }));
+              console.log(`Updated Task: ${taskData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };

@@ -78,13 +78,33 @@ class Firebase {
 
   deleteField = () => firebase.firestore.FieldValue.delete();
 
-  getDocRef = path => this.db.doc(path);
+  getDocRef = (collection, doc, subcollection = null, subdoc = null) => {
+    const docRef = this.db.doc(`${collection}/${doc}`);
+    return subcollection && subdoc
+      ? docRef.collection(subcollection).doc(subdoc)
+      : docRef;
+  };
 
-  updateDoc = (path, newValue = {}) =>
-    this.getDocRef(path).update({
+  createBatch = () => this.db.batch();
+
+  queryCollection = (collectionName, [field, comparisonOperator, value]) => {
+    return this.db
+      .collection(collectionName)
+      .where(field, comparisonOperator, value);
+  };
+
+  updateDoc = ([collection, doc, subcollection, subdoc], newValue = {}) =>
+    this.getDocRef(collection, doc, subcollection, subdoc).update({
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
+
+  updateBatch = (batch, ref, newValue = {}) => {
+    return batch.update(ref, {
+      lastUpdatedAt: this.getTimestamp(),
+      ...newValue
+    });
+  };
 
   // User API
 
@@ -99,11 +119,11 @@ class Firebase {
     photoURL = null
   }) => {
     const batch = this.db.batch();
-    const userRef = this.getDocRef(`users/${userId}`);
-    const newFolderRef = this.getDocRef(`users/${userId}/folders/0`);
-    const todayFolderRef = this.getDocRef(`users/${userId}/folders/1`);
-    const upcomingFolderRef = this.getDocRef(`users/${userId}/folders/2`);
-    const laterFolderRef = this.getDocRef(`users/${userId}/folders/3`);
+    const userRef = this.getDocRef('users', userId);
+    const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
+    const todayFolderRef = this.getDocRef('users', userId, 'folders', '1');
+    const upcomingFolderRef = this.getDocRef('users', userId, 'folders', '2');
+    const laterFolderRef = this.getDocRef('users', userId, 'folders', '3');
 
     batch.set(userRef, {
       userId,
@@ -467,11 +487,11 @@ class Firebase {
       })
       .then(ref => {
         if (isFolderItem) {
-          this.updateDoc(`users/${userId}/folders/${folderId}`, {
+          this.updateDoc(['users', userId, 'folders', folderId], {
             taskIds: this.addToArray(ref.id)
           });
         } else {
-          this.updateDoc(`lists/${listId}`, {
+          this.updateDoc(['lists', listId], {
             taskIds: this.addToArray(ref.id)
           });
         }
@@ -485,43 +505,42 @@ class Firebase {
     });
   };
 
-  removeAssignee = ({ taskId, userId, folderId }) => {
-    const batch = this.db.batch();
-    const taskRef = this.getDocRef(`tasks/${taskId}`);
-    const folderRef = this.getDocRef(`users/${userId}/folders/${folderId}`);
-    batch.update(folderRef, {
-      taskIds: this.removeFromArray(taskId),
-      lastUpdatedAt: this.getTimestamp()
+  removeAssignee = ({ taskId, userId, folderId }, batch = this.createBatch(), shouldCommit = true) => {
+    const folderRef = this.getDocRef('users', userId, 'folders', folderId);
+    this.updateBatch(batch, folderRef, {
+      taskIds: this.removeFromArray(taskId)
     });
 
-    batch.update(taskRef, {
-      assignedTo: this.removeFromArray(userId),
-      [`folders.${userId}`]: this.deleteField(),
-      lastUpdatedAt: this.getTimestamp()
-    });
-
-    return batch
-      .commit()
-      .then(() => {
-        console.log('Removed member from task');
-      })
-      .catch(error => {
-        console.error(error);
+    if (shouldCommit) {
+      const taskRef = this.getDocRef('tasks', taskId);
+      this.updateBatch(batch, taskRef, {
+        assignedTo: this.removeFromArray(userId),
+        [`folders.${userId}`]: this.deleteField()
       });
+  
+      return batch
+        .commit()
+        .then(() => {
+          console.log('Removed member from task');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   };
 
   addAssignee = ({ taskId, projectId, userId }) => {
     const batch = this.db.batch();
-    const taskRef = this.getDocRef(`tasks/${taskId}`);
-    const projectRef = this.getDocRef(`projects/${projectId}`);
-    const newFolderRef = this.getDocRef(`users/${userId}/folders/0`);
+    const taskRef = this.getDocRef('tasks', taskId);
+    const projectRef = this.getDocRef('projects', projectId);
+    const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
     batch.update(newFolderRef, {
       taskIds: this.addToArray(taskId),
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(taskRef, {
       assignedTo: this.addToArray(userId),
-      [`folders.${userId}`]: 0,
+      [`folders.${userId}`]: '0',
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(projectRef, {
@@ -538,63 +557,60 @@ class Firebase {
       });
   };
 
-  deleteTask = ({ taskId, listId, assignedTo = [], folders = null }) => {
-    const batch = this.db.batch();
-    const taskRef = this.getDocRef(`tasks/${taskId}`);
+  deleteTask = (
+    { taskId, listId, assignedTo, subtaskIds, commentIds, folders },
+    batch = this.createBatch(),
+    shouldCommit = true
+  ) => {
+    const taskRef = this.getDocRef('tasks', taskId);
     batch.delete(taskRef);
 
     if (listId) {
-      const listRef = this.getDocRef(`lists/${listId}`);
-      batch.update(listRef, {
-        taskIds: this.removeFromArray(taskId),
-        lastUpdatedAt: this.getTimestamp()
+      const listRef = this.getDocRef('lists', listId);
+      this.updateBatch(batch, listRef, {
+        taskIds: this.removeFromArray(taskId)
       });
     }
 
-    // Delete subtasks assigned to task
-    this.db
-      .collection('subtasks')
-      .where('taskId', '==', taskId)
-      .get()
-      .then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          batch.delete(doc.ref);
-        });
-        console.log('1. delete task subtasks');
-      })
-      .then(() => {
-        assignedTo.forEach(memberId => {
-          const folderId = folders[memberId];
-          const folderRef = this.getDocRef(
-            `users/${memberId}/folders/${folderId}`
-          );
-          batch.update(folderRef, {
-            taskIds: this.removeFromArray(taskId),
-            lastUpdatedAt: this.getTimestamp()
-          });
-        });
-        console.log('2. remove task assignment');
-      })
-      .then(() => {
-        this.db
-          .collection('comments')
-          .where('taskId', '==', taskId)
-          .get()
-          .then(snapshot => {
-            snapshot.docs.forEach(doc => {
-              batch.delete(doc.ref);
-            });
-            console.log('3. delete task comments');
-            return batch
-              .commit()
-              .then(() => {
-                console.log('task deleted');
-              })
-              .catch(error => {
-                console.error(error);
-              });
-          });
+    // Delete subtasks
+    if (subtaskIds.length > 0) {
+      subtaskIds.forEach(subtaskId => {
+        this.deleteSubtask({ subtaskId }, batch, false);
       });
+      console.log('1. Subtasks deleted.');
+    }
+
+    // Delete task assignments
+    if (assignedTo.length > 0) {
+      assignedTo.forEach(userId => {
+        const folderId = folders[userId];
+        const folderRef = this.getDocRef('users', userId, 'folders', folderId);
+        this.updateBatch(batch, folderRef, {
+          taskIds: this.removeFromArray(taskId)
+        });
+      });
+      console.log('2. Removed task assignments.');
+    }
+
+    // Delete comments
+    if (commentIds.length > 0) {
+      commentIds.forEach(commentId => {
+        const commentRef = this.getDocRef('comments', commentId);
+        batch.delete(commentRef);
+      });
+      console.log('3. Task comments deleted.');
+    }
+
+    if (shouldCommit) {
+      return batch
+      .commit()
+      .then(() => {
+        console.log('task deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
   };
 
   moveTaskToList = ({ taskId, origListId, newListId, updatedTaskIds }) => {
@@ -624,11 +640,27 @@ class Firebase {
       });
   };
 
-  moveTaskToFolder = ({ userId, taskId, origFolderId, newFolderId, updatedTaskIds }) => {
+  moveTaskToFolder = ({
+    userId,
+    taskId,
+    origFolderId,
+    newFolderId,
+    updatedTaskIds
+  }) => {
     const batch = this.db.batch();
-    const taskRef = this.getDocRef(`tasks/${taskId}`);
-    const origFolderRef = this.getDocRef(`users/${userId}/folders/${origFolderId}`);
-    const newFolderRef = this.getDocRef(`users/${userId}/folders/${newFolderId}`);
+    const taskRef = this.getDocRef('tasks', taskId);
+    const origFolderRef = this.getDocRef(
+      'users',
+      userId,
+      'folders',
+      origFolderId
+    );
+    const newFolderRef = this.getDocRef(
+      'users',
+      userId,
+      'folders',
+      newFolderId
+    );
     batch.update(taskRef, {
       [`folders.${userId}`]: newFolderId,
       lastUpdatedAt: this.getTimestamp()
@@ -692,26 +724,31 @@ class Firebase {
     });
   };
 
-  deleteSubtask = ({ subtaskId, taskId = null }) => {
-    const batch = this.db.batch();
-    const subtaskRef = this.getSubtaskDoc(subtaskId);
+  deleteSubtask = (
+    { subtaskId, taskId = null },
+    batch = this.createBatch(),
+    shouldCommit = true
+  ) => {
+    const subtaskRef = this.getDocRef('subtasks', subtaskId);
     batch.delete(subtaskRef);
 
     if (taskId) {
       const taskRef = this.getTaskDoc(taskId);
-      batch.update(taskRef, {
-        subtaskIds: this.removeFromArray(subtaskId),
-        lastUpdatedAt: this.getTimestamp()
+      this.updateBatch(batch, taskRef, {
+        subtaskIds: this.removeFromArray(subtaskId)
       });
     }
-    return batch
-      .commit()
-      .then(() => {
-        console.log('subtask deleted');
-      })
-      .catch(error => {
-        console.error(error);
-      });
+
+    if (shouldCommit) {
+      return batch
+        .commit()
+        .then(() => {
+          console.log('Subtask deleted.');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   };
 
   // Comment API

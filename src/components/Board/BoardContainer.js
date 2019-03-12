@@ -36,9 +36,6 @@ class BoardContainer extends Component {
     const {
       firebase,
       updateProject,
-      addTask,
-      deleteTask,
-      updateTask,
       updateProjectTags,
       projectId,
       project,
@@ -48,7 +45,8 @@ class BoardContainer extends Component {
       selectProject,
       selectedProjectId,
       fetchProjectContent,
-      syncProjectLists
+      syncProjectLists,
+      syncProjectTasks
     } = this.props;
 
     if (selectedProjectId !== projectId) {
@@ -60,10 +58,13 @@ class BoardContainer extends Component {
         isFetching: false
       });
 
-      const { tasksById, subtasksById } = this.props;
+      const { subtasksById } = this.props;
 
       this.listObserver = () => syncProjectLists(projectId);
       this.listObserver();
+
+      this.taskObserver = () => syncProjectTasks(projectId);
+      this.taskObserver();
 
       this.projectObserver = firebase
         .getProjectDoc(projectId)
@@ -92,25 +93,6 @@ class BoardContainer extends Component {
             }
             if (change.type === 'removed') {
               deleteSubtask(subtaskId);
-            }
-          });
-        });
-
-      this.taskObserver = firebase.db
-        .collection('tasks')
-        .where('projectId', '==', projectId)
-        .onSnapshot(querySnapshot => {
-          querySnapshot.docChanges().forEach(change => {
-            const taskId = change.doc.id;
-            const taskData = change.doc.data();
-            if (change.type === 'added') {
-              if (tasksById && taskId in tasksById) return;
-              console.log(`task added: ${taskId}`);
-              addTask({ taskId, taskData });
-            } else if (change.type === 'removed') {
-              deleteTask(taskId);
-            } else {
-              updateTask({ taskId, taskData });
             }
           });
         });
@@ -296,11 +278,6 @@ const mapDispatchToProps = dispatch => {
       dispatch(projectActions.reorderLists(projectId, listIds)),
     updateProjectTags: (projectId, tags) =>
       dispatch(projectActions.updateProjectTags(projectId, tags)),
-    addTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.addTask({ taskId, taskData })),
-    updateTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.updateTask({ taskId, taskData })),
-    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
     addSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
     deleteSubtask: subtaskId =>
@@ -308,7 +285,9 @@ const mapDispatchToProps = dispatch => {
     updateSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData })),
     syncProjectLists: projectId =>
-      dispatch(listActions.syncProjectLists(projectId))
+      dispatch(listActions.syncProjectLists(projectId)),
+    syncProjectTasks: projectId =>
+      dispatch(taskActions.syncProjectTasks(projectId))
   };
 };
 

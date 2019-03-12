@@ -43,18 +43,6 @@ export const fetchProjectsById = userId => {
   };
 };
 
-export const fetchProjectDetails = async projectId => {
-  try {
-    const project = await firebase.getDocRef(`projects/${projectId}`).get();
-    return {
-      projectId,
-      ...project.data()
-    };
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const fetchProjectLists = async projectId => {
   try {
     const projectLists = await firebase.db

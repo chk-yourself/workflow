@@ -7,7 +7,10 @@ import {
   currentUserSelectors
 } from '../../ducks/currentUser';
 import { taskSelectors, taskActions } from '../../ducks/tasks';
-import { selectTask as selectTaskAction, getSelectedTaskId } from '../../ducks/selectedTask';
+import {
+  selectTask as selectTaskAction,
+  getSelectedTaskId
+} from '../../ducks/selectedTask';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../Folder';
 import { Main } from '../Main';
@@ -25,55 +28,21 @@ class UserTasks extends Component {
       userId,
       fetchFolders,
       fetchUserTasks,
-      addTask,
-      updateTask,
-      deleteTask,
-      addFolder,
-      updateFolder,
-      deleteFolder,
-      firebase
+      syncUserTasks,
+      syncFolders
     } = this.props;
     fetchFolders(userId);
     fetchUserTasks(userId).then(() => {
       this.setState({
         isFetching: false
       });
+
+      this.taskObserver = () => syncUserTasks(userId);
+      this.taskObserver();
     });
 
-    this.taskObserver = firebase.db
-      .collection('tasks')
-      .where('assignedTo', 'array-contains', userId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const taskId = change.doc.id;
-          const taskData = change.doc.data();
-          if (change.type === 'added') {
-            console.log('added task');
-            addTask({ taskId, taskData });
-          } else if (change.type === 'removed') {
-            deleteTask(taskId);
-          } else {
-            updateTask({ taskId, taskData });
-          }
-        });
-      });
-
-    this.folderObserver = firebase
-      .getDocRef(`users/${userId}`)
-      .collection('folders')
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const folderId = change.doc.id;
-          const folderData = change.doc.data();
-          if (change.type === 'added') {
-            addFolder({ folderId, folderData });
-          } else if (change.type === 'removed') {
-            deleteFolder(folderId);
-          } else {
-            updateFolder({ folderId, folderData });
-          }
-        });
-      });
+    this.folderObserver = () => syncFolders(userId);
+    this.folderObserver();
   }
 
   componentWillUnmount() {
@@ -221,21 +190,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    syncFolders: userId => dispatch(currentUserActions.syncFolders(userId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
     syncUserTasks: userId => dispatch(taskActions.syncUserTasks(userId)),
     fetchFolders: userId => dispatch(currentUserActions.fetchFolders(userId)),
     fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
-    addTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.addTask({ taskId, taskData })),
-    updateTask: ({ taskId, taskData }) =>
-      dispatch(taskActions.updateTask({ taskId, taskData })),
-    deleteTask: taskId => dispatch(taskActions.deleteTask(taskId)),
-    addFolder: ({ folderId, folderData }) =>
-      dispatch(currentUserActions.addFolder({ folderId, folderData })),
-    updateFolder: ({ folderId, folderData }) =>
-      dispatch(currentUserActions.updateFolder({ folderId, folderData })),
-    deleteFolder: folderId =>
-      dispatch(currentUserActions.deleteFolder(folderId)),
     reorderFolders: (userId, folderIds) =>
       dispatch(currentUserActions.reorderFolders(userId, folderIds))
   };

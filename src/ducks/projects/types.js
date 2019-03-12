@@ -4,5 +4,3 @@ export const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const REORDER_LISTS = 'REORDER_LISTS';
 export const UPDATE_PROJECT_TAGS = 'UPDATE_PROJECT_TAGS';
 export const ADD_TAG = 'ADD_TAG';
-export const ADD_LIST = 'ADD_LIST';
-export const DELETE_LIST = 'DELETE_LIST';

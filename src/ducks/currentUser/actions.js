@@ -12,7 +12,7 @@ export const fetchCurrentUserData = userId => {
   return async dispatch => {
     try {
       const currentUser = await firebase
-        .getDocRef(`users/${userId}`)
+        .getDocRef('users', userId)
         .get()
         .then(doc => doc.data());
       dispatch(setCurrentUser(currentUser));
@@ -33,7 +33,7 @@ export const fetchFolders = userId => {
   return async dispatch => {
     try {
       const folders = await firebase
-        .getDocRef(`users/${userId}`)
+        .getDocRef('users', userId)
         .collection('folders')
         .get()
         .then(snapshot => {
@@ -142,5 +142,38 @@ export const updateTaskDueSoon = ({ taskId, taskData }) => {
     type: types.UPDATE_TASK_DUE_SOON,
     taskId,
     taskData
+  };
+};
+
+export const syncFolders = userId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase
+        .getDocRef('users', userId)
+        .collection('folders')
+        .onSnapshot(async querySnapshot => {
+          querySnapshot.docChanges().forEach(async change => {
+            const [folderId, folderData, changeType] = await Promise.all([
+              change.doc.id,
+              change.doc.data(),
+              change.type
+            ]);
+            const { folders } = getState().currentUser;
+            if (!folders) return;
+            if (changeType === 'added') {
+              if (folderId in folders) return;
+              dispatch(addFolder({ folderId, folderData }));
+              console.log('folder added');
+            } else if (changeType === 'removed') {
+              dispatch(deleteFolder(folderId));
+            } else {
+              dispatch(updateFolder({ folderId, folderData }));
+              console.log(`Updated Folder: ${folderData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
