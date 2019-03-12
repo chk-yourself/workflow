@@ -70,11 +70,7 @@ class BoardContainer extends Component {
         .getProjectDoc(projectId)
         .onSnapshot(snapshot => {
           const updatedProject = snapshot.data();
-          if (!utils.isEqual(updatedProject.tags, project.tags)) {
-            updateProjectTags(projectId, updatedProject.tags);
-          } else {
-            updateProject(projectId, updatedProject);
-          }
+          updateProject(projectId, updatedProject);
         });
 
       this.subtaskObserver = firebase.db

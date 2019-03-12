@@ -65,9 +65,9 @@ export default class TagsInput extends Component {
   };
 
   matchTag = (tag, value) => {
-    const { text } = tag;
+    const { name } = tag;
     const regExp = new RegExp(value, 'i');
-    return regExp.test(text);
+    return regExp.test(name);
   };
 
   onChange = e => {
@@ -78,7 +78,7 @@ export default class TagsInput extends Component {
       this.matchTag(tag, value)
     );
     const hasExactMatch =
-      filteredList.findIndex(item => item.text === value) !== -1;
+      filteredList.findIndex(item => item.name === value) !== -1;
     const newIndex = filteredList.indexOf(selectedTag);
     const persistSelectedTag = newIndex !== -1;
 
@@ -86,13 +86,13 @@ export default class TagsInput extends Component {
       selectedTag: persistSelectedTag
         ? selectedTag
         : filteredList.length > 0
-        ? filteredList[0].text
+        ? filteredList[0].name
         : '',
       selectedIndex: persistSelectedTag ? newIndex : 0,
       value,
       filteredList: hasExactMatch
         ? filteredList
-        : [...filteredList, { text: value, color: 'default' }],
+        : [...filteredList, { name: value, color: 'default' }],
       hasExactMatch
     });
   };
@@ -107,7 +107,13 @@ export default class TagsInput extends Component {
     )
       return;
 
-    const { filteredList, selectedIndex, selectedTag, value, focusedTag } = this.state;
+    const {
+      filteredList,
+      selectedIndex,
+      selectedTag,
+      value,
+      focusedTag
+    } = this.state;
     const { addTag, removeTag, assignedTags } = this.props;
     const nextIndex =
       selectedIndex === filteredList.length - 1 || selectedIndex === null
@@ -122,14 +128,14 @@ export default class TagsInput extends Component {
       // eslint-disable-next-line no-fallthrough
       case keys.TAB: {
         this.setState({
-          selectedTag: filteredList[nextIndex].text,
+          selectedTag: filteredList[nextIndex].name,
           selectedIndex: nextIndex
         });
         break;
       }
       case keys.ARROW_UP: {
         this.setState({
-          selectedTag: filteredList[prevIndex].text,
+          selectedTag: filteredList[prevIndex].name,
           selectedIndex: prevIndex
         });
         break;
@@ -143,13 +149,13 @@ export default class TagsInput extends Component {
       case keys.BACKSPACE: {
         if (value !== '') return;
         if (focusedTag === '') {
-        this.setState({
-          focusedTag: assignedTags[assignedTags.length - 1].text
-        });
-      } else {
-        this.resetForm();
-        removeTag(focusedTag);
-      }
+          this.setState({
+            focusedTag: assignedTags[assignedTags.length - 1].name
+          });
+        } else {
+          this.resetForm();
+          removeTag(focusedTag);
+        }
       }
     }
     e.preventDefault();
@@ -178,6 +184,7 @@ export default class TagsInput extends Component {
   handleTagDelete = tag => {
     const { removeTag } = this.props;
     this.resetForm();
+    console.log(tag);
     removeTag(tag);
   };
 
@@ -186,8 +193,7 @@ export default class TagsInput extends Component {
       isColorPickerActive,
       assignedTags,
       setTagColor,
-      currentTag,
-      removeTag
+      currentTag
     } = this.props;
     const {
       value,
@@ -213,17 +219,22 @@ export default class TagsInput extends Component {
     }
 
     return (
-      <div className={`tags__container ${isActive ? 'is-active' : ''} ${!hasTags ? 'no-tags' : ''}`} ref={el => (this.el = el)}>
+      <div
+        className={`tags__container ${isActive ? 'is-active' : ''} ${
+          !hasTags ? 'no-tags' : ''
+        }`}
+        ref={el => (this.el = el)}
+      >
         {assignedTags.map(tag => (
           <Tag
-            key={tag.text}
+            key={tag.name}
             color={tag.color}
             size="md"
-            text={tag.text}
-            onDelete={() => this.handleTagDelete(tag.text)}
-            className={focusedTag === tag.text ? 'is-focused' : ''}
+            name={tag.name}
+            onDelete={() => this.handleTagDelete(tag.name)}
+            className={focusedTag === tag.name ? 'is-focused' : ''}
             tagRef={
-              currentTag === tag.text ? el => (this.currentTagEl = el) : null
+              currentTag === tag.name ? el => (this.currentTagEl = el) : null
             }
           />
         ))}
@@ -244,9 +255,9 @@ export default class TagsInput extends Component {
               {filteredList.map((item, i) => {
                 return (
                   <li
-                    key={item.text}
+                    key={item.name}
                     className={`tags-input__item ${
-                      selectedTag === item.text ? 'is-selected' : ''
+                      selectedTag === item.name ? 'is-selected' : ''
                     } ${
                       !hasExactMatch && i === filteredList.length - 1
                         ? 'tags-input__item--new'
@@ -256,12 +267,12 @@ export default class TagsInput extends Component {
                     {!hasExactMatch && i === filteredList.length - 1 ? (
                       <>
                         <h4 className="tags-input__item--heading">New Tag</h4>
-                        <span className="tags-input__item--text">
-                          {item.text}
+                        <span className="tags-input__item--name">
+                          {item.name}
                         </span>
                       </>
                     ) : (
-                      <Tag text={item.text} color={item.color} size="sm" />
+                      <Tag name={item.name} color={item.color} size="sm" />
                     )}
                   </li>
                 );

@@ -3,14 +3,14 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import './Tag.scss';
 
-const Tag = ({ text, color, size, onDelete, className, tagRef, variant }) => (
+const Tag = ({ name, color, size, onDelete, className, tagRef, variant }) => (
   <span
     className={`tag tag--${size} bg--${color} ${
       variant !== 'default' ? `tag--${variant}` : ''
     } ${className}`}
     ref={tagRef}
   >
-    {text}
+    {name}
     {size === 'md' && (
       <Button
         type="button"

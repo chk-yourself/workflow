@@ -52,6 +52,17 @@ const tasksById = (state = {}, action) => {
         }
       };
     }
+    case types.REMOVE_TAG: {
+      const { taskId, name } = action;
+      if (!taskId || !(taskId in state)) return state;
+      return {
+        ...state,
+        [taskId]: {
+          ...state[taskId],
+          tags: state[taskId].tags.filter(tag => tag !== name)
+        }
+      };
+    }
     default:
       return state;
   }

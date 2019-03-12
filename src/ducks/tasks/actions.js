@@ -1,6 +1,7 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 import { utils } from '../../utils';
+import { REMOVE_TAG } from '../currentUser/types';
 
 export const loadTasksById = tasksById => {
   return {
@@ -54,6 +55,15 @@ export const addTag = (taskId, tag) => {
     type: types.ADD_TAG,
     taskId,
     tag
+  };
+};
+
+
+export const removeTag = ({ taskId, name }) => {
+  return {
+    type: types.REMOVE_TAG,
+    taskId,
+    name
   };
 };
 
@@ -282,6 +292,25 @@ export const syncProjectTasks = projectId => {
         });
     } catch (error) {
       console.log(error);
+    }
+  };
+};
+
+export const removeTaskTag = ({ taskId, name, userId, projectId }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { currentUser, projectsById } = getState();
+      const { tags: userTags } = currentUser;
+      const projectTags = projectId ? projectsById[projectId].tags : {};
+      const isProjectTag = projectTags && name in projectTags;
+      const isUserTag = userTags && name in userTags;
+      const projectCount = isProjectTag ? projectTags[name].count - 1 : null;
+      const userCount = isUserTag ? userTags[name].count - 1 : null;
+
+      await firebase.removeTag({ taskId, name, userId, userCount, projectId, projectCount });
+      dispatch(removeTag({ taskId, name }));
+    } catch (error) {
+      console.error(error);
     }
   };
 };

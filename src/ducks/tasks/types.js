@@ -12,3 +12,4 @@ export const UPDATE_TASKS_BY_ID = 'UPDATE_TASKS_BY_ID';
 export const ADD_TAG = 'ADD_TAG';
 export const LOAD_USER_TASKS = 'LOAD_USER_TASKS';
 export const REMOVE_TASK = 'REMOVE_TASK';
+export const REMOVE_TAG = 'REMOVE_TAG';

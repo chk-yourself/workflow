@@ -249,8 +249,7 @@ class TaskEditor extends Component {
     });
   };
 
-  addTag = text => {
-    console.log(text);
+  addTag = name => {
     const {
       firebase,
       currentUser,
@@ -260,13 +259,17 @@ class TaskEditor extends Component {
       addTag
     } = this.props;
     const { userId, tags: userTags } = currentUser;
-    const isProjectTag = projectTags && text in projectTags;
-    const isUserTag = userTags && text in userTags;
+    const isProjectTag = projectTags && name in projectTags;
+    const isUserTag = userTags && name in userTags;
+    const projectTag = isProjectTag ? projectTags[name] : null;
+    const userTag = isUserTag ? userTags[name] : null;
+    const projectCount = isProjectTag ? projectTag.count + 1 : 1;
+    const userCount = isUserTag ? userTag.count + 1 : 1;
     const tagData = isProjectTag
-      ? projectTags[text]
+      ? { ...projectTag, projectCount, userCount }
       : isUserTag
-      ? userTags[text]
-      : { projectId, text };
+      ? { ...userTag, projectCount, userCount }
+      : { name, userCount, projectCount };
 
     firebase
       .addTag({
@@ -278,7 +281,7 @@ class TaskEditor extends Component {
       .then(() => {
         if (!isUserTag && !isProjectTag) {
           this.setState({
-            currentTag: text
+            currentTag: name
           });
           this.toggleColorPicker(true);
         }
@@ -291,9 +294,10 @@ class TaskEditor extends Component {
     firebase.setTagColor({ userId, projectId, tag, color });
   };
 
-  removeTag = tag => {
-    const { taskId, firebase } = this.props;
-    firebase.removeTag({ taskId, tag });
+  removeTag = name => {
+    const { taskId, currentUser, projectId, removeTaskTag } = this.props;
+    const { userId } = currentUser;
+    removeTaskTag({ taskId, name, userId, projectId });
     this.toggleColorPicker(false);
   };
 
@@ -708,7 +712,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(commentActions.deleteComment(commentId)),
     updateComment: ({ commentId, commentData }) =>
       dispatch(commentActions.updateComment({ commentId, commentData })),
-    addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag))
+    addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag)),
+    removeTaskTag: ({ taskId, name, userId, projectId }) => dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
   };
 };
 

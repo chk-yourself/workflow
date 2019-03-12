@@ -8,6 +8,7 @@ import { ProjectGridContainer } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { BoardContainer } from '../../components/Board';
 import { projectActions, projectSelectors } from '../../ducks/projects';
+import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
@@ -28,11 +29,19 @@ class HomePage extends Component {
       fetchProjectsById,
       updateUser,
       userId,
-      firebase
+      firebase,
+      fetchUserTags,
+      syncUserTags
     } = this.props;
     console.log('mounted home');
     fetchUsersById()
       .then(() => fetchProjectsById(userId))
+      .then(() => {
+        fetchUserTags(userId).then(() => {
+          this.tagsObserver = () => syncUserTags(userId);
+          this.tagsObserver();
+        });
+      })
       .then(() =>
         this.setState({
           isFetching: false
@@ -54,6 +63,11 @@ class HomePage extends Component {
     const { userId, firebase } = this.props;
     firebase.addProject({ userId, name });
   };
+
+  componentWillUnmount() {
+    this.userObserver();
+    this.tagsObserver();
+  }
 
   render() {
     const { isProjectComposerOpen, isFetching } = this.state;
@@ -123,7 +137,9 @@ const mapDispatchToProps = dispatch => {
       dispatch(userActions.updateUser({ userId, userData })),
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
     fetchProjectsById: userId =>
-      dispatch(projectActions.fetchProjectsById(userId))
+      dispatch(projectActions.fetchProjectsById(userId)),
+    fetchUserTags: userId => dispatch(currentUserActions.fetchUserTags(userId)),
+    syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
   };
 };
 

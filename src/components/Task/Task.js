@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
+import { Tag } from '../Tag';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
+import { taskSelectors } from '../../ducks/tasks';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import './Task.scss';
 
@@ -76,7 +78,7 @@ class Task extends Component {
   };
 
   render() {
-    const { taskId, isCompleted, innerRef, provided } = this.props;
+    const { taskId, taskTags, isCompleted, innerRef, provided } = this.props;
     const { isFocused, name } = this.state;
     const draggableProps = provided
       ? provided.draggableProps
@@ -111,14 +113,26 @@ class Task extends Component {
           className="task__textarea"
           onKeyDown={this.deleteTask}
         />
+        <div className="task__tags">
+          {taskTags.map(taskTag => (
+            <Tag
+              name={taskTag.name}
+              key={taskTag.name}
+              size="sm"
+              color={taskTag.color}
+              className="task__tag"
+            />
+          ))}
+        </div>
       </li>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentUserSelectors.getCurrentUserId(state)
+    userId: currentUserSelectors.getCurrentUserId(state),
+    taskTags: taskSelectors.getTaskTags(state, ownProps)
   };
 };
 

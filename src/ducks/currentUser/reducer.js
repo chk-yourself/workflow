@@ -13,6 +13,44 @@ const currentUser = (state = null, action) => {
         folders
       };
     }
+    case types.LOAD_USER_TAGS: {
+      const { tags } = action;
+      return {
+        ...state,
+        tags
+      };
+    }
+    case types.CREATE_TAG: {
+      const { tagId, tagData } = action;
+      return {
+        ...state,
+        tags: {
+          ...state.tags,
+          [tagId]: tagData
+        }
+      };
+    }
+    case types.DELETE_TAG: {
+      const { tagId } = action;
+      const { [tagId]: deletedTag, ...restOfTags } = state.tags;
+      return {
+        ...state,
+        tags: restOfTags
+      };
+    }
+    case types.UPDATE_TAG: {
+      const { tagId, tagData } = action;
+      return {
+        ...state,
+        tags: {
+          ...state.tags,
+          [tagId]: {
+            ...state.tags[tagId],
+            ...tagData
+          }
+        }
+      };
+    }
     case types.ADD_FOLDER: {
       const { folderId, folderData } = action;
       return {

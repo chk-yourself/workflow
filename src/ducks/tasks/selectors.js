@@ -27,11 +27,14 @@ export const getSimpleTasks = (state, taskIds) => {
 };
 
 export const getTaskTags = (state, ownProps) => {
-  if (!ownProps.projectId) return [];
-  const { projectsById } = state;
   const { projectId, tags: taskTags } = ownProps;
-  const { tags: projectTags } = projectsById[projectId];
+  if (!taskTags) return [];
 
-  if (!taskTags || !projectTags) return [];
-  return taskTags.map(taskTag => projectTags[taskTag]);
+  if (projectId) {
+    const { projectsById } = state;
+    const { tags: projectTags } = projectsById[projectId];
+    return taskTags.map(taskTag => projectTags[taskTag]);
+  }
+  const { tags: userTags } = state.currentUser;
+  return taskTags.map(taskTag => userTags[taskTag]);
 };

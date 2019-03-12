@@ -1,10 +1,18 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
+import { addTag } from '../tasks/actions';
 
 export const setCurrentUser = currentUser => {
   return {
     type: types.SET_CURRENT_USER,
     currentUser
+  };
+};
+
+export const loadUserTags = tags => {
+  return {
+    type: types.LOAD_USER_TAGS,
+    tags
   };
 };
 
@@ -16,6 +24,27 @@ export const fetchCurrentUserData = userId => {
         .get()
         .then(doc => doc.data());
       dispatch(setCurrentUser(currentUser));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const fetchUserTags = userId => {
+  return async dispatch => {
+    try {
+      const userTags = await firebase
+        .getDocRef('users', userId)
+        .collection('tags')
+        .get()
+        .then(snapshot => {
+          const tags = {};
+          snapshot.forEach(doc => {
+            tags[doc.id] = doc.data();
+          });
+          return tags;
+        });
+      dispatch(loadUserTags(userTags));
     } catch (error) {
       console.log(error);
     }
@@ -88,6 +117,29 @@ export const loadTasksDueSoon = tasksDueSoon => {
   return {
     type: types.LOAD_TASKS_DUE_SOON,
     tasksDueSoon
+  };
+};
+
+export const createTag = ({ tagId, tagData }) => {
+  return {
+    type: types.CREATE_TAG,
+    tagId,
+    tagData
+  };
+};
+
+export const updateTag = ({ tagId, tagData }) => {
+  return {
+    type: types.UPDATE_TAG,
+    tagId,
+    tagData
+  };
+};
+
+export const deleteTag = name => {
+  return {
+    type: types.DELETE_TAG,
+    name
   };
 };
 
@@ -169,6 +221,66 @@ export const syncFolders = userId => {
             } else {
               dispatch(updateFolder({ folderId, folderData }));
               console.log(`Updated Folder: ${folderData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+/*
+export const createTag = ({ userId, taskId, name }) => {
+  return async (dispatch, getState) => {
+    try {
+      await firebase.addTag({ taskId, userId, name, projectId, color, projectCount, userCount});
+            const { tags } = getState().currentUser;
+           if (changeType === 'added') {
+             console.log(tags);
+              dispatch(addTag({ tagId, tagData }));
+              console.log('tag added');
+            } else if (changeType === 'removed') {
+              dispatch(removeTag(tagId));
+            } else {
+              dispatch(updateTag({ tagId, tagData }));
+              console.log(`Updated Tag: ${tagData.name}`);
+            }
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+*/
+
+
+export const syncUserTags = userId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase
+        .getDocRef('users', userId)
+        .collection('tags')
+        .onSnapshot(async querySnapshot => {
+          querySnapshot.docChanges().forEach(async change => {
+            const [tagId, tagData, changeType] = await Promise.all([
+              change.doc.id,
+              change.doc.data(),
+              change.type
+            ]);
+            const { tags } = getState().currentUser;
+           if (!tags) return;
+           if (changeType === 'added') {
+              if (tagId in tags) return;
+              console.log( tagId, tagData);
+              dispatch(createTag({ tagId, tagData }));
+              console.log('tag added');
+            } else if (changeType === 'removed') {
+              dispatch(deleteTag(tagId));
+            } else {
+              dispatch(updateTag({ tagId, tagData }));
+              console.log(`Updated Tag: ${tagData.name}`);
             }
           });
         });

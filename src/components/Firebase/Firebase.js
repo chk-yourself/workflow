@@ -173,42 +173,37 @@ class Firebase {
 
   // Tags API
 
-  addTag = ({ taskId, userId, text, projectId = null, color = 'default' }) => {
+  addTag = ({ taskId, userId, name, projectId, color = 'default', projectCount, userCount }) => {
     const batch = this.db.batch();
-    const userRef = this.getUserDoc(userId);
+    const userTagRef = this.getDocRef('users', userId, 'tags', name);
     const taskRef = this.getTaskDoc(taskId);
 
     batch.update(taskRef, {
-      tags: this.addToArray(text),
+      tags: this.addToArray(name),
       lastUpdatedAt: this.getTimestamp()
     });
 
     batch.set(
-      userRef,
+      userTagRef,
       {
-        tags: {
-          [text]: {
-            text,
-            color,
-            lastUsedAt: this.getTimestamp()
-          }
-        },
-        lastUpdatedAt: this.getTimestamp()
+        name,
+        color,
+        count: userCount
       },
       { merge: true }
     );
 
     if (projectId) {
-      const projectRef = this.getProjectDoc(projectId);
+      const projectRef = this.getDocRef('projects', projectId);
 
       batch.set(
         projectRef,
         {
           tags: {
-            [text]: {
-              text,
+            [name]: {
+              name,
               color,
-              lastUsedAt: this.getTimestamp()
+              count: projectCount
             }
           },
           lastUpdatedAt: this.getTimestamp()
@@ -227,42 +222,69 @@ class Firebase {
       });
   };
 
-  removeTag = ({ taskId, tag }) => {
-    this.updateTask(taskId, {
-      tags: this.removeFromArray(tag)
+  removeTag = ({ taskId, name, userId, userCount, projectId, projectCount }) => {
+    const batch = this.createBatch();
+    const taskRef = this.getDocRef('tasks', taskId);
+    this.updateBatch(batch, taskRef, {
+      tags: this.removeFromArray(name)
     });
+
+    if (userCount !== null) {
+      const userTagRef = this.getDocRef('users', userId, 'tags', name);
+      if (userCount > 0) {
+        this.updateBatch(batch, userTagRef, {
+          count: userCount
+        });
+      } else {
+        batch.delete(userTagRef);
+      }
+    }
+
+    if (projectId) {
+      const projectRef = this.getDocRef('projects', projectId);
+      if (projectCount < 1) {
+        this.updateBatch(batch, projectRef, {
+          [`tags.${name}`]: this.deleteField()
+        });
+      } else {
+        this.updateBatch(batch, projectRef, {
+          [`tags.${name}.count`]: projectCount
+        });
+      }
+    }
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Tag deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   setTagColor = ({ userId, projectId, tag, color }) => {
     const batch = this.db.batch();
-    const userRef = this.getUserDoc(userId);
-    const projectRef = this.getProjectDoc(projectId);
-
-    batch.set(
-      userRef,
-      {
-        tags: {
-          [tag]: {
-            color
-          }
+    const userTagRef = this.getDocRef('users', userId, 'tags', tag);
+    if (projectId) {
+      const projectRef = this.getProjectDoc(projectId);
+      batch.set(
+        projectRef,
+        {
+          tags: {
+            [tag]: {
+              color
+            }
+          },
+          lastUpdatedAt: this.getTimestamp()
         },
-        lastUpdatedAt: this.getTimestamp()
-      },
-      { merge: true }
-    );
+        { merge: true }
+      );
+    }
 
-    batch.set(
-      projectRef,
-      {
-        tags: {
-          [tag]: {
-            color
-          }
-        },
-        lastUpdatedAt: this.getTimestamp()
-      },
-      { merge: true }
-    );
+    this.updateBatch(batch, userTagRef, {
+      color
+    });
 
     return batch
       .commit()
