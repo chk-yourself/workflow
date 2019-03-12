@@ -8,6 +8,33 @@ export const loadListsById = listsById => {
   };
 };
 
+export const updateList = ({ listId, listData }) => {
+  return {
+    type: types.UPDATE_LIST,
+    listId,
+    listData
+  };
+};
+
+export const addList = ({ listId, listData }) => {
+  console.log(listId, listData);
+  return {
+    type: types.ADD_LIST,
+    listId,
+    listData
+  };
+};
+
+export const deleteList = ({ listId, projectId }) => {
+  return {
+    type: types.DELETE_LIST,
+    listId,
+    projectId
+  };
+};
+
+// Thunks
+
 export const fetchListsById = projectId => {
   return async dispatch => {
     try {
@@ -56,30 +83,7 @@ export const fetchUserLists = userId => {
   };
 };
 
-export const updateList = ({ listId, listData }) => {
-  return {
-    type: types.UPDATE_LIST,
-    listId,
-    listData
-  };
-};
-
-export const addList = ({ listId, listData }) => {
-  return {
-    type: types.ADD_LIST,
-    listId,
-    listData
-  };
-};
-
-export const deleteList = listId => {
-  return {
-    type: types.DELETE_LIST,
-    listId
-  };
-};
-
-export const handleListSubscription = projectId => {
+export const syncProjectLists = projectId => {
   return async (dispatch, getState) => {
     try {
       firebase.db
@@ -94,16 +98,28 @@ export const handleListSubscription = projectId => {
             ]);
             if (changeType === 'added') {
               if (listId in getState().listsById) return;
+              console.log(listId, listData);
               dispatch(addList({ listId, listData }));
               console.log('list added');
             } else if (changeType === 'removed') {
-              dispatch(deleteList(listId));
+              dispatch(deleteList({ listId, projectId }));
             } else {
               dispatch(updateList({ listId, listData }));
+              console.log(listId, listData);
               console.log(`Updated List: ${listData.name}`);
             }
           });
         });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const createList = ({ projectId, name }) => {
+  return async dispatch => {
+    try {
+      firebase.addList({ projectId, name });
     } catch (error) {
       console.log(error);
     }

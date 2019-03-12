@@ -29,7 +29,6 @@ const projectsById = (state = {}, action) => {
         }
       };
     }
-    case types.UPDATE_LIST_IDS:
     case types.REORDER_LISTS: {
       const { projectId, listIds } = action;
       return {
@@ -37,6 +36,27 @@ const projectsById = (state = {}, action) => {
         [projectId]: {
           ...state[projectId],
           listIds
+        }
+      };
+    }
+    case types.ADD_LIST: {
+      const { listId, listData } = action;
+      const { projectId } = listData;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          listIds: [...state[projectId].listIds, listId]
+        }
+      };
+    }
+    case types.DELETE_LIST: {
+      const { listId, projectId } = action;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          listIds: state[projectId].listIds.filter(id => id !== listId)
         }
       };
     }

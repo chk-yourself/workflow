@@ -153,14 +153,6 @@ export const reorderLists = (projectId, listIds) => {
   };
 };
 
-export const updateListIds = (projectId, listIds) => {
-  return {
-    type: types.UPDATE_LIST_IDS,
-    projectId,
-    listIds
-  };
-};
-
 export const updateProjectTags = (projectId, tags) => {
   return {
     type: types.UPDATE_PROJECT_TAGS,

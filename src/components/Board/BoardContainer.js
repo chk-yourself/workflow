@@ -34,9 +34,6 @@ class BoardContainer extends Component {
 
   componentDidMount() {
     const {
-      fetchListsById,
-      fetchProjectTasks,
-      fetchProjectSubtasks,
       firebase,
       updateProject,
       addTask,
@@ -45,24 +42,19 @@ class BoardContainer extends Component {
       updateProjectTags,
       projectId,
       project,
-      updateListIds,
       addSubtask,
       updateSubtask,
       deleteSubtask,
       selectProject,
       selectedProjectId,
       fetchProjectContent,
-      handleListSubscription
+      syncProjectLists
     } = this.props;
 
     if (selectedProjectId !== projectId) {
       selectProject(projectId);
     }
-    /*
-    fetchListsById(projectId);
-    fetchProjectTasks(projectId);
-    fetchProjectSubtasks(projectId)
-    */
+
     fetchProjectContent(projectId).then(() => {
       this.setState({
         isFetching: false
@@ -70,15 +62,14 @@ class BoardContainer extends Component {
 
       const { tasksById, subtasksById } = this.props;
 
-      this.listObserver = () => handleListSubscription(projectId);
+      this.listObserver = () => syncProjectLists(projectId);
+      this.listObserver();
 
       this.projectObserver = firebase
         .getProjectDoc(projectId)
         .onSnapshot(snapshot => {
           const updatedProject = snapshot.data();
-          if (!utils.isEqual(updatedProject.listIds, project.listIds)) {
-            updateListIds(projectId, updatedProject.listIds);
-          } else if (!utils.isEqual(updatedProject.tags, project.tags)) {
+          if (!utils.isEqual(updatedProject.tags, project.tags)) {
             updateProjectTags(projectId, updatedProject.tags);
           } else {
             updateProject(projectId, updatedProject);
@@ -297,17 +288,12 @@ const mapDispatchToProps = dispatch => {
       dispatch(listActions.fetchListsById(projectId)),
     updateList: ({ listId, listData }) =>
       dispatch(listActions.updateList(listId, listData)),
-    addList: ({ listId, listData }) =>
-      dispatch(listActions.addList({ listId, listData })),
-    deleteList: listId => dispatch(listActions.deleteList(listId)),
     fetchProjectTasks: projectId =>
       dispatch(taskActions.fetchProjectTasks(projectId)),
     fetchProjectSubtasks: projectId =>
       dispatch(subtaskActions.fetchProjectSubtasks(projectId)),
     reorderLists: (projectId, listIds) =>
       dispatch(projectActions.reorderLists(projectId, listIds)),
-    updateListIds: (projectId, listIds) =>
-      dispatch(projectActions.updateListIds(projectId, listIds)),
     updateProjectTags: (projectId, tags) =>
       dispatch(projectActions.updateProjectTags(projectId, tags)),
     addTask: ({ taskId, taskData }) =>
@@ -321,8 +307,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(subtaskActions.deleteSubtask(subtaskId)),
     updateSubtask: ({ subtaskId, subtaskData }) =>
       dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData })),
-    handleListSubscription: projectId =>
-      dispatch(listActions.handleListSubscription(projectId))
+    syncProjectLists: projectId =>
+      dispatch(listActions.syncProjectLists(projectId))
   };
 };
 
