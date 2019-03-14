@@ -34,7 +34,7 @@ class Topbar extends Component {
                     avatar: 'topbar__avatar',
                     placeholder: 'topbar__avatar-placeholder'
                   }}
-                  fullName={currentUser.name}
+                  name={currentUser.name}
                   size="sm"
                   variant="circle"
                   imgSrc={currentUser.photoURL}

@@ -69,6 +69,25 @@ export const removeTag = ({ taskId, name }) => {
 
 // Thunks
 
+export const removeTaskTag = ({ taskId, name, userId, projectId }) => {
+  return async (dispatch, getState) => {
+    try {
+      const { currentUser, projectsById } = getState();
+      const { tags: userTags } = currentUser;
+      const projectTags = projectId ? projectsById[projectId].tags : {};
+      const isProjectTag = projectTags && name in projectTags;
+      const isUserTag = userTags && name in userTags;
+      const projectCount = isProjectTag ? projectTags[name].count - 1 : null;
+      const userCount = isUserTag ? userTags[name].count - 1 : null;
+
+      await firebase.removeTag({ taskId, name, userId, userCount, projectId, projectCount });
+      dispatch(removeTag({ taskId, name }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
 export const deleteTask = ({ taskId, listId = null }) => {
   return async (dispatch, getStore) => {
     try {
@@ -76,8 +95,11 @@ export const deleteTask = ({ taskId, listId = null }) => {
         folders,
         subtaskIds,
         commentIds,
-        assignedTo
+        assignedTo,
+        tags,
+        projectId
       } = getStore().tasksById[taskId];
+      const { userId } = getStore().currentUser;
       await firebase.deleteTask({
         taskId,
         listId,
@@ -87,6 +109,11 @@ export const deleteTask = ({ taskId, listId = null }) => {
         commentIds
       });
       dispatch(removeTask({ taskId, listId }));
+      if (tags && tags.length > 0) {
+        tags.forEach(name => {
+          dispatch(removeTaskTag({ taskId: null, name, userId, projectId }));
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -292,25 +319,6 @@ export const syncProjectTasks = projectId => {
         });
     } catch (error) {
       console.log(error);
-    }
-  };
-};
-
-export const removeTaskTag = ({ taskId, name, userId, projectId }) => {
-  return async (dispatch, getState) => {
-    try {
-      const { currentUser, projectsById } = getState();
-      const { tags: userTags } = currentUser;
-      const projectTags = projectId ? projectsById[projectId].tags : {};
-      const isProjectTag = projectTags && name in projectTags;
-      const isUserTag = userTags && name in userTags;
-      const projectCount = isProjectTag ? projectTags[name].count - 1 : null;
-      const userCount = isUserTag ? userTags[name].count - 1 : null;
-
-      await firebase.removeTag({ taskId, name, userId, userCount, projectId, projectCount });
-      dispatch(removeTag({ taskId, name }));
-    } catch (error) {
-      console.error(error);
     }
   };
 };

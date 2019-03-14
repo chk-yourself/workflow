@@ -186,7 +186,7 @@ export default class MemberSearch extends Component {
                         avatar: 'member-search__avatar--sm',
                         placeholder: 'member-search__avatar-placeholder--sm'
                       }}
-                      fullName={name}
+                      name={name}
                       size="sm"
                       variant="circle"
                       imgSrc={photoURL}

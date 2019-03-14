@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import { Calendar, dateUtils } from '../Calendar';
+import {
+  toSimpleDateString,
+  toSimpleDateObj,
+  isSDSFormat,
+  isSameDate
+} from '../../utils/date';
+import { Calendar } from '../Calendar';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import './DatePicker.scss';
@@ -14,14 +20,14 @@ export default class DatePicker extends Component {
     selectedDate: this.props.selectedDate,
     currentMonth: this.props.currentMonth,
     currentYear: this.props.currentYear,
-    dateString: dateUtils.toSimpleDateString(this.props.selectedDate) || ''
+    dateString: toSimpleDateString(this.props.selectedDate) || ''
   };
 
   componentDidMount() {}
 
   selectDate = date => {
     if (typeof date === 'string') {
-      const newDate = dateUtils.toSimpleDateObj(date);
+      const newDate = toSimpleDateObj(date);
       const { month, year } = newDate;
       const { currentMonth, currentYear } = this.state;
       this.setState({
@@ -33,7 +39,7 @@ export default class DatePicker extends Component {
     } else {
       this.setState({
         selectedDate: date,
-        dateString: dateUtils.toSimpleDateString(date)
+        dateString: toSimpleDateString(date)
       });
     }
   };
@@ -56,7 +62,7 @@ export default class DatePicker extends Component {
     this.setState({
       dateString: value
     });
-    if (dateUtils.isSDSFormat(value)) {
+    if (isSDSFormat(value)) {
       this.selectDate(value);
     }
   };
@@ -66,7 +72,7 @@ export default class DatePicker extends Component {
     const { selectedDate } = this.state;
     if (
       !(currentDueDate === null && selectedDate === null) &&
-      !dateUtils.isSameDate(currentDueDate, selectedDate)
+      !isSameDate(currentDueDate, selectedDate)
     ) {
       const { day, month, year } = selectedDate;
       const date = new Date(year, month, day);
@@ -93,7 +99,11 @@ export default class DatePicker extends Component {
       dateString
     } = this.state;
     return (
-      <div className="date-picker" ref={innerRef} style={{display: !isActive ? 'none' : 'block'}}>
+      <div
+        className="date-picker"
+        ref={innerRef}
+        style={{ display: !isActive ? 'none' : 'block' }}
+      >
         <div className="date-picker__header">
           <div className="date-picker__due-date-wrapper">
             <Input

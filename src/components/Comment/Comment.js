@@ -1,15 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withAuthorization } from '../Session';
-import { userActions, userSelectors } from '../../ducks/users';
-import { currentActions, currentSelectors } from '../../ducks/current';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { withFirebase } from '../Firebase';
+import { userSelectors } from '../../ducks/users';
 import { commentActions, commentSelectors } from '../../ducks/comments';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { Avatar } from '../Avatar';
-import { dateUtils } from '../Calendar';
+import { toDateString } from '../../utils/date';
 import './Comment.scss';
 
 class Comment extends Component {
@@ -18,7 +17,7 @@ class Comment extends Component {
   };
 
   componentDidMount() {
-    const { createdAt } = this.props.comment;
+    const { createdAt } = this.props;
     const secondsSinceCreation =
       Math.floor(Date.now() / 1000) -
       Math.floor(createdAt.toDate().getTime() / 1000);
@@ -30,35 +29,35 @@ class Comment extends Component {
     this.interval = setInterval(this.tick, 1000);
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   tick = () => {
     this.setState(prevState => ({
       secondsElapsed: prevState.secondsElapsed + 1
     }));
   };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+  handleLike = () => {
+    const { commentId, likes, currentUserId, firebase } = this.props;
 
-  handleLikeClick = () => {
-    const { handleLike, comment } = this.props;
-    const { commentId } = comment;
-    handleLike(commentId);
+    if (likes[currentUserId]) {
+      firebase.updateDoc(['comments', commentId], {
+        [`likes.${currentUserId}`]: firebase.deleteField()
+      });
+    } else {
+      firebase.updateDoc([`comments`, commentId], {
+        [`likes.${currentUserId}`]: true
+      });
+    }
   };
 
   render() {
-    const { user, comment } = this.props;
+    const { user, content, createdAt, likes, to, from, isPinned } = this.props;
     const { secondsElapsed } = this.state;
     const { name, photoURL } = user;
-    const {
-      content,
-      createdAt,
-      lastUpdatedAt,
-      likes,
-      to,
-      from,
-      isPinned
-    } = comment;
+    const likesCount = Object.keys(likes).length;
     if (!createdAt) return null;
     const dateCreated = createdAt.toDate();
     const timeCreated = dateCreated.toLocaleTimeString([], {
@@ -66,7 +65,7 @@ class Comment extends Component {
       minute: '2-digit',
       hour12: true
     });
-    const dateCreatedString = dateUtils.toDateString(dateCreated, {
+    const dateCreatedString = toDateString(dateCreated, {
       useRelative: true,
       format: {
         weekday: 'short',
@@ -76,26 +75,22 @@ class Comment extends Component {
       }
     });
     return (
-      <div
-        className={`task-editor__comment-wrapper ${
-          isPinned ? 'is-pinned' : ''
-        }`}
-      >
+      <div className={`comment__wrapper ${isPinned ? 'is-pinned' : ''}`}>
         <Avatar
           classes={{
-            avatar: 'task-editor__comment-avatar',
-            placeholder: 'task-editor__comment-avatar-placeholder'
+            avatar: 'comment__avatar',
+            placeholder: 'comment__avatar-placeholder'
           }}
-          fullName={name}
+          name={name}
           size="sm"
           variant="circle"
           imgSrc={photoURL}
         />
-        <div className="task-editor__comment">
-          <div className="task-editor__comment-header">
-            <div className="task-editor__comment-details">
-              <span className="task-editor__name">{name}</span>
-              <span className="task-editor__timestamp">
+        <div className="comment">
+          <div className="comment__header">
+            <div className="comment__details">
+              <span className="comment__name">{name}</span>
+              <span className="comment__timestamp">
                 {secondsElapsed < 60 // less than one minute
                   ? 'Just now'
                   : secondsElapsed < 120 // less than 2 minutes
@@ -110,47 +105,35 @@ class Comment extends Component {
               </span>
             </div>
             <Button
-              className="task-editor__likes"
-              onClick={this.handleLikeClick}
+              className="comment__likes"
+              onClick={this.handleLike}
               size="sm"
             >
               <Icon name="thumbs-up" />
-              <span className="task-editor__likes-counter">
-                {likes.length > 0 ? likes.length : ''}
+              <span className="comment__likes-counter">
+                {likesCount > 0 ? likesCount : ''}
               </span>
             </Button>
           </div>
-          <div className="task-editor__comment-body">{content}</div>
+          <div className="comment__content">{content}</div>
         </div>
       </div>
     );
   }
 }
 
-const condition = authUser => !!authUser;
-
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.comment.from),
-    current: currentSelectors.getCurrent(state)
+    user: userSelectors.getUserData(state, ownProps.from),
+    currentUserId: currentUserSelectors.getCurrentUserId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    updateTasksById: task => dispatch(taskActions.updateTasksById(task)),
-    fetchTaskComments: taskId =>
-      dispatch(commentActions.fetchTaskComments(taskId)),
-    addComment: ({ commentId, commentData }) =>
-      dispatch(commentActions.addComment({ commentId, commentData })),
-    deleteComment: commentId =>
-      dispatch(commentActions.deleteComment(commentId)),
-    updateComment: ({ commentId, commentData }) =>
-      dispatch(commentActions.updateComment({ commentId, commentData }))
-  };
+  return {};
 };
 
-export default withAuthorization(condition)(
+export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps

@@ -1,11 +1,9 @@
-
 /**
- * Checks if two arrays or objects are equal
- * @param {Array|Object} value
- * @param {Array|Object} other
+ * Performs deep comparison two objects or arrays to determine if they are equivalent
+ * @param {Array|Object} value - The value to compare
+ * @param {Array|Object} other - The other value to compare
  */
 
-// eslint-disable-next-line import/prefer-default-export
 export const isEqual = (value, other) => {
   const type = Object.prototype.toString.call(value);
 
@@ -40,65 +38,11 @@ export const isEqual = (value, other) => {
       if (!compare(value[i], other[i])) return false;
     }
   } else {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in value) {
+    Object.keys(value).forEach(key => {
       if (value.hasOwnProperty(key)) {
         if (compare(value[key], other[key]) === false) return false;
       }
-    }
+    });
   }
   return true;
 };
-
-/**
- * Delays callback execution until next browser repaint
- * Best used for `scroll` and `resize` window events
- * @param {Function} callback - The function to debounce
- */
-
-export const windowDebouncer = callback => {
-  let request;
-
-  return (...args) => {
-    const context = this;
-
-    if (request) {
-      window.cancelAnimationFrame(request);
-    }
-
-    request = window.requestAnimationFrame(() => {
-      callback.apply(context, args);
-    });
-  };
-};
-
-
-/**
- * Returns a function that executes the first callback on its initial call
- * then the second callback on subsequent calls
- * @param {Function} first - The function executed only on its initial call
- * @param {Function} after - The function executed on subsequent calls
- */
-export const firstThen = (first, after) => {
-  let count = 0;
-  return (...args) => {
-    count++;
-    if (count === 1) {
-      return first.apply(this, args);
-    } else {
-      return after.apply(this, args);
-    }
-  }
-};
-
-export const count = (fn, invokeBeforeExecution) => {
-  let count = 0;
-  return (args) => {
-    count++;
-    if (count <= invokeBeforeExecution) {
-      return true;
-    } else {
-      return fn(args, count);
-    }
-  };
-}

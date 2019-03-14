@@ -1,0 +1,67 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.comment__wrapper {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.comment {
+  width: 100%;
+}
+
+.comment__header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.comment__timestamp {
+  font-size: 11px;
+  color: $grey-600;
+}
+
+.comment__name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 8px;
+  color: $grey-900;
+}
+
+.comment__content {
+  font-size: 14px;
+  color: $grey-800;
+}
+
+.comment__likes {
+  min-width: 0;
+  padding: 2px 14px 2px 0;
+  position: relative;
+  color: $grey-700;
+  .feather {
+    width: 16px;
+    height: 16px;
+    color: $grey-700;
+  }
+}
+
+.comment__likes-counter {
+  font-size: 11px;
+  position: absolute;
+  left: 18px;
+  font-weight: 600;
+}
+
+.comment__avatar {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin-right: 11px;
+}
+
+.comment__avatar-placeholder {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-size: 12px;
+}

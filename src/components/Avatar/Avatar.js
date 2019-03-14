@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Avatar.scss';
+import { fromJSON } from 'tough-cookie';
 
 export default class Avatar extends Component {
   static defaultProps = {
@@ -10,7 +11,8 @@ export default class Avatar extends Component {
       placeholder: ''
     },
     size: 'md',
-    variant: 'circle'
+    variant: 'circle',
+    name: 'Guest'
   };
 
   getUserInitials = fullName => {
@@ -26,7 +28,7 @@ export default class Avatar extends Component {
       imgSrc,
       imgProps,
       classes,
-      fullName,
+      name,
       variant,
       color,
       size
@@ -40,7 +42,7 @@ export default class Avatar extends Component {
         {imgSrc !== null ? (
           <img
             src={imgSrc}
-            alt={fullName}
+            alt={name}
             className={`avatar__img ${classes.img}`}
             {...imgProps}
           />
@@ -49,7 +51,7 @@ export default class Avatar extends Component {
             className={`avatar__placeholder ${classes.placeholder}`}
             style={{ backgroundColor: color }}
           >
-            {this.getUserInitials(fullName)}
+            {this.getUserInitials(name)}
           </div>
         )}
       </div>

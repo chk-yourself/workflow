@@ -1,6 +1,6 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
-import { removeTask } from '../tasks/actions';
+import { removeTask, removeTaskTag } from '../tasks/actions';
 
 export const loadListsById = listsById => {
   return {
@@ -36,6 +36,7 @@ export const removeList = ({ listId, projectId }) => {
 
 // Thunks
 
+// TODO: remove tags
 export const deleteList = ({ listId, projectId }) => {
   return async (dispatch, getStore) => {
     try {
@@ -58,7 +59,7 @@ export const deleteList = ({ listId, projectId }) => {
           dispatch(removeList({ listId, projectId }));
           if (taskIds.length > 0) {
             taskIds.forEach(async taskId => {
-              const { assignedTo, folders, subtaskIds, commentIds } = tasksById[
+              const { assignedTo, folders, subtaskIds, commentIds, tags } = tasksById[
                 taskId
               ];
               await firebase.deleteTask({
@@ -69,6 +70,7 @@ export const deleteList = ({ listId, projectId }) => {
                 commentIds
               });
               dispatch(removeTask({ taskId, listId: null }));
+              console.log({ tags });
             });
           }
         })

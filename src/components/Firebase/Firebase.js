@@ -222,12 +222,13 @@ class Firebase {
       });
   };
 
-  removeTag = ({ taskId, name, userId, userCount, projectId, projectCount }) => {
-    const batch = this.createBatch();
-    const taskRef = this.getDocRef('tasks', taskId);
+  removeTag = ({ taskId = null, name, userId, userCount, projectId, projectCount }, batch = this.createBatch(), shouldCommit = true) => {
+    if (taskId) {
+      const taskRef = this.getDocRef('tasks', taskId);
     this.updateBatch(batch, taskRef, {
       tags: this.removeFromArray(name)
     });
+    }
 
     if (userCount !== null) {
       const userTagRef = this.getDocRef('users', userId, 'tags', name);
@@ -242,6 +243,7 @@ class Firebase {
 
     if (projectId) {
       const projectRef = this.getDocRef('projects', projectId);
+      console.log({ projectCount });
       if (projectCount < 1) {
         this.updateBatch(batch, projectRef, {
           [`tags.${name}`]: this.deleteField()
@@ -252,8 +254,8 @@ class Firebase {
         });
       }
     }
-
-    return batch
+    if (shouldCommit) {
+      return batch
       .commit()
       .then(() => {
         console.log('Tag deleted');
@@ -261,6 +263,7 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
+    }
   };
 
   setTagColor = ({ userId, projectId, tag, color }) => {
@@ -774,7 +777,6 @@ class Firebase {
   };
 
   // Comment API
-  getCommentDoc = commentId => this.db.collection('comments').doc(commentId);
 
   addComment = ({ userId, memberIds = [], projectId, taskId, content }) => {
     this.db
@@ -785,7 +787,7 @@ class Firebase {
         isPinned: false,
         from: userId,
         to: memberIds,
-        likes: [],
+        likes: {},
         projectId,
         taskId,
         content
@@ -795,13 +797,6 @@ class Firebase {
           commentIds: this.addToArray(ref.id)
         });
       });
-  };
-
-  updateComment = (commentId, newValue = {}) => {
-    this.getCommentDoc(commentId).update({
-      lastUpdatedAt: this.getTimestamp(),
-      ...newValue
-    });
   };
 }
 

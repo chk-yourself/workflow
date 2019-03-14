@@ -8,8 +8,7 @@ import './Card.scss';
 import { Tag } from '../Tag';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
-import { Button } from '../Button';
-import { MONTHS, dateUtils } from '../Calendar';
+import { toDateString, isPriorDate } from '../../utils/date';
 
 const CardDetail = ({ icon, children, className = '' }) => (
   <div className={`card__detail ${className}`}>
@@ -51,14 +50,14 @@ class Card extends Component {
     } = this.props;
 
     const dueDateStr = dueDate
-      ? dateUtils.toDateString(dueDate.toDate(), {
+      ? toDateString(dueDate.toDate(), {
           useRelative: true,
           format: { month: 'short', day: 'numeric' }
         })
       : null;
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
-    const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
+    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
     return (
       <Draggable draggableId={taskId} index={taskIndex}>
         {provided => (

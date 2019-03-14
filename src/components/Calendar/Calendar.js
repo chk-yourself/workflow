@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import * as dateUtils from './utils';
-import { MONTHS, WEEK_DAYS } from './constants';
+import {
+  MONTHS,
+  WEEK_DAYS,
+  getNextMonth,
+  getPrevMonth,
+  getMonthDates,
+  getNextYears
+} from '../../utils/date';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { PopoverWrapper } from '../Popover';
@@ -15,12 +21,12 @@ export default class Calendar extends Component {
 
   goToNextMonth = () => {
     const { month, year, onMonthClick } = this.props;
-    onMonthClick(dateUtils.getNextMonth(month, year));
+    onMonthClick(getNextMonth(month, year));
   };
 
   goToPrevMonth = () => {
     const { month, year, onMonthClick } = this.props;
-    onMonthClick(dateUtils.getPrevMonth(month, year));
+    onMonthClick(getPrevMonth(month, year));
   };
 
   toggleMonthsDropdown = () => {
@@ -50,10 +56,17 @@ export default class Calendar extends Component {
   };
 
   render() {
-    const { month, year, selectedDate, today, onDayClick, classes } = this.props;
+    const {
+      month,
+      year,
+      selectedDate,
+      today,
+      onDayClick,
+      classes
+    } = this.props;
     const { isMonthsDropdownActive, isYearsDropdownActive } = this.state;
-    const dates = dateUtils.getMonthDates(month, year);
-    const years = dateUtils.getNextYears(4);
+    const dates = getMonthDates(month, year);
+    const years = getNextYears(4);
 
     return (
       <div className={`calendar ${classes.calendar}`}>

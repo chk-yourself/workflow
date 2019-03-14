@@ -22,14 +22,14 @@ import { MemberSearch } from '../MemberSearch';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
 import * as keys from '../../constants/keys';
 import { Subtasks } from '../Subtasks';
-import TaskEditorComment from './TaskEditorComment';
+import { Comment } from '../Comment';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
 import { projectSelectors } from '../../ducks/projects';
 import { DatePicker } from '../DatePicker';
-import { dateUtils } from '../Calendar';
 import TaskEditorPane from './TaskEditorPane';
 import { ProjectIcon } from '../ProjectIcon';
+import { getSimpleDate, toDateString, isPriorDate } from '../../utils/date';
 
 const TaskEditorWrapper = ({
   view,
@@ -215,28 +215,12 @@ class TaskEditor extends Component {
     e.preventDefault(); // prevents page reload
   };
 
-  handleCommentLike = commentId => {
-    const { firebase, userId, commentsById } = this.props;
-    const { likes } = commentsById[commentId];
-
-    if (likes.indexOf(userId) === -1) {
-      firebase.updateComment(commentId, {
-        likes: firebase.addToArray(userId)
-      });
-    } else {
-      firebase.updateComment(commentId, {
-        likes: firebase.removeFromArray(userId)
-      });
-    }
-  };
-
   assignMember = userId => {
-    const { taskId, projectId, assignedTo, firebase } = this.props;
+    const { taskId, projectId, assignedTo, firebase, folders } = this.props;
 
     if (assignedTo.includes(userId)) {
-      console.log(projectId);
       if (!projectId) return;
-      const folderId = this.props.folders[userId];
+      const folderId = folders[userId];
       firebase.removeAssignee({ taskId, userId, folderId });
     } else {
       firebase.addAssignee({ taskId, projectId, userId });
@@ -370,17 +354,17 @@ class TaskEditor extends Component {
     const commentFormIsFocused = currentFocus === 'newComment';
     const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
     const taskDueDate = dueDate
-      ? dateUtils.getSimpleDate(dueDate.toDate())
-      : dateUtils.getSimpleDate(new Date());
+      ? getSimpleDate(dueDate.toDate())
+      : getSimpleDate(new Date());
     const dueDateStr = dueDate
-      ? dateUtils.toDateString(dueDate.toDate(), {
+      ? toDateString(dueDate.toDate(), {
           useRelative: true,
           format: { month: 'short', day: 'numeric' }
         })
       : null;
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
-    const isPastDue = dueDate && dateUtils.isPriorDate(dueDate.toDate());
+    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
 
     return (
       <TaskEditorWrapper
@@ -489,7 +473,7 @@ class TaskEditor extends Component {
                         avatar: 'task-editor__avatar',
                         placeholder: 'task-editor__avatar-placeholder'
                       }}
-                      fullName={name}
+                      name={name}
                       size="sm"
                       variant="circle"
                       imgSrc={photoURL}
@@ -617,16 +601,9 @@ class TaskEditor extends Component {
 
           {!isFetching && hasComments && (
             <div className="task-editor__comments">
-              {commentsArray.map(comment => {
-                const { commentId } = comment;
-                return (
-                  <TaskEditorComment
-                    key={commentId}
-                    comment={comment}
-                    handleLike={this.handleCommentLike}
-                  />
-                );
-              })}
+              {commentsArray.map(comment => (
+                <Comment key={comment.commentId} {...comment} />
+              ))}
             </div>
           )}
           <Avatar
@@ -634,7 +611,7 @@ class TaskEditor extends Component {
               avatar: 'task-editor__avatar',
               placeholder: 'task-editor__avatar-placeholder'
             }}
-            fullName={currentUser.name}
+            name={currentUser.name}
             size="sm"
             variant="circle"
             imgSrc={currentUser.photoURL}

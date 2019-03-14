@@ -1,6 +1,9 @@
-/* eslint-disable default-case */
+// Helper functions for working with date objects
+
 /* eslint-disable no-nested-ternary */
 import { MONTHS, WEEK_DAYS } from './constants';
+
+export { MONTHS, WEEK_DAYS };
 
 export const isLeapYear = year =>
   (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
