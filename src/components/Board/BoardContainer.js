@@ -19,81 +19,50 @@ import { Input } from '../Input';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
-import { utils } from '../../utils';
 import './Board.scss';
 
 class BoardContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isFetching: true,
       isTaskEditorOpen: false,
-      projectName: this.props.projectName
+      projectName: props.projectName
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       firebase,
       updateProject,
-      updateProjectTags,
       projectId,
-      project,
-      addSubtask,
-      updateSubtask,
-      deleteSubtask,
       selectProject,
       selectedProjectId,
-      fetchProjectContent,
       syncProjectLists,
-      syncProjectTasks
+      syncProjectTasks,
+      syncProjectSubtasks,
+      syncProject
     } = this.props;
 
     if (selectedProjectId !== projectId) {
       selectProject(projectId);
     }
+    this.subtaskObserver = () => syncProjectSubtasks(projectId);
+    this.taskObserver = () => syncProjectTasks(projectId);
+    this.listObserver = () => syncProjectLists(projectId);
+    this.projectObserver = () => syncProject(projectId);
 
-    fetchProjectContent(projectId).then(() => {
+    await Promise.all([
+      this.subtaskObserver(),
+      this.taskObserver(),
+      this.listObserver(),
+      this.projectObserver()
+    ]).then(() => {
       this.setState({
-        isFetching: false
+        isLoading: false
       });
-
-      const { subtasksById } = this.props;
-
-      this.listObserver = () => syncProjectLists(projectId);
-      this.listObserver();
-
-      this.taskObserver = () => syncProjectTasks(projectId);
-      this.taskObserver();
-
-      this.projectObserver = firebase
-        .getProjectDoc(projectId)
-        .onSnapshot(snapshot => {
-          const updatedProject = snapshot.data();
-          updateProject(projectId, updatedProject);
-        });
-
-      this.subtaskObserver = firebase.db
-        .collection('subtasks')
-        .where('projectId', '==', projectId)
-        .onSnapshot(querySnapshot => {
-          querySnapshot.docChanges().forEach(change => {
-            const subtaskId = change.doc.id;
-            const subtaskData = change.doc.data();
-            if (change.type === 'added') {
-              if (subtaskId in subtasksById) return;
-              addSubtask({ subtaskId, subtaskData });
-            }
-            if (change.type === 'modified') {
-              updateSubtask({ subtaskId, subtaskData });
-            }
-            if (change.type === 'removed') {
-              deleteSubtask(subtaskId);
-            }
-          });
-        });
     });
     console.log('mounted');
+    console.log(typeof this.taskObserver);
   }
 
   componentWillUnmount() {
@@ -189,9 +158,9 @@ class BoardContainer extends Component {
   };
 
   render() {
-    const { isFetching, isTaskEditorOpen, projectName } = this.state;
-    const { lists, tasksById, projectId, userId, selectedTaskId } = this.props;
-    if (isFetching) return null;
+    const { isTaskEditorOpen, projectName } = this.state;
+    const { lists, tasksById, projectId, userId, selectedTaskId, isLoaded } = this.props;
+    if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main className="board-container">
         <Input
@@ -209,16 +178,15 @@ class BoardContainer extends Component {
           onDragStart={this.onDragStart}
         >
           <Board projectId={projectId}>
-            {lists.map((list, listIndex) => {
+            {lists.map((list, i) => {
               const { listId, name: listName, taskIds } = list;
               return (
                 <List
                   listId={listId}
                   key={listId}
-                  listIndex={listIndex}
+                  index={i}
                   name={listName}
                   taskIds={taskIds}
-                  isFetchingTasks={isFetching}
                   onTaskClick={this.handleTaskClick}
                   projectId={projectId}
                   view="board"
@@ -250,7 +218,8 @@ const mapStateToProps = (state, ownProps) => {
     lists: listSelectors.getSelectedProjectLists(state),
     subtasksById: subtaskSelectors.getSubtasksById(state),
     tasksById: taskSelectors.getTasksById(state),
-    project: projectSelectors.getProject(state, ownProps.projectId)
+    project: projectSelectors.getProject(state, ownProps.projectId),
+    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId)
   };
 };
 
@@ -283,7 +252,10 @@ const mapDispatchToProps = dispatch => {
     syncProjectLists: projectId =>
       dispatch(listActions.syncProjectLists(projectId)),
     syncProjectTasks: projectId =>
-      dispatch(taskActions.syncProjectTasks(projectId))
+      dispatch(taskActions.syncProjectTasks(projectId)),
+    syncProjectSubtasks: projectId =>
+      dispatch(subtaskActions.syncProjectSubtasks(projectId)),
+    syncProject: projectId => dispatch(projectActions.syncProject(projectId))
   };
 };
 

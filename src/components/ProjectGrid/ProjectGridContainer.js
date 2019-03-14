@@ -1,34 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { ProjectGrid, ProjectTile } from './ProjectGrid';
 import './ProjectGrid.scss';
-import { withAuthorization } from '../Session';
+import { withSubscription } from '../withSubscription';
 import { projectActions, projectSelectors } from '../../ducks/projects';
 import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import { Icon } from '../Icon';
+import { currentUserSelectors } from '../../ducks/currentUser';
 
 class ProjectGridContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-  }
-
-  componentDidMount() {
-    const { userId, firebase, updateProject } = this.props;
-    this.projectObserver = firebase.db
-      .collection('projects')
-      .where('memberIds', 'array-contains', userId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const projectId = change.doc.id;
-          const projectData = change.doc.data();
-          updateProject(projectId, projectData);
-        });
-      });
-  }
-
-  componentWillUnmount() {
-    this.projectObserver();
   }
 
   render() {
@@ -60,28 +44,54 @@ class ProjectGridContainer extends Component {
   }
 }
 
-const condition = authUser => !!authUser;
-
 const mapStateToProps = (state, ownProps) => {
   return {
     projectsById: projectSelectors.getProjectsById(state),
-    projectsArray: projectSelectors.getProjectsArray(state)
+    projectsArray: projectSelectors.getProjectsArray(state),
+    userId: currentUserSelectors.getCurrentUserId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProjectsById: userId =>
-      dispatch(projectActions.fetchProjectsById(userId)),
-    updateProject: (projectId, projectData) =>
-      dispatch(projectActions.updateProject(projectId, projectData)),
-    selectProject: projectId => dispatch(selectProjectAction(projectId))
+    selectProject: projectId => dispatch(selectProjectAction(projectId)),
+    syncUserProjects: userId =>
+      dispatch(projectActions.syncUserProjects(userId)),
+    loadProjectsById: projectsById =>
+      dispatch(projectActions.loadProjectsById(projectsById)),
+    updateProject: ({ projectId, projectData }) =>
+      dispatch(projectActions.updateProject({ projectId, projectData })),
+    addProject: ({ projectId, projectData }) =>
+      dispatch(projectActions.addProject({ projectId, projectData }))
   };
 };
 
-export default withAuthorization(condition)(
+export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ProjectGridContainer)
-);
+  ),
+  withSubscription({
+    path: () => 'projects',
+    query: props => ['memberIds', 'array-contains', props.userId],
+    onLoad: props => changes => {
+      const projectsById = {};
+      changes.forEach(change => {
+        projectsById[change.doc.id] = {
+          projectId: change.doc.id,
+          isLoaded: {
+            subtasks: false,
+            tasks: false,
+            lists: false
+          },
+          ...change.doc.data()
+        };
+      });
+      props.loadProjectsById(projectsById);
+    },
+    onModify: props => (projectId, projectData) =>
+      props.updateProject({ projectId, projectData }),
+    onAdd: props => (projectId, projectData) =>
+      props.addProject({ projectId, projectData })
+  })
+)(ProjectGridContainer);

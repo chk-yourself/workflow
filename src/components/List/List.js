@@ -22,7 +22,7 @@ class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: this.props.name
+      name: props.name
     };
   }
 
@@ -56,7 +56,7 @@ class List extends Component {
       name: listName,
       onTaskClick,
       listId,
-      listIndex,
+      index,
       isFetchingTasks,
       isRestricted,
       projectId,
@@ -70,7 +70,7 @@ class List extends Component {
     const { name } = this.state;
 
     return (
-      <Draggable draggableId={listId} index={listIndex}>
+      <Draggable draggableId={listId} index={index}>
         {provided => (
           <>
             <section

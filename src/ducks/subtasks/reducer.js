@@ -15,11 +15,12 @@ const subtasksById = (state = {}, action) => {
         ...state,
         [subtaskId]: {
           subtaskId,
+          isLoaded: true,
           ...subtaskData
         }
       };
     }
-    case types.DELETE_SUBTASK: {
+    case types.REMOVE_SUBTASK: {
       const { subtaskId } = action;
       const { [subtaskId]: deletedSubtask, ...restOfSubtasks } = state;
       return restOfSubtasks;

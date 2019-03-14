@@ -11,6 +11,14 @@ export const loadProjectsById = projectsById => {
   };
 };
 
+export const setProjectLoadedState = (projectId, key) => {
+  return {
+    type: types.SET_PROJECT_LOADED_STATE,
+    projectId,
+    key
+  };
+};
+
 export const loadProject = (projectId, projectData) => {
   return {
     type: types.LOAD_PROJECT,
@@ -31,6 +39,11 @@ export const fetchProjectsById = userId => {
           snapshot.forEach(doc => {
             projects[doc.id] = {
               projectId: doc.id,
+              isLoaded: {
+                subtasks: false,
+                tasks: false,
+                lists: false
+              },
               ...doc.data()
             };
           });
@@ -125,11 +138,27 @@ export const fetchProjectContent = projectId => {
   };
 };
 
-export const updateProject = (projectId, projectData) => {
+export const updateProject = ({ projectId, projectData }) => {
   return {
     type: types.UPDATE_PROJECT,
     projectId,
     projectData
+  };
+};
+
+export const addProject = ({ projectId, projectData }) => {
+  console.log(projectData);
+  return {
+    type: types.ADD_PROJECT,
+    projectId,
+    projectData
+  };
+};
+
+export const removeProject = projectId => {
+  return {
+    type: types.REMOVE_PROJECT,
+    projectId
   };
 };
 
@@ -146,5 +175,62 @@ export const updateProjectTags = (projectId, tags) => {
     type: types.UPDATE_PROJECT_TAGS,
     projectId,
     tags
+  };
+};
+
+export const syncProject = projectId => {
+  return async dispatch => {
+    try {
+      firebase.getDocRef('projects', projectId).onSnapshot(snapshot => {
+        const projectData = snapshot.data();
+        dispatch(updateProject({ projectId, projectData }));
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const syncUserProjects = userId => {
+  return async (dispatch, getState) => {
+    try {
+      firebase
+        .queryCollection('projects', ['memberIds', 'array-contains', userId])
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+
+          if (changes.length > 1) {
+            const projectsById = {};
+            changes.forEach(change => {
+              projectsById[change.doc.id] = {
+                projectId: change.doc.id,
+                ...change.doc.data()
+              };
+            });
+            dispatch(loadProjectsById(projectsById));
+          } else {
+            changes.forEach(async change => {
+              const [projectId, projectData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              if (changeType === 'added') {
+                if (projectId in getState().projectsById) return;
+                dispatch(addProject({ projectId, projectData }));
+                console.log(`Added Project: ${projectData.name}`);
+              } else if (changeType === 'removed') {
+                dispatch(removeProject(projectId));
+                console.log(`Deleted Project: ${projectData.name}`);
+              } else {
+                dispatch(updateProject({ projectId, projectData }));
+                console.log(`Updated Project: ${projectData.name}`);
+              }
+            });
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };

@@ -20,6 +20,26 @@ const projectsById = (state = {}, action) => {
         }
       };
     }
+    case types.ADD_PROJECT: {
+      const { projectId, projectData } = action;
+      return {
+        ...state,
+        [projectId]: {
+          projectId,
+          isLoaded: {
+            subtasks: false,
+            tasks: false,
+            lists: false
+          },
+          ...projectData
+        }
+      };
+    }
+    case types.REMOVE_PROJECT: {
+      const { projectId } = action;
+      const { [projectId]: deletedProject, ...restOfProjects } = state;
+      return restOfProjects;
+    }
     case types.UPDATE_PROJECT: {
       const { projectId, projectData } = action;
       return {
@@ -27,6 +47,19 @@ const projectsById = (state = {}, action) => {
         [projectId]: {
           ...state[projectId],
           ...projectData
+        }
+      };
+    }
+    case types.SET_PROJECT_LOADED_STATE: {
+      const { projectId, key } = action;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          isLoaded: {
+            ...state[projectId].isLoaded,
+            [key]: true
+          }
         }
       };
     }

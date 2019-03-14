@@ -15,6 +15,7 @@ const commentsById = (state = {}, action) => {
         ...state,
         [commentId]: {
           commentId,
+          isLoaded: true,
           ...commentData
         }
       };

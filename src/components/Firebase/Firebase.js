@@ -1,4 +1,6 @@
-import firebase from 'firebase';
+import app from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -11,9 +13,9 @@ const config = {
 
 class Firebase {
   constructor() {
-    firebase.initializeApp(config);
-    this.auth = firebase.auth();
-    this.db = firebase.firestore();
+    app.initializeApp(config);
+    this.auth = app.auth();
+    this.db = app.firestore();
   }
 
   // Auth API
@@ -23,7 +25,7 @@ class Firebase {
   }
 
   signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new app.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     this.auth
       .signInWithPopup(provider)
@@ -31,7 +33,7 @@ class Firebase {
         if (result.credential) {
           const token = result.credential.accessToken;
           console.log(token);
-          const user = result.user;
+          const { user } = result;
         }
       })
       .catch(error => {
@@ -51,7 +53,7 @@ class Firebase {
   };
 
   signInWithGithub = () => {
-    const provider = new firebase.auth.GithubAuthProvider();
+    const provider = new app.auth.GithubAuthProvider();
     this.auth.signInWithRedirect(provider);
   };
 
@@ -70,13 +72,13 @@ class Firebase {
 
   // Utility API
 
-  getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
+  getTimestamp = () => app.firestore.FieldValue.serverTimestamp();
 
-  addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
+  addToArray = value => app.firestore.FieldValue.arrayUnion(value);
 
-  removeFromArray = value => firebase.firestore.FieldValue.arrayRemove(value);
+  removeFromArray = value => app.firestore.FieldValue.arrayRemove(value);
 
-  deleteField = () => firebase.firestore.FieldValue.delete();
+  deleteField = () => app.firestore.FieldValue.delete();
 
   getDocRef = (collection, doc, subcollection = null, subdoc = null) => {
     const docRef = this.db.doc(`${collection}/${doc}`);
@@ -87,10 +89,8 @@ class Firebase {
 
   createBatch = () => this.db.batch();
 
-  queryCollection = (collectionName, [field, comparisonOperator, value]) => {
-    return this.db
-      .collection(collectionName)
-      .where(field, comparisonOperator, value);
+  queryCollection = (path, [field, comparisonOperator, value]) => {
+    return this.db.collection(path).where(field, comparisonOperator, value);
   };
 
   updateDoc = ([collection, doc, subcollection, subdoc], newValue = {}) =>

@@ -69,12 +69,6 @@ const withOutsideClick = WrappedComponent => {
       );
     }
   }
-
-  /*
-  return forwardRef((props, ref) => {
-    return <WithOutsideClick {...props} forwardedRef={ref} />;
-  });
-  */
   return WithOutsideClick;
 };
 

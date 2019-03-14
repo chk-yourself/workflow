@@ -127,7 +127,7 @@ class Card extends Component {
                             avatar: 'card__avatar',
                             placeholder: 'card__avatar-placeholder'
                           }}
-                          fullName={name}
+                          name={name}
                           size="sm"
                           variant="circle"
                           imgSrc={photoURL}

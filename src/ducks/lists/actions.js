@@ -1,6 +1,7 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 import { removeTask, removeTaskTag } from '../tasks/actions';
+import { setProjectLoadedState } from '../projects/actions';
 
 export const loadListsById = listsById => {
   return {
@@ -18,7 +19,6 @@ export const updateList = ({ listId, listData }) => {
 };
 
 export const addList = ({ listId, listData }) => {
-  console.log(listId, listData);
   return {
     type: types.ADD_LIST,
     listId,
@@ -59,9 +59,13 @@ export const deleteList = ({ listId, projectId }) => {
           dispatch(removeList({ listId, projectId }));
           if (taskIds.length > 0) {
             taskIds.forEach(async taskId => {
-              const { assignedTo, folders, subtaskIds, commentIds, tags } = tasksById[
-                taskId
-              ];
+              const {
+                assignedTo,
+                folders,
+                subtaskIds,
+                commentIds,
+                tags
+              } = tasksById[taskId];
               await firebase.deleteTask({
                 taskId,
                 assignedTo,
@@ -134,11 +138,22 @@ export const fetchUserLists = userId => {
 export const syncProjectLists = projectId => {
   return async (dispatch, getState) => {
     try {
-      firebase.db
-        .collection('lists')
-        .where('projectId', '==', projectId)
-        .onSnapshot(async querySnapshot => {
-          querySnapshot.docChanges().forEach(async change => {
+      await firebase
+        .queryCollection('lists', ['projectId', '==', projectId])
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          if (changes.length > 1) {
+            const listsById = {};
+            changes.forEach(change => {
+              listsById[change.doc.id] = {
+                listId: change.doc.id,
+                ...change.doc.data()
+              };
+            });
+            dispatch(loadListsById(listsById));
+            dispatch(setProjectLoadedState(projectId, 'lists'));
+          }
+          changes.forEach(async change => {
             const [listId, listData, changeType] = await Promise.all([
               change.doc.id,
               change.doc.data(),
@@ -147,12 +162,13 @@ export const syncProjectLists = projectId => {
             if (changeType === 'added') {
               if (listId in getState().listsById) return;
               dispatch(addList({ listId, listData }));
-              console.log('list added');
+              console.log(`List added: ${listData.name}`);
             } else if (changeType === 'removed') {
               dispatch(deleteList({ listId, projectId }));
+              console.log(`List deleted: ${listData.name}`);
             } else {
               dispatch(updateList({ listId, listData }));
-              console.log(`Updated List: ${listData.name}`);
+              console.log(`List updated: ${listData.name}`);
             }
           });
         });

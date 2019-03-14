@@ -26,7 +26,6 @@ class HomePage extends Component {
   componentDidMount() {
     const {
       fetchUsersById,
-      fetchProjectsById,
       updateUser,
       userId,
       firebase,
@@ -35,7 +34,6 @@ class HomePage extends Component {
     } = this.props;
     console.log('mounted home');
     fetchUsersById()
-      .then(() => fetchProjectsById(userId))
       .then(() => {
         fetchUserTags(userId).then(() => {
           this.tagsObserver = () => syncUserTags(userId);

@@ -29,3 +29,9 @@ export const getProjectColor = (state, projectId) => {
   const { projectsById } = state;
   return projectsById[projectId].color;
 };
+
+export const getProjectLoadedState = (state, projectId) => {
+  if (!projectId) return '';
+  const { projectsById } = state;
+  return projectsById[projectId].isLoaded;
+};

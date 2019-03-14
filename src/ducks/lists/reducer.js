@@ -26,6 +26,7 @@ const listsById = (state = {}, action) => {
         ...state,
         [listId]: {
           listId,
+          isLoaded: true,
           ...listData
         }
       };

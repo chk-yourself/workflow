@@ -1,5 +1,6 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
+import { setProjectLoadedState } from '../projects/actions';
 
 export const loadSubtasksById = subtasksById => {
   return {
@@ -118,10 +119,11 @@ export const addSubtask = ({ subtaskId, subtaskData }) => {
   };
 };
 
-export const deleteSubtask = subtaskId => {
+export const removeSubtask = ({ subtaskId, taskId }) => {
   return {
-    type: types.DELETE_SUBTASK,
-    subtaskId
+    type: types.REMOVE_SUBTASK,
+    subtaskId,
+    taskId
   };
 };
 
@@ -130,5 +132,53 @@ export const updateSubtask = ({ subtaskId, subtaskData }) => {
     type: types.UPDATE_SUBTASK,
     subtaskId,
     subtaskData
+  };
+};
+
+export const syncProjectSubtasks = projectId => {
+  return async (dispatch, getState) => {
+    try {
+      await firebase
+        .queryCollection('subtasks', ['projectId', '==', projectId])
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+
+          if (changes.length > 1) {
+            const subtasksById = {};
+            changes.forEach(change => {
+              subtasksById[change.doc.id] = {
+                subtaskId: change.doc.id,
+                ...change.doc.data()
+              };
+            });
+            dispatch(loadSubtasksById(subtasksById));
+            dispatch(setProjectLoadedState(projectId, 'subtasks'));
+          } else {
+            changes.forEach(async change => {
+              const [subtaskId, subtaskData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { subtasksById } = getState();
+              if (changeType === 'added') {
+                if (subtaskId in subtasksById) return;
+                dispatch(addSubtask({ subtaskId, subtaskData }));
+                console.log(`Subtask added: ${subtaskData.name}`);
+              } else if (changeType === 'removed') {
+                if (subtaskId in subtasksById === false) return;
+                const { taskId } = subtaskData;
+                dispatch(removeSubtask({ subtaskId, taskId }));
+                console.log(`Subtask deleted: ${subtaskData.name}`);
+              } else {
+                dispatch(updateSubtask({ subtaskId, subtaskData }));
+                console.log(`Subtask updated: ${subtaskData.name}`);
+              }
+            });
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
