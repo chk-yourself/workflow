@@ -10,6 +10,7 @@ import { ProjectGridContainer } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
 import DashboardPanel from './DashboardPanel';
 import { TaskEditor } from '../TaskEditor';
+import { Main } from '../Main';
 import './Dashboard.scss';
 
 class Dashboard extends Component {
@@ -43,8 +44,10 @@ class Dashboard extends Component {
     } = this.props;
     const { isTaskEditorOpen } = this.state;
     return (
-      <main className="dashboard">
-        <h1 className="dashboard__header">Home</h1>
+      <Main
+        title="Home"
+        classes={{ main: 'dashboard', title: 'dashboard__header' }}
+      >
         <TasksDueSoon onTaskClick={this.handleTaskClick} />
         <DashboardPanel name="Notifications" icon="bell" size="sm" />
         <DashboardPanel name="Projects" icon="grid">
@@ -58,7 +61,7 @@ class Dashboard extends Component {
             view="board"
           />
         )}
-      </main>
+      </Main>
     );
   }
 }

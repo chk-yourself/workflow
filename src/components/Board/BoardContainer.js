@@ -62,7 +62,6 @@ class BoardContainer extends Component {
       });
     });
     console.log('mounted');
-    console.log(typeof this.taskObserver);
   }
 
   componentWillUnmount() {

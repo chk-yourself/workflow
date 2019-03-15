@@ -28,13 +28,15 @@ export const getSimpleTasks = (state, taskIds) => {
 
 export const getTaskTags = (state, ownProps) => {
   const { projectId, tags: taskTags } = ownProps;
-  if (!taskTags) return [];
-
-  if (projectId) {
-    const { projectsById } = state;
+  const { projectsById, currentUser } = state;
+  if (!taskTags || taskTags.length === 0) return [];
+  if (projectId && projectId in projectsById) {
     const { tags: projectTags } = projectsById[projectId];
     return taskTags.map(taskTag => projectTags[taskTag]);
   }
-  const { tags: userTags } = state.currentUser;
-  return taskTags.map(taskTag => userTags[taskTag]);
+  if (currentUser && 'tags' in currentUser) {
+    const { tags: userTags } = currentUser;
+    return taskTags.map(taskTag => userTags[taskTag]);
+  }
+  return [];
 };

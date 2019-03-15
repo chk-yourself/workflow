@@ -12,6 +12,7 @@
   position: relative;
   flex: none;
   margin: 2px 0.175em;
+  line-height: 1;
   &:first-child {
     margin-left: 0;
   }
@@ -41,16 +42,21 @@
 }
 
 .tag--md {
-  font-size: 14px;
-  line-height: 14px;
+  font-size: 13px;
+  line-height: 16px;
   height: 30px;
-  padding: 0.5em 0.8em 0.5em 1em;
+  padding: 0.4em 0.8em;
   margin: 2px 0.175em;
 }
 
 .tag--sm {
   font-size: 10px;
-  padding: 0.4em 0.9em;
+  padding: 0.24em 0.62em;
+  line-height: 1.15;
+  @include lg {
+    font-size: 11px;
+    padding: 0.4em 0.8em;
+  }
 }
 
 .tag--pill {

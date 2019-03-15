@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../../components/Session';
 import { userActions, userSelectors } from '../../ducks/users';
+import { currentUserActions, currentUserSelectors } from '../../ducks/currentUser';
 import './Admin.scss';
 
 class AdminPage extends Component {
@@ -43,7 +44,7 @@ class AdminPage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentUser: userSelectors.getCurrentUserData(state)
+    currentUser: currentUserSelectors.getCurrentUser(state)
   };
 };
 

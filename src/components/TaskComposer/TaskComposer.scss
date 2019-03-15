@@ -1,7 +1,11 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 .task-composer {
-  padding: 0 8px;
+  padding: 0 4px;
+  @include md {
+    padding: 0 8px;
+  }
   &.is-active {
     .task-composer__btn--submit {
       .feather {
@@ -12,9 +16,13 @@
 }
 
 .task-composer__form {
-  padding: 8px;
+  padding: 4px;
   display: flex;
   align-items: center;
+  box-shadow: 0px -1px 0 0 $grey-200;
+  @include md {
+    padding: 8px;
+  }
 }
 
 .task-composer__input {
@@ -22,7 +30,6 @@
   width: calc(100% - 34px);
   padding: 8px 6px;
   font-size: 14px;
-  margin-left: 4px;
   height: 32px;
   &:active,
   &:focus {

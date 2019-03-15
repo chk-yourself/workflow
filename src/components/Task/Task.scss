@@ -3,12 +3,14 @@
 
 .task {
   width: 100%;
-  padding: 8px;
   list-style: none;
   margin-left: auto;
   overflow: visible;
-  box-shadow: 0px 1px 0 0 $grey-200;
+  box-shadow: 0px -1px 0 0 $grey-200;
   position: relative;
+  padding: 4px;
+  display: flex;
+  align-items: center;
   &.is-focused {
     box-shadow: 0px 1px 0 0 rgba($primary, 0.8);
   }
@@ -24,6 +26,7 @@
     width: calc(100% - 38px);
   }
   @include md {
+    padding: 4px 8px;
     &::before {
       display: none;
     }
@@ -56,23 +59,70 @@
 
 .task__textarea {
   border-width: 1px;
-  width: calc(100% - 34px);
-  margin-left: 4px;
   padding: 8px 6px;
   vertical-align: middle;
   font-size: 14px;
   overflow: visible;
+  position: relative;
+  margin-top: -8px;
+  background-color: transparent;
   &:active,
   &:focus {
     border-color: transparent;
   }
 }
 
-.task__tags {
-  position: absolute;
-  right: 0;
-  top: 8px;
+.task__badges {
+  display: flex;
+  align-items: center;
+  min-height: 8px;
+  &--top {
+    top: 2px;
+    justify-content: flex-end;
+    @include md {
+      top: 4px;
+    }
+  }
+  &--btm {
+    left: 0;
+    bottom: 0;
+    justify-content: flex-start;
+  }
 }
 
-.task__tag {
+.task__detail {
+  font-size: 11px;
+  line-height: 1;
+  display: inline-block;
+  color: $grey-700;
+  padding: 0.24em 0.62em;
+  .feather {
+    width: 12px;
+    height: 12px;
+    vertical-align: bottom;
+    margin-right: 4px;
+  }
+  &:not(:first-child) {
+    margin-left: 8px;
+  }
+  &.task__due-date {
+    font-weight: 600;
+    color: $grey-900;
+  }
+  &.is-due-today {
+    color: $secondary;
+  }
+  &.is-due-tmrw {
+    color: $primary;
+  }
+  &.is-past-due {
+    color: $red;
+  }
+}
+
+.task__wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: calc(100% - 34px);
 }

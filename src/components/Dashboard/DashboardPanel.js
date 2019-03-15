@@ -2,12 +2,14 @@ import React from 'react';
 import { Icon } from '../Icon';
 
 const DashboardPanel = ({ name, icon, children, size }) => (
-  <section className={`dashboard__section dashboard__section--${size}`}>
-    <h2 className="dashboard__section-header">
-      <Icon name={icon} className="dashboard__section-icon" />
+  <section className={`dashboard-panel dashboard-panel--${size}`}>
+    <h2 className="dashboard-panel__header">
+      <Icon name={icon} className="dashboard-panel__icon" />
       {name}
     </h2>
+    <div className="dashboard-panel__content">
     {children}
+    </div>
   </section>
 );
 

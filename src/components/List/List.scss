@@ -97,7 +97,10 @@
 }
 
 .list__tasks {
-  padding: 0 8px;
+  padding: 0 4px;
   margin: 0;
   list-style-type: none;
+  @include md {
+    padding: 0 8px;
+  }
 }

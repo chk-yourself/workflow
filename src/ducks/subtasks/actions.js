@@ -154,6 +154,7 @@ export const syncProjectSubtasks = projectId => {
             dispatch(loadSubtasksById(subtasksById));
             dispatch(setProjectLoadedState(projectId, 'subtasks'));
           } else {
+            console.log(changes);
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
                 change.doc.id,

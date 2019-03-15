@@ -69,6 +69,7 @@ class HomePage extends Component {
 
   render() {
     const { isProjectComposerOpen, isFetching } = this.state;
+    console.log(this.props.state, isFetching);
     if (isFetching) return null;
     const { userId, projectsById } = this.props;
     return (
@@ -125,7 +126,8 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    projectsById: projectSelectors.getProjectsById(state)
+    projectsById: projectSelectors.getProjectsById(state),
+    state
   };
 };
 

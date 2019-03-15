@@ -1,12 +1,16 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
 import { Tag } from '../Tag';
+import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
 import { taskSelectors } from '../../ducks/tasks';
 import { currentUserSelectors } from '../../ducks/currentUser';
+import { Badge } from '../Badge';
+import { toDateString, isPriorDate } from '../../utils/date';
 import './Task.scss';
 
 class Task extends Component {
@@ -78,7 +82,15 @@ class Task extends Component {
   };
 
   render() {
-    const { taskId, taskTags, isCompleted, innerRef, provided } = this.props;
+    const {
+      taskId,
+      taskTags,
+      isCompleted,
+      innerRef,
+      provided,
+      dueDate
+    } = this.props;
+    console.log(this.props);
     const { isFocused, name } = this.state;
     const draggableProps = provided
       ? provided.draggableProps
@@ -86,6 +98,15 @@ class Task extends Component {
     const dragHandleProps = provided
       ? provided.dragHandleProps
       : { style: { listStyle: 'none' } };
+    const dueDateStr = dueDate
+      ? toDateString(dueDate.toDate(), {
+          useRelative: true,
+          format: { month: 'short', day: 'numeric' }
+        })
+      : null;
+    const isDueToday = dueDateStr === 'Today';
+    const isDueTmrw = dueDateStr === 'Tomorrow';
+    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
 
     return (
       <li
@@ -104,15 +125,8 @@ class Task extends Component {
           className="task__checkbox"
           labelClass="task__checkbox-label"
         />
-        <Textarea
-          value={name}
-          onFocus={this.onFocus}
-          onChange={this.onChange}
-          onBlur={this.onBlur}
-          name={taskId}
-          className="task__textarea"
-          onKeyDown={this.deleteTask}
-        />
+        <div className="task__wrapper">
+        <div className="task__badges task__badges--top">
         <div className="task__tags">
           {taskTags.map(taskTag => (
             <Tag
@@ -122,7 +136,38 @@ class Task extends Component {
               color={taskTag.color}
               className="task__tag"
             />
-          ))}
+          ))
+          }
+          </div>
+          {dueDate && (
+            <Badge
+              icon="calendar"
+              className={`task__detail task__due-date ${
+                isDueToday
+                  ? 'is-due-today'
+                  : isDueTmrw
+                  ? 'is-due-tmrw'
+                  : isPastDue
+                  ? 'is-past-due'
+                  : ''
+              }
+                  `}
+            >
+              {dueDateStr}
+            </Badge>
+          )}
+        </div>
+        <Textarea
+          value={name}
+          onFocus={this.onFocus}
+          onChange={this.onChange}
+          onBlur={this.onBlur}
+          name={taskId}
+          className="task__textarea"
+          onKeyDown={this.deleteTask}
+        />
+        <div className="task__badges task__badges--btm">
+        </div>
         </div>
       </li>
     );

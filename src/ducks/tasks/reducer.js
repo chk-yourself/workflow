@@ -30,7 +30,10 @@ const tasksById = (state = {}, action) => {
         ...state,
         [taskId]: {
           taskId,
-          isLoaded: true,
+          isLoaded: {
+            subtasks: false,
+            comments: false
+          },
           ...taskData
         }
       };
