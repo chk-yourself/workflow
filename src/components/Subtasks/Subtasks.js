@@ -42,6 +42,7 @@ class Subtasks extends Component {
             addSubtask({ subtaskId, subtaskData });
           }
           if (change.type === 'modified') {
+            console.log('Subtask modified from subtasks');
             updateSubtask({ subtaskId, subtaskData });
           }
           if (change.type === 'removed') {

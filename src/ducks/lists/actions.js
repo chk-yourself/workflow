@@ -138,7 +138,7 @@ export const fetchUserLists = userId => {
 export const syncProjectLists = projectId => {
   return async (dispatch, getState) => {
     try {
-      await firebase
+      const subscription = await firebase
         .queryCollection('lists', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
@@ -172,6 +172,7 @@ export const syncProjectLists = projectId => {
             }
           });
         });
+        return subscription;
     } catch (error) {
       console.log(error);
     }

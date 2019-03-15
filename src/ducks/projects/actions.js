@@ -181,10 +181,11 @@ export const updateProjectTags = (projectId, tags) => {
 export const syncProject = projectId => {
   return async dispatch => {
     try {
-      firebase.getDocRef('projects', projectId).onSnapshot(snapshot => {
+      const subscription = await firebase.getDocRef('projects', projectId).onSnapshot(snapshot => {
         const projectData = snapshot.data();
         dispatch(updateProject({ projectId, projectData }));
       });
+      return subscription;
     } catch (error) {
       console.error(error);
     }

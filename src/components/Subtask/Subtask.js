@@ -14,8 +14,8 @@ class Subtask extends Component {
     super(props);
     this.portal = document.createElement('div');
     this.state = {
-      name: this.props.name
-    }
+      name: props.name
+    };
   }
 
   componentDidMount() {
@@ -51,9 +51,9 @@ class Subtask extends Component {
     firebase.deleteSubtask({ subtaskId, taskId });
   };
 
-  toggleCompleted = () => {
+  toggleCompleted = async () => {
     const { subtaskId, isCompleted, firebase } = this.props;
-    firebase.updateSubtask(subtaskId, {
+    await firebase.updateSubtask(subtaskId, {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
     });

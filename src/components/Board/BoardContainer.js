@@ -46,17 +46,14 @@ class BoardContainer extends Component {
     if (selectedProjectId !== projectId) {
       selectProject(projectId);
     }
-    this.subtaskObserver = () => syncProjectSubtasks(projectId);
-    this.taskObserver = () => syncProjectTasks(projectId);
-    this.listObserver = () => syncProjectLists(projectId);
-    this.projectObserver = () => syncProject(projectId);
 
     await Promise.all([
-      this.subtaskObserver(),
-      this.taskObserver(),
-      this.listObserver(),
-      this.projectObserver()
-    ]).then(() => {
+      syncProject(projectId),
+      syncProjectLists(projectId),
+      syncProjectTasks(projectId),
+      syncProjectSubtasks(projectId)
+    ]).then(listeners => {
+      this.unsubscribe = listeners;
       this.setState({
         isLoading: false
       });
@@ -67,10 +64,7 @@ class BoardContainer extends Component {
   componentWillUnmount() {
     const { selectProject } = this.props;
     selectProject(null);
-    this.projectObserver();
-    this.listObserver();
-    this.taskObserver();
-    this.subtaskObserver();
+    this.unsubscribe.forEach(func => func());
   }
 
   onDragStart = () => {
@@ -158,7 +152,14 @@ class BoardContainer extends Component {
 
   render() {
     const { isTaskEditorOpen, projectName } = this.state;
-    const { lists, tasksById, projectId, userId, selectedTaskId, isLoaded } = this.props;
+    const {
+      lists,
+      tasksById,
+      projectId,
+      userId,
+      selectedTaskId,
+      isLoaded
+    } = this.props;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main className="board-container">

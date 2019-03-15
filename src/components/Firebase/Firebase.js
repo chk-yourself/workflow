@@ -743,8 +743,8 @@ class Firebase {
       });
   };
 
-  updateSubtask = (subtaskId, newValue = {}) => {
-    this.getSubtaskDoc(subtaskId).update({
+  updateSubtask = async (subtaskId, newValue = {}) => {
+    await this.getSubtaskDoc(subtaskId).update({
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });

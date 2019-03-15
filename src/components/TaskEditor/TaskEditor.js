@@ -89,7 +89,6 @@ class TaskEditor extends Component {
       updateComment
     } = this.props;
 
-    console.log(taskId);
     fetchTaskComments(taskId).then(() => {
       this.setState({
         isFetching: false

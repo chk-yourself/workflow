@@ -81,10 +81,6 @@ class Task extends Component {
     onTaskClick(taskId);
   };
 
-  componentWillUnmount() {
-    console.log(this.props.name);
-  }
-
   render() {
     const {
       taskId,

@@ -138,9 +138,9 @@ export const updateSubtask = ({ subtaskId, subtaskData }) => {
 export const syncProjectSubtasks = projectId => {
   return async (dispatch, getState) => {
     try {
-      await firebase
+      const subscription = await firebase
         .queryCollection('subtasks', ['projectId', '==', projectId])
-        .onSnapshot(async snapshot => {
+        .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
 
           if (changes.length > 1) {
@@ -178,6 +178,8 @@ export const syncProjectSubtasks = projectId => {
             });
           }
         });
+      console.log(typeof subscription);
+      return subscription;
     } catch (error) {
       console.log(error);
     }

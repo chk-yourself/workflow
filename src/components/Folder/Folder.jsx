@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { TaskComposer } from '../TaskComposer';
+import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
@@ -13,12 +14,20 @@ import './Folder.scss';
 
 class Folder extends Component {
   state = {
-    name: this.props.name
+    name: this.props.name,
+    isExpanded: this.props.taskIds.length > 0
+  };
+
+  toggleFolder = e => {
+    if (e.target.matches('.folder__btn--more-actions')) return;
+    this.setState(prevState => ({
+      isExpanded: !prevState.isExpanded
+    }));
   };
 
   render() {
     const { tasks, onTaskClick, folderId, index, isRestricted } = this.props;
-    const { name } = this.state;
+    const { name, isExpanded } = this.state;
     return (
       <Draggable
         draggableId={folderId}
@@ -27,42 +36,60 @@ class Folder extends Component {
       >
         {provided => (
           <>
-            <section
-              className="folder"
-              ref={provided.innerRef}
+            <ExpansionPanel
+              isExpanded={isExpanded}
+              onChange={this.toggleFolder}
+              classes={{ panel: 'folder', content: 'folder__content' }}
+              innerRef={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              header={{
+                className: 'folder__header',
+                children: (
+                  <>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className={`folder__btn--toggle ${
+                        isExpanded ? 'is-expanded' : ''
+                      }`}
+                      iconOnly
+                    >
+                      <Icon name="chevron-right" />
+                    </Button>
+                    <Input
+                      className="folder__input--title"
+                      name="name"
+                      type="text"
+                      value={name}
+                      onChange={this.onChange}
+                      required={!isRestricted}
+                      hideLabel
+                      isReadOnly={isRestricted}
+                      onBlur={this.onBlur}
+                      onClick={this.toggleFolder}
+                    />
+                    <PopoverWrapper
+                      classes={{
+                        wrapper: 'folder__popover-wrapper',
+                        popover: 'folder__popover'
+                      }}
+                      alignInner="right"
+                      buttonProps={{
+                        size: 'medium',
+                        iconOnly: true,
+                        className: 'folder__btn--more-actions',
+                        children: <Icon name="more-vertical" />
+                      }}
+                    >
+                      <Menu>
+                        <MenuItem />
+                      </Menu>
+                    </PopoverWrapper>
+                  </>
+                )
+              }}
             >
-              <header className="folder__header">
-                <Input
-                  className="folder__input--title"
-                  name="name"
-                  type="text"
-                  value={name}
-                  onChange={this.onChange}
-                  required={!isRestricted}
-                  hideLabel
-                  isReadOnly={isRestricted}
-                  onBlur={this.onBlur}
-                />
-                <PopoverWrapper
-                  classes={{
-                    wrapper: 'folder__popover-wrapper',
-                    popover: 'folder__popover'
-                  }}
-                  alignInner="right"
-                  buttonProps={{
-                    size: 'medium',
-                    iconOnly: true,
-                    className: 'folder__btn--more-actions',
-                    children: <Icon name="more-vertical" />
-                  }}
-                >
-                  <Menu>
-                    <MenuItem />
-                  </Menu>
-                </PopoverWrapper>
-              </header>
               <div className="folder__content">
                 <Tasks
                   tasks={tasks}
@@ -80,7 +107,7 @@ class Folder extends Component {
                 projectName={null}
                 folderId={folderId}
               />
-            </section>
+            </ExpansionPanel>
             {provided.placeholder}
           </>
         )}
