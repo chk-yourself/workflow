@@ -1,9 +1,11 @@
 import React, { Component, createRef } from 'react';
 import './Textarea.scss';
+import { debounce } from '../../utils/function';
 
 export default class Textarea extends Component {
   static defaultProps = {
-    isAutoHeightResizeEnabled: true
+    isAutoHeightResizeEnabled: true,
+    minHeight: 0
   };
 
   constructor(props) {
@@ -15,13 +17,19 @@ export default class Textarea extends Component {
     const { isAutoHeightResizeEnabled } = this.props;
     if (!isAutoHeightResizeEnabled) return;
     this.autoHeightResize();
+    this.handleResize = debounce(200, this.autoHeightResize);
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   }
 
   autoHeightResize = () => {
-    const { isAutoHeightResizeEnabled } = this.props;
+    const { isAutoHeightResizeEnabled, minHeight } = this.props;
     if (!isAutoHeightResizeEnabled) return;
 
-    this.textareaEl.current.style.height = '0px'; // resets scroll height
+    this.textareaEl.current.style.height = `${minHeight}px`; // resets scroll height
     this.textareaEl.current.style.height = `${
       this.textareaEl.current.scrollHeight
     }px`;
@@ -41,6 +49,7 @@ export default class Textarea extends Component {
       onDragStart,
       isReadOnly
     } = this.props;
+
     return (
       <textarea
         className={`textarea ${className}`}

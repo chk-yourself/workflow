@@ -524,6 +524,7 @@ class Firebase {
   };
 
   updateTask = (taskId, newValue = {}) => {
+    console.log('task updated');
     this.getTaskDoc(taskId).update({
       lastUpdatedAt: this.getTimestamp(),
       ...newValue

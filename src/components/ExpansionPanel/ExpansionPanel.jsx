@@ -18,7 +18,7 @@ export default class ExpansionPanel extends Component {
     isExpanded: false
   };
 
-  toggleContent = () => {
+  toggleContent = e => {
     const { onChange, id } = this.props;
 
     if (!onChange) {
@@ -26,20 +26,29 @@ export default class ExpansionPanel extends Component {
         isExpanded: !prevProps.isExpanded
       }));
     } else {
-      onChange(id);
+      onChange(e, id);
     }
   };
 
   render() {
-    const { classes, header, content, isExpanded: propsIsExpanded } = this.props;
-    const isExpanded = propsIsExpanded !== null ? propsIsExpanded : this.state.isExpanded;
+    const {
+      classes,
+      header,
+      content,
+      isExpanded: propsIsExpanded
+    } = this.props;
+    const isExpanded =
+      propsIsExpanded !== null ? propsIsExpanded : this.state.isExpanded;
 
     return (
       <div
         className={`accordion-panel ${classes.panel || ''}`}
         aria-expanded={isExpanded}
       >
-        <ExpansionPanelHeader onClick={this.toggleContent} className={classes.header || ''}>
+        <ExpansionPanelHeader
+          onClick={this.toggleContent}
+          className={classes.header || ''}
+        >
           {header}
         </ExpansionPanelHeader>
         {isExpanded && (

@@ -545,11 +545,7 @@ class TaskEditor extends Component {
             />
           )}
           <div className="task-editor__section-icon">
-            {newSubtaskFormIsFocused ? (
-              <div className="task-editor__checkbox" />
-            ) : (
-              <Icon name="plus-circle" />
-            )}
+          <Icon name="plus-circle" />
           </div>
           <form
             name="newSubtaskForm"

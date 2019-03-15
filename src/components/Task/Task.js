@@ -81,6 +81,10 @@ class Task extends Component {
     onTaskClick(taskId);
   };
 
+  componentWillUnmount() {
+    console.log(this.props.name);
+  }
+
   render() {
     const {
       taskId,
@@ -90,7 +94,6 @@ class Task extends Component {
       provided,
       dueDate
     } = this.props;
-    console.log(this.props);
     const { isFocused, name } = this.state;
     const draggableProps = provided
       ? provided.draggableProps
@@ -126,48 +129,47 @@ class Task extends Component {
           labelClass="task__checkbox-label"
         />
         <div className="task__wrapper">
-        <div className="task__badges task__badges--top">
-        <div className="task__tags">
-          {taskTags.map(taskTag => (
-            <Tag
-              name={taskTag.name}
-              key={taskTag.name}
-              size="sm"
-              color={taskTag.color}
-              className="task__tag"
-            />
-          ))
-          }
-          </div>
-          {dueDate && (
-            <Badge
-              icon="calendar"
-              className={`task__detail task__due-date ${
-                isDueToday
-                  ? 'is-due-today'
-                  : isDueTmrw
-                  ? 'is-due-tmrw'
-                  : isPastDue
-                  ? 'is-past-due'
-                  : ''
-              }
+          <div className="task__badges task__badges--top">
+            <div className="task__tags">
+              {taskTags.map(taskTag => (
+                <Tag
+                  name={taskTag.name}
+                  key={taskTag.name}
+                  size="sm"
+                  color={taskTag.color}
+                  className="task__tag"
+                />
+              ))}
+            </div>
+            {dueDate && (
+              <Badge
+                icon="calendar"
+                className={`task__detail task__due-date ${
+                  isDueToday
+                    ? 'is-due-today'
+                    : isDueTmrw
+                    ? 'is-due-tmrw'
+                    : isPastDue
+                    ? 'is-past-due'
+                    : ''
+                }
                   `}
-            >
-              {dueDateStr}
-            </Badge>
-          )}
-        </div>
-        <Textarea
-          value={name}
-          onFocus={this.onFocus}
-          onChange={this.onChange}
-          onBlur={this.onBlur}
-          name={taskId}
-          className="task__textarea"
-          onKeyDown={this.deleteTask}
-        />
-        <div className="task__badges task__badges--btm">
-        </div>
+              >
+                {dueDateStr}
+              </Badge>
+            )}
+          </div>
+          <Textarea
+            value={name}
+            onFocus={this.onFocus}
+            onChange={this.onChange}
+            onBlur={this.onBlur}
+            name={taskId}
+            className="task__textarea"
+            onKeyDown={this.deleteTask}
+            minHeight={14}
+          />
+          <div className="task__badges task__badges--btm" />
         </div>
       </li>
     );

@@ -20,6 +20,18 @@ export const windowDebouncer = callback => {
   };
 };
 
+export const debounce = (delay, fn) => {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    timerId = setTimeout(() => {
+      fn(...args);
+      timerId = null;
+    }, delay);
+  };
+};
 
 /**
  * Returns a function that executes the first callback on its initial call
@@ -33,20 +45,18 @@ export const firstThen = (first, after) => {
     count++;
     if (count === 1) {
       return first.apply(this, args);
-    } else {
-      return after.apply(this, args);
     }
-  }
+    return after.apply(this, args);
+  };
 };
 
 export const count = (fn, invokeBeforeExecution) => {
   let count = 0;
-  return (args) => {
+  return args => {
     count++;
     if (count <= invokeBeforeExecution) {
       return true;
-    } else {
-      return fn(args, count);
     }
+    return fn(args, count);
   };
 };

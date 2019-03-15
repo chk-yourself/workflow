@@ -31,7 +31,7 @@ class TasksDueSoon extends Component {
     const startingDate = new Date();
     const timeStart = startingDate.setHours(0, 0, 0, 0);
     const endingDate = new Date(startingDate);
-    const timeEnd = endingDate.setDate(endingDate.getDate() + 7);
+    const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + 7));
 
     this.taskObserver = firebase.db
       .collection('tasks')
@@ -43,7 +43,6 @@ class TasksDueSoon extends Component {
           const taskId = change.doc.id;
           const taskData = change.doc.data();
           if (change.type === 'added') {
-            console.log('added task');
             addTaskDueSoon({ taskId, taskData });
           } else if (change.type === 'removed') {
             deleteTaskDueSoon(taskId);

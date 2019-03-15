@@ -2,9 +2,9 @@
 @import '../../styles/mixins';
 
 .task-composer {
-  padding: 0 4px;
+  padding: 0 8px;
   @include md {
-    padding: 0 8px;
+    padding: 0 16px;
   }
   &.is-active {
     .task-composer__btn--submit {
@@ -19,14 +19,14 @@
   padding: 4px;
   display: flex;
   align-items: center;
-  box-shadow: 0px -1px 0 0 $grey-200;
+  box-shadow: inset 0px 3px 1px -2px $grey-200;
   @include md {
     padding: 8px;
   }
 }
 
 .task-composer__input {
-  border: 1px solid transparent;
+  border: none;
   width: calc(100% - 34px);
   padding: 8px 6px;
   font-size: 14px;

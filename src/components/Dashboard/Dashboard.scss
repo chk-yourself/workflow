@@ -18,12 +18,13 @@
 }
 
 .dashboard-panel__header {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
   font-weight: 400;
   text-transform: uppercase;
-  color: $grey-600;
+  color: $grey-900;
   padding: 8px;
+  letter-spacing: 0.01em;
   @include md {
     padding: 8px 16px;
   }
@@ -35,7 +36,6 @@
 .dashboard-panel {
   background-color: $white;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
   padding: 4px;
   border: 1px solid transparent;
   margin: 0 0 8px 0;
@@ -61,10 +61,10 @@
 }
 
 .dashboard-panel__icon {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   margin-right: 8px;
   vertical-align: middle;
   position: relative;
-  top: -2px;
+  top: -1px;
 }

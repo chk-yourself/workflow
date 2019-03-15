@@ -90,7 +90,7 @@ class UserTasks extends Component {
       if (isMovedWithinFolder) {
         updatedTaskIds.splice(origIndex, 1);
         updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.updateDoc(`users/${currentUserId}/folders/${newFolderId}`, {
+        firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
           taskIds: updatedTaskIds
         });
       } else {

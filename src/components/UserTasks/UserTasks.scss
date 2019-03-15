@@ -2,13 +2,11 @@
 @import '../../styles/mixins';
 
 .user-tasks {
-  background-color: $white;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   max-width: 960px;
   width: 100%;
-  padding: 8px;
-  @include lg {
-    padding: 16px;
+  padding: 0;
+  @include md {
+    padding: 0 8px;
   }
 }
 

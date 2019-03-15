@@ -128,7 +128,7 @@ const currentUser = (state = null, action) => {
         tasksDueSoon: {
           ...state.tasksDueSoon,
           [taskId]: {
-            ...state[taskId],
+            ...state.tasksDueSoon[taskId],
             ...taskData
           }
         }
