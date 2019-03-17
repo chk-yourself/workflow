@@ -20,14 +20,13 @@ export default class ExpansionPanel extends Component {
   };
 
   toggleContent = e => {
-    const { onChange, id } = this.props;
-
-    if (!onChange) {
+    const { onToggle, id } = this.props;
+    if (!onToggle) {
       this.setState(prevProps => ({
         isExpanded: !prevProps.isExpanded
       }));
     } else {
-      onChange(e, id);
+      onToggle(e, id);
     }
   };
 

@@ -38,8 +38,8 @@ class Folder extends Component {
           <>
             <ExpansionPanel
               isExpanded={isExpanded}
-              onChange={this.toggleFolder}
-              classes={{ panel: 'folder', content: 'folder__content' }}
+              onToggle={this.toggleFolder}
+              classes={{ panel: 'folder' }}
               innerRef={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
