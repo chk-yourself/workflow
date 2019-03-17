@@ -308,6 +308,14 @@ class TaskEditor extends Component {
     e.preventDefault();
   };
 
+  toggleCompleted = e => {
+    const { taskId, isCompleted, firebase } = this.props;
+    firebase.updateDoc(['tasks', taskId], {
+      isCompleted: !isCompleted,
+      completedAt: !isCompleted ? firebase.getTimestamp() : null
+    });
+  };
+
   componentWillUnmount() {
     this.commentObserver();
   }
@@ -331,7 +339,8 @@ class TaskEditor extends Component {
       view,
       projectName,
       listName,
-      projectColor
+      projectColor,
+      isCompleted
     } = this.props;
     const {
       name,
@@ -381,6 +390,17 @@ class TaskEditor extends Component {
               />
             </TaskEditorAssignMember>
           )}
+          <Button
+            type="button"
+            onClick={this.toggleCompleted}
+            size="md"
+            variant={isCompleted ? 'contained' : 'outlined'}
+            color="success"
+            className="task-editor__btn--toggle-completed"
+          >
+            <Icon name="check" />
+            {isCompleted ? 'Completed' : 'Mark Completed'}
+          </Button>
           <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
         <form
@@ -544,7 +564,7 @@ class TaskEditor extends Component {
             />
           )}
           <div className="task-editor__section-icon">
-          <Icon name="plus-circle" />
+            <Icon name="plus-circle" />
           </div>
           <form
             name="newSubtaskForm"
@@ -685,7 +705,8 @@ const mapDispatchToProps = dispatch => {
     updateComment: ({ commentId, commentData }) =>
       dispatch(commentActions.updateComment({ commentId, commentData })),
     addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag)),
-    removeTaskTag: ({ taskId, name, userId, projectId }) => dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
+    removeTaskTag: ({ taskId, name, userId, projectId }) =>
+      dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
   };
 };
 

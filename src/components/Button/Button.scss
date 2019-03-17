@@ -43,6 +43,11 @@ button {
   background-color: $grey-700;
   color: $white;
 }
+.success.contained {
+  background-color: $success;
+  color: $white;
+  font-weight: 600;
+}
 
 // Outlined
 .primary.outlined {
@@ -59,6 +64,10 @@ button {
   border: 1px solid $grey-700;
   color: $grey-700;
 }
+.success.outlined {
+  border: 1px solid $success-dk;
+  color: $success-dk;
+}
 
 // Text
 
@@ -72,6 +81,10 @@ button {
 
 .neutral.text {
   color: $grey-700;
+}
+
+.success.text {
+  color: $success-dk;
 }
 
 // Sizes

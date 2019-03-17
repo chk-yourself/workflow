@@ -10,9 +10,9 @@ import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { toDateString, isPriorDate } from '../../utils/date';
 
-const CardDetail = ({ icon, children, className = '' }) => (
+const CardDetail = ({ icon = null, children, className = '' }) => (
   <div className={`card__detail ${className}`}>
-    <Icon name={icon} />
+    {icon && <Icon name={icon} />}
     {children}
   </div>
 );
@@ -46,7 +46,8 @@ class Card extends Component {
       dueDate,
       subtaskIds,
       completedSubtasks,
-      taskMembers
+      taskMembers,
+      isCompleted
     } = this.props;
 
     const dueDateStr = dueDate
@@ -87,6 +88,13 @@ class Card extends Component {
               <h3 className="card__title">{name}</h3>
             </div>
             <div className="card__body">
+              {isCompleted && (
+                <CardDetail className="card__completed-status">
+                  <span className="card__completed-status-icon">
+                    <Icon name="check" />
+                  </span>
+                </CardDetail>
+              )}
               {dueDate && (
                 <CardDetail
                   icon="calendar"

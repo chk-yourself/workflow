@@ -1,8 +1,8 @@
 import React from 'react';
 import './ProjectIcon.scss';
 
-const ProjectIcon = ({className, color}) => (
-  <span className={`project-icon bg--${color} ${className}`} />
+const ProjectIcon = ({ className, color }) => (
+  <span className={`project-icon project-icon--${color} ${className}`} />
 );
 
 ProjectIcon.defaultProps = {

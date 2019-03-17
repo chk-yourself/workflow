@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Droppable } from 'react-beautiful-dnd';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { Card } from '../Card';

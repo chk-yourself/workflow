@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,8 +11,10 @@ import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
 import { taskSelectors } from '../../ducks/tasks';
 import { currentUserSelectors } from '../../ducks/currentUser';
+import { projectSelectors } from '../../ducks/projects';
 import { Badge } from '../Badge';
 import { toDateString, isPriorDate } from '../../utils/date';
+import { ProjectIcon } from '../ProjectIcon';
 import './Task.scss';
 
 class Task extends Component {
@@ -63,7 +67,7 @@ class Task extends Component {
 
   toggleCompleted = () => {
     const { taskId, isCompleted, firebase } = this.props;
-    firebase.updateTask(taskId, {
+    firebase.updateDoc(['tasks', taskId], {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
     });
@@ -81,6 +85,16 @@ class Task extends Component {
     onTaskClick(taskId);
   };
 
+  onKeyDown = e => {
+    const { provided, taskId, onTaskClick } = this.props;
+    if (provided && provided.dragHandleProps) {
+      provided.dragHandleProps.onKeyDown(e);
+    }
+    if (e.key === keys.ENTER) {
+      onTaskClick(taskId);
+    }
+  };
+
   render() {
     const {
       taskId,
@@ -88,15 +102,15 @@ class Task extends Component {
       isCompleted,
       innerRef,
       provided,
-      dueDate
+      dueDate,
+      projectId,
+      projectName,
+      listName,
+      projectColor
     } = this.props;
     const { isFocused, name } = this.state;
-    const draggableProps = provided
-      ? provided.draggableProps
-      : { style: { listStyle: 'none' } };
-    const dragHandleProps = provided
-      ? provided.dragHandleProps
-      : { style: { listStyle: 'none' } };
+    const draggableProps = provided ? provided.draggableProps : {};
+    const dragHandleProps = provided ? provided.dragHandleProps : {};
     const dueDateStr = dueDate
       ? toDateString(dueDate.toDate(), {
           useRelative: true,
@@ -111,9 +125,11 @@ class Task extends Component {
       <li
         className={`task ${isFocused ? 'is-focused' : ''}`}
         onClick={this.handleTaskClick}
+        tabIndex={0}
         ref={innerRef}
         {...draggableProps}
         {...dragHandleProps}
+        onKeyDown={this.onKeyDown}
       >
         <Checkbox
           id={`cb-${taskId}`}
@@ -165,7 +181,19 @@ class Task extends Component {
             onKeyDown={this.deleteTask}
             minHeight={14}
           />
-          <div className="task__badges task__badges--btm" />
+          <div className="task__badges task__badges--btm">
+            {projectId && (
+              <Badge className="task__project-details">
+                <ProjectIcon
+                  color={projectColor}
+                  className="task__project-icon"
+                />
+                <span className="task__project-name">{projectName}</span>
+                <Icon name="chevron-right" />
+                <span className="task__list-name">{listName}</span>
+              </Badge>
+            )}
+          </div>
         </div>
       </li>
     );
@@ -175,7 +203,8 @@ class Task extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentUserSelectors.getCurrentUserId(state),
-    taskTags: taskSelectors.getTaskTags(state, ownProps)
+    taskTags: taskSelectors.getTaskTags(state, ownProps),
+    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId)
   };
 };
 

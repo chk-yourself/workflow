@@ -6,66 +6,55 @@
   border-radius: 4px;
   display: inline-block;
   vertical-align: middle;
-}
-
-// Background Colors
-
-.bg--default {
-  background-color: $grey-500;
-}
-
-.bg--blue {
-  background-color: $blue;
-  color: $white;
-}
-.bg--green {
-  background-color: $green;
-  color: $white;
-}
-.bg--pink {
-  background-color: $pink;
-  color: $white;
-}
-.bg--orange {
-  background-color: $orange;
-  color: $white;
-}
-.bg--purple {
-  background-color: $purple;
-  color: $white;
-}
-
-.bg--red {
-  background-color: $red;
-  color: $white;
-}
-
-.bg--teal {
-  background-color: $teal;
-  color: $white;
-}
-
-.bg--cyan {
-  background-color: $cyan;
-  color: $white;
-}
-
-.bg--grape {
-  background-color: $grape;
-  color: $white;
-}
-
-.bg--violet {
-  background-color: $violet;
-  color: $white;
-}
-
-.bg--indigo {
-  background-color: $indigo;
-  color: $white;
-}
-
-.bg--yellow {
-  background-color: $yellow;
-  color: $white;
+  &--default {
+    background-color: $grey-500;
+  }
+  &--blue {
+    background-color: $blue;
+    color: $white;
+  }
+  &--green {
+    background-color: $green;
+    color: $white;
+  }
+  &--pink {
+    background-color: $pink;
+    color: $white;
+  }
+  &--orange {
+    background-color: $orange;
+    color: $white;
+  }
+  &--purple {
+    background-color: $purple;
+    color: $white;
+  }
+  &--red {
+    background-color: $red;
+    color: $white;
+  }
+  &--teal {
+    background-color: $teal;
+    color: $white;
+  }
+  &--cyan {
+    background-color: $cyan;
+    color: $white;
+  }
+  &--grape {
+    background-color: $grape;
+    color: $white;
+  }
+  &--violet {
+    background-color: $violet;
+    color: $white;
+  }
+  &--indigo {
+    background-color: $indigo;
+    color: $white;
+  }
+  &--yellow {
+    background-color: $yellow;
+    color: $white;
+  }
 }

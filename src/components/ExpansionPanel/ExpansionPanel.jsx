@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ExpansionPanelHeader from './ExpansionPanelHeader';
 import ExpansionPanelContent from './ExpansionPanelContent';
+import * as keys from '../../constants/keys';
 
 export default class ExpansionPanel extends Component {
   static defaultProps = {
@@ -20,6 +21,7 @@ export default class ExpansionPanel extends Component {
   };
 
   toggleContent = e => {
+    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { onToggle, id } = this.props;
     if (!onToggle) {
       this.setState(prevProps => ({
@@ -28,6 +30,11 @@ export default class ExpansionPanel extends Component {
     } else {
       onToggle(e, id);
     }
+  };
+
+  onDragOver = e => {
+    e.preventDefault();
+    console.log(e.target);
   };
 
   render() {
@@ -48,6 +55,7 @@ export default class ExpansionPanel extends Component {
         aria-expanded={isExpanded}
         ref={innerRef}
         {...rest}
+        onDragOver={this.onDragOver}
       >
         <ExpansionPanelHeader
           onClick={this.toggleContent}

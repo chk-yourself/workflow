@@ -191,6 +191,7 @@
   top: 4px;
   width: calc(100% - 44px);
   justify-content: space-between;
+  align-items: center;
   padding: 0 0 0 5px;
   border-bottom: 1px solid $grey-300;
   z-index: 4;
@@ -412,5 +413,17 @@
     height: 13px;
     margin-right: 6px;
     vertical-align: top;
+  }
+}
+
+.task-editor__btn--toggle-completed {
+  font-size: 14px;
+  line-height: 18px;
+  padding: 6px 10px 6px 8px;
+  .feather {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    margin-right: 4px;
   }
 }

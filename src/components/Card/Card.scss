@@ -96,3 +96,22 @@
 .card__members-wrapper {
   height: 32px;
 }
+
+.card__completed-status-icon {
+  display: inline-block;
+  border-radius: 50%;
+  width: 11px;
+  height: 11px;
+  background-color: $success;
+  color: $white;
+  text-align: center;
+  .feather {
+    width: 7px;
+    height: 7px;
+    position: relative;
+    top: -1px;
+    margin-right: 0;
+    vertical-align: middle;
+    stroke-width: 3.6px;
+  }
+}

@@ -7,6 +7,8 @@ const ExpansionPanelHeader = ({ children, className, onClick }) => {
       role="button"
       onClick={onClick}
       tabIndex={0}
+      onKeyDown={onClick}
+      onDragOver={onClick}
     >
       {children}
     </header>

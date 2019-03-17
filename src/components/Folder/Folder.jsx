@@ -34,7 +34,7 @@ class Folder extends Component {
         index={index}
         isDragDisabled={isRestricted}
       >
-        {provided => (
+        {(provided, snapshot) => (
           <>
             <ExpansionPanel
               isExpanded={isExpanded}
@@ -99,7 +99,6 @@ class Folder extends Component {
                   view="list"
                 />
               </div>
-              {provided.placeholder}
               <TaskComposer
                 listId={null}
                 listName={null}
@@ -108,7 +107,6 @@ class Folder extends Component {
                 folderId={folderId}
               />
             </ExpansionPanel>
-            {provided.placeholder}
           </>
         )}
       </Draggable>
