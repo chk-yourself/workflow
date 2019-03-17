@@ -19,7 +19,7 @@ class Subtasks extends Component {
       fetchTaskSubtasks,
       addSubtask,
       updateSubtask,
-      deleteSubtask,
+      removeSubtask,
       taskId,
       projectId,
       selectedProjectId
@@ -46,7 +46,7 @@ class Subtasks extends Component {
             updateSubtask({ subtaskId, subtaskData });
           }
           if (change.type === 'removed') {
-            deleteSubtask(subtaskId);
+            removeSubtask({ subtaskId, taskId });
           }
         });
       });

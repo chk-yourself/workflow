@@ -10,11 +10,14 @@ import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
 import { taskSelectors } from '../../ducks/tasks';
+import { userSelectors } from '../../ducks/users';
 import { currentUserSelectors } from '../../ducks/currentUser';
-import { projectSelectors } from '../../ducks/projects';
+import { getSelectedProjectId } from '../../ducks/selectedProject';
 import { Badge } from '../Badge';
+import { ProjectBadge } from '../ProjectBadge';
 import { toDateString, isPriorDate } from '../../utils/date';
-import { ProjectIcon } from '../ProjectIcon';
+import { ListBadge } from '../ListBadge';
+import { Avatar } from '../Avatar';
 import './Task.scss';
 
 class Task extends Component {
@@ -104,9 +107,9 @@ class Task extends Component {
       provided,
       dueDate,
       projectId,
-      projectName,
       listName,
-      projectColor
+      selectedProjectId,
+      taskMembers
     } = this.props;
     const { isFocused, name } = this.state;
     const draggableProps = provided ? provided.draggableProps : {};
@@ -170,6 +173,28 @@ class Task extends Component {
                 {dueDateStr}
               </Badge>
             )}
+            {taskMembers && taskMembers.length > 0 && (
+              <div className="task__detail task__members-wrapper">
+                <div className="task__members">
+                  {taskMembers.map(member => {
+                    const { name: memberName, photoURL, userId } = member;
+                    return (
+                      <Avatar
+                        classes={{
+                          avatar: 'task__avatar',
+                          placeholder: 'task__avatar-placeholder'
+                        }}
+                        name={memberName}
+                        size="sm"
+                        variant="circle"
+                        imgSrc={photoURL}
+                        key={userId}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
           <Textarea
             value={name}
@@ -182,16 +207,11 @@ class Task extends Component {
             minHeight={14}
           />
           <div className="task__badges task__badges--btm">
-            {projectId && (
-              <Badge className="task__project-details">
-                <ProjectIcon
-                  color={projectColor}
-                  className="task__project-icon"
-                />
-                <span className="task__project-name">{projectName}</span>
-                <Icon name="chevron-right" />
-                <span className="task__list-name">{listName}</span>
-              </Badge>
+            {!selectedProjectId && projectId && (
+              <>
+                <ProjectBadge projectId={projectId} />
+                <ListBadge name={listName} />
+              </>
             )}
           </div>
         </div>
@@ -204,7 +224,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     userId: currentUserSelectors.getCurrentUserId(state),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
-    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId)
+    selectedProjectId: getSelectedProjectId(state),
+    taskMembers: userSelectors.getMembersArray(state, ownProps.assignedTo)
   };
 };
 

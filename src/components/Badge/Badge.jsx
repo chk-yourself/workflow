@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from '../Icon';
+import './Badge.scss';
 
 const Badge = ({ icon, children, className }) => (
   <span className={`badge ${className}`}>

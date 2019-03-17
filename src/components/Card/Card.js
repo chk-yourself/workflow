@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
-import { userActions, userSelectors } from '../../ducks/users';
+import { userSelectors } from '../../ducks/users';
 import { subtaskSelectors } from '../../ducks/subtasks';
 import './Card.scss';
 import { Tag } from '../Tag';

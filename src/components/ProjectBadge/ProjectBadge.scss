@@ -1,0 +1,63 @@
+@import '../../styles/variables';
+
+.project-badge {
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 10px;
+  padding: 0.24em 0.62em;
+  border: 1px solid transparent;
+  &--default {
+    background-color: $grey-100;
+    color: $grey-800;
+    border-color: $grey-400;
+  }
+  &--blue {
+    background-color: $blue;
+    color: $white;
+  }
+  &--green {
+    background-color: $green;
+    color: $white;
+  }
+  &--pink {
+    background-color: $pink;
+    color: $white;
+  }
+  &--orange {
+    background-color: $orange;
+    color: $white;
+  }
+  &--purple {
+    background-color: $purple;
+    color: $white;
+  }
+  &--red {
+    background-color: $red;
+    color: $white;
+  }
+  &--teal {
+    background-color: $teal;
+    color: $white;
+  }
+  &--cyan {
+    background-color: $cyan;
+    color: $white;
+  }
+  &--grape {
+    background-color: $grape;
+    color: $white;
+  }
+  &--violet {
+    background-color: $violet;
+    color: $white;
+  }
+  &--indigo {
+    background-color: $indigo;
+    color: $white;
+  }
+  &--yellow {
+    background-color: $yellow;
+    color: $white;
+  }
+}

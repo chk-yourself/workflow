@@ -21,7 +21,9 @@ export const getProjectTags = (state, projectId) => {
 export const getProjectName = (state, projectId) => {
   if (!projectId) return '';
   const { projectsById } = state;
-  return projectsById[projectId].name;
+  const project = projectsById[projectId];
+  if (!project) return null;
+  return project.name;
 };
 
 export const getProjectColor = (state, projectId) => {

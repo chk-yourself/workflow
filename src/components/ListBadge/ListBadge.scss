@@ -1,0 +1,18 @@
+@import '../../styles/variables';
+
+.list-badge {
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 10px;
+  padding: 0.24em 0.62em;
+  border: 1px solid transparent;
+  color: $grey-700;
+  font-style: italic;
+  .feather {
+    width: 11px;
+    height: 11px;
+    vertical-align: bottom;
+    margin-right: 4px;
+  }
+}
