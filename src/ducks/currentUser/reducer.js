@@ -1,4 +1,5 @@
 import * as types from './types';
+import { UPDATE_USER } from '../users/types';
 
 const currentUser = (state = null, action) => {
   switch (action.type) {
@@ -72,6 +73,27 @@ const currentUser = (state = null, action) => {
         folders: restOfFolders
       };
     }
+    case types.LOAD_ASSIGNED_TASKS: {
+      const { assignedTasks } = action;
+      return {
+        ...state,
+        assignedTasks
+      };
+    }
+    case types.ADD_ASSIGNED_TASK: {
+      const { taskId } = action;
+      return {
+        ...state,
+        assignedTasks: [...state.assignedTasks, taskId]
+      };
+    }
+    case types.REMOVE_ASSIGNED_TASK: {
+      const { taskId } = action;
+      return {
+        ...state,
+        assignedTasks: [...state.assignedTasks.filter(id => id !== taskId)]
+      };
+    }
     case types.UPDATE_FOLDER: {
       const { folderId, folderData } = action;
       return {
@@ -133,6 +155,13 @@ const currentUser = (state = null, action) => {
           }
         }
       };
+    }
+    case UPDATE_USER: {
+      const { userData } = action;
+      return {
+        ...state,
+        ...userData
+      }
     }
     default:
       return state;

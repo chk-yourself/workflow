@@ -26,11 +26,11 @@ class Folder extends Component {
   };
 
   render() {
-    const { tasks, onTaskClick, folderId, index, isRestricted } = this.props;
+    const { tasks, onTaskClick, projectId, projectName, folderId, index, isRestricted, dueDate } = this.props;
     const { name, isExpanded } = this.state;
     return (
       <Draggable
-        draggableId={folderId}
+        draggableId={folderId || projectId || dueDate}
         index={index}
         isDragDisabled={isRestricted}
       >
@@ -76,7 +76,7 @@ class Folder extends Component {
                       }}
                       alignInner="right"
                       buttonProps={{
-                        size: 'medium',
+                        size: 'md',
                         iconOnly: true,
                         className: 'folder__btn--more-actions',
                         children: <Icon name="more-vertical" />
@@ -95,6 +95,8 @@ class Folder extends Component {
                   tasks={tasks}
                   listId={null}
                   folderId={folderId}
+                  projectId={projectId}
+                  dueDate={dueDate}
                   onTaskClick={onTaskClick}
                   view="list"
                 />
@@ -102,8 +104,9 @@ class Folder extends Component {
               <TaskComposer
                 listId={null}
                 listName={null}
-                projectId={null}
-                projectName={null}
+                dueDate={dueDate}
+                projectId={projectId}
+                projectName={projectName}
                 folderId={folderId}
               />
             </ExpansionPanel>

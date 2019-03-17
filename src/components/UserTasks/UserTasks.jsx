@@ -15,39 +15,37 @@ import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../Folder';
 import { Main } from '../Main';
 import { TaskEditor } from '../TaskEditor';
+import { TaskSettings } from '../TaskSettings';
 import './UserTasks.scss';
 
 class UserTasks extends Component {
   state = {
-    isFetching: true,
-    isTaskEditorOpen: false
+    isLoading: true,
+    isTaskEditorOpen: false,
+    isTaskSettingsOpen: false,
+    isSortRuleDropdownActive: false
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       userId,
-      fetchFolders,
-      fetchUserTasks,
       syncUserTasks,
       syncFolders
     } = this.props;
-    fetchFolders(userId);
-    fetchUserTasks(userId).then(() => {
+
+    await Promise.all([
+      syncUserTasks(userId),
+      syncFolders(userId)
+    ]).then(listeners => {
+      this.unsubscribe = listeners;
       this.setState({
-        isFetching: false
+        isLoading: false
       });
-
-      this.taskObserver = () => syncUserTasks(userId);
-      this.taskObserver();
     });
-
-    this.folderObserver = () => syncFolders(userId);
-    this.folderObserver();
   }
 
   componentWillUnmount() {
-    this.taskObserver();
-    this.folderObserver();
+    this.unsubscribe.forEach(func => func());
   }
 
   toggleTaskEditor = () => {
@@ -117,18 +115,67 @@ class UserTasks extends Component {
     }
   };
 
-  onDragStart = () => {
-    this.setState({
-      isDragging: true
+  selectViewFilter = e => {
+    const { firebase, currentUserId } = this.props;
+    firebase.updateDoc(['users', currentUserId], {
+      [`settings.tasks.view`]: e.target.value
     });
   };
 
+  selectSortRule = e => {
+    const { firebase, currentUserId } = this.props;
+    firebase.updateDoc(['users', currentUserId], {
+      [`settings.tasks.sortBy`]: e.target.value
+    });
+    this.toggleSortRuleDropdown();
+  };
+
+  toggleTaskSettings = () => {
+    this.setState(prevState => ({
+      isTaskSettingsOpen: !prevState.isTaskSettingsOpen
+    }));
+  };
+
+  toggleSortRuleDropdown = () => {
+    this.setState(prevState => ({
+      isSortRuleDropdownActive: !prevState.isSortRuleDropdownActive
+    }));
+  };
+
   render() {
-    const { filters, userId, selectedTaskId, tasksById, folders } = this.props;
-    const { isFetching, isTaskEditorOpen } = this.state;
-    if (isFetching) return null;
+    const { userId, selectedTaskId, tasksById, folders, taskSettings } = this.props;
+    const { isLoading, isTaskEditorOpen, isSortRuleDropdownActive, isTaskSettingsOpen } = this.state;
+    console.log(folders);
+    if (isLoading) return null;
     return (
-      <Main title="All Tasks">
+      <Main title="All Tasks" classes={{title: 'user-tasks__title'}}>
+        <TaskSettings
+          isOpen={isTaskSettingsOpen}
+          onToggle={this.toggleTaskSettings}
+          classes={{
+            wrapper: 'user-tasks__settings-wrapper',
+            popover: 'user-tasks__settings',
+            item: 'user-tasks__settings-item'
+          }}
+          filters={[
+              {
+                filter: 'view',
+                options: [
+                  {value: 'active', name: 'Active Tasks'},
+                  {value: 'completed', name: 'Completed Tasks'},
+                  {value: 'all', name: 'All Tasks'}
+                  ],
+                value: taskSettings.view,
+                onChange: this.selectViewFilter
+              }
+            ]}
+            sortRule={{
+              options: [{value: "project", name: "Project"}, {value: "folder", name: "Folder"}, {value: "dueDate", name: "Due Date"}],
+              value: taskSettings.sortBy,
+              onChange: this.selectSortRule,
+              isDropdownActive: isSortRuleDropdownActive,
+              toggleDropdown: this.toggleSortRuleDropdown
+            }} />
         <div
           className={`user-tasks__wrapper ${
             isTaskEditorOpen ? 'show-task-editor' : ''
@@ -147,9 +194,12 @@ class UserTasks extends Component {
                 >
                   {folders.map((folder, i) => (
                     <Folder
-                      key={folder.folderId}
+                      key={`${taskSettings.sortBy}-${folder.folderId || folder.projectId || folder.dueDate}`}
                       userId={userId}
                       folderId={folder.folderId}
+                      projectId={folder.projectId}
+                      projectName={folder.projectName}
+                      dueDate={folder.dueDate}
                       index={i}
                       name={folder.name}
                       taskIds={folder.taskIds}
@@ -184,7 +234,9 @@ const mapStateToProps = state => {
     folders: currentUserSelectors.getFoldersArray(state),
     folderIds: currentUserSelectors.getFolderIds(state),
     tasksById: taskSelectors.getTasksById(state),
-    selectedTaskId: getSelectedTaskId(state)
+    selectedTaskId: getSelectedTaskId(state),
+    assignedTasks: currentUserSelectors.getAssignedTasks(state),
+    taskSettings: currentUserSelectors.getTaskSettings(state)
   };
 };
 
@@ -192,9 +244,7 @@ const mapDispatchToProps = dispatch => {
   return {
     syncFolders: userId => dispatch(currentUserActions.syncFolders(userId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    syncUserTasks: userId => dispatch(taskActions.syncUserTasks(userId)),
-    fetchFolders: userId => dispatch(currentUserActions.fetchFolders(userId)),
-    fetchUserTasks: userId => dispatch(taskActions.fetchUserTasks(userId)),
+    syncUserTasks: userId => dispatch(currentUserActions.syncUserTasks(userId)),
     reorderFolders: (userId, folderIds) =>
       dispatch(currentUserActions.reorderFolders(userId, folderIds))
   };

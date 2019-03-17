@@ -1,0 +1,73 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.sort-rule__dropdown-wrapper {
+  margin-top: 8px;
+}
+
+.sort-rule__dropdown {
+  background-color: $white;
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 120px;
+  line-height: 1.15;
+  @include box-shadow(2);
+}
+
+.sort-rule__radio {
+  display: none;
+  &:checked + .calendar__radio-label {
+    color: $primary;
+    &:hover {
+      color: $white;
+    }
+  }
+}
+
+.sort-rule__radio-label {
+  position: relative;
+  display: inline-block;
+  padding: 8px 8px 8px 30px;
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+  &:hover {
+    cursor: pointer;
+    background-color: $primary;
+    color: $white;
+    .feather {
+      color: $white;
+    }
+  }
+  .feather {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 8px;
+    color: $primary;
+  }
+}
+
+.sort-rule__btn-dropdown {
+  font-size: 14px;
+  border: 1px solid $grey-600;
+  width: 120px;
+  text-align: left;
+  position: relative;
+  padding: 6px 8px;
+  .feather {
+    width: 16px;
+    height: 16px;
+    font-size: 14px;
+    position: absolute;
+    right: 4px;
+  }
+}
+
+.task-settings__btn--close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

@@ -1,6 +1,11 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
-import { addTag } from '../tasks/actions';
+import {
+  loadTasksById,
+  addTask,
+  removeTask,
+  updateTask
+} from '../tasks/actions';
 
 export const setCurrentUser = currentUser => {
   return {
@@ -13,6 +18,28 @@ export const loadUserTags = tags => {
   return {
     type: types.LOAD_USER_TAGS,
     tags
+  };
+};
+
+export const loadAssignedTasks = assignedTasks => {
+  return {
+    type: types.LOAD_ASSIGNED_TASKS,
+    assignedTasks
+  };
+};
+
+
+export const addAssignedTask = taskId => {
+  return {
+    type: types.ADD_ASSIGNED_TASK,
+    taskId
+  };
+};
+
+export const removeAssignedTask = taskId => {
+  return {
+    type: types.REMOVE_ASSIGNED_TASK,
+    taskId
   };
 };
 
@@ -200,30 +227,42 @@ export const updateTaskDueSoon = ({ taskId, taskData }) => {
 export const syncFolders = userId => {
   return async (dispatch, getState) => {
     try {
-      firebase
+      const subscription = await firebase
         .getDocRef('users', userId)
         .collection('folders')
-        .onSnapshot(async querySnapshot => {
-          querySnapshot.docChanges().forEach(async change => {
-            const [folderId, folderData, changeType] = await Promise.all([
-              change.doc.id,
-              change.doc.data(),
-              change.type
-            ]);
-            const { folders } = getState().currentUser;
-            if (!folders) return;
-            if (changeType === 'added') {
-              if (folderId in folders) return;
-              dispatch(addFolder({ folderId, folderData }));
-              console.log('folder added');
-            } else if (changeType === 'removed') {
-              dispatch(deleteFolder(folderId));
-            } else {
-              dispatch(updateFolder({ folderId, folderData }));
-              console.log(`Updated Folder: ${folderData.name}`);
-            }
+        .onSnapshot(async snapshot => {
+          const changes = await snapshot.docChanges();
+          if (snapshot.size === changes.length || changes.length > 1) {
+            const foldersById = {};
+            snapshot.forEach(doc => {
+            foldersById[doc.id] = {
+              folderId: doc.id,
+              ...doc.data()
+            };
           });
+            await dispatch(loadFolders(foldersById));
+          } else {
+            changes.forEach(async change => {
+              const [folderId, folderData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { folders } = getState().currentUser;
+              if (changeType === 'added') {
+                if (folderId in folders) return;
+                dispatch(addFolder({ folderId, folderData }));
+                console.log('folder added');
+              } else if (changeType === 'removed') {
+                dispatch(deleteFolder(folderId));
+              } else {
+                dispatch(updateFolder({ folderId, folderData }));
+                console.log(`Updated Folder: ${folderData.name}`);
+              }
+            });
+          }
         });
+      return subscription;
     } catch (error) {
       console.log(error);
     }
@@ -284,6 +323,79 @@ export const syncUserTags = userId => {
             }
           });
         });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const fetchUserTasks = userId => {
+  return async dispatch => {
+    try {
+      const tasksById = await firebase.db
+        .collection('tasks')
+        .where('assignedTo', 'array-contains', userId)
+        .get()
+        .then(snapshot => {
+          const tasks = {};
+          snapshot.forEach(doc => {
+            tasks[doc.id] = {
+              taskId: doc.id,
+              ...doc.data()
+            };
+          });
+          return tasks;
+        });
+      dispatch(loadTasksById(tasksById));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const syncUserTasks = userId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('tasks', ['assignedTo', 'array-contains', userId])
+        .onSnapshot(async snapshot => {
+          const changes = await snapshot.docChanges();
+          if (snapshot.size === changes.length || changes.length > 1) {
+            const tasksById = {};
+            snapshot.forEach(doc => {
+            tasksById[doc.id] = {
+              taskId: doc.id,
+              ...doc.data()
+            };
+          });
+            await dispatch(loadTasksById(tasksById));
+            await dispatch(loadAssignedTasks(Object.keys(tasksById)));
+          } else {
+            changes.forEach(async change => {
+              const [taskId, taskData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              if (changeType === 'added') {
+                if (taskId in getState().tasksById) return;
+                dispatch(addTask({ taskId, taskData }));
+                dispatch(addAssignedTask(taskId));
+                console.log('task added');
+              } else if (changeType === 'removed') {
+                const { listId } = taskData;
+                if (!change.doc.exists) {
+                  dispatch(removeTask({ taskId, listId }));
+                }
+                dispatch(removeAssignedTask(taskId));
+              } else {
+                dispatch(updateTask({ taskId, taskData }));
+                console.log(`Updated Task: ${taskData.name}`);
+              }
+            });
+          }
+        });
+        return subscription;
     } catch (error) {
       console.log(error);
     }

@@ -15,3 +15,6 @@ export const REMOVE_TAG = 'REMOVE_TAG';
 export const UPDATE_TAG = 'UPDATE_TAG';
 export const CREATE_TAG = 'CREATE_TAG';
 export const DELETE_TAG = 'DELETE_TAG';
+export const LOAD_ASSIGNED_TASKS = 'LOAD_ASSIGNED_TASKS';
+export const ADD_ASSIGNED_TASK = 'ADD_ASSIGNED_TASK';
+export const REMOVE_ASSIGNED_TASK = 'REMOVE_ASSIGNED_TASK';

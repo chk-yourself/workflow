@@ -26,7 +26,7 @@ export default class Tasks extends Component {
   };
 
   render() {
-    const { listId, tasks, onTaskClick, folderId, view } = this.props;
+    const { listId, projectId, dueDate, tasks, onTaskClick, folderId, view } = this.props;
     const isBoardView = view === 'board';
 
     const inner = tasks.map((task, taskIndex) => {
@@ -51,7 +51,7 @@ export default class Tasks extends Component {
     });
 
     return (
-      <Droppable droppableId={listId || folderId} type={droppableTypes.TASK}>
+      <Droppable droppableId={listId || folderId || projectId || dueDate } type={droppableTypes.TASK}>
         {(provided, snapshot) =>
           isBoardView ? (
             <div

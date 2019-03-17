@@ -25,3 +25,63 @@
     }
   }
 }
+
+.user-tasks__title {
+  display: inline-block;
+  width: calc(100% - 36px);
+}
+
+.user-tasks__settings-wrapper {
+  display: inline-block;
+  z-index: 5;
+}
+
+.user-tasks__settings {
+  background-color: $white;
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 200px;
+  line-height: 1.15;
+  @include box-shadow(2);
+}
+
+.view__options {
+  margin-top: 4px;
+}
+
+.user-tasks__settings-item {
+  text-transform: capitalize;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $grey-800;
+}
+
+.view__radio {
+  vertical-align: middle;
+  line-height: 14px;
+  display: inline-block;
+  position: relative;
+  top: -1px;
+  cursor: pointer;
+}
+
+.view__radio-label {
+  position: relative;
+  display: inline-block;
+  padding: 8px;
+  width: calc(100% - 12px);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+  vertical-align: middle;
+  .feather {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 8px;
+    color: $primary;
+  }
+}
+

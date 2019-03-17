@@ -132,6 +132,12 @@ class Firebase {
       email,
       projectIds,
       photoURL,
+      settings: {
+        tasks: {
+          view: 'all',
+          sortBy: 'folder'
+        }
+      },
       folderIds: [0, 1, 2, 3]
     });
 

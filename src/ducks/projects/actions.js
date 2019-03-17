@@ -200,7 +200,7 @@ export const syncUserProjects = userId => {
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
 
-          if (changes.length > 1) {
+          if (snapshot.size === changes.length || changes.length > 1) {
             const projectsById = {};
             changes.forEach(change => {
               projectsById[change.doc.id] = {
