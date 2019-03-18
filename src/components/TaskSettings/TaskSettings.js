@@ -34,7 +34,7 @@ const TaskSettings = ({ onToggle, isOpen, filters, sortRule, selectFilter, selec
             {filter.filter}
             <Menu className={`${filter.filter}__options`}>
             {filter.options.map(filterOption => (
-              <MenuItem key={filterOption.value} className={`${filter.filter}__option`}>
+              <MenuItem key={filterOption.value} className={`filter__option ${filter.filter}__option`}>
               <Radio
               name={filter.filter}
               id={filterOption.value}
@@ -43,8 +43,8 @@ const TaskSettings = ({ onToggle, isOpen, filters, sortRule, selectFilter, selec
               label={filterOption.name}
               onChange={filter.onChange}
               classes={{
-                radio: `${filter.filter}__radio`,
-                label: `${filter.filter}__radio-label`
+                radio: `filter__radio ${filter.filter}__radio`,
+                label: `filter__label ${filter.filter}__label`
               }}
             />
             </MenuItem>
