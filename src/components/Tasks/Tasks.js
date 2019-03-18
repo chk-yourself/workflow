@@ -51,7 +51,7 @@ export default class Tasks extends Component {
     });
 
     return (
-      <Droppable droppableId={listId || folderId || projectId || dueDate } type={droppableTypes.TASK}>
+      <Droppable droppableId={listId || folderId || projectId || ''+dueDate } type={droppableTypes.TASK}>
         {(provided, snapshot) =>
           isBoardView ? (
             <div

@@ -72,6 +72,7 @@ class Firebase {
 
   // Utility API
 
+
   getTimestamp = () => app.firestore.FieldValue.serverTimestamp();
 
   addToArray = value => app.firestore.FieldValue.arrayUnion(value);
@@ -487,6 +488,7 @@ class Firebase {
     listId,
     listName,
     userId,
+    dueDate = null,
     folderId = null
   }) => {
     const isFolderItem = folderId && userId;
@@ -501,7 +503,6 @@ class Firebase {
         subtaskIds: [],
         isCompleted: false,
         completedAt: null,
-        dueDate: null,
         notes: '',
         assignedTo: isFolderItem ? [userId] : [],
         folders: isFolderItem
@@ -510,6 +511,7 @@ class Firebase {
             }
           : {},
         ownerId: isFolderItem ? userId : null,
+        dueDate,
         listId,
         listName,
         projectId,

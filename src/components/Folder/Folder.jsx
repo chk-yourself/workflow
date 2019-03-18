@@ -13,6 +13,13 @@ import { ExpansionPanel } from '../ExpansionPanel';
 import './Folder.scss';
 
 class Folder extends Component {
+  static defaultProps = {
+    userPermissions: {
+      canChangeName: false,
+      canAddTasks: true
+    }
+  };
+
   state = {
     name: this.props.name,
     isExpanded: this.props.taskIds.length > 0
@@ -26,13 +33,23 @@ class Folder extends Component {
   };
 
   render() {
-    const { tasks, onTaskClick, projectId, projectName, folderId, index, isRestricted, dueDate } = this.props;
+    const {
+      tasks,
+      onTaskClick,
+      projectId,
+      projectName,
+      folderId,
+      index,
+      dueDate,
+      userPermissions
+    } = this.props;
     const { name, isExpanded } = this.state;
+    console.log({ folderId, projectId, dueDate });
     return (
       <Draggable
-        draggableId={folderId || projectId || dueDate}
+        draggableId={folderId || projectId || `${dueDate}`}
         index={index}
-        isDragDisabled={isRestricted}
+        isDragDisabled={!userPermissions.canChangeName}
       >
         {(provided, snapshot) => (
           <>
@@ -63,9 +80,9 @@ class Folder extends Component {
                       type="text"
                       value={name}
                       onChange={this.onChange}
-                      required={!isRestricted}
+                      required={userPermissions.canChangeName}
                       hideLabel
-                      isReadOnly={isRestricted}
+                      isReadOnly={!userPermissions.canChangeName}
                       onBlur={this.onBlur}
                       onClick={this.toggleFolder}
                     />
@@ -101,14 +118,16 @@ class Folder extends Component {
                   view="list"
                 />
               </div>
-              <TaskComposer
-                listId={null}
-                listName={null}
-                dueDate={dueDate}
-                projectId={projectId}
-                projectName={projectName}
-                folderId={folderId}
-              />
+              {userPermissions.canAddTasks && (
+                <TaskComposer
+                  listId={null}
+                  listName={null}
+                  dueDate={dueDate}
+                  projectId={projectId}
+                  projectName={projectName}
+                  folderId={folderId}
+                />
+              )}
             </ExpansionPanel>
           </>
         )}

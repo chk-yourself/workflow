@@ -194,7 +194,9 @@ class UserTasks extends Component {
                 >
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${taskSettings.sortBy}-${taskGroup.folderId || taskGroup.projectId || taskGroup.dueDate}`}
+                      key={`${taskSettings.sortBy}-${
+                        taskGroup[taskSettings.sortBy] || taskGroup[`${taskSettings.sortBy}Id`]
+                      }`}
                       userId={userId}
                       folderId={taskGroup.folderId}
                       projectId={taskGroup.projectId}
@@ -204,7 +206,7 @@ class UserTasks extends Component {
                       name={taskGroup.name}
                       taskIds={taskGroup.taskIds}
                       onTaskClick={this.handleTaskClick}
-                      isRestricted={taskGroup.isDefault}
+                      userPermissions={taskGroup.userPermissions}
                     />
                   ))}
                   {provided.placeholder}

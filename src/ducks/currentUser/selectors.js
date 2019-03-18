@@ -47,44 +47,52 @@ export const getSortedFilteredTaskGroups = state => {
         const { projectId, projectName, isCompleted } = tasksById[taskId];
         if (view === 'active' && isCompleted) return tasksByProject;
         if (view === 'completed' && !isCompleted) return tasksByProject;
-        if (projectId && projectId in tasksByProject) {
-          tasksByProject[projectId] = {
-            ...tasksByProject[projectId],
-            taskIds: [...tasksByProject[projectId].taskIds, taskId]
-          }
-        } else if (projectId) {
-          tasksByProject[projectId] = {
-            taskIds: [taskId],
-            projectId: projectId,
-            name: projectName,
-            projectName: projectName,
-            dueDate: null,
-            folderId: null
-          }
-        }
-        else {
-          if ('noProject' in tasksByProject) {
-            tasksByProject.noProject = {
-              ...tasksByProject.noProject,
-              taskIds: [...tasksByProject.noProject.taskIds, taskId]
+        if (projectId) {
+          if (!(projectId in tasksByProject)) {
+            tasksByProject[projectId] = {
+              taskIds: [],
+              projectId,
+              name: projectName,
+              projectName,
+              dueDate: null,
+              folderId: null,
+              userPermissions: {
+                canChangeName: false,
+                canAddTasks: false
+              }
             };
-          } else {
+          }
+          tasksByProject[projectId].taskIds = [
+            ...tasksByProject[projectId].taskIds,
+            taskId
+          ];
+        } else {
+          if (!('noProject' in tasksByProject)) {
             tasksByProject.noProject = {
               projectId: null,
               projectName: null,
               dueDate: null,
               name: 'No project',
               folderId: '0',
-              isDefault: true,
-              taskIds: [taskId]
-            }
+              taskIds: [],
+              userPermissions: {
+                canChangeName: false,
+                canAddTasks: true
+              }
+            };
           }
+          tasksByProject.noProject.taskIds = [
+            ...tasksByProject.noProject.taskIds,
+            taskId
+          ];
         }
         return tasksByProject;
       }, {});
       const { noProject, ...restOfProjectTasks } = projectTasks;
       return [
-        ...Object.keys(restOfProjectTasks).map(projectId => restOfProjectTasks[projectId]),
+        ...Object.keys(restOfProjectTasks).map(
+          projectId => restOfProjectTasks[projectId]
+        ),
         ...(noProject ? [noProject] : [])
       ];
     }
@@ -96,15 +104,23 @@ export const getSortedFilteredTaskGroups = state => {
         const { taskIds } = folders[folderId];
         return {
           ...folders[folderId],
-          taskIds: view === 'active' ? taskIds.filter(taskId => !tasksById[taskId].isCompleted) :
-          view === 'completed' ? taskIds.filter(taskId => tasksById[taskId].isCompleted) : taskIds,
+          taskIds:
+            view === 'active'
+              ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
+              : view === 'completed'
+              ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
+              : taskIds,
           projectId: null,
           projectName: null,
           dueDate: null,
-          isDefault: folderId === '0' ||
-            folderId === '1' ||
-            folderId === '2' ||
-            folderId === '3'
+          userPermissions: {
+            canChangeName:
+              folderId !== '0' &&
+              folderId !== '1' &&
+              folderId !== '2' &&
+              folderId !== '3',
+            canAddTasks: true
+          }
         };
       });
     }
@@ -117,64 +133,78 @@ export const getSortedFilteredTaskGroups = state => {
         if (view === 'active' && isCompleted) return tasksByDueDate;
         if (view === 'completed' && !isCompleted) return tasksByDueDate;
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
-        if (dueDate && +dueDate.toDate() in tasksByDueDate) {
-          tasksByDueDate[+dueDate.toDate()] = {
-            ...tasksByDueDate[dueDate],
-            taskIds: [...tasksByDueDate[dueDate].taskIds, taskId]
-          }
-        } else if (dueDate && !isPastDue) {
-          tasksByDueDate[+dueDate.toDate()] = {
-            taskIds: [taskId],
-            projectId: null,
-            name: toDateString(dueDate.toDate(), {
+        if (dueDate && !isPastDue) {
+          if (!(`${dueDate.toMillis()}` in tasksByDueDate)) {
+            tasksByDueDate[dueDate.toMillis()] = {
+              taskIds: [],
+              projectId: null,
+              name: toDateString(dueDate.toDate(), {
                 useRelative: true,
                 format: { month: 'short', day: 'numeric' }
               }),
-            projectName: null,
-            folderId: null,
-            dueDate: +dueDate.toDate()
+              projectName: null,
+              folderId: '0',
+              dueDate: dueDate.toMillis(),
+              userPermissions: {
+                canChangeName: false,
+                canAddTasks: true
+              }
+            };
+            dueDates = [...dueDates, dueDate.toMillis()];
           }
-          dueDates = [...dueDates, +dueDate.toDate()];
-        } else if (dueDate && isPastDue && 'pastDue' in tasksByDueDate) {
-          tasksByDueDate.pastDue = {
-            ...tasksByDueDate.pastDue,
-            taskIds: [...tasksByDueDate.pastDue.taskIds, taskId]
-          }
+          tasksByDueDate[dueDate.toMillis()].taskIds = [
+            ...tasksByDueDate[dueDate.toMillis()].taskIds,
+            taskId
+          ];
         } else if (dueDate && isPastDue) {
-          tasksByDueDate.pastDue = {
-            taskIds: [taskId],
-            projectId: null,
-            name: 'Past Due',
-            projectName: null,
-            folderId: null,
-            dueDate: 'pastDue',
-            isDefault: true
-        }
-        } else if (!dueDate && 'noDueDate' in tasksByDueDate) {
-          tasksByDueDate.noDueDate = {
-            ...tasksByDueDate.noDueDate,
-            taskIds: [...tasksByDueDate.noDueDate.taskIds, taskId]
+          if (!('pastDue' in tasksByDueDate)) {
+            tasksByDueDate.pastDue = {
+              taskIds: [],
+              projectId: null,
+              name: 'Past Due',
+              projectName: null,
+              folderId: null,
+              dueDate: 'pastDue',
+              userPermissions: {
+                canChangeName: false,
+                canAddTasks: false
+              }
+            };
           }
-      } else {
-        tasksByDueDate.noDueDate = {
-          taskIds: [taskId],
-          projectId: null,
-          name: 'No Due Date',
-          projectName: null,
-          folderId: '0',
-          dueDate: null,
-          isDefault: true
-      }
-    }
+          tasksByDueDate.pastDue.taskIds = [
+            ...tasksByDueDate.pastDue.taskIds,
+            taskId
+          ];
+        } else {
+          if (!('noDueDate' in tasksByDueDate)) {
+            tasksByDueDate.noDueDate = {
+              taskIds: [],
+              projectId: null,
+              name: 'No Due Date',
+              projectName: null,
+              folderId: '0',
+              dueDate: null,
+              userPermissions: {
+                canChangeName: false,
+                canAddTasks: true
+              }
+            };
+          }
+          tasksByDueDate.noDueDate.taskIds = [
+            ...tasksByDueDate.noDueDate.taskIds,
+            taskId
+          ];
+        }
+        console.log(tasksByDueDate);
         return tasksByDueDate;
       }, {});
       const { pastDue, noDueDate, ...restOfDueTasks } = dueTasks;
       const sortedDueDates = [...dueDates].sort((a, b) => a - b);
-        return [
-          ...(pastDue ? [pastDue] : []),
-          ...sortedDueDates.map(date => restOfDueTasks[date]),
-          ...(noDueDate ? [noDueDate] : [])
-        ];
+      return [
+        ...(pastDue ? [pastDue] : []),
+        ...sortedDueDates.map(date => restOfDueTasks[date]),
+        ...(noDueDate ? [noDueDate] : [])
+      ];
     }
     default: {
       return [];
