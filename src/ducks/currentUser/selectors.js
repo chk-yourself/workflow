@@ -34,16 +34,19 @@ export const getFolderIds = state => {
   return currentUser.folderIds;
 };
 
-export const getFoldersArray = state => {
+export const getSortedFilteredTaskGroups = state => {
   const { currentUser } = state;
   if (!currentUser) return [];
-  const { settings, folders, assignedTasks } = currentUser;
-  switch (settings.tasks.sortBy) {
+  const { settings, assignedTasks } = currentUser;
+  const { sortBy, view } = settings.tasks;
+  switch (sortBy) {
     case 'project': {
       const { tasksById } = state;
       if (!assignedTasks || !tasksById) return [];
       const projectTasks = assignedTasks.reduce((tasksByProject, taskId) => {
-        const { projectId, projectName } = tasksById[taskId];
+        const { projectId, projectName, isCompleted } = tasksById[taskId];
+        if (view === 'active' && isCompleted) return tasksByProject;
+        if (view === 'completed' && !isCompleted) return tasksByProject;
         if (projectId && projectId in tasksByProject) {
           tasksByProject[projectId] = {
             ...tasksByProject[projectId],
@@ -59,23 +62,42 @@ export const getFoldersArray = state => {
             folderId: null
           }
         }
+        else {
+          if ('noProject' in tasksByProject) {
+            tasksByProject.noProject = {
+              ...tasksByProject.noProject,
+              taskIds: [...tasksByProject.noProject.taskIds, taskId]
+            };
+          } else {
+            tasksByProject.noProject = {
+              projectId: null,
+              projectName: null,
+              dueDate: null,
+              name: 'No project',
+              folderId: '0',
+              isDefault: true,
+              taskIds: [taskId]
+            }
+          }
+        }
         return tasksByProject;
       }, {});
-      return [...Object.keys(projectTasks).map(projectId => projectTasks[projectId]), {
-        projectId: null,
-        projectName: null,
-        dueDate: null,
-        name: 'No project',
-        folderId: '0',
-        taskIds: assignedTasks.filter(taskId => tasksById[taskId].projectId === null),
-        isDefault: true
-      }];
+      const { noProject, ...restOfProjectTasks } = projectTasks;
+      return [
+        ...Object.keys(restOfProjectTasks).map(projectId => restOfProjectTasks[projectId]),
+        ...(noProject ? [noProject] : [])
+      ];
     }
     case 'folder': {
+      const { folders } = currentUser;
       if (!folders) return [];
+      const { tasksById } = state;
       return Object.keys(folders).map(folderId => {
+        const { taskIds } = folders[folderId];
         return {
           ...folders[folderId],
+          taskIds: view === 'active' ? taskIds.filter(taskId => !tasksById[taskId].isCompleted) :
+          view === 'completed' ? taskIds.filter(taskId => tasksById[taskId].isCompleted) : taskIds,
           projectId: null,
           projectName: null,
           dueDate: null,
@@ -91,7 +113,9 @@ export const getFoldersArray = state => {
       if (!assignedTasks || !tasksById) return [];
       let dueDates = [];
       const dueTasks = assignedTasks.reduce((tasksByDueDate, taskId) => {
-        const { dueDate } = tasksById[taskId];
+        const { dueDate, isCompleted } = tasksById[taskId];
+        if (view === 'active' && isCompleted) return tasksByDueDate;
+        if (view === 'completed' && !isCompleted) return tasksByDueDate;
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
         if (dueDate && +dueDate.toDate() in tasksByDueDate) {
           tasksByDueDate[+dueDate.toDate()] = {
@@ -144,32 +168,13 @@ export const getFoldersArray = state => {
     }
         return tasksByDueDate;
       }, {});
-      console.log(dueTasks);
-      let emptyArr = [];
       const { pastDue, noDueDate, ...restOfDueTasks } = dueTasks;
-      console.log(dueDates);
-      dueDates.sort((a, b) => a - b);
-      if (pastDue && noDueDate && dueDates.length > 0) {
+      const sortedDueDates = [...dueDates].sort((a, b) => a - b);
         return [
-          pastDue,
-          ...dueDates.map(date => restOfDueTasks[date]),
-          noDueDate
+          ...(pastDue ? [pastDue] : []),
+          ...sortedDueDates.map(date => restOfDueTasks[date]),
+          ...(noDueDate ? [noDueDate] : [])
         ];
-      } else if (pastDue && !noDueDate && dueDates.length > 0) {
-        return [
-          pastDue,
-          ...dueDates.map(date => restOfDueTasks[date])
-        ];
-      } else if (noDueDate && !pastDue && dueDates.length > 0) {
-        return [
-          ...dueDates.map(date => restOfDueTasks[date]),
-          noDueDate
-        ];
-      } else if (!pastDue && !noDueDate && dueDates.length > 0) {
-        return [...dueDates.map(date => restOfDueTasks[date])];
-      } else {
-        return [];
-      }
     }
     default: {
       return [];

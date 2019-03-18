@@ -22,8 +22,8 @@ class UserTasks extends Component {
   state = {
     isLoading: true,
     isTaskEditorOpen: false,
-    isTaskSettingsOpen: false,
-    isSortRuleDropdownActive: false
+    isTaskSettingsMenuVisible: false,
+    isSortRuleDropdownVisible: false
   };
 
   async componentDidMount() {
@@ -130,28 +130,28 @@ class UserTasks extends Component {
     this.toggleSortRuleDropdown();
   };
 
-  toggleTaskSettings = () => {
+  toggleTaskSettingsMenu = () => {
     this.setState(prevState => ({
-      isTaskSettingsOpen: !prevState.isTaskSettingsOpen
+      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
+      isSortRuleDropdownVisible: prevState.isSortRuleDropdownVisible && prevState.isTaskSettingsMenuVisible ? !prevState.isSortRuleDropdownVisible : prevState.isSortRuleDropdownVisible
     }));
   };
 
   toggleSortRuleDropdown = () => {
     this.setState(prevState => ({
-      isSortRuleDropdownActive: !prevState.isSortRuleDropdownActive
+      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
     }));
   };
 
   render() {
-    const { userId, selectedTaskId, tasksById, folders, taskSettings } = this.props;
-    const { isLoading, isTaskEditorOpen, isSortRuleDropdownActive, isTaskSettingsOpen } = this.state;
-    console.log(folders);
+    const { userId, selectedTaskId, tasksById, taskGroups, taskSettings } = this.props;
+    const { isLoading, isTaskEditorOpen, isSortRuleDropdownVisible, isTaskSettingsMenuVisible } = this.state;
     if (isLoading) return null;
     return (
       <Main title="All Tasks" classes={{title: 'user-tasks__title'}}>
         <TaskSettings
-          isOpen={isTaskSettingsOpen}
-          onToggle={this.toggleTaskSettings}
+          isVisible={isTaskSettingsMenuVisible}
+          onToggle={this.toggleTaskSettingsMenu}
           classes={{
             wrapper: 'user-tasks__settings-wrapper',
             popover: 'user-tasks__settings',
@@ -173,7 +173,7 @@ class UserTasks extends Component {
               options: [{value: "project", name: "Project"}, {value: "folder", name: "Folder"}, {value: "dueDate", name: "Due Date"}],
               value: taskSettings.sortBy,
               onChange: this.selectSortRule,
-              isDropdownActive: isSortRuleDropdownActive,
+              isDropdownVisible: isSortRuleDropdownVisible,
               toggleDropdown: this.toggleSortRuleDropdown
             }} />
         <div
@@ -192,19 +192,19 @@ class UserTasks extends Component {
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  {folders.map((folder, i) => (
+                  {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${taskSettings.sortBy}-${folder.folderId || folder.projectId || folder.dueDate}`}
+                      key={`${taskSettings.sortBy}-${taskGroup.folderId || taskGroup.projectId || taskGroup.dueDate}`}
                       userId={userId}
-                      folderId={folder.folderId}
-                      projectId={folder.projectId}
-                      projectName={folder.projectName}
-                      dueDate={folder.dueDate}
+                      folderId={taskGroup.folderId}
+                      projectId={taskGroup.projectId}
+                      projectName={taskGroup.projectName}
+                      dueDate={taskGroup.dueDate}
                       index={i}
-                      name={folder.name}
-                      taskIds={folder.taskIds}
+                      name={taskGroup.name}
+                      taskIds={taskGroup.taskIds}
                       onTaskClick={this.handleTaskClick}
-                      isRestricted={folder.isDefault}
+                      isRestricted={taskGroup.isDefault}
                     />
                   ))}
                   {provided.placeholder}
@@ -231,7 +231,7 @@ const mapStateToProps = state => {
   return {
     currentUserId: currentUserSelectors.getCurrentUserId(state),
     foldersById: currentUserSelectors.getFolders(state),
-    folders: currentUserSelectors.getFoldersArray(state),
+    taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state),
     folderIds: currentUserSelectors.getFolderIds(state),
     tasksById: taskSelectors.getTasksById(state),
     selectedTaskId: getSelectedTaskId(state),

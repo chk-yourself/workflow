@@ -8,9 +8,9 @@ import { Button } from '../Button';
 import { Menu, MenuItem } from '../Menu';
 import './TaskSettings.scss';
 
-const TaskSettings = ({ onToggle, isOpen, filters, sortRule, selectFilter, selectSortRule, classes }) => (
+const TaskSettings = ({ onToggle, isVisible, filters, sortRule, selectFilter, selectSortRule, classes }) => (
       <PopoverWrapper
-        isActive={isOpen}
+        isActive={isVisible}
         onOutsideClick={onToggle}
         classes={{
           wrapper: `task-settings__wrapper ${classes.wrapper || ''}`,
@@ -58,7 +58,7 @@ const TaskSettings = ({ onToggle, isOpen, filters, sortRule, selectFilter, selec
         <MenuItem className={classes.item || ''}>
           Sort by
           <PopoverWrapper
-            isActive={sortRule.isDropdownActive}
+            isActive={sortRule.isDropdownVisible}
             onButtonClick={sortRule.toggleDropdown}
             onOutsideClick={sortRule.toggleDropdown}
             alignInner="left"
