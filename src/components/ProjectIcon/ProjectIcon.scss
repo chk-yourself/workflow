@@ -6,8 +6,11 @@
   border-radius: 4px;
   display: inline-block;
   vertical-align: middle;
+  border: 1px solid transparent;
   &--default {
-    background-color: $grey-500;
+    background-color: $grey-100;
+    color: $grey-800;
+    border-color: $grey-400;
   }
   &--blue {
     background-color: $blue;

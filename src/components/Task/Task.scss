@@ -29,9 +29,9 @@
     width: calc(100% - 38px);
   }
   .task__avatar {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
+    width: 19px;
+    height: 19px;
+    line-height: 18px;
     &:not(:last-child) {
       margin-right: 4px;
     }
@@ -147,4 +147,8 @@
 
 .task__members-wrapper {
   padding: 0;
+}
+
+.task__tags {
+  height: 19px;
 }

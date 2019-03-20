@@ -208,10 +208,7 @@ class Task extends Component {
           />
           <div className="task__badges task__badges--btm">
             {!selectedProjectId && projectId && (
-              <>
-                <ProjectBadge projectId={projectId} />
-                <ListBadge name={listName} />
-              </>
+              <ProjectBadge projectId={projectId} />
             )}
           </div>
         </div>

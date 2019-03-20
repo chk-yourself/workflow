@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { ProjectGrid, ProjectTile } from './ProjectGrid';
+import ProjectGrid from './ProjectGrid';
+import ProjectTile from './ProjectTile';
 import './ProjectGrid.scss';
 import { withSubscription } from '../withSubscription';
 import { projectActions, projectSelectors } from '../../ducks/projects';
