@@ -27,21 +27,16 @@ class UserTasks extends Component {
   };
 
   async componentDidMount() {
-    const {
-      userId,
-      syncUserTasks,
-      syncFolders
-    } = this.props;
+    const { userId, syncUserTasks, syncFolders } = this.props;
 
-    await Promise.all([
-      syncUserTasks(userId),
-      syncFolders(userId)
-    ]).then(listeners => {
-      this.unsubscribe = listeners;
-      this.setState({
-        isLoading: false
-      });
-    });
+    await Promise.all([syncUserTasks(userId), syncFolders(userId)]).then(
+      listeners => {
+        this.unsubscribe = listeners;
+        this.setState({
+          isLoading: false
+        });
+      }
+    );
   }
 
   componentWillUnmount() {
@@ -133,7 +128,11 @@ class UserTasks extends Component {
   toggleTaskSettingsMenu = () => {
     this.setState(prevState => ({
       isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
-      isSortRuleDropdownVisible: prevState.isSortRuleDropdownVisible && prevState.isTaskSettingsMenuVisible ? !prevState.isSortRuleDropdownVisible : prevState.isSortRuleDropdownVisible
+      isSortRuleDropdownVisible:
+        prevState.isSortRuleDropdownVisible &&
+        prevState.isTaskSettingsMenuVisible
+          ? !prevState.isSortRuleDropdownVisible
+          : prevState.isSortRuleDropdownVisible
     }));
   };
 
@@ -144,43 +143,31 @@ class UserTasks extends Component {
   };
 
   render() {
-    const { userId, selectedTaskId, tasksById, taskGroups, taskSettings } = this.props;
-    const { isLoading, isTaskEditorOpen, isSortRuleDropdownVisible, isTaskSettingsMenuVisible } = this.state;
+    const {
+      userId,
+      selectedTaskId,
+      tasksById,
+      taskGroups,
+      taskSettings
+    } = this.props;
+    const {
+      isLoading,
+      isTaskEditorOpen,
+      isSortRuleDropdownVisible,
+      isTaskSettingsMenuVisible
+    } = this.state;
     if (isLoading) return null;
     return (
-      <Main title="All Tasks" classes={{title: 'user-tasks__title'}}>
-        <TaskSettings
-          isVisible={isTaskSettingsMenuVisible}
-          onToggle={this.toggleTaskSettingsMenu}
-          classes={{
-            wrapper: 'user-tasks__settings-wrapper',
-            popover: 'user-tasks__settings',
-            item: 'user-tasks__settings-item'
-          }}
-          filters={[
-              {
-                filter: 'view',
-                options: [
-                  {value: 'active', name: 'Active Tasks'},
-                  {value: 'completed', name: 'Completed Tasks'},
-                  {value: 'all', name: 'All Tasks'}
-                  ],
-                value: taskSettings.view,
-                onChange: this.selectViewFilter
-              }
-            ]}
-            sortRule={{
-              options: [{value: "project", name: "Project"}, {value: "folder", name: "Folder"}, {value: "dueDate", name: "Due Date"}],
-              value: taskSettings.sortBy,
-              onChange: this.selectSortRule,
-              isDropdownVisible: isSortRuleDropdownVisible,
-              toggleDropdown: this.toggleSortRuleDropdown
-            }} />
-        <div
-          className={`user-tasks__wrapper ${
+      <Main
+        title="All Tasks"
+        classes={{
+          main: `user-tasks__container ${
             isTaskEditorOpen ? 'show-task-editor' : ''
-          }`}
-        >
+          }`,
+          title: 'user-tasks__title'
+        }}
+      >
+        <div className="user-tasks__wrapper">
           <DragDropContext
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}
@@ -192,11 +179,43 @@ class UserTasks extends Component {
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
+                  <TaskSettings
+                    isVisible={isTaskSettingsMenuVisible}
+                    onToggle={this.toggleTaskSettingsMenu}
+                    classes={{
+                      wrapper: 'user-tasks__settings-wrapper',
+                      popover: 'user-tasks__settings',
+                      item: 'user-tasks__settings-item'
+                    }}
+                    filters={[
+                      {
+                        filter: 'view',
+                        options: [
+                          { value: 'active', name: 'Active Tasks' },
+                          { value: 'completed', name: 'Completed Tasks' },
+                          { value: 'all', name: 'All Tasks' }
+                        ],
+                        value: taskSettings.view,
+                        onChange: this.selectViewFilter
+                      }
+                    ]}
+                    sortRule={{
+                      options: [
+                        { value: 'project', name: 'Project' },
+                        { value: 'folder', name: 'Folder' },
+                        { value: 'dueDate', name: 'Due Date' }
+                      ],
+                      value: taskSettings.sortBy,
+                      onChange: this.selectSortRule,
+                      isDropdownVisible: isSortRuleDropdownVisible,
+                      toggleDropdown: this.toggleSortRuleDropdown
+                    }}
+                  />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${taskSettings.sortBy}-${
-                        taskGroup[taskSettings.sortBy] || taskGroup[`${taskSettings.sortBy}Id`]
-                      }`}
+                      key={`${taskSettings.sortBy}-${taskGroup[
+                        taskSettings.sortBy
+                      ] || taskGroup[`${taskSettings.sortBy}Id`]}`}
                       userId={userId}
                       folderId={taskGroup.folderId}
                       projectId={taskGroup.projectId}

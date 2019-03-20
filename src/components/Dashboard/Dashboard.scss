@@ -7,6 +7,8 @@
   flex-flow: row wrap;
   display: flex;
   max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .dashboard__header {
@@ -18,16 +20,24 @@
 }
 
 .dashboard-panel__header {
-  font-size: 13px;
-  margin: 0;
-  font-weight: 400;
-  text-transform: uppercase;
-  color: $grey-900;
+  display: flex;
   padding: 8px;
-  letter-spacing: 0.01em;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
   @include md {
     padding: 8px 16px;
   }
+}
+
+.dashboard-panel__name {
+  font-size: 12px;
+  margin: 0;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: $grey-700;
+  padding: 0;
+  letter-spacing: 0.02em;
 }
 
 .dashboard-panel__content {
@@ -67,4 +77,13 @@
   vertical-align: middle;
   position: relative;
   top: -1px;
+  color: $grey-700;
+}
+
+.dashboard-panel__link {
+  text-decoration: none;
+  color: $primary;
+  text-transform: none;
+  font-size: 12px;
+  font-weight: 500;
 }

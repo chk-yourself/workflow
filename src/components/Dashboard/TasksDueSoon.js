@@ -59,10 +59,15 @@ class TasksDueSoon extends Component {
 
   render() {
     const { isFetching } = this.state;
-    const { tasksDueSoon, onTaskClick } = this.props;
+    const { tasksDueSoon, onTaskClick, currentUserId } = this.props;
     if (isFetching) return null;
     return (
-      <DashboardPanel icon="check-square" size="md" name="Tasks Due Soon">
+      <DashboardPanel
+        icon="check-square"
+        size="md"
+        name="Tasks Due Soon"
+        link={{ path: `/0/${currentUserId}/tasks`, text: 'View all tasks' }}
+      >
         {tasksDueSoon.map((task, i) => (
           <Task
             index={i}

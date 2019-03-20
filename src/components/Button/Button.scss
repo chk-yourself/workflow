@@ -29,61 +29,78 @@ button {
 // Colors + Variants
 
 // Contained
-.primary.contained {
+.contained--primary {
   background-color: $primary;
   color: $white;
 }
 
-.secondary.contained {
+.contained--secondary {
   background-color: $secondary;
   color: $white;
 }
 
-.neutral.contained {
+.contained--neutral {
   background-color: $grey-700;
   color: $white;
 }
-.success.contained {
-  background-color: $success;
+.contained--success {
+  background-image: linear-gradient(-20deg, $success-dk 0%, 20%, $success 100%);
   color: $white;
   font-weight: 600;
 }
 
 // Outlined
-.primary.outlined {
+.outlined--primary {
   border: 1px solid $primary;
   color: $primary;
+  &:hover {
+    background-color: $primary;
+    color: $white;
+  }
 }
 
-.secondary.outlined {
+.outlined--secondary {
   border: 1px solid $secondary;
   color: $secondary;
+  &:hover {
+    background-color: $secondary;
+    color: $white;
+  }
 }
 
-.neutral.outlined {
+.outlined--neutral {
   border: 1px solid $grey-700;
   color: $grey-700;
+  &:hover {
+    background-color: $grey-700;
+    color: $white;
+  }
 }
-.success.outlined {
+.outlined--success {
   border: 1px solid $success-dk;
   color: $success-dk;
+  &:hover {
+    background-color: $success;
+    border-color: $success;
+    color: $white;
+  }
 }
 
 // Text
 
-.primary.text {
+.text--primary {
   color: $primary;
 }
 
-.secondary.text {
+.text--secondary {
   color: $secondary;
 }
 
-.neutral.text {
+.text--neutral {
   color: $grey-700;
 }
 
-.success.text {
+.text--success {
   color: $success-dk;
 }
 
