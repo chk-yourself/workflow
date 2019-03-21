@@ -8,15 +8,15 @@ import { Button } from '../Button';
 import { Menu, MenuItem } from '../Menu';
 import './TaskSettings.scss';
 
-const TaskSettings = ({ onToggle, isVisible, filters, sortRule, selectFilter, selectSortRule, classes }) => (
+const TaskSettings = ({ onToggle, onClose, isVisible, filters, sortRule, selectFilter, selectSortRule, classes }) => (
       <PopoverWrapper
         isActive={isVisible}
-        onOutsideClick={onToggle}
+        onOutsideClick={onClose}
         classes={{
           wrapper: `task-settings__wrapper ${classes.wrapper || ''}`,
           popover: `task-settings ${classes.popover || ''}`
           }}
-        alignInner="right"
+        align={{inner: "right"}}
         buttonProps={{
           size: 'sm',
           iconOnly: true,
@@ -25,7 +25,7 @@ const TaskSettings = ({ onToggle, isVisible, filters, sortRule, selectFilter, se
           onClick: onToggle
         }}
         >
-        <Button type="button" className="task-settings__btn--close" size="sm" onClick={onToggle} iconOnly>
+        <Button type="button" className="task-settings__btn--close" size="sm" onClick={onClose} iconOnly>
          <Icon name="x" />
          </Button>
         <Menu className={classes.menu || ''}>
@@ -59,9 +59,7 @@ const TaskSettings = ({ onToggle, isVisible, filters, sortRule, selectFilter, se
           Sort by
           <PopoverWrapper
             isActive={sortRule.isDropdownVisible}
-            onButtonClick={sortRule.toggleDropdown}
-            onOutsideClick={sortRule.toggleDropdown}
-            alignInner="left"
+            onOutsideClick={sortRule.hideDropdown}
             classes={{
               wrapper: 'sort-rule__dropdown-wrapper',
               popover: 'sort-rule__dropdown'
@@ -76,7 +74,8 @@ const TaskSettings = ({ onToggle, isVisible, filters, sortRule, selectFilter, se
                   {sortRule.options.find(option => option.value === sortRule.value).name}
                   <Icon name="chevron-down" />
                 </>
-              )
+              ),
+              onClick: sortRule.toggleDropdown
             }}
           >
             <Menu className="sort-options">

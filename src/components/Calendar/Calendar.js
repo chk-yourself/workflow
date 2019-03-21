@@ -41,6 +41,18 @@ export default class Calendar extends Component {
     }));
   };
 
+  closeYearsDropdown = () => {
+    this.setState({
+      isYearsDropdownActive: false
+    });
+  };
+
+  closeMonthsDropdown = () => {
+    this.setState({
+      isMonthsDropdownActive: false
+    });
+  };
+
   selectMonth = e => {
     const month = +e.target.value;
     const { onMonthClick, year } = this.props;
@@ -73,9 +85,7 @@ export default class Calendar extends Component {
         <div className="calendar__year">
           <PopoverWrapper
             isActive={isYearsDropdownActive}
-            onButtonClick={this.toggleYearsDropdown}
-            onOutsideClick={this.toggleYearsDropdown}
-            alignInner="left"
+            onOutsideClick={this.closeYearsDropdown}
             classes={{
               wrapper: 'calendar__years-dropdown-wrapper',
               popover: 'calendar__years-dropdown'
@@ -89,7 +99,8 @@ export default class Calendar extends Component {
                   {year}
                   <Icon name="chevron-down" />
                 </>
-              )
+              ),
+              onClick: this.toggleYearsDropdown
             }}
           >
             <ul className="calendar__years-list">
@@ -124,9 +135,7 @@ export default class Calendar extends Component {
         <div className="calendar__month">
           <PopoverWrapper
             isActive={isMonthsDropdownActive}
-            onButtonClick={this.toggleMonthsDropdown}
-            onOutsideClick={this.toggleMonthsDropdown}
-            alignInner="left"
+            onOutsideClick={this.closeMonthsDropdown}
             classes={{
               wrapper: 'calendar__months-dropdown-wrapper',
               popover: 'calendar__months-dropdown'
@@ -140,7 +149,8 @@ export default class Calendar extends Component {
                   {MONTHS[month].long}
                   <Icon name="chevron-down" />
                 </>
-              )
+              ),
+              onClick: this.toggleMonthsDropdown
             }}
           >
             <ul className="calendar__months-list">

@@ -39,3 +39,10 @@ export const getProjectLoadedState = (state, projectId) => {
   const { projectsById } = state;
   return projectsById[projectId].isLoaded;
 };
+
+export const getProjectLists = (state, projectId) => {
+  const { projectsById, listsById } = state;
+  if (!projectsById || !listsById || !projectId) return [];
+  const { listIds } = projectsById[projectId];
+  return listIds.map(listId => listsById[listId]);
+};

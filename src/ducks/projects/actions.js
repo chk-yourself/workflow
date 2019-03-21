@@ -56,26 +56,28 @@ export const fetchProjectsById = userId => {
   };
 };
 
-export const fetchProjectLists = async projectId => {
-  try {
-    const projectLists = await firebase.db
-      .collection('lists')
-      .where('projectId', '==', projectId)
-      .get()
-      .then(snapshot => {
-        const lists = {};
-        snapshot.forEach(doc => {
-          lists[doc.id] = {
-            listId: doc.id,
-            ...doc.data()
-          };
+export const fetchProjectLists = projectId => {
+  return async dispatch => {
+    try {
+      const projectLists = await firebase.db
+        .collection('lists')
+        .where('projectId', '==', projectId)
+        .get()
+        .then(snapshot => {
+          const lists = {};
+          snapshot.forEach(doc => {
+            lists[doc.id] = {
+              listId: doc.id,
+              ...doc.data()
+            };
+          });
+          return lists;
         });
-        return lists;
-      });
-    return projectLists;
-  } catch (error) {
-    console.log(error);
-  }
+      dispatch(loadListsById(projectLists));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 };
 
 export const fetchProjectTasks = async projectId => {
@@ -122,6 +124,8 @@ export const fetchProjectSubtasks = async projectId => {
   }
 };
 
+/*
+don't use
 export const fetchProjectContent = projectId => {
   return async dispatch => {
     try {
@@ -137,6 +141,7 @@ export const fetchProjectContent = projectId => {
     }
   };
 };
+*/
 
 export const updateProject = ({ projectId, projectData }) => {
   return {

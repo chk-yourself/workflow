@@ -1,5 +1,9 @@
 import React, { Component, createRef } from 'react';
 
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}
+
 const withOutsideClick = WrappedComponent => {
   class WithOutsideClick extends Component {
     constructor(props) {
@@ -43,6 +47,7 @@ const withOutsideClick = WrappedComponent => {
       if (!this.componentEl) {
         throw new Error('Must set component ref to prop innerRef!');
       }
+      console.log(this.componentEl.contains(e.target));
       if (
         this.componentEl.contains(e.target) ||
         (!this.componentInstance.current.onOutsideClick &&
@@ -51,12 +56,13 @@ const withOutsideClick = WrappedComponent => {
         return;
         if (this.componentInstance.current.onOutsideClick) {
           this.componentInstance.current.onOutsideClick(e);
-        }
-
-      const { onOutsideClick } = this.props;
+        } else {
+          const { onOutsideClick } = this.props;
       if (onOutsideClick) {
         onOutsideClick(e);
       }
+        }
+        e.stopPropagation();
     };
 
     render() {
@@ -69,6 +75,9 @@ const withOutsideClick = WrappedComponent => {
       );
     }
   }
+  WithOutsideClick.displayName = `WithOutsideClick(${getDisplayName(
+    WrappedComponent
+  )})`;
   return WithOutsideClick;
 };
 

@@ -9,11 +9,10 @@ export default class TaskEditorAssignMember extends Component {
     return (
       <PopoverWrapper
         classes={{
-          wrapper: "task-editor__popover-wrapper task-editor__member-search-popover-wrapper",
-          popover: "task-editor__popover task-editor__member-search-popover"
+          wrapper:
+            'task-editor__popover-wrapper task-editor__member-search-popover-wrapper',
+          popover: 'task-editor__popover task-editor__member-search-popover'
         }}
-        alignOuter="left"
-        alignInner="left"
         buttonProps={{
           size: 'md',
           iconOnly: true,

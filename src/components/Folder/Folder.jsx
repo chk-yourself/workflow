@@ -91,7 +91,7 @@ class Folder extends Component {
                         wrapper: 'folder__popover-wrapper',
                         popover: 'folder__popover'
                       }}
-                      alignInner="right"
+                      align={{ inner: 'right' }}
                       buttonProps={{
                         size: 'md',
                         iconOnly: true,

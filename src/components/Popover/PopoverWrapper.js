@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Button } from '../Button';
 import Popover from './Popover';
+import { withOutsideClick } from '../withOutsideClick';
 import './Popover.scss';
 
-export default class PopoverWrapper extends Component {
+class PopoverWrapper extends Component {
   state = {
     isActive: 'isActive' in this.props ? null : false
   };
@@ -14,37 +15,34 @@ export default class PopoverWrapper extends Component {
       popover: ''
     },
     buttonProps: {},
-    align: 'left',
+    align: {
+      outer: 'left',
+      inner: 'left'
+    },
     anchorEl: null
   };
 
-  handleOutsideClick = target => {
-    if (this.componentEl && this.componentEl.contains(target)) return;
+  onOutsideClick = e => {
     const { onOutsideClick, onPopoverClose } = this.props;
 
     if (onOutsideClick) {
-      onOutsideClick();
+      onOutsideClick(e);
     } else {
+
       this.setState({
         isActive: false
       });
-  
+
       if (onPopoverClose) {
-        onPopoverClose();
+        onPopoverClose(e);
       }
     }
   };
 
   toggleOpen = () => {
-    const { onButtonClick } = this.props;
-
-    if (onButtonClick) {
-      onButtonClick();
-    } else {
-      this.setState(prevState => ({
-        isActive: !prevState.isActive
-      }));
-    }
+    this.setState(prevState => ({
+      isActive: !prevState.isActive
+    }));
   };
 
   handleClose = e => {
@@ -58,14 +56,15 @@ export default class PopoverWrapper extends Component {
   render() {
     const {
       children,
-      alignInner,
+      align,
       onWrapperClick,
-      alignOuter,
       buttonProps,
       classes,
-      anchorEl
+      anchorEl,
+      innerRef
     } = this.props;
-    const isActive = 'isActive' in this.props ? this.props.isActive : this.state.isActive;
+    const isActive =
+      'isActive' in this.props ? this.props.isActive : this.state.isActive;
 
     let popoverWrapperStyle = null;
 
@@ -74,7 +73,7 @@ export default class PopoverWrapper extends Component {
       popoverWrapperStyle = {
         position: 'absolute',
         top: offsetTop,
-        [alignOuter]: offsetLeft
+        [align.outer || 'left']: offsetLeft
       };
     }
 
@@ -83,7 +82,7 @@ export default class PopoverWrapper extends Component {
         className={`popover-wrapper ${isActive ? 'is-active' : ''} ${
           classes.wrapper
         }`}
-        ref={el => (this.componentEl = el)}
+        ref={innerRef}
         style={popoverWrapperStyle}
         onClick={onWrapperClick}
       >
@@ -93,16 +92,16 @@ export default class PopoverWrapper extends Component {
           buttonRef={this.props.buttonRef}
           {...buttonProps}
         />
-        {isActive && (
           <Popover
-            className={`align-${alignInner} ${classes.popover}`}
+            isVisible={isActive}
+            className={`align-${align.inner || 'left'} ${classes.popover}`}
             onClick={this.handleClose}
-            onOutsideClick={this.handleOutsideClick}
           >
             {children}
           </Popover>
-        )}
       </div>
     );
   }
 }
+
+export default withOutsideClick(PopoverWrapper);

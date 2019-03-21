@@ -14,7 +14,8 @@ const Radio = ({
   hideLabel,
   label,
   onKeyDown,
-  isChecked
+  isChecked,
+  ...rest
 }) => {
   return (
     <>
@@ -32,6 +33,7 @@ const Radio = ({
         onKeyDown={onKeyDown}
         required={isRequired}
         checked={isChecked}
+        {...rest}
       />
       {!hideLabel && (
         <label htmlFor={id} className={`radio__label ${classes.label}`}>

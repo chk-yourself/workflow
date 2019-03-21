@@ -6,12 +6,33 @@ import './ProjectBadge.scss';
 import { Badge } from '../Badge';
 import { ProjectIcon } from '../ProjectIcon';
 
-const ProjectBadge = ({ projectId, name, color }) => (
-  <Link to={`/0/project/${projectId}`} className="project-badge">
-    <ProjectIcon color={color} className="project-badge__icon" />
+const ProjectBadge = ({ projectId, size, variant, name, color, classes }) => (
+  <Link
+    to={`/0/project/${projectId}`}
+    className={`project-badge project-badge--${size} ${
+      variant === 'contained'
+        ? `project-badge--contained project-badge--${color}`
+        : ''
+    } ${classes.badge || ''}`}
+  >
+    {variant === 'icon' && (
+      <ProjectIcon
+        color={color}
+        className={`project-badge__icon ${classes.icon || ''}`}
+      />
+    )}
     {name}
   </Link>
 );
+
+ProjectBadge.defaultProps = {
+  classes: {
+    badge: '',
+    icon: ''
+  },
+  variant: 'icon',
+  size: 'md'
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {

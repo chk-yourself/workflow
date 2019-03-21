@@ -26,10 +26,12 @@ import { Comment } from '../Comment';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
 import { projectSelectors } from '../../ducks/projects';
+import { listSelectors } from '../../ducks/lists';
 import { DatePicker } from '../DatePicker';
 import TaskEditorPane from './TaskEditorPane';
-import { ProjectIcon } from '../ProjectIcon';
+import { ProjectBadge } from '../ProjectBadge';
 import { getSimpleDate, toDateString, isPriorDate } from '../../utils/date';
+import { ProjectListDropdown } from '../ProjectListDropdown';
 
 const TaskEditorWrapper = ({
   view,
@@ -316,6 +318,15 @@ class TaskEditor extends Component {
     });
   };
 
+  moveToList = e => {
+    e.stopPropagation();
+    const { firebase, taskId, listsById, listId: origListId } = this.props;
+    const newListId = e.target.value;
+    const newListName = e.target.dataset.label;
+    const updatedTaskIds = [...listsById[newListId].taskIds, taskId];
+    firebase.moveTaskToList({ taskId, origListId, newListId, updatedTaskIds, newListName });
+  };
+
   componentWillUnmount() {
     this.commentObserver();
   }
@@ -337,9 +348,8 @@ class TaskEditor extends Component {
       projectId,
       completedSubtasks,
       view,
-      projectName,
       listName,
-      projectColor,
+      listId,
       isCompleted
     } = this.props;
     const {
@@ -420,15 +430,14 @@ class TaskEditor extends Component {
           {projectId && (
             <TaskEditorSection>
               <div className="task-editor__project-name">
-                <ProjectIcon
-                  color={projectColor}
-                  className="task-editor__project-icon"
+                <ProjectBadge
+                  projectId={projectId}
+                  variant="contained"
+                  classes={{badge: 'task-editor__project-badge', icon: 'task-editor__project-badge-icon'}}
                 />
-                {projectName}
               </div>
               <div className="task-editor__list-name">
-                <Icon name="chevron-right" />
-                {listName}
+                <ProjectListDropdown projectId={projectId} selectedList={{ value: listId, label: listName }} onChange={this.moveToList} />
               </div>
             </TaskEditorSection>
           )}
@@ -686,7 +695,8 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.subtaskIds
     ),
-    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId)
+    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId),
+    listsById: listSelectors.getListsById(state)
   };
 };
 

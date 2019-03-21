@@ -647,13 +647,14 @@ class Firebase {
     }
   };
 
-  moveTaskToList = ({ taskId, origListId, newListId, updatedTaskIds }) => {
+  moveTaskToList = ({ taskId, origListId, newListId, updatedTaskIds, newListName }) => {
     const batch = this.db.batch();
     const taskRef = this.getTaskDoc(taskId);
     const origListRef = this.getListDoc(origListId);
     const newListRef = this.getListDoc(newListId);
     batch.update(taskRef, {
       listId: newListId,
+      listName: newListName,
       lastUpdatedAt: this.getTimestamp()
     });
     batch.update(origListRef, {

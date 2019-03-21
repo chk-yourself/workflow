@@ -96,7 +96,7 @@ class List extends Component {
                     wrapper: 'list__popover-wrapper',
                     popover: 'list__popover'
                   }}
-                  alignInner={isBoardView ? 'left' : 'right'}
+                  align={{ inner: isBoardView ? 'left' : 'right' }}
                   buttonProps={{
                     size: 'medium',
                     iconOnly: true,
@@ -159,7 +159,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteList: ({ listId, projectId }) => dispatch(listActions.deleteList({ listId, projectId }))
+    deleteList: ({ listId, projectId }) =>
+      dispatch(listActions.deleteList({ listId, projectId }))
   };
 };
 

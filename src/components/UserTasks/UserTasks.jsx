@@ -125,7 +125,9 @@ class UserTasks extends Component {
     this.toggleSortRuleDropdown();
   };
 
-  toggleTaskSettingsMenu = () => {
+  toggleTaskSettingsMenu = e => {
+    e.stopPropagation();
+    console.log(e.type, 'toggle task settings menu');
     this.setState(prevState => ({
       isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
       isSortRuleDropdownVisible:
@@ -136,11 +138,22 @@ class UserTasks extends Component {
     }));
   };
 
-  toggleSortRuleDropdown = () => {
+  closeTaskSettingsMenu = () => {
+    this.setState({
+      isTaskSettingsMenuVisible: false,
+      isSortRuleDropdownVisible: false
+    });
+  }
+
+  toggleSortRuleDropdown = (value = null) => {
     this.setState(prevState => ({
-      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
+      isSortRuleDropdownVisible: value === null ? !prevState.isSortRuleDropdownVisible : value
     }));
   };
+
+  hideSortRuleDropdown = () => {
+    this.toggleSortRuleDropdown(false);
+  }
 
   render() {
     const {
@@ -182,6 +195,7 @@ class UserTasks extends Component {
                   <TaskSettings
                     isVisible={isTaskSettingsMenuVisible}
                     onToggle={this.toggleTaskSettingsMenu}
+                    onClose={this.closeTaskSettingsMenu}
                     classes={{
                       wrapper: 'user-tasks__settings-wrapper',
                       popover: 'user-tasks__settings',
@@ -208,7 +222,8 @@ class UserTasks extends Component {
                       value: taskSettings.sortBy,
                       onChange: this.selectSortRule,
                       isDropdownVisible: isSortRuleDropdownVisible,
-                      toggleDropdown: this.toggleSortRuleDropdown
+                      toggleDropdown: this.toggleSortRuleDropdown,
+                      hideDropdown: this.hideSortRuleDropdown
                     }}
                   />
                   {taskGroups.map((taskGroup, i) => (

@@ -1,0 +1,53 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.dropdown__menu {
+  background-color: $white;
+  @include box-shadow(2);
+  min-width: 160px;
+  border-radius: 4px;
+  padding: 8px 0;
+}
+
+.dropdown__btn--toggle {
+  padding: 8px 0 8px 8px;
+  min-height: 32px;
+  .feather {
+    margin-left: 4px;
+  }
+}
+
+.dropdown__radio {
+  display: none;
+  &:checked + .dropdown__label {
+    color: $primary;
+    &:hover {
+      color: $white;
+    }
+  }
+}
+
+.dropdown__label {
+  position: relative;
+  display: inline-block;
+  padding: 6px 8px 6px 30px;
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+  &:hover {
+    cursor: pointer;
+    background-color: $primary;
+    color: $white;
+    .feather {
+      color: $white;
+    }
+  }
+  .feather {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 8px;
+    color: $primary;
+  }
+}

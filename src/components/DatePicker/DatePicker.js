@@ -23,6 +23,13 @@ export default class DatePicker extends Component {
     dateString: toSimpleDateString(this.props.selectedDate) || ''
   };
 
+  resetCalendar = () => {
+    this.setState({
+      currentMonth: this.props.currentMonth,
+      currentYear: this.props.currentYear
+    });
+  };
+
   componentDidMount() {}
 
   selectDate = date => {
@@ -68,7 +75,7 @@ export default class DatePicker extends Component {
   };
 
   setDate = () => {
-    const { selectedDate: currentDueDate, selectDate, onClose } = this.props;
+    const { selectedDate: currentDueDate, selectDate } = this.props;
     const { selectedDate } = this.state;
     if (
       !(currentDueDate === null && selectedDate === null) &&
@@ -78,7 +85,7 @@ export default class DatePicker extends Component {
       const date = new Date(year, month, day);
       selectDate(date);
     }
-    onClose();
+    this.closeDatePicker();
   };
 
   clearDueDate = () => {
@@ -89,8 +96,14 @@ export default class DatePicker extends Component {
     }
   };
 
+  closeDatePicker = () => {
+    const { onClose } = this.props;
+    this.resetCalendar();
+    onClose();
+  }
+
   render() {
-    const { onClose, isActive, innerRef } = this.props;
+    const { isActive, innerRef } = this.props;
     const {
       today,
       selectedDate,
@@ -156,7 +169,7 @@ export default class DatePicker extends Component {
             variant="text"
             color="neutral"
             className="date-picker__btn--cancel"
-            onClick={onClose}
+            onClick={this.closeDatePicker}
           >
             Cancel
           </Button>

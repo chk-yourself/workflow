@@ -9,8 +9,7 @@ const TaskEditorMoreActions = ({ onMenuClick }) => (
       wrapper: 'task-editor__popover-wrapper',
       popover: 'task-editor__popover'
     }}
-    alignOuter="right"
-    alignInner="right"
+    align={{ outer: 'right', inner: 'right' }}
     buttonProps={{
       size: 'md',
       iconOnly: true,

@@ -22,8 +22,7 @@ class Topbar extends Component {
               wrapper: 'topbar__user-actions-wrapper',
               popover: 'topbar__user-actions'
             }}
-            alignOuter="right"
-            alignInner="right"
+            align={{ outer: 'right', inner: 'right' }}
             buttonProps={{
               size: 'sm',
               iconOnly: true,

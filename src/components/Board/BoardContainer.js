@@ -81,9 +81,8 @@ class BoardContainer extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase } = this.props;
+    const { firebase, listsById } = this.props;
     if (type === droppableTypes.TASK) {
-      const { listsById } = this.props;
       const isMovedWithinList = source.droppableId === destination.droppableId;
       const updatedTaskIds = [...listsById[destination.droppableId].taskIds];
       if (isMovedWithinList) {
@@ -93,12 +92,14 @@ class BoardContainer extends Component {
           taskIds: updatedTaskIds
         });
       } else {
+        const newListName = listsById[destination.droppableId].name;
         updatedTaskIds.splice(destination.index, 0, draggableId);
         firebase.moveTaskToList({
           taskId: draggableId,
           origListId: source.droppableId,
           newListId: destination.droppableId,
-          updatedTaskIds
+          updatedTaskIds,
+          newListName
         });
       }
     }
