@@ -4,16 +4,27 @@
 .dropdown__menu {
   background-color: $white;
   @include box-shadow(2);
-  min-width: 160px;
+  min-width: 132px;
   border-radius: 4px;
   padding: 8px 0;
+  border: 1px solid $grey-300;
 }
 
 .dropdown__btn--toggle {
-  padding: 8px 0 8px 8px;
-  min-height: 32px;
+  padding: 4px 16px 4px 4px;
+  min-height: 0;
+  position: relative;
+  text-align: left;
+  min-width: 0;
   .feather {
-    margin-left: 4px;
+    position: absolute;
+    right: 0;
+    width: 14px;
+    height: 14px;
+  }
+  &:hover,
+  &.is-active {
+    color: $primary;
   }
 }
 

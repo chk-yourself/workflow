@@ -8,14 +8,6 @@
   vertical-align: middle;
   padding: 2px 0;
   border: 1px solid transparent;
-  font-style: italic;
-  .project-badge__icon {
-    margin-right: 4px;
-    width: 9px;
-    height: 9px;
-    border-radius: 2px;
-    vertical-align: bottom;
-  }
   &--default {
     background-color: $grey-100;
     color: $grey-800;
@@ -74,10 +66,27 @@
 .project-badge--sm {
   font-size: 10px;
   line-height: 10px;
+  .project-badge__icon {
+    margin-right: 4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    vertical-align: bottom;
+  }
 }
 
 .project-badge--md {
   font-size: 13px;
+  line-height: 12px;
+  .project-badge__icon {
+    margin-right: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
 }
 
 .project-badge--contained {

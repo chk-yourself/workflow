@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dropdown } from '../Dropdown';
 import { projectSelectors, projectActions } from '../../ducks/projects';
-import './ProjectListDropdown.scss';
 
 class ProjectListDropdown extends Component {
   state = {
@@ -23,7 +22,7 @@ class ProjectListDropdown extends Component {
 
   render() {
     const { isLoadingLists } = this.state;
-    const { isActive, onToggle, onChange, lists, selectedList } = this.props;
+    const { isActive, onToggle, onChange, lists, selectedList, classes } = this.props;
     return (
       <Dropdown
         options={
@@ -35,7 +34,7 @@ class ProjectListDropdown extends Component {
         name="list"
         align={{ inner: 'right' }}
         onChange={onChange}
-        classes={{ button: 'project-list-dropdown__btn--toggle', menu: 'project-list-dropdown__menu' }}
+        classes={classes}
       />
     );
   }

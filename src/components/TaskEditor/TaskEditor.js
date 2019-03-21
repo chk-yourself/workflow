@@ -428,16 +428,17 @@ class TaskEditor extends Component {
             onFocus={this.onFocus}
           />
           {projectId && (
-            <TaskEditorSection>
+            <TaskEditorSection size="sm">
               <div className="task-editor__project-name">
                 <ProjectBadge
                   projectId={projectId}
-                  variant="contained"
+                  size="md"
+                  variant="icon"
                   classes={{badge: 'task-editor__project-badge', icon: 'task-editor__project-badge-icon'}}
                 />
               </div>
               <div className="task-editor__list-name">
-                <ProjectListDropdown projectId={projectId} selectedList={{ value: listId, label: listName }} onChange={this.moveToList} />
+                <ProjectListDropdown classes={{ button: 'task-editor__project-list-dropdown-btn--toggle', menu: 'task-editor__project-list-dropdown-menu' }} projectId={projectId} selectedList={{ value: listId, label: listName }} onChange={this.moveToList} />
               </div>
             </TaskEditorSection>
           )}

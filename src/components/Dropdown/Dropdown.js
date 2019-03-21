@@ -56,7 +56,7 @@ export default class Dropdown extends Component {
         }}
         buttonProps={{
           onClick: this.toggleDropdown,
-          className: `dropdown__btn--toggle ${classes.button || ''}`,
+          className: `dropdown__btn--toggle ${isActive ? 'is-active' : ''} ${classes.button || ''}`,
           children: (
             <>
               {selectedOption.label}

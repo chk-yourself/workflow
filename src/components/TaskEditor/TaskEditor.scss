@@ -32,6 +32,10 @@
       color: $primary;
     }
   }
+  &--sm {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .task-editor__textarea--title {
@@ -396,7 +400,6 @@
 }
 
 .task-editor__project-icon {
-  margin-right: 8px;
   vertical-align: top;
 }
 
@@ -404,15 +407,16 @@
   font-size: 12px;
   margin-left: 4px;
   margin-right: 6px;
+  height: 24px;
+  line-height: 24px;
 }
 
 .task-editor__list-name {
-  font-size: 12px;
-  .feather {
-    width: 13px;
-    height: 13px;
-    vertical-align: top;
-  }
+}
+
+.task-editor__project-badge {
+  color: $grey-800;
+  font-weight: 500;
 }
 
 .task-editor__btn--toggle-completed {
@@ -425,4 +429,12 @@
     font-size: 18px;
     margin-right: 4px;
   }
+}
+
+.task-editor__project-list-dropdown-btn--toggle {
+  font-size: 13px;
+  height: 24px;
+  padding: 0;
+  font-weight: 400;
+  color: $grey-600;
 }
