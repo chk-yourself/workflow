@@ -19,35 +19,24 @@ class HomePage extends Component {
     super(props);
     this.state = {
       isProjectComposerOpen: false,
-      isFetching: true
+      isLoading: true
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       fetchUsersById,
-      updateUser,
       userId,
       firebase,
-      fetchUserTags,
       syncUserTags
     } = this.props;
     console.log('mounted home');
-    fetchUsersById()
-      .then(() => {
-        fetchUserTags(userId).then(() => {
-          this.tagsObserver = () => syncUserTags(userId);
-          this.tagsObserver();
-        });
+
+    await Promise.all([fetchUsersById(), syncUserTags(userId)]).then(listeners => {
+      this.unsubscribe = listeners[1];
+      this.setState({
+        isLoading: false
       })
-      .then(() =>
-        this.setState({
-          isFetching: false
-        })
-      );
-    this.userObserver = firebase.getUserDoc(userId).onSnapshot(snapshot => {
-      const userData = snapshot.data();
-      updateUser({ userId, userData });
     });
   }
 
@@ -63,13 +52,12 @@ class HomePage extends Component {
   };
 
   componentWillUnmount() {
-    this.userObserver();
-    this.tagsObserver();
+    this.unsubscribe();
   }
 
   render() {
-    const { isProjectComposerOpen, isFetching } = this.state;
-    if (isFetching) return null;
+    const { isProjectComposerOpen, isLoading } = this.state;
+    if (isLoading) return null;
     const { userId, projectsById } = this.props;
     return (
       <>
@@ -132,12 +120,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateUser: ({ userId, userData }) =>
-      dispatch(userActions.updateUser({ userId, userData })),
     fetchUsersById: () => dispatch(userActions.fetchUsersById()),
-    fetchProjectsById: userId =>
-      dispatch(projectActions.fetchProjectsById(userId)),
-    fetchUserTags: userId => dispatch(currentUserActions.fetchUserTags(userId)),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
   };
 };

@@ -10,9 +10,8 @@
   position: relative;
   .list__popover-wrapper {
     position: absolute;
-    top: 0;
+    top: 8px;
     right: 0;
-    line-height: 48px;
     z-index: 4;
   }
   &.is-list-view {
@@ -62,6 +61,10 @@
   .feather {
     width: 18px;
     height: 18px;
+  }
+  &:hover,
+  &.is-active {
+    color: $primary;
   }
 }
 

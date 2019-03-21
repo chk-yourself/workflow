@@ -1,26 +1,49 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { PasswordForgetForm } from '../PasswordForget';
 import { PasswordChangeForm } from '../PasswordChange';
+import {
+  currentUserActions,
+  currentUserSelectors
+} from '../../ducks/currentUser';
 import { AuthUserContext, withAuthorization } from '../../components/Session';
+import { UserFormPage } from '../../components/UserFormPage';
 import './Account.scss';
 
 const AccountPage = () => (
   <AuthUserContext.Consumer>
     {authUser => (
-      <main className="account">
-        <h1>Account: {authUser.email}</h1>
-        <section className="account__section">
-        <h2>Forgot your password?</h2>
+      <UserFormPage title="My Account">
+        <section className="account-section">
+        <h2 className="account-section__header">Forgot your password?</h2>
           <PasswordForgetForm />
         </section>
-        <section className="account__section">
-        <h2>Change your password.</h2>
+        <section className="account-section">
+        <h2 className="account-section__header">Change your password.</h2>
           <PasswordChangeForm />
         </section>
-      </main>
+        </UserFormPage>
     )}
   </AuthUserContext.Consumer>
 );
 
 const condition = authUser => !!authUser;
-export default withAuthorization(condition)(AccountPage);
+
+const mapStateToProps = state => {
+  return {
+    currentUser: currentUserSelectors.getCurrentUser(state)
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    
+  }
+};
+
+export default withAuthorization(condition)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AccountPage)
+);

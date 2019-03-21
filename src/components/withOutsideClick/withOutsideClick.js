@@ -47,7 +47,6 @@ const withOutsideClick = WrappedComponent => {
       if (!this.componentEl) {
         throw new Error('Must set component ref to prop innerRef!');
       }
-      console.log(this.componentEl.contains(e.target));
       if (
         this.componentEl.contains(e.target) ||
         (!this.componentInstance.current.onOutsideClick &&

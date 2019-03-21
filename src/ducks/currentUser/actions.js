@@ -6,6 +6,7 @@ import {
   removeTask,
   updateTask
 } from '../tasks/actions';
+import { updateUser } from '../users/actions';
 
 export const setCurrentUser = currentUser => {
   return {
@@ -298,18 +299,25 @@ export const createTag = ({ userId, taskId, name }) => {
 export const syncUserTags = userId => {
   return async (dispatch, getState) => {
     try {
-      firebase
+      const subscription = await firebase
         .getDocRef('users', userId)
         .collection('tags')
-        .onSnapshot(async querySnapshot => {
-          querySnapshot.docChanges().forEach(async change => {
+        .onSnapshot(async snapshot => {
+          const changes = await snapshot.docChanges();
+          if (snapshot.size === changes.length || changes.length > 1) {
+            const tags = {};
+            snapshot.forEach(doc => {
+              tags[doc.id] = doc.data();
+            });
+            await dispatch(loadUserTags(tags));
+          } else {
+          changes.forEach(async change => {
             const [tagId, tagData, changeType] = await Promise.all([
               change.doc.id,
               change.doc.data(),
               change.type
             ]);
             const { tags } = getState().currentUser;
-           if (!tags) return;
            if (changeType === 'added') {
               if (tagId in tags) return;
               console.log( tagId, tagData);
@@ -322,12 +330,14 @@ export const syncUserTags = userId => {
               console.log(`Updated Tag: ${tagData.name}`);
             }
           });
-        });
+        };
+      });
+        return subscription;
     } catch (error) {
       console.log(error);
     }
   };
-};
+  };
 
 export const fetchUserTasks = userId => {
   return async dispatch => {
@@ -401,3 +411,21 @@ export const syncUserTasks = userId => {
     }
   };
 };
+
+export const syncCurrentUserData = userId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase.getDocRef('users', userId).onSnapshot(snapshot => {
+        const userData = snapshot.data();
+        if (!getState().currentUser) {
+          dispatch(setCurrentUser(userData));
+        } else {
+          dispatch(updateUser({ userId, userData }));
+        }
+      });
+      return subscription;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}

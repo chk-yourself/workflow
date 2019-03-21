@@ -16,21 +16,24 @@ const withAuthentication = Component => {
       };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
       const {
         firebase,
         history,
-        fetchCurrentUserData,
+        syncCurrentUserData,
         setCurrentUser
       } = this.props;
 
-      this.listener = firebase.auth.onAuthStateChanged(authUser => {
+      this.listener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
-          fetchCurrentUserData(authUser.uid);
+          this.unsubscribe = await syncCurrentUserData(authUser.uid);
           this.setState({ authUser });
           history.push(`/0/home/${authUser.uid}`);
         } else {
           history.push(ROUTES.SIGN_IN);
+          if (this.unsubscribe) {
+            this.unsubscribe();
+          }
           setCurrentUser(null);
           this.setState({ authUser: null });
         }
@@ -39,6 +42,9 @@ const withAuthentication = Component => {
 
     componentWillUnmount() {
       this.listener();
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
     }
 
     render() {
@@ -51,8 +57,8 @@ const withAuthentication = Component => {
   }
 
   const mapDispatchToProps = dispatch => ({
-    fetchCurrentUserData: userId =>
-      dispatch(currentUserActions.fetchCurrentUserData(userId)),
+    syncCurrentUserData: userId =>
+      dispatch(currentUserActions.syncCurrentUserData(userId)),
     setCurrentUser: currentUser =>
       dispatch(currentUserActions.setCurrentUser(currentUser))
   });

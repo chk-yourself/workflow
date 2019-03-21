@@ -22,7 +22,8 @@ class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: props.name
+      name: props.name,
+      isMoreActionsMenuVisible: false
     };
   }
 
@@ -50,6 +51,18 @@ class List extends Component {
     }
   };
 
+  toggleMoreActionsMenu = e => {
+    this.setState(prevState => ({
+      isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
+    }));
+  };
+
+  closeMoreActionsMenu = e => {
+    this.setState({
+      isMoreActionsMenuVisible: false
+    });
+  };
+
   render() {
     const {
       tasks,
@@ -67,7 +80,7 @@ class List extends Component {
 
     const isBoardView = view === 'board';
 
-    const { name } = this.state;
+    const { name, isMoreActionsMenuVisible } = this.state;
 
     return (
       <Draggable draggableId={listId} index={index}>
@@ -92,16 +105,19 @@ class List extends Component {
                   onBlur={this.onBlur}
                 />
                 <PopoverWrapper
+                  isActive={isMoreActionsMenuVisible}
+                  onOutsideClick={this.closeMoreActionsMenu}
                   classes={{
                     wrapper: 'list__popover-wrapper',
                     popover: 'list__popover'
                   }}
-                  align={{ inner: isBoardView ? 'left' : 'right' }}
+                  align={{ inner: 'right' }}
                   buttonProps={{
                     size: 'medium',
                     iconOnly: true,
-                    className: 'list__btn--more-actions',
-                    children: <Icon name="more-vertical" />
+                    className: `list__btn--more-actions ${isMoreActionsMenuVisible ? 'is-active' : ''}`,
+                    children: <Icon name="more-vertical" />,
+                    onClick: this.toggleMoreActionsMenu
                   }}
                 >
                   <Menu>
