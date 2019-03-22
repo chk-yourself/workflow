@@ -20,6 +20,7 @@ export default class MemberSearch extends Component {
     document.addEventListener('touchstart', this.handleTouch);
     document.addEventListener('click', this.handleOutsideClick, false);
     this.inputEl.focus();
+    console.log('member search mounted');
   }
 
   handleOutsideClick = e => {
@@ -122,13 +123,19 @@ export default class MemberSearch extends Component {
       }
       case keys.ENTER: {
         if (selectedMember === '') return;
-        onMemberClick(selectedMember);
+        this.assignMember(selectedMember, e);
         break;
       }
     }
 
     e.preventDefault();
   };
+
+  assignMember = (memberId, e) => {
+    const { onMemberClick, onClose } = this.props;
+    onMemberClick(memberId, e);
+    onClose(e);
+  }
 
   componentWillUnmount() {
     const { isTouchEnabled } = this.state;
@@ -162,13 +169,14 @@ export default class MemberSearch extends Component {
           hideLabel
           placeholder="Assign or remove member"
           onKeyDown={this.onKeyDown}
-          inputRef={el => (this.inputEl = el)}
+          innerRef={el => (this.inputEl = el)}
         />
         {isActive && (
           <ul className="member-search__list">
             {filteredList.length > 0 ? (
               filteredList.map((user, i) => {
                 const { name, photoURL, email, username, userId } = user;
+                console.log(userId);
                 const isAssigned =
                   assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
@@ -176,7 +184,7 @@ export default class MemberSearch extends Component {
                     className={`member-search__item ${
                       selectedMember === userId ? 'is-selected' : ''
                     }`}
-                    onClick={() => onMemberClick(userId)}
+                    onClick={(e) => this.assignMember(userId, e)}
                     key={userId}
                     id={userId}
                   >

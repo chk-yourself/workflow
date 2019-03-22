@@ -459,7 +459,7 @@ export const syncCurrentUserData = userId => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase.getDocRef('users', userId).onSnapshot(snapshot => {
-        const userData = snapshot.data();
+        const userData = snapshot.data() || null;
         if (!getState().currentUser) {
           dispatch(setCurrentUser(userData));
         } else {

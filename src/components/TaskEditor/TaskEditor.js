@@ -19,6 +19,7 @@ import { MemberSearch } from '../MemberSearch';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
 import * as keys from '../../constants/keys';
 import { Subtasks } from '../Subtasks';
+import { SubtaskComposer } from '../SubtaskComposer';
 import { Comment } from '../Comment';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
@@ -35,21 +36,21 @@ import { Comments } from '../Comments';
 const TaskEditorWrapper = ({
   view,
   handleTaskEditorClose,
-  handleClick,
+  onOutsideClick,
   children
 }) => {
   return view === 'board' ? (
     <Modal
       onModalClose={handleTaskEditorClose}
       classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
-      onModalClick={handleClick}
       size="lg"
       id="taskEditor"
+      onOutsideClick={onOutsideClick}
     >
       {children}
     </Modal>
   ) : (
-    <TaskEditorPane onClose={handleTaskEditorClose} onClick={handleClick}>
+    <TaskEditorPane onClose={handleTaskEditorClose}>
       {children}
     </TaskEditorPane>
   );
@@ -65,18 +66,16 @@ class TaskEditor extends Component {
     this.state = {
       name: this.props.name,
       notes: this.props.notes,
-      newSubtask: '',
-      newComment: '',
       currentFocus: null,
       isColorPickerActive: false,
       currentTag: null,
       isDatePickerActive: false,
+      isMemberSearchActive: false,
       prevProps: {
         name: this.props.name,
         notes: this.props.notes
       }
     };
-    this.membersListButton = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -132,15 +131,6 @@ class TaskEditor extends Component {
     });
   };
 
-  addComment = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { userId, firebase, taskId, projectId } = this.props;
-    const { newComment: content } = this.state;
-    firebase.addComment({ userId, content, taskId, projectId });
-    this.resetForm('newComment');
-    e.preventDefault();
-  };
-
   resetForm = key => {
     this.setState({
       [key]: ''
@@ -151,18 +141,6 @@ class TaskEditor extends Component {
     this.setState({
       currentFocus: e.target.name
     });
-  };
-
-  handleClick = e => {
-    const { currentFocus } = this.state;
-    if (
-      (currentFocus === 'newSubtask' &&
-        !this.newSubtaskFormEl.contains(e.target))
-    ) {
-      this.setState({
-        currentFocus: null
-      });
-    }
   };
 
   handleMoreActions = e => {
@@ -176,7 +154,8 @@ class TaskEditor extends Component {
     e.preventDefault(); // prevents page reload
   };
 
-  assignMember = userId => {
+  assignMember = (userId, e) => {
+    console.log(e, userId);
     const { taskId, projectId, assignedTo, firebase, folders } = this.props;
 
     if (assignedTo.includes(userId)) {
@@ -260,16 +239,6 @@ class TaskEditor extends Component {
     }));
   };
 
-  addSubtask = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { userId, firebase, taskId, projectId } = this.props;
-    console.log({ userId, projectId });
-    const { newSubtask: name } = this.state;
-    firebase.addSubtask({ userId, name, taskId, projectId });
-    this.resetForm('newSubtask');
-    e.preventDefault();
-  };
-
   toggleCompleted = e => {
     const { taskId, isCompleted, firebase } = this.props;
     firebase.updateDoc(['tasks', taskId], {
@@ -287,13 +256,32 @@ class TaskEditor extends Component {
     firebase.moveTaskToList({ taskId, origListId, newListId, updatedTaskIds, newListName });
   };
 
+  toggleMemberSearch = () => {
+    this.setState(prevState => ({
+      isMemberSearchActive: !prevState.isMemberSearchActive
+    }));
+  }
+
+  hideMemberSearch = e => {
+    if (e.target.matches('.task-editor__btn--add-member')) return;
+    this.setState({
+      isMemberSearchActive: false
+    });
+  }
+
+  onOutsideClick = e => {
+    const { handleTaskEditorClose } = this.props;
+    if (e.target.matches('.member-search__item')) return;
+    console.log(e.target);
+    handleTaskEditorClose();
+  }
+
   render() {
     const {
       handleTaskEditorClose,
       taskId,
       commentIds,
       assignedTo,
-      commentsArray,
       usersArray,
       membersArray,
       currentUser,
@@ -311,21 +299,16 @@ class TaskEditor extends Component {
     const {
       name,
       notes,
-      newComment,
       currentFocus,
-      newSubtask,
       subtasks,
       isColorPickerActive,
       isDatePickerActive,
+      isMemberSearchActive,
       currentTag
     } = this.state;
     const hasSubtasks = subtaskIds && subtaskIds.length > 0;
     const hasComments = commentIds && commentIds.length > 0;
     const isAssigned = !!assignedTo && assignedTo.length > 0;
-    const isNewCommentInvalid = newComment === '';
-    const isNewSubtaskInvalid = newSubtask === '';
-    const commentFormIsFocused = currentFocus === 'newComment';
-    const newSubtaskFormIsFocused = currentFocus === 'newSubtask';
     const taskDueDate = dueDate
       ? getSimpleDate(dueDate.toDate())
       : getSimpleDate(new Date());
@@ -341,17 +324,20 @@ class TaskEditor extends Component {
     return (
       <TaskEditorWrapper
         handleTaskEditorClose={handleTaskEditorClose}
-        handleClick={this.handleClick}
+        onOutsideClick={this.onOutsideClick}
         view={view}
       >
         <Toolbar className="task-editor__toolbar">
           {projectId && (
-            <TaskEditorAssignMember buttonRef={this.membersListButton}>
+            <TaskEditorAssignMember isActive={isMemberSearchActive} onClose={this.hideMemberSearch} onToggle={this.toggleMemberSearch}>
+            {isMemberSearchActive && (
               <MemberSearch
                 users={usersArray}
                 assignedMembers={assignedTo}
                 onMemberClick={this.assignMember}
+                onClose={this.hideMemberSearch}
               />
+            )}
             </TaskEditorAssignMember>
           )}
           <Button
@@ -470,7 +456,7 @@ class TaskEditor extends Component {
               <Button
                 type="button"
                 className="task-editor__btn--add-member"
-                onClick={() => this.membersListButton.current.click()}
+                onClick={this.toggleMemberSearch}
               >
                 <Icon name="plus" />
               </Button>
@@ -527,40 +513,12 @@ class TaskEditor extends Component {
               projectId={projectId}
             />
           )}
-          <div className="task-editor__section-icon">
-            <Icon name="plus-circle" />
-          </div>
-          <form
-            name="newSubtaskForm"
-            className={`task-editor__new-subtask-form ${
-              currentFocus === 'newSubtask' ? 'is-focused' : ''
-            }`}
-            ref={el => (this.newSubtaskFormEl = el)}
-            onSubmit={this.addSubtask}
-          >
-            <Textarea
-              className="task-editor__textarea task-editor__textarea--new-subtask"
-              name="newSubtask"
-              value={newSubtask}
-              onChange={this.onChange}
-              placeholder="Add a subtask"
-              onFocus={this.onFocus}
-              onKeyDown={this.addSubtask}
-            />
-            {currentFocus === 'newSubtask' && (
-              <Button
-                type="submit"
-                color="primary"
-                size="small"
-                variant="contained"
-                disabled={isNewSubtaskInvalid}
-                onClick={this.addSubtask}
-                className="task-editor__btn--add-subtask"
-              >
-                Add subtask
-              </Button>
-            )}
-          </form>
+          <SubtaskComposer taskId={taskId} projectId={projectId} classes={{
+            iconWrapper: "task-editor__section-icon",
+            form: 'task-editor__new-subtask-form',
+            textarea: "task-editor__textarea task-editor__textarea--new-subtask",
+            button: "task-editor__btn--add-subtask"
+          }} />
         </TaskEditorSection>
         <TaskEditorSection>
           <div className="task-editor__section-header">
@@ -608,9 +566,7 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.subtaskIds
     ),
-    projectColor: projectSelectors.getProjectColor(state, ownProps.projectId),
-    listsById: listSelectors.getListsById(state),
-    state: state
+    listsById: listSelectors.getListsById(state)
   };
 };
 

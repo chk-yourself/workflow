@@ -4,10 +4,12 @@ import { PopoverWrapper } from '../Popover';
 
 export default class TaskEditorAssignMember extends Component {
   render() {
-    const { children } = this.props;
+    const { children, isActive, onToggle, onClose } = this.props;
 
     return (
       <PopoverWrapper
+        isActive={isActive}
+        onOutsideClick={onClose}
         classes={{
           wrapper:
             'task-editor__popover-wrapper task-editor__member-search-popover-wrapper',
@@ -18,7 +20,7 @@ export default class TaskEditorAssignMember extends Component {
           iconOnly: true,
           className: 'task-editor__toolbar-btn',
           children: <Icon name="users" />,
-          buttonRef: this.props.buttonRef
+          onClick: onToggle
         }}
       >
         {children}

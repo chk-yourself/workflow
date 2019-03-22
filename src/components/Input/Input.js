@@ -13,7 +13,7 @@ const Input = ({
   isRequired,
   onBlur,
   autoComplete,
-  inputRef,
+  innerRef,
   hideLabel,
   label,
   labelClass,
@@ -41,7 +41,7 @@ const Input = ({
         required={isRequired}
         onBlur={onBlur}
         autoComplete={autoComplete}
-        ref={inputRef}
+        ref={innerRef}
         onInput={onInput}
         onKeyDown={onKeyDown}
         maxLength={maxLength}
@@ -54,7 +54,8 @@ const Input = ({
 };
 
 Input.defaultProps = {
-  className: ''
+  className: '',
+  innerRef: null
 };
 
 export default Input;

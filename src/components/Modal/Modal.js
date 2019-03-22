@@ -5,10 +5,18 @@ import { withOutsideClick } from '../withOutsideClick';
 import './Modal.scss';
 
 class Modal extends Component {
+  static defaultProps = {
+    onModalClick: () => null,
+    onOutsideClick: () => null
+  }
   
   onOutsideClick = e => {
-    const { onModalClose } = this.props;
-    onModalClose(e);
+    const { onOutsideClick, onModalClose } = this.props;
+    if (onOutsideClick) {
+      onOutsideClick(e);
+    } else {
+      onModalClose(e);
+    }
   };
 
   render() {

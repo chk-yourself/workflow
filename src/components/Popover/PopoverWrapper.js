@@ -89,7 +89,6 @@ class PopoverWrapper extends Component {
         <Button
           type="button"
           onClick={this.toggleOpen}
-          buttonRef={this.props.buttonRef}
           {...buttonProps}
         />
           <Popover
