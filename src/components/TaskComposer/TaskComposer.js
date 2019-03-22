@@ -63,10 +63,6 @@ class TaskComposer extends Component {
     });
   };
 
-  onReset = e => {
-    this.setState({ ...INITIAL_STATE });
-  };
-
   onBlur = e => {
     if (e.target.value !== '') return;
     this.setState({

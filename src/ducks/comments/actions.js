@@ -1,4 +1,5 @@
 import * as types from './types';
+import { setTaskLoadedState } from '../tasks/actions';
 import firebase from '../../store/firebase';
 
 export const loadCommentsById = commentsById => {
@@ -7,6 +8,31 @@ export const loadCommentsById = commentsById => {
     commentsById
   };
 };
+
+export const addComment = ({ commentId, commentData }) => {
+  return {
+    type: types.ADD_COMMENT,
+    commentId,
+    commentData
+  };
+};
+
+export const removeComment = commentId => {
+  return {
+    type: types.REMOVE_COMMENT,
+    commentId
+  };
+};
+
+export const updateComment = ({ commentId, commentData }) => {
+  return {
+    type: types.UPDATE_COMMENT,
+    commentId,
+    commentData
+  };
+};
+
+// Thunks
 
 export const fetchCommentsById = () => {
   return async dispatch => {
@@ -28,13 +54,6 @@ export const fetchCommentsById = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-};
-
-export const updateCommentsById = comment => {
-  return {
-    type: types.UPDATE_COMMENTS_BY_ID,
-    comment
   };
 };
 
@@ -86,25 +105,52 @@ export const fetchUserComments = userId => {
   };
 };
 
-export const addComment = ({ commentId, commentData }) => {
-  return {
-    type: types.ADD_COMMENT,
-    commentId,
-    commentData
-  };
-};
+export const syncTaskComments = taskId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase.db
+      .collection('comments')
+      .where('taskId', '==', taskId)
+      .onSnapshot(async snapshot => {
+        const changes = await snapshot.docChanges();
+        const isInitialLoad = changes.every(change => change.type === 'added');
 
-export const deleteComment = commentId => {
-  return {
-    type: types.DELETE_COMMENT,
-    commentId
-  };
-};
-
-export const updateComment = ({ commentId, commentData }) => {
-  return {
-    type: types.UPDATE_COMMENT,
-    commentId,
-    commentData
+        if (isInitialLoad && changes.length > 1) {
+          let comments = {};
+          changes.forEach(change => {
+            const commentId = change.doc.id;
+            if (commentId in getState().commentsById) return;
+            const commentData = change.doc.data();
+            comments[commentId] = {
+              commentId,
+              ...commentData
+            };
+          });
+          dispatch(loadCommentsById(comments));
+          dispatch(setTaskLoadedState(taskId, 'comments'));
+        } else {
+          changes.forEach(change => {
+            const commentId = change.doc.id;
+            const commentData = change.doc.data();
+            if (change.type === 'added') {
+              const { createdAt } = commentData;
+              if (commentId in getState().commentsById) return;
+              dispatch(addComment({ commentId, commentData }));
+            } else if (change.type === 'removed') {
+              dispatch(removeComment(commentId));
+            } else {
+              if (!(commentId in getState().commentsById)) {
+                dispatch(addComment({ commentId, commentData }));
+              } else {
+                dispatch(updateComment({ commentId, commentData }));
+              }
+            }
+          });
+        }
+      });
+      return subscription;
+  } catch (error) {
+      console.error(error);
+    }
   };
 };

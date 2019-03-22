@@ -113,8 +113,7 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    projectsById: projectSelectors.getProjectsById(state),
-    state
+    projectsById: projectSelectors.getProjectsById(state)
   };
 };
 

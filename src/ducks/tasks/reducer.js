@@ -31,8 +31,8 @@ const tasksById = (state = {}, action) => {
         [taskId]: {
           taskId,
           isLoaded: {
-            subtasks: false,
-            comments: false
+            subtasks: true,
+            comments: true
           },
           ...taskData
         }
@@ -71,6 +71,19 @@ const tasksById = (state = {}, action) => {
         [taskId]: {
           ...state[taskId],
           tags: state[taskId].tags.filter(tag => tag !== name)
+        }
+      };
+    }
+    case types.SET_TASK_LOADED_STATE: {
+      const { taskId, key } = action;
+      return {
+        ...state,
+        [taskId]: {
+          ...state[taskId],
+          isLoaded: {
+            ...state[taskId].isLoaded,
+            [key]: true
+          }
         }
       };
     }

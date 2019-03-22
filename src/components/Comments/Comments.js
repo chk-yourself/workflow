@@ -1,0 +1,59 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withFirebase } from '../Firebase';
+import { Comment } from '../Comment';
+import { commentActions, commentSelectors } from '../../ducks/comments';
+import { taskSelectors } from '../../ducks/tasks';
+import { getSelectedProjectId } from '../../ducks/selectedProject';
+
+class Comments extends Component {
+  state = {
+    isLoading: !this.props.isLoaded.comments
+  };
+
+  async componentDidMount() {
+    const { syncTaskComments, taskId } = this.props;
+      this.unsubscribe = await syncTaskComments(taskId);
+      this.setState({
+        isLoading: false
+      });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
+  render() {
+    const { taskId, comments } = this.props;
+    const { isLoading } = this.state;
+    if (isLoading) return null;
+    return comments.length > 0 ? comments.map(comment => (
+        <Comment key={comment.commentId} {...comment} />
+      )) : null;
+  }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    comments: commentSelectors.getCommentsArray(
+      state,
+      ownProps.commentIds
+    ),
+    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId)
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    syncTaskComments: taskId => dispatch(commentActions.syncTaskComments(taskId))
+  };
+};
+
+export default withFirebase(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Comments)
+);

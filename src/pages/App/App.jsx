@@ -10,12 +10,11 @@ import { AccountPage } from '../Account';
 import { AdminPage } from '../Admin';
 import { withAuthentication } from '../../components/Session';
 import { Header } from '../../components/Header';
-import './App.scss';
 
 class App extends Component {
   render() {
     return (
-      <div className="app">
+      <>
         <Header />
         <Switch>
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
@@ -26,7 +25,7 @@ class App extends Component {
           <Route path={ROUTES.ACCOUNT} component={AccountPage} />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
         </Switch>
-      </div>
+      </>
     );
   }
 }

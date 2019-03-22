@@ -73,6 +73,14 @@ export const removeTag = ({ taskId, name }) => {
   };
 };
 
+export const setTaskLoadedState = (taskId, key) => {
+  return {
+    type: types.SET_TASK_LOADED_STATE,
+    taskId,
+    key
+  };
+};
+
 // Thunks
 
 export const removeTaskTag = ({ taskId, name, userId, projectId }) => {
@@ -145,6 +153,10 @@ export const fetchProjectTasks = projectId => {
           snapshot.forEach(doc => {
             tasks[doc.id] = {
               taskId: doc.id,
+              isLoaded: {
+                subtasks: false,
+                comments: false
+              },
               ...doc.data()
             };
           });
@@ -164,12 +176,17 @@ export const syncProjectTasks = projectId => {
         .queryCollection('tasks', ['projectId', '==', projectId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(change => change.type === 'added');
 
-          if (snapshot.size === changes.length || changes.length > 1) {
+          if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
             changes.forEach(change => {
               tasksById[change.doc.id] = {
                 taskId: change.doc.id,
+                isLoaded: {
+                  subtasks: true,
+                  comments: false
+                },
                 ...change.doc.data()
               };
             });

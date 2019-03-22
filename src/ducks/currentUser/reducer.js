@@ -135,9 +135,9 @@ const currentUser = (state = null, action) => {
         }
       };
     }
-    case types.DELETE_TASK_DUE_SOON: {
+    case types.REMOVE_TASK_DUE_SOON: {
       const { taskId } = action;
-      const { [taskId]: deletedTask, ...restOfTasks } = state.tasksDueSoon;
+      const { [taskId]: removedTask, ...restOfTasks } = state.tasksDueSoon;
       return {
         ...state,
         tasksDueSoon: restOfTasks

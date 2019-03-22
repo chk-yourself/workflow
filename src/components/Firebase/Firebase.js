@@ -793,7 +793,7 @@ class Firebase {
       .collection('comments')
       .add({
         createdAt: this.getTimestamp(),
-        lastUpdatedAt: this.getTimestamp(),
+        lastUpdatedAt: null,
         isPinned: false,
         from: userId,
         to: memberIds,

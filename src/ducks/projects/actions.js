@@ -204,12 +204,18 @@ export const syncUserProjects = userId => {
         .queryCollection('projects', ['memberIds', 'array-contains', userId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(change => change.type === 'added');
 
-          if (snapshot.size === changes.length || changes.length > 1) {
+          if (isInitialLoad && changes.length > 1) {
             const projectsById = {};
             changes.forEach(change => {
               projectsById[change.doc.id] = {
                 projectId: change.doc.id,
+                isLoaded: {
+                  subtasks: false,
+                  tasks: false,
+                  lists: false
+                },
                 ...change.doc.data()
               };
             });

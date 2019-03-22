@@ -5,8 +5,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  -webkit-overflow-scrolling: touch;
-  overflow-x: auto;
+  min-width: 100%;
 }
 
 .board-container {
@@ -16,6 +15,7 @@
   overflow-y: hidden;
   overflow-x: visible;
   margin-top: 40px;
+  min-width: 100%;
   @include md {
     padding: 8px;
     margin-top: 40px;

@@ -4,9 +4,12 @@
   "private": true,
   "homepage": "https://chk-yourself.github.io/workflow",
   "dependencies": {
+    "ajv": "^6.10.0",
+    "braces": "^2.3.2",
     "firebase": "^5.8.2",
     "firebase-admin": "^7.0.0",
     "history": "^4.7.2",
+    "immutable": "^4.0.0-rc.12",
     "node-sass": "^4.11.0",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.1",
@@ -15,10 +18,13 @@
     "react-dom": "^16.7.0",
     "react-redux": "^6.0.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.5",
+    "react-scripts": "^2.1.8",
     "recompose": "^0.30.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "slate": "^0.44.12",
+    "slate-react": "^0.21.18",
+    "typescript": "^3.3.4000",
     "why-did-you-update": "^1.0.6"
   },
   "scripts": {

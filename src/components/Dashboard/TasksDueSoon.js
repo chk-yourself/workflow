@@ -10,57 +10,30 @@ import {
 
 class TasksDueSoon extends Component {
   state = {
-    isFetching: true
+    isLoading: true
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       currentUserId,
-      fetchTasksDueWithinDays,
-      addTaskDueSoon,
-      deleteTaskDueSoon,
-      updateTaskDueSoon,
+      syncTasksDueWithinDays,
       firebase
     } = this.props;
-    fetchTasksDueWithinDays(currentUserId, 7).then(() => {
-      this.setState({
-        isFetching: false
-      });
+    
+    this.unsubscribe = await syncTasksDueWithinDays(currentUserId, 7);
+    this.setState({
+      isLoading: false
     });
-
-    const startingDate = new Date();
-    const timeStart = startingDate.setHours(0, 0, 0, 0);
-    const endingDate = new Date(startingDate);
-    const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + 7));
-
-    this.taskObserver = firebase.db
-      .collection('tasks')
-      .where('assignedTo', 'array-contains', currentUserId)
-      .where('dueDate', '<=', timeEnd)
-      .orderBy('dueDate', 'asc')
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const taskId = change.doc.id;
-          const taskData = change.doc.data();
-          if (change.type === 'added') {
-            addTaskDueSoon({ taskId, taskData });
-          } else if (change.type === 'removed') {
-            deleteTaskDueSoon(taskId);
-          } else {
-            updateTaskDueSoon({ taskId, taskData });
-          }
-        });
-      });
   }
 
   componentWillUnmount() {
-    this.taskObserver();
+    this.unsubscribe();
   }
 
   render() {
-    const { isFetching } = this.state;
+    const { isLoading } = this.state;
     const { tasksDueSoon, onTaskClick, currentUserId } = this.props;
-    if (isFetching) return null;
+    if (isLoading) return null;
     return (
       <DashboardPanel
         icon="check-square"
@@ -90,14 +63,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchTasksDueWithinDays: (userId, days) =>
-      dispatch(currentUserActions.fetchTasksDueWithinDays(userId, days)),
-    addTaskDueSoon: ({ taskId, taskData }) =>
-      dispatch(currentUserActions.addTaskDueSoon({ taskId, taskData })),
-    updateTaskDueSoon: ({ taskId, taskData }) =>
-      dispatch(currentUserActions.updateTaskDueSoon({ taskId, taskData })),
-    deleteTaskDueSoon: taskId =>
-      dispatch(currentUserActions.deleteTaskDueSoon(taskId))
+    syncTasksDueWithinDays: (userId, days) =>
+      dispatch(currentUserActions.syncTasksDueWithinDays(userId, days))
   };
 };
 

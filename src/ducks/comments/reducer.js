@@ -20,9 +20,9 @@ const commentsById = (state = {}, action) => {
         }
       };
     }
-    case types.DELETE_COMMENT: {
+    case types.REMOVE_COMMENT: {
       const { commentId } = action;
-      const { [commentId]: deletedComment, ...restOfComments } = state;
+      const { [commentId]: removedComment, ...restOfComments } = state;
       return restOfComments;
     }
     case types.UPDATE_COMMENT: {

@@ -202,6 +202,61 @@ export const fetchTasksDueWithinDays = (userId, days) => {
   };
 };
 
+export const syncTasksDueWithinDays = (userId, days) => {
+  const startingDate = new Date();
+  const timeStart = new Date(startingDate.setHours(0, 0, 0, 0));
+  const endingDate = new Date(startingDate);
+  const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + days));
+
+  return async dispatch => {
+    try {
+      const subscription = await firebase.db
+        .collection('tasks')
+        .where('assignedTo', 'array-contains', userId)
+        .where('dueDate', '<=', timeEnd)
+        .orderBy('dueDate', 'asc')
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(change => change.type === 'added');
+          
+          if (isInitialLoad) {
+            const tasks = {};
+          changes.forEach(change => {
+            const taskId = change.doc.id;
+            const taskData = change.doc.data();
+            const { subtaskIds, commentIds } = taskData;
+            tasks[taskId] = {
+              isLoaded: {
+                subtasks: subtaskIds.length === 0,
+                comments: commentIds.length === 0
+              },
+              taskId,
+              ...taskData
+            };
+          });
+          dispatch(loadTasksDueSoon(tasks));
+          dispatch(loadTasksById(tasks));
+          } else {
+            changes.forEach(change => {
+              const taskId = change.doc.id;
+              const taskData = change.doc.data();
+              if (change.type === 'added') {
+                dispatch(addTaskDueSoon({ taskId, taskData }));
+              } else if (change.type === 'removed') {
+                dispatch(removeTaskDueSoon(taskId));
+              } else {
+                dispatch(updateTaskDueSoon({ taskId, taskData }));
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const addTaskDueSoon = ({ taskId, taskData }) => {
   return {
     type: types.ADD_TASK_DUE_SOON,
@@ -210,9 +265,9 @@ export const addTaskDueSoon = ({ taskId, taskData }) => {
   };
 };
 
-export const deleteTaskDueSoon = taskId => {
+export const removeTaskDueSoon = taskId => {
   return {
-    type: types.DELETE_TASK_DUE_SOON,
+    type: types.REMOVE_TASK_DUE_SOON,
     taskId
   };
 };
@@ -232,8 +287,9 @@ export const syncFolders = userId => {
         .getDocRef('users', userId)
         .collection('folders')
         .onSnapshot(async snapshot => {
-          const changes = await snapshot.docChanges();
-          if (snapshot.size === changes.length || changes.length > 1) {
+          const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(change => change.type === 'added');
+          if (isInitialLoad) {
             const foldersById = {};
             snapshot.forEach(doc => {
             foldersById[doc.id] = {
@@ -304,7 +360,8 @@ export const syncUserTags = userId => {
         .collection('tags')
         .onSnapshot(async snapshot => {
           const changes = await snapshot.docChanges();
-          if (snapshot.size === changes.length || changes.length > 1) {
+          const isInitialLoad = changes.every(change => change.type === 'added');
+          if (isInitialLoad) {
             const tags = {};
             snapshot.forEach(doc => {
               tags[doc.id] = doc.data();
@@ -339,30 +396,6 @@ export const syncUserTags = userId => {
   };
   };
 
-export const fetchUserTasks = userId => {
-  return async dispatch => {
-    try {
-      const tasksById = await firebase.db
-        .collection('tasks')
-        .where('assignedTo', 'array-contains', userId)
-        .get()
-        .then(snapshot => {
-          const tasks = {};
-          snapshot.forEach(doc => {
-            tasks[doc.id] = {
-              taskId: doc.id,
-              ...doc.data()
-            };
-          });
-          return tasks;
-        });
-      dispatch(loadTasksById(tasksById));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
 export const syncUserTasks = userId => {
   return async (dispatch, getState) => {
     try {
@@ -370,12 +403,22 @@ export const syncUserTasks = userId => {
         .queryCollection('tasks', ['assignedTo', 'array-contains', userId])
         .onSnapshot(async snapshot => {
           const changes = await snapshot.docChanges();
-          if (snapshot.size === changes.length || changes.length > 1) {
+          const isInitialLoad = changes.every(change => change.type === 'added');
+          const { tasksById: loadedTasks } = getState();
+          if (isInitialLoad) {
             const tasksById = {};
-            snapshot.forEach(doc => {
-            tasksById[doc.id] = {
-              taskId: doc.id,
-              ...doc.data()
+            changes.forEach(change => {
+            const taskId = change.doc.id;
+            if (loadedTasks && taskId in loadedTasks) return;
+            const taskData = change.doc.data();
+            const { subtaskIds, commentIds } = taskData;
+            tasksById[taskId] = {
+              isLoaded: {
+                subtasks: subtaskIds.length === 0,
+                comments: commentIds.length === 0
+              },
+              taskId,
+              ...taskData
             };
           });
             await dispatch(loadTasksById(tasksById));

@@ -44,7 +44,6 @@ class Folder extends Component {
       userPermissions
     } = this.props;
     const { name, isExpanded } = this.state;
-    console.log({ folderId, projectId, dueDate });
     return (
       <Draggable
         draggableId={folderId || projectId || `${dueDate}`}

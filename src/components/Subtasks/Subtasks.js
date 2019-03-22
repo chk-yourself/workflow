@@ -5,58 +5,28 @@ import { withFirebase } from '../Firebase';
 import { Subtask } from '../Subtask';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
+import { taskSelectors } from '../../ducks/tasks';
 import { getSelectedProjectId } from '../../ducks/selectedProject';
 import './Subtasks.scss';
 
 class Subtasks extends Component {
   state = {
-    isFetching: !this.props.selectedProjectId || !this.props.projectId
+    isLoading: !this.props.isLoaded.subtasks
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
-      firebase,
-      fetchTaskSubtasks,
-      addSubtask,
-      updateSubtask,
-      removeSubtask,
+      syncTaskSubtasks,
       taskId,
-      projectId,
       selectedProjectId
     } = this.props;
-    if (!selectedProjectId || !projectId) {
-      fetchTaskSubtasks(taskId).then(() => {
-        this.setState({
-          isFetching: false
-        });
+    console.log(selectedProjectId);
+    if (!selectedProjectId) {
+      this.unsubscribe = await syncTaskSubtasks(taskId);
+      this.setState({
+        isLoading: false
       });
     }
-    this.subtaskObserver = firebase.db
-      .collection('subtasks')
-      .where('taskId', '==', taskId)
-      .onSnapshot(querySnapshot => {
-        querySnapshot.docChanges().forEach(change => {
-          const subtaskId = change.doc.id;
-          const subtaskData = change.doc.data();
-          if (change.type === 'added') {
-            addSubtask({ subtaskId, subtaskData });
-          }
-          if (change.type === 'modified') {
-            console.log('Subtask modified from subtasks');
-            updateSubtask({ subtaskId, subtaskData });
-          }
-          if (change.type === 'removed') {
-            removeSubtask({ subtaskId, taskId });
-          }
-        });
-      });
-  }
-
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.subtasks.includes(undefined)) {
-      return false;
-    }
-    return true;
   }
 
   moveSubtask = ({ destination, draggableId, source }) => {
@@ -72,12 +42,14 @@ class Subtasks extends Component {
   };
 
   componentWillUnmount() {
-    this.subtaskObserver();
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   render() {
     const { taskId, subtasks } = this.props;
-    const { isFetching } = this.state;
+    const { isLoading } = this.state;
     return (
       <DragDropContext onDragEnd={this.moveSubtask}>
         <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
@@ -87,7 +59,7 @@ class Subtasks extends Component {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {!isFetching &&
+              {!isLoading &&
                 subtasks.map((subtask, index) => {
                   return (
                     <Subtask
@@ -112,20 +84,16 @@ class Subtasks extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
-    selectedProjectId: getSelectedProjectId(state)
+    subtasksById: subtaskSelectors.getSubtasksById(state),
+    selectedProjectId: getSelectedProjectId(state),
+    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchTaskSubtasks: taskId =>
-      dispatch(subtaskActions.fetchTaskSubtasks(taskId)),
-    addSubtask: ({ subtaskId, subtaskData }) =>
-      dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
-    deleteSubtask: subtaskId =>
-      dispatch(subtaskActions.deleteSubtask(subtaskId)),
-    updateSubtask: ({ subtaskId, subtaskData }) =>
-      dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData }))
+    syncTaskSubtasks: taskId =>
+      dispatch(subtaskActions.syncTaskSubtasks(taskId))
   };
 };
 

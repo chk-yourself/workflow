@@ -2,6 +2,10 @@ export const getTasksById = state => {
   return state.tasksById;
 };
 
+export const getTask = (state, taskId) => {
+  return state.tasksById[taskId];
+};
+
 export const getListTasks = (state, taskIds) => {
   const { tasksById } = state;
   return taskIds.map(taskId => tasksById[taskId]);
@@ -40,3 +44,10 @@ export const getTaskTags = (state, ownProps) => {
   }
   return [];
 };
+
+export const getTaskLoadedState = (state, taskId) => {
+  const { tasksById } = state;
+  const task = tasksById[taskId];
+  if (!task) return {};
+  return task.isLoaded;
+}

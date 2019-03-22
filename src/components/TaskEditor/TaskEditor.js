@@ -2,10 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
-import {
-  currentUserActions,
-  currentUserSelectors
-} from '../../ducks/currentUser';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
 import { userSelectors } from '../../ducks/users';
@@ -32,6 +29,8 @@ import TaskEditorPane from './TaskEditorPane';
 import { ProjectBadge } from '../ProjectBadge';
 import { getSimpleDate, toDateString, isPriorDate } from '../../utils/date';
 import { ProjectListDropdown } from '../ProjectListDropdown';
+import { CommentComposer } from '../CommentComposer';
+import { Comments } from '../Comments';
 
 const TaskEditorWrapper = ({
   view,
@@ -64,7 +63,6 @@ class TaskEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isFetching: this.props.commentIds && this.props.commentIds.length > 0,
       name: this.props.name,
       notes: this.props.notes,
       newSubtask: '',
@@ -79,42 +77,6 @@ class TaskEditor extends Component {
       }
     };
     this.membersListButton = React.createRef();
-  }
-
-  componentDidMount() {
-    const {
-      taskId,
-      firebase,
-      fetchTaskComments,
-      addComment,
-      deleteComment,
-      updateComment
-    } = this.props;
-
-    fetchTaskComments(taskId).then(() => {
-      this.setState({
-        isFetching: false
-      });
-    });
-
-    this.commentObserver = firebase.db
-      .collection('comments')
-      .where('taskId', '==', taskId)
-      .onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-          const commentId = change.doc.id;
-          const commentData = change.doc.data();
-          if (change.type === 'added') {
-            addComment({ commentId, commentData });
-          }
-          if (change.type === 'modified') {
-            updateComment({ commentId, commentData });
-          }
-          if (change.type === 'removed') {
-            deleteComment(commentId);
-          }
-        });
-      });
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -194,8 +156,6 @@ class TaskEditor extends Component {
   handleClick = e => {
     const { currentFocus } = this.state;
     if (
-      (currentFocus === 'newComment' &&
-        !this.commentFormEl.contains(e.target)) ||
       (currentFocus === 'newSubtask' &&
         !this.newSubtaskFormEl.contains(e.target))
     ) {
@@ -327,10 +287,6 @@ class TaskEditor extends Component {
     firebase.moveTaskToList({ taskId, origListId, newListId, updatedTaskIds, newListName });
   };
 
-  componentWillUnmount() {
-    this.commentObserver();
-  }
-
   render() {
     const {
       handleTaskEditorClose,
@@ -359,7 +315,6 @@ class TaskEditor extends Component {
       currentFocus,
       newSubtask,
       subtasks,
-      isFetching,
       isColorPickerActive,
       isDatePickerActive,
       currentTag
@@ -383,7 +338,6 @@ class TaskEditor extends Component {
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
     const isPastDue = dueDate && isPriorDate(dueDate.toDate());
-
     return (
       <TaskEditorWrapper
         handleTaskEditorClose={handleTaskEditorClose}
@@ -624,55 +578,18 @@ class TaskEditor extends Component {
             <hr className="task-editor__hr" />
           </div>
 
-          {!isFetching && hasComments && (
+          {hasComments && (
             <div className="task-editor__comments">
-              {commentsArray.map(comment => (
-                <Comment key={comment.commentId} {...comment} />
-              ))}
+              <Comments taskId={taskId} commentIds={commentIds} />
             </div>
           )}
-          <Avatar
-            classes={{
-              avatar: 'task-editor__avatar',
-              placeholder: 'task-editor__avatar-placeholder'
-            }}
-            name={currentUser.name}
-            size="sm"
-            variant="circle"
-            imgSrc={currentUser.photoURL}
-          />
-          <form
-            name="commentForm"
-            className={`task-editor__comment-form ${
-              commentFormIsFocused ? 'is-focused' : ''
-            }`}
-            ref={el => (this.commentFormEl = el)}
-            onSubmit={this.addComment}
-          >
-            <Textarea
-              className="task-editor__textarea task-editor__textarea--comment"
-              name="newComment"
-              value={newComment}
-              onChange={this.onChange}
-              placeholder="Write a comment..."
-              onFocus={this.onFocus}
-              onKeyDown={this.addComment}
-            />
-            {commentFormIsFocused && (
-              <Button
-                type="submit"
-                color="primary"
-                size="small"
-                variant="contained"
-                disabled={isNewCommentInvalid}
-                onClick={this.addComment}
-                name="newCommentSubmit"
-                className="task-editor__btn--submit-comment"
-              >
-                Send
-              </Button>
-            )}
-          </form>
+          <CommentComposer taskId={taskId} projectId={projectId} classes={{
+            avatar: 'task-editor__avatar',
+            avatarPlaceholder: 'task-editor__avatar-placeholder',
+            form: 'task-editor__comment-form',
+            textarea: 'task-editor__textarea task-editor__textarea--comment',
+            button: 'task-editor__btn--submit-comment'
+          }} />
         </TaskEditorSection>
       </TaskEditorWrapper>
     );
@@ -682,11 +599,6 @@ class TaskEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state),
-    commentsArray: commentSelectors.getCommentsArray(
-      state,
-      ownProps.commentIds
-    ),
-    commentsById: commentSelectors.getCommentsById(state),
     usersArray: userSelectors.getUsersArray(state),
     membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
@@ -697,7 +609,8 @@ const mapStateToProps = (state, ownProps) => {
       ownProps.subtaskIds
     ),
     projectColor: projectSelectors.getProjectColor(state, ownProps.projectId),
-    listsById: listSelectors.getListsById(state)
+    listsById: listSelectors.getListsById(state),
+    state: state
   };
 };
 
@@ -705,16 +618,6 @@ const mapDispatchToProps = dispatch => {
   return {
     deleteTask: ({ taskId, listId }) =>
       dispatch(taskActions.deleteTask({ taskId, listId })),
-    fetchTaskComments: taskId =>
-      dispatch(commentActions.fetchTaskComments(taskId)),
-    syncTaskComments: taskId =>
-      dispatch(commentActions.syncTaskComments(taskId)),
-    addComment: ({ commentId, commentData }) =>
-      dispatch(commentActions.addComment({ commentId, commentData })),
-    deleteComment: commentId =>
-      dispatch(commentActions.deleteComment(commentId)),
-    updateComment: ({ commentId, commentData }) =>
-      dispatch(commentActions.updateComment({ commentId, commentData })),
     addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag)),
     removeTaskTag: ({ taskId, name, userId, projectId }) =>
       dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))

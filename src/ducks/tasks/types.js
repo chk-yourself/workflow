@@ -1,5 +1,4 @@
 export const ADD_TASK = 'ADD_TASK';
-export const DELETE_TASK = 'DELETE_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';
 export const SET_TASK_DUE_DATE = 'SET_TASK_DUE_DATE';
 export const ADD_TASK_SUBTASK = 'ADD_TASK_SUBTASK';
@@ -14,3 +13,4 @@ export const LOAD_USER_TASKS = 'LOAD_USER_TASKS';
 export const REMOVE_TASK = 'REMOVE_TASK';
 export const REMOVE_TAG = 'REMOVE_TAG';
 export const LOAD_PROJECT_TASKS = 'LOAD_PROJECT_TASKS';
+export const SET_TASK_LOADED_STATE = 'SET_TASK_LOADED_STATE';
