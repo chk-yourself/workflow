@@ -385,9 +385,24 @@ class Firebase {
         name
       })
       .then(ref => {
-        this.updateUser(userId, {
+        const batch = this.createBatch();
+        this.updateBatch(batch, ['users', userId], {
           projectIds: this.addToArray(ref.id)
         });
+
+        batch.set(this.getDocRef('users', userId, 'folders', ref.id), {
+          name,
+          taskIds: []
+        });
+
+        return batch
+          .commit()
+          .then(() => {
+            console.log('created project');
+          })
+          .catch(error => {
+            console.error(error);
+          });
       });
   };
 
@@ -608,7 +623,7 @@ class Firebase {
         });
   };
 
-  removeAssignee = ({ taskId, userId, folderId, dueDate = null }, batch = this.createBatch(), shouldCommit = true) => {
+  removeAssignee = ({ taskId, projectId, userId, folderId, dueDate = null }, batch = this.createBatch(), shouldCommit = true) => {
     const folderRef = this.getDocRef('users', userId, 'folders', folderId);
     this.updateBatch(batch, folderRef, {
       taskIds: this.removeFromArray(taskId)
@@ -616,6 +631,12 @@ class Firebase {
 
     if (!dueDate) {
       this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+        taskIds: this.removeFromArray(taskId)
+      });
+    }
+
+    if (taskId && projectId) {
+      this.updateBatch(batch, ['users', userId, 'folders', projectId], {
         taskIds: this.removeFromArray(taskId)
       });
     }
@@ -638,27 +659,34 @@ class Firebase {
     }
   };
 
-  addAssignee = ({ taskId, projectId, userId, dueDate = null }) => {
+  addAssignee = ({ taskId, projectId, projectName, userId, dueDate = null }) => {
     const batch = this.db.batch();
-    const taskRef = this.getDocRef('tasks', taskId);
-    const projectRef = this.getDocRef('projects', projectId);
-    const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
-    this.updateBatch(batch, newFolderRef, {
-      taskIds: this.addToArray(taskId)
-    });
-    this.updateBatch(batch, taskRef, {
-      assignedTo: this.addToArray(userId),
-      [`folders.${userId}`]: '0'
-    });
-    this.updateBatch(batch, projectRef, {
+
+    this.updateBatch(batch, ['projects', projectId], {
       memberIds: this.addToArray(userId)
     });
 
-    if (!dueDate) {
-      this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+    batch.set(this.getDocRef('users', userId, 'folders', projectId), {
+      name: projectName,
+      taskIds: this.addToArray(taskId)
+    }, { merge: true });
+
+    if (taskId) {
+      this.updateBatch(batch, ['users', userId, 'folders', '0'], {
         taskIds: this.addToArray(taskId)
       });
+      this.updateBatch(batch, ['tasks', taskId], {
+        assignedTo: this.addToArray(userId),
+        [`folders.${userId}`]: '0'
+      });
+  
+      if (!dueDate) {
+        this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+          taskIds: this.addToArray(taskId)
+        });
+      }
     }
+
     return batch
       .commit()
       .then(() => {

@@ -76,7 +76,7 @@ class UserTasks extends Component {
     const { firebase, currentUserId } = this.props;
     switch (type) {
       case droppableTypes.TASK: {
-        const { foldersById } = this.props;
+      const { foldersById } = this.props;
       const { droppableId: origFolderId, index: origIndex } = source;
       const { droppableId: newFolderId, index: newIndex } = destination;
       const isMovedWithinFolder = origFolderId === newFolderId;
@@ -112,10 +112,21 @@ class UserTasks extends Component {
       }
       default: {
         const { sortBy } = this.props.taskSettings;
-        console.log(source.droppableId);
+        const { foldersById } = this.props;
+      const { droppableId: origFolderId, index: origIndex } = source;
+      const { droppableId: newFolderId, index: newIndex } = destination;
+      const isMovedWithinFolder = origFolderId === newFolderId;
+      const updatedTaskIds = [...foldersById[newFolderId].taskIds];
+      if (isMovedWithinFolder) {
+        updatedTaskIds.splice(origIndex, 1);
+        updatedTaskIds.splice(newIndex, 0, draggableId);
+        firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
+          taskIds: updatedTaskIds
+        });
       }
     }
   };
+};
 
   selectViewFilter = e => {
     const { firebase, currentUserId } = this.props;

@@ -155,14 +155,14 @@ class TaskEditor extends Component {
   };
 
   assignMember = (userId, e) => {
-    const { taskId, projectId, assignedTo, firebase, folders, dueDate } = this.props;
+    const { taskId, projectId, projectName, assignedTo, firebase, folders, dueDate } = this.props;
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
       const folderId = folders[userId];
-      firebase.removeAssignee({ taskId, userId, folderId, dueDate });
+      firebase.removeAssignee({ taskId, projectId, userId, folderId, dueDate });
     } else {
-      firebase.addAssignee({ taskId, projectId, userId, dueDate });
+      firebase.addAssignee({ taskId, projectId, projectName, userId, dueDate });
     }
   };
 

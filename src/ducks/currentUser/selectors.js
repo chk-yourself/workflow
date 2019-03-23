@@ -45,33 +45,27 @@ export const getSortedFilteredTaskGroups = state => {
     case 'project': {
       const { tasksById } = state;
       if (!assignedTasks || !tasksById) return [];
-      const projectTasks = assignedTasks.reduce((tasksByProject, taskId) => {
-        const { projectId, projectName, isCompleted } = tasksById[taskId];
-        if (view === 'active' && isCompleted) return tasksByProject;
-        if (view === 'completed' && !isCompleted) return tasksByProject;
-        if (projectId) {
-          if (!(projectId in tasksByProject)) {
-            tasksByProject[projectId] = {
-              taskIds: [],
-              projectId,
-              name: projectName,
-              projectName,
-              dueDate: null,
-              folderId: null,
-              userPermissions: {
-                enableNameChange: false,
-                enableTaskAdd: false,
-                enableDragNDrop: true
-              }
-            };
+      const { projectIds } = currentUser;
+      const projectTasks = projectIds.reduce((tasksByProject, projectId) => {
+        const { name, taskIds } = folders[projectId];
+        return tasksByProject.concat(taskIds.length > 0 ? {
+          taskIds: view === 'active'
+          ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
+          : view === 'completed'
+          ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
+          : taskIds,
+          projectId,
+          name,
+          projectName: name,
+          dueDate: null,
+          folderId: projectId,
+          userPermissions: {
+            enableNameChange: false,
+            enableTaskAdd: false,
+            enableDragNDrop: true
           }
-          tasksByProject[projectId].taskIds = [
-            ...tasksByProject[projectId].taskIds,
-            taskId
-          ];
-        }
-        return tasksByProject;
-      }, {});
+        } : []);
+      }, []);
       const miscFolder = folders['4'];
       const noProject = miscFolder.taskIds.length > 0 ? {
         ...miscFolder,
@@ -90,22 +84,19 @@ export const getSortedFilteredTaskGroups = state => {
         }
       } : null;
       return [
-        ...Object.keys(projectTasks).map(
-          projectId => projectTasks[projectId]
-        ),
+        ...projectTasks,
         ...(noProject ? [noProject] : [])
       ];
     }
     case 'folder': {
       if (!folders) return [];
-      const { '4': miscFolder, '5': unscheduledFolder, ...restOfFolders } = folders;
+      const { folderIds } = currentUser;
       const { tasksById } = state;
-      return Object.keys(restOfFolders).map(folderId => {
+      return folderIds.map(folderId => {
         const { taskIds } = folders[folderId];
         return {
           ...folders[folderId],
-          taskIds:
-            view === 'active'
+          taskIds: view === 'active'
               ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
               : view === 'completed'
               ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
