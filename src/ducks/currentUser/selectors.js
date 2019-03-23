@@ -22,6 +22,12 @@ export const getTaskSettings = state => {
   return currentUser.settings.tasks;
 };
 
+export const getTempTaskSettings = state => {
+  const { currentUser } = state;
+  if (!currentUser) return null;
+  return currentUser.tempSettings.tasks;
+};
+
 export const getAssignedTasks = state => {
   const { currentUser } = state;
   if (!currentUser) return null;
@@ -37,8 +43,8 @@ export const getFolderIds = state => {
 export const getSortedFilteredTaskGroups = state => {
   const { currentUser } = state;
   if (!currentUser) return [];
-  const { settings, assignedTasks } = currentUser;
-  const { sortBy, view } = settings.tasks;
+  const { tempSettings, assignedTasks } = currentUser;
+  const { sortBy, view } = tempSettings.tasks;
   const { folders } = currentUser;
   if (!folders) return [];
   switch (sortBy) {

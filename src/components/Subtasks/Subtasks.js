@@ -20,7 +20,6 @@ class Subtasks extends Component {
       taskId,
       selectedProjectId
     } = this.props;
-    console.log(selectedProjectId);
     if (!selectedProjectId) {
       this.unsubscribe = await syncTaskSubtasks(taskId);
       this.setState({

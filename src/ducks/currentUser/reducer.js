@@ -157,6 +157,20 @@ const currentUser = (state = null, action) => {
         }
       };
     }
+    case types.SET_TEMP_TASK_SETTINGS: {
+      const { view, sortBy } = action;
+      return {
+        ...state,
+        tempSettings: {
+          ...state.tempSettings,
+          tasks: {
+            ...state.tempSettings.tasks,
+            view: view || state.tempSettings.tasks.view,
+            sortBy: sortBy || state.tempSettings.tasks.sortBy
+          }
+        }
+      }
+    }
     case UPDATE_USER: {
       const { userData } = action;
       return {

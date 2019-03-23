@@ -73,7 +73,7 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, currentUserId, taskSettings } = this.props;
+    const { firebase, currentUserId, tempTaskSettings } = this.props;
     switch (type) {
       case droppableTypes.TASK: {
       const { foldersById } = this.props;
@@ -95,7 +95,7 @@ class UserTasks extends Component {
           origFolderId,
           newFolderId,
           updatedTaskIds,
-          type: taskSettings.sortBy === 'folder' ? 'default' : taskSettings.sortBy
+          type: tempTaskSettings.sortBy === 'folder' ? 'default' : tempTaskSettings.sortBy
         });
       }
       break;
@@ -112,7 +112,6 @@ class UserTasks extends Component {
         break;
       }
       default: {
-        const { sortBy } = this.props.taskSettings;
         const { foldersById } = this.props;
       const { droppableId: origFolderId, index: origIndex } = source;
       const { droppableId: newFolderId, index: newIndex } = destination;
@@ -129,19 +128,24 @@ class UserTasks extends Component {
   };
 };
 
-  selectViewFilter = e => {
-    const { firebase, currentUserId } = this.props;
+  saveTaskSettings = () => {
+    const { firebase, currentUserId, tempTaskSettings } = this.props;
     firebase.updateDoc(['users', currentUserId], {
-      [`settings.tasks.view`]: e.target.value
+      [`settings.tasks.view`]: tempTaskSettings.view,
+      [`settings.tasks.sortBy`]: tempTaskSettings.sortBy
     });
+    this.closeTaskSettingsMenu();
   };
 
-  selectSortRule = e => {
-    const { firebase, currentUserId } = this.props;
-    firebase.updateDoc(['users', currentUserId], {
-      [`settings.tasks.sortBy`]: e.target.value
+  setTempTaskSettings = e => {
+    const { setTempTaskSettings } = this.props;
+    const { name, value } = e.target;
+    setTempTaskSettings({
+      [name]: value
     });
-    this.toggleSortRuleDropdown();
+    if (name === 'sortBy') {
+      this.hideSortRuleDropdown();
+    }
   };
 
   toggleTaskSettingsMenu = e => {
@@ -179,7 +183,7 @@ class UserTasks extends Component {
       selectedTaskId,
       tasksById,
       taskGroups,
-      taskSettings
+      tempTaskSettings
     } = this.props;
     const {
       isLoading,
@@ -214,6 +218,7 @@ class UserTasks extends Component {
                     isVisible={isTaskSettingsMenuVisible}
                     onToggle={this.toggleTaskSettingsMenu}
                     onClose={this.closeTaskSettingsMenu}
+                    onSave={this.saveTaskSettings}
                     classes={{
                       wrapper: 'user-tasks__settings-wrapper',
                       popover: 'user-tasks__settings',
@@ -227,18 +232,18 @@ class UserTasks extends Component {
                           { value: 'completed', name: 'Completed Tasks' },
                           { value: 'all', name: 'All Tasks' }
                         ],
-                        value: taskSettings.view,
-                        onChange: this.selectViewFilter
+                        value: tempTaskSettings.view,
+                        onChange: this.setTempTaskSettings
                       }
                     ]}
                     sortRule={{
                       options: [
-                        { value: 'project', name: 'Project' },
                         { value: 'folder', name: 'Folder' },
+                        { value: 'project', name: 'Project' },
                         { value: 'dueDate', name: 'Due Date' }
                       ],
-                      value: taskSettings.sortBy,
-                      onChange: this.selectSortRule,
+                      value: tempTaskSettings.sortBy,
+                      onChange: this.setTempTaskSettings,
                       isDropdownVisible: isSortRuleDropdownVisible,
                       toggleDropdown: this.toggleSortRuleDropdown,
                       hideDropdown: this.hideSortRuleDropdown
@@ -246,9 +251,9 @@ class UserTasks extends Component {
                   />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${taskSettings.sortBy}-${taskGroup[
-                        taskSettings.sortBy
-                      ] || taskGroup[`${taskSettings.sortBy}Id`]}`}
+                      key={`${tempTaskSettings.sortBy}-${taskGroup[
+                        tempTaskSettings.sortBy
+                      ] || taskGroup[`${tempTaskSettings.sortBy}Id`]}`}
                       userId={userId}
                       folderId={taskGroup.folderId}
                       projectId={taskGroup.projectId}
@@ -284,13 +289,15 @@ class UserTasks extends Component {
 const mapStateToProps = state => {
   return {
     currentUserId: currentUserSelectors.getCurrentUserId(state),
+    currentUser: currentUserSelectors.getCurrentUser(state),
     foldersById: currentUserSelectors.getFolders(state),
     taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state),
     folderIds: currentUserSelectors.getFolderIds(state),
     tasksById: taskSelectors.getTasksById(state),
     selectedTaskId: getSelectedTaskId(state),
     assignedTasks: currentUserSelectors.getAssignedTasks(state),
-    taskSettings: currentUserSelectors.getTaskSettings(state)
+    taskSettings: currentUserSelectors.getTaskSettings(state),
+    tempTaskSettings: currentUserSelectors.getTempTaskSettings(state)
   };
 };
 
@@ -300,7 +307,8 @@ const mapDispatchToProps = dispatch => {
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
     syncUserTasks: userId => dispatch(currentUserActions.syncUserTasks(userId)),
     reorderFolders: (userId, folderIds) =>
-      dispatch(currentUserActions.reorderFolders(userId, folderIds))
+      dispatch(currentUserActions.reorderFolders(userId, folderIds)),
+    setTempTaskSettings: ({ view = null, sortBy = null }) => dispatch(currentUserActions.setTempTaskSettings({view, sortBy}))
   };
 };
 

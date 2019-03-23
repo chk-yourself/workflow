@@ -15,6 +15,14 @@ export const setCurrentUser = currentUser => {
   };
 };
 
+export const setTempTaskSettings = ({ view, sortBy }) => {
+  return {
+    type: types.SET_TEMP_TASK_SETTINGS,
+    view,
+    sortBy
+  };
+};
+
 export const loadUserTags = tags => {
   return {
     type: types.LOAD_USER_TAGS,
@@ -476,6 +484,11 @@ export const syncCurrentUserData = userId => {
     try {
       const subscription = await firebase.getDocRef('users', userId).onSnapshot(snapshot => {
         const userData = snapshot.data() || null;
+        if (userData) {
+          userData.tempSettings = {
+            tasks: {...userData.settings.tasks}
+          };
+        }
         if (!getState().currentUser) {
           dispatch(setCurrentUser(userData));
         } else {

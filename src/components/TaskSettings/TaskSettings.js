@@ -8,7 +8,7 @@ import { Button } from '../Button';
 import { Menu, MenuItem } from '../Menu';
 import './TaskSettings.scss';
 
-const TaskSettings = ({ onToggle, onClose, isVisible, filters, sortRule, selectFilter, selectSortRule, classes }) => (
+const TaskSettings = ({ onToggle, onClose, onSave, isVisible, filters, sortRule, selectFilter, selectSortRule, classes }) => (
       <PopoverWrapper
         isActive={isVisible}
         onOutsideClick={onClose}
@@ -82,7 +82,7 @@ const TaskSettings = ({ onToggle, onClose, isVisible, filters, sortRule, selectF
             {sortRule.options && sortRule.options.map(sortOption => (
               <MenuItem className="sort-options__item" key={sortOption.value}>
               <Radio
-              name={'sortRule'}
+              name={'sortBy'}
               id={sortOption.value}
               value={sortOption.value}
               isChecked={sortOption.value === sortRule.value}
@@ -110,6 +110,9 @@ const TaskSettings = ({ onToggle, onClose, isVisible, filters, sortRule, selectF
         </MenuItem>
         }
         </Menu>
+        <Button type="button" color="primary" variant="contained" className="task-settings__btn--save" size="sm" onClick={onSave}>
+         Save View
+         </Button>
         </PopoverWrapper>
     );
 
