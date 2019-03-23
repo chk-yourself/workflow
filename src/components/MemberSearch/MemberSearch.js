@@ -20,7 +20,6 @@ export default class MemberSearch extends Component {
     document.addEventListener('touchstart', this.handleTouch);
     document.addEventListener('click', this.handleOutsideClick, false);
     this.inputEl.focus();
-    console.log('member search mounted');
   }
 
   handleOutsideClick = e => {

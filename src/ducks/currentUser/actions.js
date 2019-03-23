@@ -402,14 +402,12 @@ export const syncUserTasks = userId => {
       const subscription = await firebase
         .queryCollection('tasks', ['assignedTo', 'array-contains', userId])
         .onSnapshot(async snapshot => {
-          const changes = await snapshot.docChanges();
+          const changes = snapshot.docChanges();
           const isInitialLoad = changes.every(change => change.type === 'added');
-          const { tasksById: loadedTasks } = getState();
-          if (isInitialLoad) {
+          if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
             changes.forEach(change => {
             const taskId = change.doc.id;
-            if (loadedTasks && taskId in loadedTasks) return;
             const taskData = change.doc.data();
             const { subtaskIds, commentIds } = taskData;
             tasksById[taskId] = {
@@ -421,8 +419,8 @@ export const syncUserTasks = userId => {
               ...taskData
             };
           });
-            await dispatch(loadTasksById(tasksById));
-            await dispatch(loadAssignedTasks(Object.keys(tasksById)));
+            dispatch(loadTasksById(tasksById));
+            dispatch(loadAssignedTasks(Object.keys(tasksById)));
           } else {
             changes.forEach(async change => {
               const [taskId, taskData, changeType] = await Promise.all([
@@ -431,16 +429,17 @@ export const syncUserTasks = userId => {
                 change.type
               ]);
               if (changeType === 'added') {
-                if (taskId in getState().tasksById) return;
-                dispatch(addTask({ taskId, taskData }));
+                if (!(taskId in getState().tasksById)) {
+                  dispatch(addTask({ taskId, taskData }));
+                }
                 dispatch(addAssignedTask(taskId));
                 console.log('task added');
               } else if (changeType === 'removed') {
                 const { listId } = taskData;
-                if (!change.doc.exists) {
+                dispatch(removeAssignedTask(taskId));
+                if (taskId in getState().tasksById && !change.doc.exists) {
                   dispatch(removeTask({ taskId, listId }));
                 }
-                dispatch(removeAssignedTask(taskId));
               } else {
                 dispatch(updateTask({ taskId, taskData }));
                 console.log(`Updated Task: ${taskData.name}`);

@@ -82,9 +82,10 @@ const currentUser = (state = null, action) => {
     }
     case types.ADD_ASSIGNED_TASK: {
       const { taskId } = action;
+      const assignedTasks = state.assignedTasks || [];
       return {
         ...state,
-        assignedTasks: [...state.assignedTasks, taskId]
+        assignedTasks: [...assignedTasks, taskId]
       };
     }
     case types.REMOVE_ASSIGNED_TASK: {

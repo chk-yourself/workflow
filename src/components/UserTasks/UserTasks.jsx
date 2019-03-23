@@ -74,8 +74,9 @@ class UserTasks extends Component {
     )
       return;
     const { firebase, currentUserId } = this.props;
-    if (type === droppableTypes.TASK) {
-      const { foldersById } = this.props;
+    switch (type) {
+      case droppableTypes.TASK: {
+        const { foldersById } = this.props;
       const { droppableId: origFolderId, index: origIndex } = source;
       const { droppableId: newFolderId, index: newIndex } = destination;
       const isMovedWithinFolder = origFolderId === newFolderId;
@@ -96,17 +97,23 @@ class UserTasks extends Component {
           updatedTaskIds
         });
       }
-    }
-
-    if (type === droppableTypes.FOLDER) {
-      const { folderIds, reorderFolders } = this.props;
-      const updatedFolderIds = [...folderIds];
-      updatedFolderIds.splice(source.index, 1);
-      updatedFolderIds.splice(destination.index, 0, draggableId);
-      firebase.updateDoc(`users/${currentUserId}`, {
-        folderIds: updatedFolderIds
-      });
-      reorderFolders(currentUserId, updatedFolderIds);
+      break;
+      }
+      case droppableTypes.FOLDER: {
+        const { folderIds, reorderFolders } = this.props;
+        const updatedFolderIds = [...folderIds];
+        updatedFolderIds.splice(source.index, 1);
+        updatedFolderIds.splice(destination.index, 0, draggableId);
+        firebase.updateDoc(`users/${currentUserId}`, {
+          folderIds: updatedFolderIds
+        });
+        reorderFolders(currentUserId, updatedFolderIds);
+        break;
+      }
+      default: {
+        const { sortBy } = this.props.taskSettings;
+        console.log(source.droppableId);
+      }
     }
   };
 

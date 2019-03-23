@@ -155,15 +155,14 @@ class TaskEditor extends Component {
   };
 
   assignMember = (userId, e) => {
-    console.log(e, userId);
-    const { taskId, projectId, assignedTo, firebase, folders } = this.props;
+    const { taskId, projectId, assignedTo, firebase, folders, dueDate } = this.props;
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
       const folderId = folders[userId];
-      firebase.removeAssignee({ taskId, userId, folderId });
+      firebase.removeAssignee({ taskId, userId, folderId, dueDate });
     } else {
-      firebase.addAssignee({ taskId, projectId, userId });
+      firebase.addAssignee({ taskId, projectId, userId, dueDate });
     }
   };
 
@@ -225,12 +224,16 @@ class TaskEditor extends Component {
     this.toggleColorPicker(false);
   };
 
-  setDueDate = date => {
-    const { firebase, taskId } = this.props;
+  setDueDate = dueDate => {
+    const { firebase, taskId, assignedTo, dueDate: currentDueDate } = this.props;
 
-    firebase.updateTask(taskId, {
-      dueDate: date
-    });
+    if (currentDueDate && dueDate) {
+      firebase.updateDoc(['tasks', taskId], {
+        dueDate
+      });
+    } else {
+      firebase.setTaskDueDate({ taskId, dueDate, assignedTo });
+    }
   };
 
   toggleDatePicker = () => {

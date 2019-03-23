@@ -101,7 +101,8 @@ class Firebase {
     });
 
   updateBatch = (batch, ref, newValue = {}) => {
-    return batch.update(ref, {
+    const doc = Array.isArray(ref) ? this.getDocRef(...ref) : ref;
+    return batch.update(doc, {
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
@@ -125,6 +126,9 @@ class Firebase {
     const todayFolderRef = this.getDocRef('users', userId, 'folders', '1');
     const upcomingFolderRef = this.getDocRef('users', userId, 'folders', '2');
     const laterFolderRef = this.getDocRef('users', userId, 'folders', '3');
+    const miscFolderRef = this.getDocRef('users', userId, 'folders', '4');
+    const unscheduledFolderRef = this.getDocRef('users', userId, 'folders', '5');
+    
 
     batch.set(userRef, {
       userId,
@@ -159,6 +163,16 @@ class Firebase {
 
     batch.set(laterFolderRef, {
       name: 'Later',
+      taskIds: []
+    });
+
+    batch.set(miscFolderRef, {
+      name: 'No Project',
+      taskIds: []
+    });
+
+    batch.set(unscheduledFolderRef, {
+      name: 'No Due Date',
       taskIds: []
     });
 
@@ -491,7 +505,7 @@ class Firebase {
     dueDate = null,
     folderId = null
   }) => {
-    const isFolderItem = folderId && userId;
+    const isFolderItem = !!folderId;
 
     this.db
       .collection('tasks')
@@ -507,7 +521,7 @@ class Firebase {
         assignedTo: isFolderItem ? [userId] : [],
         folders: isFolderItem
           ? {
-              [userId]: folderId
+              [userId]: '0'
             }
           : {},
         ownerId: isFolderItem ? userId : null,
@@ -520,9 +534,39 @@ class Firebase {
       })
       .then(ref => {
         if (isFolderItem) {
-          this.updateDoc(['users', userId, 'folders', folderId], {
+          const batch = this.createBatch();
+
+          
+          if (!projectId && folderId !== '4') {
+            this.updateBatch(batch, ['users', userId, 'folders', '4'], {
+              taskIds: this.addToArray(ref.id)
+            });
+          }
+          
+          if (!dueDate && folderId !== '5') {
+            this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+              taskIds: this.addToArray(ref.id)
+            });
+          }
+
+          if (folderId !== '0') {
+            this.updateBatch(batch, ['users', userId, 'folders', '0'], {
+              taskIds: this.addToArray(ref.id)
+            });
+          }
+          
+          this.updateBatch(batch, ['users', userId, 'folders', folderId], {
             taskIds: this.addToArray(ref.id)
           });
+
+        return batch
+        .commit()
+        .then(() => {
+          console.log('Added task');
+        })
+        .catch(error => {
+          console.error(error);
+        });
         } else {
           this.updateDoc(['lists', listId], {
             taskIds: this.addToArray(ref.id)
@@ -539,11 +583,42 @@ class Firebase {
     });
   };
 
-  removeAssignee = ({ taskId, userId, folderId }, batch = this.createBatch(), shouldCommit = true) => {
+  setTaskDueDate = ({ taskId, dueDate, assignedTo = [] }) => {
+    const batch = this.createBatch();
+    
+    this.updateBatch(batch, ['tasks', taskId], {
+      dueDate
+    });
+
+    if (assignedTo.length > 0) {
+      assignedTo.forEach(userId => {
+        this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+          taskIds: dueDate === null ? this.addToArray(taskId) : this.removeFromArray(taskId)
+        });
+      });
+    }
+
+    return batch
+        .commit()
+        .then(() => {
+          console.log('Set task due date');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  };
+
+  removeAssignee = ({ taskId, userId, folderId, dueDate = null }, batch = this.createBatch(), shouldCommit = true) => {
     const folderRef = this.getDocRef('users', userId, 'folders', folderId);
     this.updateBatch(batch, folderRef, {
       taskIds: this.removeFromArray(taskId)
     });
+
+    if (!dueDate) {
+      this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+        taskIds: this.removeFromArray(taskId)
+      });
+    }
 
     if (shouldCommit) {
       const taskRef = this.getDocRef('tasks', taskId);
@@ -563,24 +638,27 @@ class Firebase {
     }
   };
 
-  addAssignee = ({ taskId, projectId, userId }) => {
+  addAssignee = ({ taskId, projectId, userId, dueDate = null }) => {
     const batch = this.db.batch();
     const taskRef = this.getDocRef('tasks', taskId);
     const projectRef = this.getDocRef('projects', projectId);
     const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
-    batch.update(newFolderRef, {
-      taskIds: this.addToArray(taskId),
-      lastUpdatedAt: this.getTimestamp()
+    this.updateBatch(batch, newFolderRef, {
+      taskIds: this.addToArray(taskId)
     });
-    batch.update(taskRef, {
+    this.updateBatch(batch, taskRef, {
       assignedTo: this.addToArray(userId),
-      [`folders.${userId}`]: '0',
-      lastUpdatedAt: this.getTimestamp()
+      [`folders.${userId}`]: '0'
     });
-    batch.update(projectRef, {
-      memberIds: this.addToArray(userId),
-      lastUpdatedAt: this.getTimestamp()
+    this.updateBatch(batch, projectRef, {
+      memberIds: this.addToArray(userId)
     });
+
+    if (!dueDate) {
+      this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+        taskIds: this.addToArray(taskId)
+      });
+    }
     return batch
       .commit()
       .then(() => {
@@ -592,7 +670,7 @@ class Firebase {
   };
 
   deleteTask = (
-    { taskId, listId, assignedTo, subtaskIds, commentIds, folders },
+    { taskId, listId, assignedTo, subtaskIds, commentIds, folders, dueDate, projectId },
     batch = this.createBatch(),
     shouldCommit = true
   ) => {
@@ -622,6 +700,18 @@ class Firebase {
         this.updateBatch(batch, folderRef, {
           taskIds: this.removeFromArray(taskId)
         });
+
+        if (!projectId) {
+          this.updateBatch(batch, ['users', userId, 'folders', '4'], {
+            taskIds: this.removeFromArray(taskId)
+          });
+        }
+
+        if (!dueDate) {
+          this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+            taskIds: this.removeFromArray(taskId)
+          });
+        }
       });
       console.log('2. Removed task assignments.');
     }

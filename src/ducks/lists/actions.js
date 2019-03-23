@@ -64,14 +64,18 @@ export const deleteList = ({ listId, projectId }) => {
                 folders,
                 subtaskIds,
                 commentIds,
-                tags
+                tags,
+                projectId,
+                dueDate
               } = tasksById[taskId];
               await firebase.deleteTask({
                 taskId,
                 assignedTo,
                 folders,
                 subtaskIds,
-                commentIds
+                commentIds,
+                projectId,
+                dueDate
               });
               dispatch(removeTask({ taskId, listId: null }));
               console.log({ tags });

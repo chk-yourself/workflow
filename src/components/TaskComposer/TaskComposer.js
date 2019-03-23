@@ -36,7 +36,6 @@ class TaskComposer extends Component {
       listName,
       dueDate
     } = this.props;
-    console.log(userId, folderId, projectId, projectName, new Date(dueDate));
     firebase.addTask({
       dueDate: dueDate ? new Date(dueDate) : null,
       name,

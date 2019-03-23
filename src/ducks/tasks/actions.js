@@ -1,6 +1,7 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 import { setProjectLoadedState } from '../projects/actions';
+import { removeAssignedTask } from '../currentUser/actions';
 
 export const loadTasksById = tasksById => {
   return {
@@ -118,7 +119,8 @@ export const deleteTask = ({ taskId, listId = null }) => {
         commentIds,
         assignedTo,
         tags,
-        projectId
+        projectId,
+        dueDate
       } = getStore().tasksById[taskId];
       const { userId } = getStore().currentUser;
       await firebase.deleteTask({
@@ -127,8 +129,11 @@ export const deleteTask = ({ taskId, listId = null }) => {
         assignedTo,
         folders,
         subtaskIds,
-        commentIds
+        commentIds,
+        dueDate,
+        projectId
       });
+      dispatch(removeAssignedTask(taskId));
       dispatch(removeTask({ taskId, listId }));
       if (tags && tags.length > 0) {
         tags.forEach(name => {

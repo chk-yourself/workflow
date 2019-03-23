@@ -10,13 +10,14 @@ import { PopoverWrapper } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
 import { ExpansionPanel } from '../ExpansionPanel';
+import * as droppableTypes from '../../constants/droppableTypes';
 import './Folder.scss';
 
 class Folder extends Component {
   static defaultProps = {
     userPermissions: {
-      canChangeName: false,
-      canAddTasks: true
+      enableNameChange: false,
+      enableTaskAdd: true
     }
   };
 
@@ -48,7 +49,7 @@ class Folder extends Component {
       <Draggable
         draggableId={folderId || projectId || `${dueDate}`}
         index={index}
-        isDragDisabled={!userPermissions.canChangeName}
+        isDragDisabled={!userPermissions.enableNameChange}
       >
         {(provided, snapshot) => (
           <>
@@ -79,9 +80,9 @@ class Folder extends Component {
                       type="text"
                       value={name}
                       onChange={this.onChange}
-                      required={userPermissions.canChangeName}
+                      required={userPermissions.enableNameChange}
                       hideLabel
-                      isReadOnly={!userPermissions.canChangeName}
+                      isReadOnly={!userPermissions.enableNameChange}
                       onBlur={this.onBlur}
                       onClick={this.toggleFolder}
                     />
@@ -114,10 +115,11 @@ class Folder extends Component {
                   projectId={projectId}
                   dueDate={dueDate}
                   onTaskClick={onTaskClick}
+                  dropType={!userPermissions.enableTaskAdd ? (projectId || folderId || dueDate) : droppableTypes.TASK }
                   view="list"
                 />
               </div>
-              {userPermissions.canAddTasks && (
+              {userPermissions.enableTaskAdd && (
                 <TaskComposer
                   listId={null}
                   listName={null}
