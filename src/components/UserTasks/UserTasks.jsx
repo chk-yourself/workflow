@@ -73,7 +73,7 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, currentUserId } = this.props;
+    const { firebase, currentUserId, taskSettings } = this.props;
     switch (type) {
       case droppableTypes.TASK: {
       const { foldersById } = this.props;
@@ -94,7 +94,8 @@ class UserTasks extends Component {
           taskId: draggableId,
           origFolderId,
           newFolderId,
-          updatedTaskIds
+          updatedTaskIds,
+          type: taskSettings.sortBy === 'folder' ? 'default' : taskSettings.sortBy
         });
       }
       break;
@@ -145,7 +146,6 @@ class UserTasks extends Component {
 
   toggleTaskSettingsMenu = e => {
     e.stopPropagation();
-    console.log(e.type, 'toggle task settings menu');
     this.setState(prevState => ({
       isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
       isSortRuleDropdownVisible:

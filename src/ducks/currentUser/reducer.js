@@ -65,9 +65,9 @@ const currentUser = (state = null, action) => {
         }
       };
     }
-    case types.DELETE_FOLDER: {
+    case types.REMOVE_FOLDER: {
       const { folderId } = action;
-      const { [folderId]: deletedFolder, ...restOfFolders } = state.folders;
+      const { [folderId]: removedFolder, ...restOfFolders } = state.folders;
       return {
         ...state,
         folders: restOfFolders

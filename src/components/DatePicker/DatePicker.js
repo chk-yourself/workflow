@@ -94,6 +94,7 @@ export default class DatePicker extends Component {
     if (selectedDate !== null) {
       selectDate(null);
     }
+    this.closeDatePicker();
   };
 
   closeDatePicker = () => {

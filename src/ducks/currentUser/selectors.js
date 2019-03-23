@@ -127,7 +127,7 @@ export const getSortedFilteredTaskGroups = state => {
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
         if (dueDate && !isPastDue) {
           if (!(`${dueDate.toMillis()}` in tasksByDueDate)) {
-            tasksByDueDate[dueDate.toMillis()] = {
+            tasksByDueDate[`${dueDate.toMillis()}`] = {
               taskIds: [],
               projectId: null,
               name: toDateString(dueDate.toDate(), {
@@ -135,7 +135,7 @@ export const getSortedFilteredTaskGroups = state => {
                 format: { month: 'short', day: 'numeric' }
               }),
               projectName: null,
-              folderId: '0',
+              folderId: `${dueDate.toMillis()}`,
               dueDate: dueDate.toMillis(),
               userPermissions: {
                 enableNameChange: false,
@@ -145,8 +145,8 @@ export const getSortedFilteredTaskGroups = state => {
             };
             dueDates = [...dueDates, dueDate.toMillis()];
           }
-          tasksByDueDate[dueDate.toMillis()].taskIds = [
-            ...tasksByDueDate[dueDate.toMillis()].taskIds,
+          tasksByDueDate[`${dueDate.toMillis()}`].taskIds = [
+            ...tasksByDueDate[`${dueDate.toMillis()}`].taskIds,
             taskId
           ];
         } else if (dueDate && isPastDue) {
@@ -193,7 +193,27 @@ export const getSortedFilteredTaskGroups = state => {
       const sortedDueDates = [...dueDates].sort((a, b) => a - b);
       return [
         ...(pastDue ? [pastDue] : []),
-        ...sortedDueDates.map(date => restOfDueTasks[date]),
+        ...sortedDueDates.map(date => `${date}` in folders ? ({
+          ...folders[`${date}`],
+          taskIds: view === 'active'
+          ? folders[`${date}`].taskIds.filter(taskId => !tasksById[taskId].isCompleted)
+          : view === 'completed'
+          ? folders[`${date}`].taskIds.filter(taskId => tasksById[taskId].isCompleted)
+          : folders[`${date}`].taskIds,
+          projectId: null,
+              name: toDateString(new Date(date), {
+                useRelative: true,
+                format: { month: 'short', day: 'numeric' }
+              }),
+              projectName: null,
+              folderId: `${date}`,
+              dueDate: date,
+              userPermissions: {
+                enableNameChange: false,
+                enableTaskAdd: true,
+                enableDragNDrop: true
+              }
+        }) : restOfDueTasks[`${date}`]),
         ...(noDueDate ? [noDueDate] : [])
       ];
     }

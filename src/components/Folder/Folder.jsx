@@ -23,8 +23,24 @@ class Folder extends Component {
 
   state = {
     name: this.props.name,
-    isExpanded: this.props.taskIds.length > 0
+    isExpanded: this.props.taskIds.length > 0,
+    prevProps: {
+      taskIds: this.props.taskIds
+    }
   };
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.prevProps.taskIds.length === 0 && props.taskIds.length > 0 && !state.isExpanded) {
+      return {
+        isExpanded: true,
+        prevProps: {
+          ...state.prevProps,
+          taskIds: props.taskIds
+        }
+      };
+    }
+    return null;
+  }
 
   toggleFolder = e => {
     if (e.target.matches('.folder__btn--more-actions')) return;

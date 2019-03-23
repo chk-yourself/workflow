@@ -224,16 +224,10 @@ class TaskEditor extends Component {
     this.toggleColorPicker(false);
   };
 
-  setDueDate = dueDate => {
-    const { firebase, taskId, assignedTo, dueDate: currentDueDate } = this.props;
-
-    if (currentDueDate && dueDate) {
-      firebase.updateDoc(['tasks', taskId], {
-        dueDate
-      });
-    } else {
-      firebase.setTaskDueDate({ taskId, dueDate, assignedTo });
-    }
+  setDueDate = newDueDate => {
+    const { firebase, taskId, assignedTo, dueDate } = this.props;
+    const prevDueDate = dueDate ? new Date(dueDate.toDate()) : null;
+    firebase.setTaskDueDate({ taskId, prevDueDate, newDueDate, assignedTo });
   };
 
   toggleDatePicker = () => {

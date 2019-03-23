@@ -126,11 +126,22 @@ export const updateFolder = ({ folderId, folderData }) => {
   };
 };
 
-export const deleteFolder = folderId => {
+export const removeFolder = folderId => {
   return {
-    type: types.DELETE_FOLDER,
+    type: types.REMOVE_FOLDER,
     folderId
   };
+};
+
+export const deleteFolder = ({userId, folderId}) => {
+  return async dispatch => {
+    try {
+      await firebase.getDocRef('users', userId, 'folders', folderId).delete();
+      dispatch(removeFolder(folderId));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 export const reorderFolders = (userId, folderIds) => {
@@ -311,10 +322,16 @@ export const syncFolders = userId => {
                 dispatch(addFolder({ folderId, folderData }));
                 console.log('folder added');
               } else if (changeType === 'removed') {
-                dispatch(deleteFolder(folderId));
+                if (!change.doc.exists && folderId in folders) {
+                  dispatch(removeFolder(folderId));
+                }
               } else {
-                dispatch(updateFolder({ folderId, folderData }));
-                console.log(`Updated Folder: ${folderData.name}`);
+                if (folderData.taskIds.length === 0 && !['0', '1', '2', '3', '4', '5'].includes(folderId)) {
+                  dispatch(deleteFolder({userId, folderId}));
+                } else {
+                  dispatch(updateFolder({ folderId, folderData }));
+                  console.log(`Updated Folder: ${folderData.name}`);
+                }
               }
             });
           }
