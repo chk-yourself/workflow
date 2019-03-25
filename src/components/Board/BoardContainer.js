@@ -147,7 +147,6 @@ class BoardContainer extends Component {
 
     if (newProjectName !== projectName) {
       firebase.updateProjectName({ projectId, name: newProjectName });
-      console.log('updated project name!');
     }
   };
 

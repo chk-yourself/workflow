@@ -7,6 +7,20 @@ import * as keys from '../../constants/keys';
 import './MemberSearch.scss';
 
 export default class MemberSearch extends Component {
+  static defaultProps = {
+    style: null,
+    classes: {
+      avatar: '',
+      avatarPlaceholder: '',
+      wrapper: '',
+      input: '',
+      list: '',
+      item: '',
+      info: '',
+      noMatch: ''
+    }
+  };
+
   state = {
     query: '',
     isActive: false,
@@ -122,7 +136,7 @@ export default class MemberSearch extends Component {
       }
       case keys.ENTER: {
         if (selectedMember === '') return;
-        this.assignMember(selectedMember, e);
+        this.selectMember(selectedMember, e);
         break;
       }
     }
@@ -130,10 +144,12 @@ export default class MemberSearch extends Component {
     e.preventDefault();
   };
 
-  assignMember = (memberId, e) => {
+  selectMember = (memberId, e) => {
     const { onMemberClick, onClose } = this.props;
     onMemberClick(memberId, e);
-    onClose(e);
+    if (onClose) {
+      onClose(e);
+    }
   }
 
   componentWillUnmount() {
@@ -148,17 +164,18 @@ export default class MemberSearch extends Component {
   }
 
   render() {
-    const { users, onMemberClick, assignedMembers } = this.props;
+    const { users, onMemberClick, assignedMembers, style, classes } = this.props;
     const { query, isActive, filteredList, selectedMember } = this.state;
 
     return (
       <div
-        className="member-search__wrapper"
+        className={`member-search__wrapper ${classes.wrapper || ''}`}
         ref={el => (this.memberSearchEl = el)}
+        style={style}
       >
         <Input
           name="query"
-          className="member-search"
+          className={`member-search ${classes.input || ''}`}
           onChange={this.onChange}
           value={query}
           onFocus={this.onFocus}
@@ -171,7 +188,7 @@ export default class MemberSearch extends Component {
           innerRef={el => (this.inputEl = el)}
         />
         {isActive && (
-          <ul className="member-search__list">
+          <ul className={`member-search__list ${classes.list || ''}`}>
             {filteredList.length > 0 ? (
               filteredList.map((user, i) => {
                 const { name, photoURL, email, username, userId } = user;
@@ -180,39 +197,39 @@ export default class MemberSearch extends Component {
                   assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
                   <li
-                    className={`member-search__item ${
+                    className={`member-search__item ${classes.item || ''} ${
                       selectedMember === userId ? 'is-selected' : ''
                     }`}
-                    onClick={(e) => this.assignMember(userId, e)}
+                    onClick={(e) => this.selectMember(userId, e)}
                     key={userId}
                     id={userId}
                   >
                     <Icon name={isAssigned ? 'user-minus' : 'user-plus'} />
                     <Avatar
                       classes={{
-                        avatar: 'member-search__avatar--sm',
-                        placeholder: 'member-search__avatar-placeholder--sm'
+                        avatar: `member-search__avatar--sm ${classes.avatar || ''}`,
+                        placeholder: `member-search__avatar-placeholder--sm ${classes.avatarPlaceholder || ''}`
                       }}
                       name={name}
                       size="sm"
                       variant="circle"
                       imgSrc={photoURL}
                     />
-                    <span className="member-search__info member-search__name">
+                    <span className={`member-search__info member-search__name ${classes.info || ''}`}>
                       {name}
                     </span>
-                    <span className="member-search__info member-search__username">
+                    <span className={`member-search__info member-search__username ${classes.info || ''}`}>
                       {username}
                     </span>
-                    <span className="member-search__info member-search__email">
+                    <span className={`member-search__info member-search__email ${classes.info || ''}`}>
                       {email}
                     </span>
                   </li>
                 );
               })
             ) : (
-              <li className="member-search__item">
-                <span className="member-search__no-match">
+              <li className={`member-search__item ${classes.item || ''}`}>
+                <span className={`member-search__no-match ${classes.noMatch || ''}`}>
                   No matches found
                 </span>
               </li>

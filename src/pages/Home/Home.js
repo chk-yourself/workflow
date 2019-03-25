@@ -46,11 +46,6 @@ class HomePage extends Component {
     }));
   };
 
-  createProject = name => {
-    const { userId, firebase } = this.props;
-    firebase.addProject({ userId, name });
-  };
-
   componentWillUnmount() {
     this.unsubscribe();
   }
@@ -64,7 +59,6 @@ class HomePage extends Component {
         {isProjectComposerOpen && (
           <ProjectComposer
             onClose={this.toggleProjectComposer}
-            handleSubmit={this.createProject}
           />
         )}
         <Switch>

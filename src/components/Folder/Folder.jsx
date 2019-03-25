@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { taskSelectors } from '../../ducks/tasks';
+import { currentUserSelectors } from '../../ducks/currentUser';
 import { TaskComposer } from '../TaskComposer';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
@@ -58,7 +59,8 @@ class Folder extends Component {
       folderId,
       index,
       dueDate,
-      userPermissions
+      userPermissions,
+      tempTaskSettings
     } = this.props;
     const { name, isExpanded } = this.state;
     return (
@@ -155,7 +157,8 @@ class Folder extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasks: taskSelectors.getFolderTasks(state, ownProps.taskIds)
+    tasks: taskSelectors.getFolderTasks(state, ownProps.taskIds),
+    tempTaskSettings: currentUserSelectors.getTempTaskSettings(state)
   };
 };
 

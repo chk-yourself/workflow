@@ -191,6 +191,7 @@ export default class TagsInput extends Component {
   render() {
     const {
       isColorPickerActive,
+      hideColorPicker,
       assignedTags,
       setTagColor,
       currentTag
@@ -280,11 +281,12 @@ export default class TagsInput extends Component {
             </ul>
           )}
         </div>
-        {isActive && isColorPickerActive && (
+        {isActive && (
           <ColorPicker
             isActive={isColorPickerActive}
             selectColor={setTagColor}
             style={colorPickerStyle}
+            onOutsideClick={hideColorPicker}
           />
         )}
       </div>

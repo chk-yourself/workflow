@@ -138,7 +138,7 @@ export const getSortedFilteredTaskGroups = state => {
               projectId: null,
               name: toDateString(dueDate.toDate(), {
                 useRelative: true,
-                format: { month: 'short', day: 'numeric' }
+                format: { weekday: 'short', month: 'short', day: 'numeric' }
               }),
               projectName: null,
               folderId: `${dueDate.toMillis()}`,
@@ -209,7 +209,7 @@ export const getSortedFilteredTaskGroups = state => {
           projectId: null,
               name: toDateString(new Date(date), {
                 useRelative: true,
-                format: { month: 'short', day: 'numeric' }
+                format: { weekday: 'short', month: 'short', day: 'numeric' }
               }),
               projectName: null,
               folderId: `${date}`,

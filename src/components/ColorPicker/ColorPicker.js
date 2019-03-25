@@ -1,31 +1,42 @@
 import React, { Component } from 'react';
 import { Radio } from '../Radio';
+import { withOutsideClick } from '../withOutsideClick';
 import './ColorPicker.scss';
 
-export default class ColorPicker extends Component {
+class ColorPicker extends Component {
+  static defaultProps = {
+    classes: {
+      colorPicker: ''
+    }
+  };
+
   state = {
     selectedColor: 'default'
   };
 
   handleColorChange = e => {
-    const { selectColor } = this.props;
+    const { selectColor, onChange } = this.props;
     this.setState({
       selectedColor: e.target.value
     });
-    selectColor(e.target.value);
+    if (onChange) {
+      onChange(e);
+    } else {
+      selectColor(e.target.value);
+    }
   };
 
   render() {
-    const { style } = this.props;
+    const { style, isActive, classes, innerRef } = this.props;
     const { selectedColor } = this.state;
     return (
-      <div className="color-picker" style={style}>
+      <div ref={innerRef} className={`color-picker ${classes.colorPicker || ''}`} style={{display: isActive ? 'block' : 'none', ...style}}>
         <Radio
           classes={{
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--default'
           }}
-          name="tagColor"
+          name="color"
           id="colorDefault"
           value="default"
           onChange={this.handleColorChange}
@@ -36,7 +47,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--red'
           }}
-          name="tagColor"
+          name="color"
           id="colorRed"
           value="red"
           onChange={this.handleColorChange}
@@ -47,7 +58,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--pink'
           }}
-          name="tagColor"
+          name="color"
           id="colorPink"
           value="pink"
           onChange={this.handleColorChange}
@@ -58,7 +69,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--grape'
           }}
-          name="tagColor"
+          name="color"
           id="colorGrape"
           value="grape"
           onChange={this.handleColorChange}
@@ -69,7 +80,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--violet'
           }}
-          name="tagColor"
+          name="color"
           id="colorViolet"
           value="violet"
           onChange={this.handleColorChange}
@@ -80,7 +91,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--indigo'
           }}
-          name="tagColor"
+          name="color"
           id="colorIndigo"
           value="indigo"
           onChange={this.handleColorChange}
@@ -91,7 +102,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--blue'
           }}
-          name="tagColor"
+          name="color"
           id="colorBlue"
           value="blue"
           onChange={this.handleColorChange}
@@ -102,7 +113,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--cyan'
           }}
-          name="tagColor"
+          name="color"
           id="colorCyan"
           value="cyan"
           onChange={this.handleColorChange}
@@ -113,7 +124,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--teal'
           }}
-          name="tagColor"
+          name="color"
           id="colorTeal"
           value="teal"
           onChange={this.handleColorChange}
@@ -124,7 +135,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--green'
           }}
-          name="tagColor"
+          name="color"
           id="colorGreen"
           value="green"
           onChange={this.handleColorChange}
@@ -135,7 +146,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--yellow'
           }}
-          name="tagColor"
+          name="color"
           id="colorYellow"
           value="yellow"
           onChange={this.handleColorChange}
@@ -146,7 +157,7 @@ export default class ColorPicker extends Component {
             radio: 'color-picker__radio',
             label: 'color-picker__swatch bg--orange'
           }}
-          name="tagColor"
+          name="color"
           id="colorOrange"
           value="orange"
           onChange={this.handleColorChange}
@@ -156,3 +167,5 @@ export default class ColorPicker extends Component {
     );
   }
 }
+
+export default withOutsideClick(ColorPicker);

@@ -47,7 +47,6 @@ class List extends Component {
 
     if (newName !== name) {
       firebase.updateListName({ listId, name: newName });
-      console.log('updated list name!');
     }
   };
 
@@ -115,7 +114,9 @@ class List extends Component {
                   buttonProps={{
                     size: 'medium',
                     iconOnly: true,
-                    className: `list__btn--more-actions ${isMoreActionsMenuVisible ? 'is-active' : ''}`,
+                    className: `list__btn--more-actions ${
+                      isMoreActionsMenuVisible ? 'is-active' : ''
+                    }`,
                     children: <Icon name="more-vertical" />,
                     onClick: this.toggleMoreActionsMenu
                   }}

@@ -39,7 +39,7 @@ class Subtask extends Component {
     const { name, firebase, subtaskId } = this.props;
     const { name: newName } = this.state;
     if (name !== newName) {
-      firebase.updateSubtask(subtaskId, {
+      firebase.updateDoc(['subtasks', subtaskId], {
         name: newName
       });
     }
@@ -64,11 +64,7 @@ class Subtask extends Component {
   }
 
   render() {
-    const {
-      subtaskId,
-      index,
-      isCompleted
-    } = this.props;
+    const { subtaskId, index, isCompleted } = this.props;
 
     const { name } = this.state;
 

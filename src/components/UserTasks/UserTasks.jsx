@@ -76,29 +76,33 @@ class UserTasks extends Component {
     const { firebase, currentUserId, tempTaskSettings } = this.props;
     switch (type) {
       case droppableTypes.TASK: {
-      const { foldersById } = this.props;
-      const { droppableId: origFolderId, index: origIndex } = source;
-      const { droppableId: newFolderId, index: newIndex } = destination;
-      const isMovedWithinFolder = origFolderId === newFolderId;
-      const updatedTaskIds = [...foldersById[newFolderId].taskIds];
-      if (isMovedWithinFolder) {
-        updatedTaskIds.splice(origIndex, 1);
-        updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
-          taskIds: updatedTaskIds
-        });
-      } else {
-        updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.moveTaskToFolder({
-          userId: currentUserId,
-          taskId: draggableId,
-          origFolderId,
-          newFolderId,
-          updatedTaskIds,
-          type: tempTaskSettings.sortBy === 'folder' ? 'default' : tempTaskSettings.sortBy
-        });
-      }
-      break;
+        const { foldersById } = this.props;
+        const { droppableId: origFolderId, index: origIndex } = source;
+        const { droppableId: newFolderId, index: newIndex } = destination;
+        const isMovedWithinFolder = origFolderId === newFolderId;
+        const updatedTaskIds = [...foldersById[newFolderId].taskIds];
+        console.log(foldersById[newFolderId].taskIds, updatedTaskIds);
+        if (isMovedWithinFolder) {
+          updatedTaskIds.splice(origIndex, 1);
+          updatedTaskIds.splice(newIndex, 0, draggableId);
+          firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
+            taskIds: updatedTaskIds
+          });
+        } else {
+          updatedTaskIds.splice(newIndex, 0, draggableId);
+          firebase.moveTaskToFolder({
+            userId: currentUserId,
+            taskId: draggableId,
+            origFolderId,
+            newFolderId,
+            updatedTaskIds,
+            type:
+              tempTaskSettings.sortBy === 'folder'
+                ? 'default'
+                : tempTaskSettings.sortBy
+          });
+        }
+        break;
       }
       case droppableTypes.FOLDER: {
         const { folderIds, reorderFolders } = this.props;
@@ -113,20 +117,20 @@ class UserTasks extends Component {
       }
       default: {
         const { foldersById } = this.props;
-      const { droppableId: origFolderId, index: origIndex } = source;
-      const { droppableId: newFolderId, index: newIndex } = destination;
-      const isMovedWithinFolder = origFolderId === newFolderId;
-      const updatedTaskIds = [...foldersById[newFolderId].taskIds];
-      if (isMovedWithinFolder) {
-        updatedTaskIds.splice(origIndex, 1);
-        updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
-          taskIds: updatedTaskIds
-        });
+        const { droppableId: origFolderId, index: origIndex } = source;
+        const { droppableId: newFolderId, index: newIndex } = destination;
+        const isMovedWithinFolder = origFolderId === newFolderId;
+        const updatedTaskIds = [...foldersById[newFolderId].taskIds];
+        if (isMovedWithinFolder) {
+          updatedTaskIds.splice(origIndex, 1);
+          updatedTaskIds.splice(newIndex, 0, draggableId);
+          firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
+            taskIds: updatedTaskIds
+          });
+        }
       }
     }
   };
-};
 
   saveTaskSettings = () => {
     const { firebase, currentUserId, tempTaskSettings } = this.props;
@@ -165,17 +169,18 @@ class UserTasks extends Component {
       isTaskSettingsMenuVisible: false,
       isSortRuleDropdownVisible: false
     });
-  }
+  };
 
   toggleSortRuleDropdown = (value = null) => {
     this.setState(prevState => ({
-      isSortRuleDropdownVisible: value === null ? !prevState.isSortRuleDropdownVisible : value
+      isSortRuleDropdownVisible:
+        value === null ? !prevState.isSortRuleDropdownVisible : value
     }));
   };
 
   hideSortRuleDropdown = () => {
     this.toggleSortRuleDropdown(false);
-  }
+  };
 
   render() {
     const {
@@ -308,7 +313,8 @@ const mapDispatchToProps = dispatch => {
     syncUserTasks: userId => dispatch(currentUserActions.syncUserTasks(userId)),
     reorderFolders: (userId, folderIds) =>
       dispatch(currentUserActions.reorderFolders(userId, folderIds)),
-    setTempTaskSettings: ({ view = null, sortBy = null }) => dispatch(currentUserActions.setTempTaskSettings({view, sortBy}))
+    setTempTaskSettings: ({ view = null, sortBy = null }) =>
+      dispatch(currentUserActions.setTempTaskSettings({ view, sortBy }))
   };
 };
 

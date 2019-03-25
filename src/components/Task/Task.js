@@ -53,7 +53,7 @@ class Task extends Component {
     const { name, firebase, taskId } = this.props;
     const { name: newName } = this.state;
     if (name !== newName) {
-      firebase.updateTask(taskId, {
+      firebase.updateDoc(['tasks', taskId], {
         name: newName
       });
     }
@@ -64,8 +64,27 @@ class Task extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const { taskId, firebase, listId, assignedTo, folders } = this.props;
-    firebase.deleteTask({ taskId, listId, assignedTo, folders });
+    const {
+      firebase,
+      taskId,
+      listId,
+      assignedTo,
+      folders,
+      subtaskIds,
+      commentIds,
+      dueDate,
+      projectId
+    } = this.props;
+    firebase.deleteTask({
+      taskId,
+      listId,
+      assignedTo,
+      folders,
+      subtaskIds,
+      commentIds,
+      dueDate,
+      projectId
+    });
   };
 
   toggleCompleted = () => {

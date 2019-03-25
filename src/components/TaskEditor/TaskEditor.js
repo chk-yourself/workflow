@@ -64,16 +64,16 @@ class TaskEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: this.props.name,
-      notes: this.props.notes,
+      name: props.name,
+      notes: props.notes,
       currentFocus: null,
       isColorPickerActive: false,
       currentTag: null,
       isDatePickerActive: false,
       isMemberSearchActive: false,
       prevProps: {
-        name: this.props.name,
-        notes: this.props.notes
+        name: props.name,
+        notes: props.notes
       }
     };
   }
@@ -120,10 +120,10 @@ class TaskEditor extends Component {
     // When field loses focus, update task if change is detected
 
     if (updatedValue !== currentValue) {
-      firebase.updateTask(taskId, {
+      firebase.updateDoc(['tasks', taskId], {
         [taskKey]: updatedValue
       });
-      console.log('updated task!');
+      console.log('Updated task!');
     }
 
     this.setState({
@@ -172,14 +172,17 @@ class TaskEditor extends Component {
     });
   };
 
+  hideColorPicker = () => {
+    this.toggleColorPicker(false);
+  };
+
   addTag = name => {
     const {
       firebase,
       currentUser,
       projectTags,
       taskId,
-      projectId,
-      addTag
+      projectId
     } = this.props;
     const { userId, tags: userTags } = currentUser;
     const isProjectTag = projectTags && name in projectTags;
@@ -269,7 +272,6 @@ class TaskEditor extends Component {
   onOutsideClick = e => {
     const { handleTaskEditorClose } = this.props;
     if (e.target.matches('.member-search__item')) return;
-    console.log(e.target);
     handleTaskEditorClose();
   }
 
@@ -467,6 +469,7 @@ class TaskEditor extends Component {
               addTag={this.addTag}
               tagSuggestions={mergedTags}
               assignedTags={taskTags}
+              hideColorPicker={this.hideColorPicker}
               isColorPickerActive={isColorPickerActive}
               setTagColor={this.setTagColor}
               removeTag={this.removeTag}
