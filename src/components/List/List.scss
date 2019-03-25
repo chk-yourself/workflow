@@ -89,6 +89,7 @@
 .list__cards {
   overflow-x: visible;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   min-height: 16px;
   max-height: calc(100vh - 274px);
   @include md {

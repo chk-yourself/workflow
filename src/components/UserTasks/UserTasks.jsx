@@ -73,20 +73,38 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, currentUserId, tempTaskSettings } = this.props;
+    const { firebase, currentUserId, tempTaskSettings, tasksById } = this.props;
+    const { view } = tempTaskSettings;
     switch (type) {
       case droppableTypes.TASK: {
         const { foldersById } = this.props;
         const { droppableId: origFolderId, index: origIndex } = source;
         const { droppableId: newFolderId, index: newIndex } = destination;
         const isMovedWithinFolder = origFolderId === newFolderId;
-        const updatedTaskIds = [...foldersById[newFolderId].taskIds];
-        console.log(foldersById[newFolderId].taskIds, updatedTaskIds);
+        const taskIds = [...foldersById[newFolderId].taskIds];
+        const completedTaskIds = taskIds.filter(
+          taskId => tasksById[taskId].isCompleted
+        );
+        const activeTaskIds = taskIds.filter(
+          taskId => !tasksById[taskId].isCompleted
+        );
+        const updatedTaskIds =
+          view === 'all'
+            ? taskIds
+            : view === 'active'
+            ? activeTaskIds
+            : completedTaskIds;
+
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
-            taskIds: updatedTaskIds
+            taskIds:
+              view === 'all'
+                ? updatedTaskIds
+                : view === 'active'
+                ? [...completedTaskIds, ...updatedTaskIds]
+                : [...activeTaskIds, ...updatedTaskIds]
           });
         } else {
           updatedTaskIds.splice(newIndex, 0, draggableId);
@@ -95,7 +113,12 @@ class UserTasks extends Component {
             taskId: draggableId,
             origFolderId,
             newFolderId,
-            updatedTaskIds,
+            updatedTaskIds:
+              view === 'all'
+                ? updatedTaskIds
+                : view === 'active'
+                ? [...completedTaskIds, ...updatedTaskIds]
+                : [...activeTaskIds, ...updatedTaskIds],
             type:
               tempTaskSettings.sortBy === 'folder'
                 ? 'default'
@@ -120,12 +143,29 @@ class UserTasks extends Component {
         const { droppableId: origFolderId, index: origIndex } = source;
         const { droppableId: newFolderId, index: newIndex } = destination;
         const isMovedWithinFolder = origFolderId === newFolderId;
-        const updatedTaskIds = [...foldersById[newFolderId].taskIds];
+        const taskIds = [...foldersById[newFolderId].taskIds];
+        const completedTaskIds = taskIds.filter(
+          taskId => tasksById[taskId].isCompleted
+        );
+        const activeTaskIds = taskIds.filter(
+          taskId => !tasksById[taskId].isCompleted
+        );
+        const updatedTaskIds =
+          view === 'all'
+            ? taskIds
+            : view === 'active'
+            ? activeTaskIds
+            : completedTaskIds;
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.updateDoc(['users', currentUserId, 'folders', newFolderId], {
-            taskIds: updatedTaskIds
+            taskIds:
+              view === 'all'
+                ? updatedTaskIds
+                : view === 'active'
+                ? [...completedTaskIds, ...updatedTaskIds]
+                : [...activeTaskIds, ...updatedTaskIds]
           });
         }
       }
