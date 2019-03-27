@@ -24,7 +24,7 @@ const withAuthentication = Component => {
         setCurrentUser
       } = this.props;
 
-      this.listener = firebase.auth.onAuthStateChanged(async authUser => {
+      this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           this.unsubscribe = await syncCurrentUserData(authUser.uid);
           this.setState({ authUser });

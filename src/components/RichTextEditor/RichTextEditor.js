@@ -50,6 +50,18 @@ class RichTextEditor extends Component {
     isFocused: false
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { isFocused } = this.state;
+    if (!prevState.isFocused && isFocused) {
+      this.scrollToBottom();
+    }
+  }
+
+  scrollToBottom = () => {
+    if (!this.end) return;
+    this.end.scrollIntoView({ behavior: 'smooth' });
+  };
+
   isEmpty = () => {
     const { value } = this.state;
     return isEqual(initialValue, value.toJSON());
@@ -144,10 +156,6 @@ class RichTextEditor extends Component {
 
     if (e.shiftKey) {
       switch (e.key) {
-        case '@': {
-          this.toggleMentionsList();
-          break;
-        }
         default: {
           return next();
         }
@@ -161,6 +169,10 @@ class RichTextEditor extends Component {
         if (isMentionsEnabled && isMentionsListVisible && lastChar === '@') {
           setTimeout(this.toggleMentionsList, 0);
         }
+        break;
+      }
+      case '@': {
+        this.toggleMentionsList();
         break;
       }
       default: {
@@ -443,6 +455,10 @@ class RichTextEditor extends Component {
             }}
           />
         )}
+        <div
+          style={{ float: 'left', clear: 'both' }}
+          ref={el => (this.end = el)}
+        />
       </div>
     );
   }

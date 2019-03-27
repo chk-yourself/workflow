@@ -494,7 +494,7 @@ class TaskEditor extends Component {
             }}
           />
         </TaskEditorSection>
-        <TaskEditorSection>
+        <TaskEditorSection className="comments">
           <div className="task-editor__section-header">
             <div className="task-editor__section-icon">
               <Icon name="message-circle" />
