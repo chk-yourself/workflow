@@ -531,7 +531,7 @@ class Firebase {
         subtaskIds: [],
         isCompleted: false,
         completedAt: null,
-        notes: '',
+        notes: null,
         assignedTo: isFolderItem ? [userId] : assignedTo,
         folders: isFolderItem
           ? {
@@ -984,16 +984,16 @@ class Firebase {
 
   // Comment API
 
-  addComment = ({ userId, memberIds = [], projectId, taskId, content }) => {
+  addComment = ({ from, to = [], projectId, taskId, content }) => {
     this.db
       .collection('comments')
       .add({
         createdAt: this.getTimestamp(),
         lastUpdatedAt: null,
         isPinned: false,
-        from: userId,
-        to: memberIds,
         likes: {},
+        from,
+        to,
         projectId,
         taskId,
         content

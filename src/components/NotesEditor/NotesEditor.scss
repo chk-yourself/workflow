@@ -1,25 +1,27 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.comment-composer {
+.notes-editor {
   position: relative;
+  border: 1px solid transparent;
   &.is-focused {
     min-height: 96px;
     padding-top: 12px;
     padding-bottom: 42px;
+    border: 1px solid $primary;
   }
 }
 
-.comment-composer__btn--submit {
+.notes-editor__btn--submit {
   padding: 6px 8px;
   min-height: 0;
 }
 
-.comment-composer__add-ons {
+.notes-editor__add-ons {
   margin-left: auto;
 }
 
-.comment-composer__toolbar {
+.notes-editor__toolbar {
   width: 100%;
   position: absolute;
   bottom: 0;
@@ -27,7 +29,7 @@
   padding: 8px 8px 4px 4px;
 }
 
-.comment-composer__toolbar-btn {
+.notes-editor__toolbar-btn {
   width: 30px;
   height: 30px;
   padding: 0;

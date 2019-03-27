@@ -1,14 +1,18 @@
 import React from 'react';
 import './Toolbar.scss';
 
-const Toolbar = ({ className, children, ...props }) => (
-  <div className={`toolbar ${className}`} {...props}>
+const Toolbar = ({ className, children, isActive, ...props }) => (
+  <div
+    className={`toolbar ${className} ${isActive ? 'is-active' : ''} `}
+    {...props}
+  >
     {children}
   </div>
 );
 
 Toolbar.defaultProps = {
-  className: ''
+  className: '',
+  isActive: true
 };
 
 export default Toolbar;

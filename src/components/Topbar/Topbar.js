@@ -48,6 +48,11 @@ class Topbar extends Component {
                 </NavLink>
               </MenuItem>
               <MenuItem>
+                <NavLink className="topbar__link" to={`/0/${currentUser.userId}/profile`}>
+                  My Profile
+                </NavLink>
+              </MenuItem>
+              <MenuItem>
                 <SignOutButton className="topbar__link" />
               </MenuItem>
             </Menu>

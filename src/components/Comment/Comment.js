@@ -1,19 +1,19 @@
-/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
 import { userSelectors } from '../../ducks/users';
-import { commentActions, commentSelectors } from '../../ducks/comments';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { Avatar } from '../Avatar';
 import { toDateString } from '../../utils/date';
+import { CommentEditor } from '../CommentEditor';
 import './Comment.scss';
 
 class Comment extends Component {
   state = {
-    secondsElapsed: 0
+    secondsElapsed: 0,
+    isCommentEditorActive: false
   };
 
   componentDidMount() {
@@ -54,8 +54,17 @@ class Comment extends Component {
   };
 
   render() {
-    const { user, content, createdAt, likes, to, from, isPinned } = this.props;
-    const { secondsElapsed } = this.state;
+    const {
+      commentId,
+      user,
+      content,
+      createdAt,
+      likes,
+      to,
+      from,
+      isPinned
+    } = this.props;
+    const { secondsElapsed, isCommentEditorActive } = this.state;
     const { name, photoURL } = user;
     const likesCount = Object.keys(likes).length;
     if (!createdAt) return null;
@@ -115,7 +124,12 @@ class Comment extends Component {
               </span>
             </Button>
           </div>
-          <div className="comment__content">{content}</div>
+          <CommentEditor
+            key={commentId}
+            commentId={commentId}
+            content={content}
+            isReadOnly={!isCommentEditorActive}
+          />
         </div>
       </div>
     );

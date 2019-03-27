@@ -2,106 +2,101 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
 import { Avatar } from '../Avatar';
-import { Button } from '../Button';
-import { Textarea } from '../Textarea';
 import * as keys from '../../constants/keys';
 import { currentUserSelectors } from '../../ducks/currentUser';
+import { userSelectors } from '../../ducks/users';
+import { RichTextEditor, getUserIdsFromMentions } from '../RichTextEditor';
+import './CommentComposer.scss';
 
 class CommentComposer extends Component {
   static defaultProps = {
     classes: {
       avatar: '',
       avatarPlaceholder: '',
-      form: '',
-      textarea: '',
+      composer: '',
       button: ''
     }
-  }
-
-  state = {
-    content: '',
-    isFocused: false
   };
 
-  resetForm = () => {
-    this.setState({ content: '' });
-  };
-
-  onChange = e => {
-    this.setState({
-      content: e.target.value
-    });
-  };
-
-  onFocus = e => {
-    this.setState({
-      isFocused: true
-    });
-  };
-
-  onBlur = e => {
-    if (e.target.value !== '') return;
-    this.setState({
-      isFocused: false
-    });
-  };
-
-  addComment = e => {
+  addComment = (value, e) => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { currentUser, firebase, taskId, projectId } = this.props;
-    const { content } = this.state;
+    const userIds = getUserIdsFromMentions(value);
     const { userId } = currentUser;
-    firebase.addComment({ userId, content, taskId, projectId });
-    this.resetForm();
+    firebase.addComment({
+      content: value.toJSON(),
+      to: userIds,
+      from: userId,
+      taskId,
+      projectId
+    });
     e.preventDefault();
   };
 
   render() {
-    const { content, isFocused } = this.state;
-    const { currentUser, classes } = this.props;
+    const { currentUser, classes, users, usersById, id } = this.props;
     return (
       <>
-      <Avatar
-        classes={{
-          avatar: classes.avatar || '',
-          placeholder: classes.avatarPlaceholder || ''
-        }}
-        name={currentUser.name}
-        size="sm"
-        variant="circle"
-        imgSrc={currentUser.photoURL}
-      />
-      <form
-        name="commentForm"
-        className={`${classes.form || ''} ${
-        isFocused ? 'is-focused' : ''}`}
-        onSubmit={this.addComment}
-      >
-      <Textarea
-        className={classes.textarea || ''}
-        name="comment"
-        value={content}
-        onChange={this.onChange}
-        placeholder="Write a comment..."
-        onFocus={this.onFocus}
-        onBlur={this.onBlur}
-        onKeyDown={this.addComment}
-      />
-        {isFocused && (
-        <Button
-          type="submit"
-          color="primary"
-          size="small"
-          variant="contained"
-          disabled={content === ''}
-          onClick={this.addComment}
-          name="newCommentSubmit"
-          className={classes.button || ''}
-        >
-          Send
-        </Button>
-      )}
-      </form>
+        <Avatar
+          classes={{
+            avatar: classes.avatar || '',
+            placeholder: classes.avatarPlaceholder || ''
+          }}
+          name={currentUser.name}
+          size="sm"
+          variant="circle"
+          imgSrc={currentUser.photoURL}
+        />
+        <RichTextEditor
+          key={`comment-composer--${id}`}
+          id={`comment-composer--${id}`}
+          onSubmit={this.addComment}
+          classes={{
+            container: `comment-composer ${classes.composer || ''}`,
+            toolbar: 'comment-composer__toolbar',
+            button: 'comment-composer__toolbar-btn',
+            addOns: 'comment-composer__add-ons'
+          }}
+          isMentionsEnabled
+          mentions={{
+            list: users,
+            map: usersById
+          }}
+          addOns={[
+            {
+              type: 'submit',
+              onClick: 'onSubmit',
+              id: 'submitComment',
+              props: {
+                className: `comment-composer__btn--submit ${classes.button ||
+                  ''}`,
+                color: 'primary',
+                variant: 'contained',
+                children: 'Send'
+              }
+            }
+          ]}
+          marks={[
+            {
+              type: 'bold',
+              icon: 'bold'
+            },
+            {
+              type: 'italic',
+              icon: 'italic'
+            },
+            {
+              type: 'underline',
+              icon: 'underline'
+            }
+          ]}
+          inlines={[
+            {
+              type: 'mention',
+              icon: 'at-sign'
+            }
+          ]}
+        />
       </>
     );
   }
@@ -109,7 +104,9 @@ class CommentComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    currentUser: currentUserSelectors.getCurrentUser(state)
+    currentUser: currentUserSelectors.getCurrentUser(state),
+    users: userSelectors.getUsersArray(state),
+    usersById: userSelectors.getUsersById(state)
   };
 };
 

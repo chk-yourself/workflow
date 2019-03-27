@@ -13,23 +13,18 @@ import { userSelectors } from '../../ducks/users';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import './ProjectComposer.scss';
 
-const INITIAL_STATE = {
-  
-};
-
-
 class ProjectComposer extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       name: '',
-  notes: '',
-  view: 'board',
-  color: 'default',
-  privacy: 'public',
-  memberIds: [props.userId],
-  isColorPickerActive: false,
-  isMemberSearchActive: false
+      notes: '',
+      view: 'board',
+      color: 'default',
+      privacy: 'public',
+      memberIds: [props.userId],
+      isColorPickerActive: false,
+      isMemberSearchActive: false
     };
   }
 
@@ -45,14 +40,22 @@ class ProjectComposer extends Component {
       isColorPickerActive: false,
       isMemberSearchActive: false
     });
-  }
+  };
 
   onSubmit = e => {
     e.preventDefault();
     const { name, notes, color, view, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, userId } = this.props;
-    firebase.addProject({ userId, name, color, view, isPrivate, memberIds, notes });
+    firebase.addProject({
+      userId,
+      name,
+      color,
+      view,
+      isPrivate,
+      memberIds,
+      notes
+    });
     onClose();
     this.reset();
   };
@@ -67,7 +70,7 @@ class ProjectComposer extends Component {
     this.setState(prevState => ({
       isColorPickerActive: !prevState.isColorPickerActive
     }));
-  }
+  };
 
   hideColorPicker = () => {
     const { isColorPickerActive } = this.state;
@@ -75,14 +78,17 @@ class ProjectComposer extends Component {
     this.setState({
       isColorPickerActive: false
     });
-  }
+  };
 
   onColorPickerOutsideClick = e => {
     const { isColorPickerActive } = this.state;
-    if (isColorPickerActive && !e.target.matches('.project-composer__btn--toggle-color-picker')) {
+    if (
+      isColorPickerActive &&
+      !e.target.matches('.project-composer__btn--toggle-color-picker')
+    ) {
       this.hideColorPicker();
     }
-  }
+  };
 
   handleMemberAssignment = (userId, e) => {
     const { memberIds } = this.state;
@@ -96,14 +102,21 @@ class ProjectComposer extends Component {
       }));
     }
     e.preventDefault();
-  }
+  };
 
   render() {
-    const { name, notes, view, privacy, color, memberIds, isColorPickerActive } = this.state;
-    const { usersArray } = this.props;
+    const {
+      name,
+      notes,
+      view,
+      privacy,
+      color,
+      memberIds,
+      isColorPickerActive
+    } = this.state;
 
     const settings = {
-      'privacy': {
+      privacy: {
         options: [
           {
             value: 'public',
@@ -115,29 +128,37 @@ class ProjectComposer extends Component {
           }
         ]
       },
-      'view': {
+      view: {
         options: [
           {
             value: 'board',
-            label: <>
-            <Icon name="trello" />
-            Board
-            </>
+            label: (
+              <>
+                <Icon name="trello" />
+                Board
+              </>
+            )
           },
           {
             value: 'list',
-            label: <>
-            <Icon name="list" />
-            List
-            </>
+            label: (
+              <>
+                <Icon name="list" />
+                List
+              </>
+            )
           }
         ]
       }
-    }
+    };
 
     return (
-      <Modal onModalClose={this.props.onClose} size="md" classes={{ content: 'project-composer'}}>
-      <h3 className="project-composer__heading">Create new project</h3>
+      <Modal
+        onModalClose={this.props.onClose}
+        size="md"
+        classes={{ content: 'project-composer' }}
+      >
+        <h3 className="project-composer__heading">Create new project</h3>
         <form className="project-composer__form" onSubmit={this.onSubmit}>
           <Input
             name="name"
@@ -149,37 +170,73 @@ class ProjectComposer extends Component {
             className="project-composer__input--name"
           />
           <div className="project-composer__settings">
-          <div className="project-composer__control-group project-composer__control-group--color">
-          <h4 className="project-composer__subheading">Highlight Color</h4>
-          <Button onClick={this.toggleColorPicker} className={`project-composer__btn--toggle-color-picker ${isColorPickerActive ? 'is-active' : ''}`}>
-          <ProjectIcon className="project-composer__color-swatch" color={color} />
-          <Icon name="chevron-down" />
-          </Button>
-          <ColorPicker onOutsideClick={this.onColorPickerOutsideClick} isActive={isColorPickerActive} onChange={this.onChange} classes={{colorPicker: 'project-composer__color-picker'}} />
-          </div>
+            <div className="project-composer__control-group project-composer__control-group--color">
+              <h4 className="project-composer__subheading">Highlight Color</h4>
+              <Button
+                onClick={this.toggleColorPicker}
+                className={`project-composer__btn--toggle-color-picker ${
+                  isColorPickerActive ? 'is-active' : ''
+                }`}
+              >
+                <ProjectIcon
+                  className="project-composer__color-swatch"
+                  color={color}
+                />
+                <Icon name="chevron-down" />
+              </Button>
+              <ColorPicker
+                onOutsideClick={this.onColorPickerOutsideClick}
+                isActive={isColorPickerActive}
+                onChange={this.onChange}
+                classes={{ colorPicker: 'project-composer__color-picker' }}
+              />
+            </div>
           </div>
           <div className="project-composer__control-group">
-          <h4 className="project-composer__subheading">Privacy</h4>
-          {
-            settings.privacy.options.map(option => (
-              <Radio key={option.value} onChange={this.onChange} isChecked={privacy === option.value} label={option.label} name='privacy' id={option.value} value={option.value} classes={{ radio: "project-composer__radio", label: 'project-composer__radio-label' }} />
-            ))
-          }
+            <h4 className="project-composer__subheading">Privacy</h4>
+            {settings.privacy.options.map(option => (
+              <Radio
+                key={option.value}
+                onChange={this.onChange}
+                isChecked={privacy === option.value}
+                label={option.label}
+                name="privacy"
+                id={option.value}
+                value={option.value}
+                classes={{
+                  radio: 'project-composer__radio',
+                  label: 'project-composer__radio-label'
+                }}
+              />
+            ))}
           </div>
           {privacy === 'public' && (
             <div className="project-composer__control-group">
-          <h4 className="project-composer__subheading">Members</h4>
-          <MemberAssigner memberIds={memberIds} onMemberSelect={this.handleMemberAssignment} />
-          </div>
-          )
-          }
+              <h4 className="project-composer__subheading">Members</h4>
+              <MemberAssigner
+                placeholder="Add or remove member"
+                memberIds={memberIds}
+                onSelectMember={this.handleMemberAssignment}
+              />
+            </div>
+          )}
           <div className="project-composer__control-group">
-          <h4 className="project-composer__subheading">View</h4>
-          {
-            settings.view.options.map(option => (
-              <Radio key={option.value} onChange={this.onChange} isChecked={view === option.value} label={option.label} name='view' id={option.value} value={option.value} classes={{ radio: "project-composer__radio", label: 'project-composer__radio-label' }} />
-            ))
-          }
+            <h4 className="project-composer__subheading">View</h4>
+            {settings.view.options.map(option => (
+              <Radio
+                key={option.value}
+                onChange={this.onChange}
+                isChecked={view === option.value}
+                label={option.label}
+                name="view"
+                id={option.value}
+                value={option.value}
+                classes={{
+                  radio: 'project-composer__radio',
+                  label: 'project-composer__radio-label'
+                }}
+              />
+            ))}
           </div>
           <Button
             className="project-composer__btn--add"
@@ -198,14 +255,12 @@ class ProjectComposer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentUserSelectors.getCurrentUserId(state),
-    usersArray: userSelectors.getUsersArray(state)
+    userId: currentUserSelectors.getCurrentUserId(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-  };
+  return {};
 };
 
 export default withFirebase(
@@ -214,4 +269,3 @@ export default withFirebase(
     mapDispatchToProps
   )(ProjectComposer)
 );
-

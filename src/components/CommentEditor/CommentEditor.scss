@@ -1,7 +1,7 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.comment-composer {
+.comment-editor {
   position: relative;
   &.is-focused {
     min-height: 96px;
@@ -10,16 +10,16 @@
   }
 }
 
-.comment-composer__btn--submit {
+.comment-editor__btn--submit {
   padding: 6px 8px;
   min-height: 0;
 }
 
-.comment-composer__add-ons {
+.comment-editor__add-ons {
   margin-left: auto;
 }
 
-.comment-composer__toolbar {
+.comment-editor__toolbar {
   width: 100%;
   position: absolute;
   bottom: 0;
@@ -27,7 +27,7 @@
   padding: 8px 8px 4px 4px;
 }
 
-.comment-composer__toolbar-btn {
+.comment-editor__toolbar-btn {
   width: 30px;
   height: 30px;
   padding: 0;

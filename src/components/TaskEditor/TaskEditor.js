@@ -1,26 +1,19 @@
-/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
-import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
-import { userSelectors } from '../../ducks/users';
-import { commentActions, commentSelectors } from '../../ducks/comments';
+import { subtaskSelectors } from '../../ducks/subtasks';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
-import { Avatar } from '../Avatar';
-import TaskEditorAssignMember from './TaskEditorAssignMember';
 import TaskEditorSection from './TaskEditorSection';
-import { MemberSearch } from '../MemberSearch';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
 import * as keys from '../../constants/keys';
 import { Subtasks } from '../Subtasks';
 import { SubtaskComposer } from '../SubtaskComposer';
-import { Comment } from '../Comment';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
 import { projectSelectors } from '../../ducks/projects';
@@ -32,6 +25,9 @@ import { getSimpleDate, toDateString, isPriorDate } from '../../utils/date';
 import { ProjectListDropdown } from '../ProjectListDropdown';
 import { CommentComposer } from '../CommentComposer';
 import { Comments } from '../Comments';
+import { MemberAssigner } from '../MemberAssigner';
+import { NotesEditor } from '../NotesEditor';
+
 
 const TaskEditorWrapper = ({
   view,
@@ -50,9 +46,7 @@ const TaskEditorWrapper = ({
       {children}
     </Modal>
   ) : (
-    <TaskEditorPane onClose={handleTaskEditorClose}>
-      {children}
-    </TaskEditorPane>
+    <TaskEditorPane onClose={handleTaskEditorClose}>{children}</TaskEditorPane>
   );
 };
 
@@ -65,15 +59,13 @@ class TaskEditor extends Component {
     super(props);
     this.state = {
       name: props.name,
-      notes: props.notes,
       currentFocus: null,
       isColorPickerActive: false,
       currentTag: null,
       isDatePickerActive: false,
       isMemberSearchActive: false,
       prevProps: {
-        name: props.name,
-        notes: props.notes
+        name: props.name
       }
     };
   }
@@ -83,17 +75,7 @@ class TaskEditor extends Component {
       return {
         name: props.name,
         prevProps: {
-          ...state.prevProps,
           name: props.name
-        }
-      };
-    }
-    if (props.notes !== state.prevProps.notes) {
-      return {
-        notes: props.notes,
-        prevProps: {
-          ...state.prevProps,
-          notes: props.notes
         }
       };
     }
@@ -155,7 +137,15 @@ class TaskEditor extends Component {
   };
 
   assignMember = (userId, e) => {
-    const { taskId, projectId, projectName, assignedTo, firebase, folders, dueDate } = this.props;
+    const {
+      taskId,
+      projectId,
+      projectName,
+      assignedTo,
+      firebase,
+      folders,
+      dueDate
+    } = this.props;
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
@@ -253,27 +243,33 @@ class TaskEditor extends Component {
     const newListId = e.target.value;
     const newListName = e.target.dataset.label;
     const updatedTaskIds = [...listsById[newListId].taskIds, taskId];
-    firebase.moveTaskToList({ taskId, origListId, newListId, updatedTaskIds, newListName });
+    firebase.moveTaskToList({
+      taskId,
+      origListId,
+      newListId,
+      updatedTaskIds,
+      newListName
+    });
   };
 
   toggleMemberSearch = () => {
     this.setState(prevState => ({
       isMemberSearchActive: !prevState.isMemberSearchActive
     }));
-  }
+  };
 
   hideMemberSearch = e => {
     if (e.target.matches('.task-editor__btn--add-member')) return;
     this.setState({
       isMemberSearchActive: false
     });
-  }
+  };
 
   onOutsideClick = e => {
     const { handleTaskEditorClose } = this.props;
     if (e.target.matches('.member-search__item')) return;
     handleTaskEditorClose();
-  }
+  };
 
   render() {
     const {
@@ -281,9 +277,6 @@ class TaskEditor extends Component {
       taskId,
       commentIds,
       assignedTo,
-      usersArray,
-      membersArray,
-      currentUser,
       taskTags,
       mergedTags,
       dueDate,
@@ -293,21 +286,17 @@ class TaskEditor extends Component {
       view,
       listName,
       listId,
-      isCompleted
+      isCompleted,
+      notes
     } = this.props;
     const {
       name,
-      notes,
-      currentFocus,
-      subtasks,
       isColorPickerActive,
       isDatePickerActive,
-      isMemberSearchActive,
       currentTag
     } = this.state;
     const hasSubtasks = subtaskIds && subtaskIds.length > 0;
     const hasComments = commentIds && commentIds.length > 0;
-    const isAssigned = !!assignedTo && assignedTo.length > 0;
     const taskDueDate = dueDate
       ? getSimpleDate(dueDate.toDate())
       : getSimpleDate(new Date());
@@ -327,18 +316,6 @@ class TaskEditor extends Component {
         view={view}
       >
         <Toolbar className="task-editor__toolbar">
-          {projectId && (
-            <TaskEditorAssignMember isActive={isMemberSearchActive} onClose={this.hideMemberSearch} onToggle={this.toggleMemberSearch}>
-            {isMemberSearchActive && (
-              <MemberSearch
-                users={usersArray}
-                assignedMembers={assignedTo}
-                onMemberClick={this.assignMember}
-                onClose={this.hideMemberSearch}
-              />
-            )}
-            </TaskEditorAssignMember>
-          )}
           <Button
             type="button"
             onClick={this.toggleCompleted}
@@ -373,11 +350,22 @@ class TaskEditor extends Component {
                   projectId={projectId}
                   size="md"
                   variant="icon"
-                  classes={{badge: 'task-editor__project-badge', icon: 'task-editor__project-badge-icon'}}
+                  classes={{
+                    badge: 'task-editor__project-badge',
+                    icon: 'task-editor__project-badge-icon'
+                  }}
                 />
               </div>
               <div className="task-editor__list-name">
-                <ProjectListDropdown classes={{ button: 'task-editor__project-list-dropdown-btn--toggle', menu: 'task-editor__project-list-dropdown-menu' }} projectId={projectId} selectedList={{ value: listId, label: listName }} onChange={this.moveToList} />
+                <ProjectListDropdown
+                  classes={{
+                    button: 'task-editor__project-list-dropdown-btn--toggle',
+                    menu: 'task-editor__project-list-dropdown-menu'
+                  }}
+                  projectId={projectId}
+                  selectedList={{ value: listId, label: listName }}
+                  onChange={this.moveToList}
+                />
               </div>
             </TaskEditorSection>
           )}
@@ -431,35 +419,14 @@ class TaskEditor extends Component {
             <div className="task-editor__section-icon">
               <Icon name="user" />
             </div>
-            {isAssigned && (
-              <div className="task-editor__members">
-                {membersArray.map(member => {
-                  const { name, photoURL, userId } = member;
-                  return (
-                    <Avatar
-                      classes={{
-                        avatar: 'task-editor__avatar',
-                        placeholder: 'task-editor__avatar-placeholder'
-                      }}
-                      name={name}
-                      size="sm"
-                      variant="circle"
-                      imgSrc={photoURL}
-                      key={userId}
-                    />
-                  );
-                })}
-              </div>
-            )}
-            {projectId && (
-              <Button
-                type="button"
-                className="task-editor__btn--add-member"
-                onClick={this.toggleMemberSearch}
-              >
-                <Icon name="plus" />
-              </Button>
-            )}
+            <div className="task-editor__members">
+              <MemberAssigner
+                placeholder="Assign or remove member"
+                memberIds={assignedTo}
+                onSelectMember={this.assignMember}
+                memberSearchIsDisabled={!projectId}
+              />
+            </div>
           </TaskEditorSection>
           <TaskEditorSection>
             <div className="task-editor__section-icon">
@@ -480,14 +447,16 @@ class TaskEditor extends Component {
             <div className="task-editor__section-icon">
               <Icon name="edit-3" />
             </div>
-            <Textarea
-              className="task-editor__textarea task-editor__textarea--description"
-              name="notes"
-              value={notes}
-              onChange={this.onChange}
+            <NotesEditor
               placeholder="Add a description"
-              onBlur={this.onBlur}
-              onFocus={this.onFocus}
+              type="task"
+              key={`notes--${taskId}`}
+              id={taskId}
+              value={notes}
+              classes={{
+                editor:
+                  'task-editor__textarea task-editor__textarea--description'
+              }}
             />
           </TaskEditorSection>
         </form>
@@ -513,12 +482,17 @@ class TaskEditor extends Component {
               projectId={projectId}
             />
           )}
-          <SubtaskComposer taskId={taskId} projectId={projectId} classes={{
-            iconWrapper: "task-editor__section-icon",
-            form: 'task-editor__new-subtask-form',
-            textarea: "task-editor__textarea task-editor__textarea--new-subtask",
-            button: "task-editor__btn--add-subtask"
-          }} />
+          <SubtaskComposer
+            taskId={taskId}
+            projectId={projectId}
+            classes={{
+              iconWrapper: 'task-editor__section-icon',
+              form: 'task-editor__new-subtask-form',
+              textarea:
+                'task-editor__textarea task-editor__textarea--new-subtask',
+              button: 'task-editor__btn--add-subtask'
+            }}
+          />
         </TaskEditorSection>
         <TaskEditorSection>
           <div className="task-editor__section-header">
@@ -541,13 +515,18 @@ class TaskEditor extends Component {
               <Comments taskId={taskId} commentIds={commentIds} />
             </div>
           )}
-          <CommentComposer taskId={taskId} projectId={projectId} classes={{
-            avatar: 'task-editor__avatar',
-            avatarPlaceholder: 'task-editor__avatar-placeholder',
-            form: 'task-editor__comment-form',
-            textarea: 'task-editor__textarea task-editor__textarea--comment',
-            button: 'task-editor__btn--submit-comment'
-          }} />
+          <CommentComposer
+            key={`comment-composer--${taskId}`}
+            id={`comment-composer--${taskId}`}
+            taskId={taskId}
+            projectId={projectId}
+            classes={{
+              avatar: 'task-editor__avatar',
+              avatarPlaceholder: 'task-editor__avatar-placeholder',
+              composer: 'task-editor__comment-composer',
+              button: 'task-editor__btn--submit-comment'
+            }}
+          />
         </TaskEditorSection>
       </TaskEditorWrapper>
     );
@@ -557,8 +536,6 @@ class TaskEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state),
-    usersArray: userSelectors.getUsersArray(state),
-    membersArray: userSelectors.getMembersArray(state, ownProps.assignedTo),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
     mergedTags: currentUserSelectors.getMergedTags(state),
     projectTags: projectSelectors.getProjectTags(state, ownProps.projectId),

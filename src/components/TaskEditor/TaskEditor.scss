@@ -65,7 +65,7 @@
 }
 
 .task-editor__textarea--description {
-  padding: 8px 6px;
+  padding: 8px;
   width: calc(100% - 34px);
   margin-left: 4px;
 }
@@ -150,14 +150,14 @@
   min-height: min-content;
 }
 
-.task-editor__comment-form,
+.task-editor__comment-composer,
 .task-editor__new-subtask-form {
   display: flex;
   flex-direction: column;
   width: calc(100% - 34px);
   border: 1px solid transparent;
   border-radius: 4px;
-  padding: 8px 6px;
+  padding: 8px;
   margin-left: auto;
   &:focus,
   &.is-focused {
@@ -165,7 +165,7 @@
   }
 }
 
-.task-editor__comment-form {
+.task-editor__comment-composer {
   width: calc(100% - 38px);
   border: 1px solid $grey-300;
   margin-left: 4px;
@@ -176,10 +176,13 @@
   flex: none;
   min-width: 0;
   padding: 8px;
-  align-self: flex-start;
   z-index: 3;
-  margin-top: 8px;
   font-size: 14px;
+}
+
+.task-editor__btn--add-subtask {
+  margin-top: 8px;
+  align-self: flex-start;
 }
 
 .task-editor__hr {

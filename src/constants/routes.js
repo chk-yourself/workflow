@@ -9,3 +9,4 @@ export const PASSWORD_FORGET = '/pw-forget';
 export const PROJECT = '/0/project/:id';
 export const USER_PROJECTS = '/0/:id/projects';
 export const USER_TASKS = '/0/:id/tasks';
+export const USER_PROFILE = '/0/:id/profile';

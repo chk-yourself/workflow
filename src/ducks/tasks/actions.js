@@ -181,7 +181,9 @@ export const syncProjectTasks = projectId => {
         .queryCollection('tasks', ['projectId', '==', projectId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(change => change.type === 'added');
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
 
           if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
@@ -221,7 +223,7 @@ export const syncProjectTasks = projectId => {
             });
           }
         });
-        return subscription;
+      return subscription;
     } catch (error) {
       console.log(error);
     }

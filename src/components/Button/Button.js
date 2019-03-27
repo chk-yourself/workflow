@@ -12,18 +12,21 @@ const Button = ({
   disabled,
   name,
   iconOnly = false,
+  value,
   innerRef,
+  isActive,
   ...props
 }) => (
   // eslint-disable-next-line react/button-has-type
   <button
     className={`${className} ${variant}--${color} ${!iconOnly ? size : ''} ${
       iconOnly ? `icon-only icon-only--${size}` : ''
-    }`}
+    } ${isActive ? 'is-active' : ''}`}
     type={type}
     onClick={onClick}
     disabled={disabled}
     name={name}
+    value={value}
     ref={innerRef}
     {...props}
   >
@@ -38,7 +41,10 @@ Button.defaultProps = {
   size: 'md',
   variant: 'text',
   iconOnly: false,
-  ref: null
+  ref: null,
+  isActive: false,
+  value: '',
+  name: ''
 };
 
 export default Button;

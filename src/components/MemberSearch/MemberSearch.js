@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 import { Input } from '../Input';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
+import { withOutsideClick } from '../withOutsideClick';
 import * as keys from '../../constants/keys';
 import './MemberSearch.scss';
 
-export default class MemberSearch extends Component {
+class MemberSearch extends Component {
   static defaultProps = {
     style: null,
+    anchor: null,
     classes: {
       avatar: '',
       avatarPlaceholder: '',
@@ -18,46 +20,43 @@ export default class MemberSearch extends Component {
       item: '',
       info: '',
       noMatch: ''
-    }
+    },
+    placeholder: '',
+    type: 'text',
+    query: null
   };
 
   state = {
     query: '',
     isActive: false,
-    isTouchEnabled: false,
     selectedMember: '',
     selectedIndex: null,
     filteredList: this.props.users
   };
 
   componentDidMount() {
-    document.addEventListener('touchstart', this.handleTouch);
-    document.addEventListener('click', this.handleOutsideClick, false);
+    const { type } = this.props;
+    if (type === 'hidden') return;
     this.inputEl.focus();
   }
 
-  handleOutsideClick = e => {
-    if (this.state.query !== '') return;
-    if (!this.memberSearchEl.contains(e.target)) {
-      this.setState({
-        isActive: false
-      });
+  componentDidUpdate(prevProps) {
+    const { type, query } = this.props;
+    if (type === 'hidden' && query && query !== prevProps.query) {
+      this.updateList(query);
     }
-  };
+  }
 
-  handleTouch = () => {
+  onOutsideClick = e => {
+    if (this.props.query) return;
+    if (this.state.query !== '') return;
     this.setState({
-      isTouchEnabled: true
+      isActive: false
     });
-    // remove touch handler to prevent unnecessary refires
-    document.removeEventListener('touchstart', this.handleTouch);
-    // remove outside click handler from click events
-    document.removeEventListener('click', this.handleOutsideClick);
-    // reattach outside click handler to touchstart events
-    document.addEventListener('touchstart', this.handleOutsideClick);
   };
 
   matchUser = (user, query) => {
+    if (query === '') return false;
     const { name, email, username } = user;
     const regExp = new RegExp(query, 'i');
     return regExp.test(name) || regExp.test(email) || regExp.test(username);
@@ -73,7 +72,6 @@ export default class MemberSearch extends Component {
     this.setState({
       query: '',
       isActive: false,
-      isTouchEnabled: false,
       selectedMember: '',
       selectedIndex: null,
       filteredList: this.props.users
@@ -81,9 +79,13 @@ export default class MemberSearch extends Component {
   };
 
   onChange = e => {
-    const { users } = this.props;
-    const { selectedMember, selectedIndex } = this.state;
     const query = e.target.value;
+    this.updateList(query);
+  };
+
+  updateList = query => {
+    const { users } = this.props;
+    const { selectedMember } = this.state;
     const filteredList = users.filter(user => this.matchUser(user, query));
     const newIndex = filteredList.indexOf(selectedMember);
     const persistSelectedMember = newIndex !== -1;
@@ -110,7 +112,6 @@ export default class MemberSearch extends Component {
       return;
 
     const { filteredList, selectedIndex, selectedMember } = this.state;
-    const { onMemberClick } = this.props;
     const nextIndex =
       selectedIndex === filteredList.length - 1 ? 0 : selectedIndex + 1;
     const prevIndex =
@@ -145,33 +146,39 @@ export default class MemberSearch extends Component {
   };
 
   selectMember = (memberId, e) => {
-    const { onMemberClick, onClose } = this.props;
-    onMemberClick(memberId, e);
+    const { onSelectMember, onClose } = this.props;
+    onSelectMember(memberId, e);
     if (onClose) {
       onClose(e);
     }
-  }
-
-  componentWillUnmount() {
-    const { isTouchEnabled } = this.state;
-
-    if (isTouchEnabled) {
-      document.removeEventListener('touchstart', this.handleOutsideClick);
-    } else {
-      document.removeEventListener('click', this.handleOutsideClick);
-      document.removeEventListener('touchstart', this.handleTouch);
-    }
-  }
+  };
 
   render() {
-    const { users, onMemberClick, assignedMembers, style, classes } = this.props;
-    const { query, isActive, filteredList, selectedMember } = this.state;
+    const {
+      assignedMembers,
+      style,
+      classes,
+      placeholder,
+      type,
+      innerRef,
+      anchor
+    } = this.props;
+    const { filteredList, selectedMember } = this.state;
+    const query = type === 'hidden' ? this.props.query : this.state.query;
+    const isActive =
+      type === 'hidden' ? this.props.isActive : this.state.isActive;
+    const position = {};
+    if (anchor) {
+      const anchorRect = anchor.getBoundingClientRect();
+      position.top = anchorRect.top;
+      position.left = anchorRect.left;
+    }
 
     return (
       <div
         className={`member-search__wrapper ${classes.wrapper || ''}`}
-        ref={el => (this.memberSearchEl = el)}
-        style={style}
+        ref={innerRef}
+        style={{ ...position, ...style }}
       >
         <Input
           name="query"
@@ -180,10 +187,10 @@ export default class MemberSearch extends Component {
           value={query}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
-          type="text"
+          type={type}
           autoComplete="off"
           hideLabel
-          placeholder="Assign or remove member"
+          placeholder={placeholder}
           onKeyDown={this.onKeyDown}
           innerRef={el => (this.inputEl = el)}
         />
@@ -192,7 +199,6 @@ export default class MemberSearch extends Component {
             {filteredList.length > 0 ? (
               filteredList.map((user, i) => {
                 const { name, photoURL, email, username, userId } = user;
-                console.log(userId);
                 const isAssigned =
                   assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
@@ -200,28 +206,39 @@ export default class MemberSearch extends Component {
                     className={`member-search__item ${classes.item || ''} ${
                       selectedMember === userId ? 'is-selected' : ''
                     }`}
-                    onClick={(e) => this.selectMember(userId, e)}
+                    onClick={e => this.selectMember(userId, e)}
                     key={userId}
                     id={userId}
                   >
                     <Icon name={isAssigned ? 'user-minus' : 'user-plus'} />
                     <Avatar
                       classes={{
-                        avatar: `member-search__avatar--sm ${classes.avatar || ''}`,
-                        placeholder: `member-search__avatar-placeholder--sm ${classes.avatarPlaceholder || ''}`
+                        avatar: `member-search__avatar--sm ${classes.avatar ||
+                          ''}`,
+                        placeholder: `member-search__avatar-placeholder--sm ${classes.avatarPlaceholder ||
+                          ''}`
                       }}
                       name={name}
                       size="sm"
                       variant="circle"
                       imgSrc={photoURL}
                     />
-                    <span className={`member-search__info member-search__name ${classes.info || ''}`}>
+                    <span
+                      className={`member-search__info member-search__name ${classes.info ||
+                        ''}`}
+                    >
                       {name}
                     </span>
-                    <span className={`member-search__info member-search__username ${classes.info || ''}`}>
+                    <span
+                      className={`member-search__info member-search__username ${classes.info ||
+                        ''}`}
+                    >
                       {username}
                     </span>
-                    <span className={`member-search__info member-search__email ${classes.info || ''}`}>
+                    <span
+                      className={`member-search__info member-search__email ${classes.info ||
+                        ''}`}
+                    >
                       {email}
                     </span>
                   </li>
@@ -229,7 +246,9 @@ export default class MemberSearch extends Component {
               })
             ) : (
               <li className={`member-search__item ${classes.item || ''}`}>
-                <span className={`member-search__no-match ${classes.noMatch || ''}`}>
+                <span
+                  className={`member-search__no-match ${classes.noMatch || ''}`}
+                >
                   No matches found
                 </span>
               </li>
@@ -240,3 +259,5 @@ export default class MemberSearch extends Component {
     );
   }
 }
+
+export default withOutsideClick(MemberSearch);

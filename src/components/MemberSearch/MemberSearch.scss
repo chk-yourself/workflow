@@ -62,6 +62,7 @@
     height: 14px;
     margin-right: 8px;
     pointer-events: none;
+    color: $primary;
   }
   @include xs {
     min-width: 100%;

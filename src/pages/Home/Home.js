@@ -7,11 +7,12 @@ import { userActions } from '../../ducks/users';
 import { ProjectGridContainer } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { BoardContainer } from '../../components/Board';
-import { projectActions, projectSelectors } from '../../ducks/projects';
+import { projectSelectors } from '../../ducks/projects';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
+import { UserProfile } from '../UserProfile';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -98,6 +99,10 @@ class HomePage extends Component {
           <Route
             path={ROUTES.USER_TASKS}
             render={props => <UserTasks userId={userId} {...props} />}
+          />
+          <Route
+            path={ROUTES.USER_PROFILE}
+            render={props => <UserProfile userId={props.match.params.id} {...props} />}
           />
         </Switch>
       </>

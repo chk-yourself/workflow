@@ -1,0 +1,179 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.btn--tooltip,
+.tooltip-link {
+  position: relative;
+  cursor: pointer;
+  box-shadow: none;
+  &::before,
+  &::after {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+  }
+  &::after {
+    content: attr(data-tooltip);
+    background-color: $grey-800;
+    color: $white;
+    padding: 8px;
+    top: calc(100% + 8px);
+    left: -50%;
+    text-align: center;
+    display: block;
+    border-radius: 4px;
+  }
+  &::before {
+    content: '';
+    width: 0;
+    left: 4px;
+    bottom: -8px;
+    border-bottom: 8px solid $grey-800;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+  }
+  &:hover,
+  &.show-tooltip {
+    background-color: $primary;
+    box-shadow: none;
+    &::before,
+    &::after {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.tag-labels__btn--tooltip {
+  width: 28px;
+  font-size: 10px;
+  height: 18px;
+  font-weight: 700;
+  @include md {
+    display: none;
+  }
+  &::after {
+    width: 100px;
+    left: calc(50% - 50px);
+    line-height: 1.6;
+    z-index: 99;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  &.show-tooltip {
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    .tooltip__inner {
+      display: block;
+      z-index: 100;
+    }
+  }
+}
+
+.tooltip__inner {
+  display: none;
+  // background-color: darken($grey-800, 1);
+  background-color: $primary;
+  color: $grey-800;
+  padding: 12px;
+  border-radius: 12px;
+  width: 240px;
+  position: absolute;
+  pointer-events: visible;
+  @include box-shadow(1);
+  &::before {
+    content: '';
+    width: 0;
+    border: 10px solid transparent;
+    position: absolute;
+  }
+}
+
+.tooltip--left {
+  .tooltip__inner {
+    top: -18px;
+    right: 60px;
+    &::before {
+      top: 32px;
+      right: -20px;
+      border-left-color: $primary;
+    }
+  }
+}
+
+.tooltip--right {
+  .tooltip__inner {
+    left: 68px;
+    &::before {
+      top: 32px;
+      left: -20px;
+      border-right-color: $primary;
+    }
+  }
+}
+
+.tooltip--top {
+  .tooltip__inner {
+    bottom: calc(100% + 12px);
+    &::before {
+      right: 32px;
+      bottom: -20px;
+      border-top-color: $primary;
+    }
+  }
+}
+
+.tooltip--bottom {
+  .tooltip__inner {
+    top: calc(100% + 12px);
+    &::before {
+      top: -20px;
+      left: 32px;
+      border-bottom-color: $primary;
+    }
+  }
+}
+
+.tooltip__icon-btn--close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  z-index: 99;
+  color: $grey-800;
+  pointer-events: visible;
+  .feather {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+}
+
+.tooltip--no-arrow {
+  .tooltip__inner::before {
+    display: none;
+  }
+}
+
+.tooltip__text {
+  color: $grey-800;
+  font-size: 14px;
+  line-height: 1.4;
+  font-family: $body-font;
+  margin: 0;
+}
+
+.tooltip__title {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  padding-top: 4px;
+  color: $grey-900;
+}
