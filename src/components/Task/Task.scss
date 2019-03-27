@@ -27,6 +27,7 @@
     left: 38px;
     height: 100%;
     width: calc(100% - 38px);
+    z-index: 2;
   }
   .task__avatar {
     width: 19px;
@@ -40,11 +41,13 @@
     font-size: 9px;
     font-weight: 600;
   }
-  @include md {
-    padding: 2px 8px;
+  @include sm {
     &::before {
       display: none;
     }
+  }
+  @include md {
+    padding: 2px 8px;
   }
 }
 

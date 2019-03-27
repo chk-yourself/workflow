@@ -36,6 +36,9 @@
     display: flex;
     width: 100%;
   }
+  &--comments {
+    padding-bottom: 96px;
+  }
 }
 
 .task-editor__textarea--title {

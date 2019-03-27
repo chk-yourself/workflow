@@ -183,6 +183,7 @@ class RichTextEditor extends Component {
   };
 
   onChange = ({ value }) => {
+    console.log(value);
     this.setState({
       value,
       query: this.getMention(value)
