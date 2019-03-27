@@ -147,19 +147,19 @@ class RichTextEditor extends Component {
           mark = 'bold';
           break;
         }
+        case 'i': {
+          mark = 'italic';
+          break;
+        }
+        case 'u': {
+          mark = 'underlined';
+          break;
+        }
         default: {
           return next();
         }
       }
       editor.toggleMark(mark);
-    }
-
-    if (e.shiftKey) {
-      switch (e.key) {
-        default: {
-          return next();
-        }
-      }
     }
 
     switch (e.key) {

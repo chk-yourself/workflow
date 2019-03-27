@@ -63,7 +63,7 @@ class NotesEditor extends Component {
             icon: 'italic'
           },
           {
-            type: 'underline',
+            type: 'underlined',
             icon: 'underline'
           }
         ]}

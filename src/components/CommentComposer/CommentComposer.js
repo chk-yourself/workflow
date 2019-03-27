@@ -86,7 +86,7 @@ class CommentComposer extends Component {
               icon: 'italic'
             },
             {
-              type: 'underline',
+              type: 'underlined',
               icon: 'underline'
             }
           ]}
