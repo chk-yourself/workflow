@@ -88,7 +88,7 @@ class BoardContainer extends Component {
       if (isMovedWithinList) {
         updatedTaskIds.splice(source.index, 1);
         updatedTaskIds.splice(destination.index, 0, draggableId);
-        firebase.updateList(source.droppableId, {
+        firebase.updateDoc(['lists', source.droppableId], {
           taskIds: updatedTaskIds
         });
       } else {
@@ -109,7 +109,7 @@ class BoardContainer extends Component {
       const updatedListIds = [...projectsById[projectId].listIds];
       updatedListIds.splice(source.index, 1);
       updatedListIds.splice(destination.index, 0, draggableId);
-      firebase.updateProject(projectId, {
+      firebase.updateDoc(['projects', projectId], {
         listIds: updatedListIds
       });
       reorderLists(projectId, updatedListIds);
