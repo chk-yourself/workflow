@@ -76,6 +76,12 @@ class RichTextEditor extends Component {
 
   hasBlock = type => {
     const { value } = this.state;
+    if (['numbered-list', 'bulleted-list'].includes(type)) {
+      const { value: { document, blocks } } = this.state;
+      if (blocks.size === 0) return false;
+      const parent = document.getParent(blocks.first().key);
+      return this.hasBlock('list-item') && parent && parent.type === type;
+    }
     return value.blocks.some(node => node.type === type);
   };
 
@@ -101,6 +107,8 @@ class RichTextEditor extends Component {
     const { data } = node;
 
     switch (node.type) {
+      case 'paragraph':
+        return <p {...attributes}>{children}</p>;
       case 'block-quote':
         return <blockquote {...attributes}>{children}</blockquote>;
       case 'bulleted-list':
@@ -124,6 +132,7 @@ class RichTextEditor extends Component {
 
   onKeyDown = (e, editor, next) => {
     const { value } = editor;
+    const { document } = value;
     const { isMentionsEnabled } = this.props;
     const { isMentionsListVisible } = this.state;
     const endOffset = value.selection.end.offset;
@@ -148,26 +157,43 @@ class RichTextEditor extends Component {
         }
       }
       editor.toggleMark(mark);
-    }
-
-    switch (e.key) {
-      case keys.BACKSPACE: {
-        editor.deleteBackward();
-        e.preventDefault();
-        if (isMentionsEnabled && isMentionsListVisible && lastChar === '@') {
-          setTimeout(this.toggleMentionsList, 0);
+      e.preventDefault();
+    } else {
+      const firstText = document.getFirstText();
+      const nextText = document.getNextText(firstText.key);
+      switch (e.key) {
+        case keys.BACKSPACE: {
+          if (firstText.text === '' && !nextText) {
+            if (this.hasBlock('list-item')) {
+              const parent = document.getParent(value.focusBlock.key);
+              const ancestor = document.getParent(parent.key);
+              if (ancestor.object === 'document') {
+                editor
+                  .moveToRangeOfNode(value.focusBlock)
+                  .setBlocks(DEFAULT_BLOCK)
+                  .moveToRangeOfNode(parent)
+                  .unwrapBlock(parent.type);
+              } else {
+                editor.unwrapBlock(parent.type);
+              }
+            }
+          } else {
+            editor.deleteBackward();
+          if (isMentionsEnabled && isMentionsListVisible && lastChar === '@') {
+            setTimeout(this.toggleMentionsList, 0);
+          }
+          }
+          break;
         }
-        break;
-      }
-      case '@': {
-        this.toggleMentionsList();
-        break;
-      }
-      default: {
-        return next();
+        case '@': {
+          this.toggleMentionsList();
+          break;
+        }
+        default: {
+          return next();
+        }
       }
     }
-    // e.preventDefault();
   };
 
   onChange = ({ value }) => {
@@ -208,6 +234,44 @@ class RichTextEditor extends Component {
   onClickBlock = e => {
     e.preventDefault();
     const type = e.target.value;
+    const { editor } = this;
+    const { value } = editor;
+    const { document } = value;
+
+    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+      const isActive = this.hasBlock(type);
+      const isList = this.hasBlock('list-item');
+      
+      if (isList) {
+        editor.setBlocks(isActive ? DEFAULT_BLOCK : type)
+          .setBlocks()
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list');
+      } else {
+        editor.setBlocks(isActive ? DEFAULT_BLOCK : type);
+      }
+    } else {
+
+      const isList = this.hasBlock('list-item')
+      const isType = value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type === type)
+      })
+
+      if (isList && isType) {
+        editor
+          .setBlocks(DEFAULT_BLOCK)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else if (isList) {
+        editor
+          .unwrapBlock(
+            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+          )
+          .wrapBlock(type)
+      } else {
+        editor.setBlocks('list-item').wrapBlock(type)
+      }
+    }
   };
 
   getMention = value => {
@@ -240,15 +304,26 @@ class RichTextEditor extends Component {
     }, 0);
   };
 
+  removeFocus = () => {
+    const { isFocused } = this.state;
+    setTimeout(() => {
+      this.setState(() => ({
+        isFocused: false
+      }));
+    }, 0);
+  };
+
   onFocus = e => {
+    console.log('focus');
     this.toggleFocus();
   };
 
-  onBlur = e => {
+  onBlur = (e, editor, next) => {
+    console.log('on blur');
     const { isFocused } = this.state;
     const { value: prevValue, onBlur } = this.props;
-    this.toggleFocus();
-    if (prevValue && this.hasChanges() && onBlur) {
+    this.removeFocus();
+    if (prevValue !== undefined && this.hasChanges() && onBlur) {
       const { value } = this.state;
       onBlur(value, e);
     }
@@ -256,6 +331,7 @@ class RichTextEditor extends Component {
 
 
   onUpdate = e => {
+    e.preventDefault();
     const { value } = this.state;
     const { onUpdate } = this.props;
     if (onUpdate && this.hasChanges()) {
@@ -305,6 +381,7 @@ class RichTextEditor extends Component {
   };
 
   onSubmit = e => {
+    e.preventDefault();
     if (this.isEmpty()) return;
     const { value } = this.state;
     const { onSubmit } = this.props;
@@ -328,9 +405,8 @@ class RichTextEditor extends Component {
 
   onOutsideClick = e => {
     const { isFocused } = this.state;
-    if (this.editor && isFocused) {
-      this.editor.blur();
-    }
+    if (!this.editor || !isFocused) return;
+    this.editor.blur();
   };
 
   render() {
@@ -365,7 +441,7 @@ class RichTextEditor extends Component {
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={mark.type}
-              onClick={this.onClickMark}
+              onMouseDown={this.onClickMark}
               iconOnly
               isActive={this.hasMark(mark.type)}
             >
@@ -378,7 +454,7 @@ class RichTextEditor extends Component {
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={inline.type}
-              onClick={this.onClickInline}
+              onMouseDown={this.onClickInline}
               iconOnly
               isActive={this.hasInline(inline.type)}
             >
@@ -391,7 +467,7 @@ class RichTextEditor extends Component {
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={block.type}
-              onClick={this.onClickBlock}
+              onMouseDown={this.onClickBlock}
               iconOnly
               isActive={this.hasBlock(block.type)}
             >
@@ -406,7 +482,7 @@ class RichTextEditor extends Component {
                 <Button
                   key={`${id}--${addOn.type}`}
                   type="button"
-                  onClick={this[addOn.onClick]}
+                  onMouseDown={this[addOn.onClick]}
                   {...addOn.props}
                 />
               ))}

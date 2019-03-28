@@ -5,6 +5,7 @@ const Button = ({
   children,
   type = 'button',
   onClick,
+  onMouseDown,
   className = '',
   color = 'neutral',
   size = 'md',
@@ -24,6 +25,7 @@ const Button = ({
     } ${isActive ? 'is-active' : ''}`}
     type={type}
     onClick={onClick}
+    onMouseDown={onMouseDown}
     disabled={disabled}
     name={name}
     value={value}
@@ -44,7 +46,9 @@ Button.defaultProps = {
   ref: null,
   isActive: false,
   value: '',
-  name: ''
+  name: '',
+  onClick: () => null,
+  onMouseDown: () => null
 };
 
 export default Button;

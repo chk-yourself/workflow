@@ -73,6 +73,12 @@ class NotesEditor extends Component {
             icon: 'at-sign'
           }
         ]}
+        blocks={[
+          {
+            type: 'bulleted-list',
+            icon: 'list'
+          }
+        ]}
       />
     );
   }
