@@ -11,13 +11,17 @@ import { Icon } from '../Icon';
 import { currentUserSelectors } from '../../ducks/currentUser';
 
 class ProjectGridContainer extends Component {
+  static defaultProps = {
+    className: ''
+  };
+
   constructor(props) {
     super(props);
     this.state = {};
   }
 
   render() {
-    const { projectsArray, selectProject } = this.props;
+    const { projectsArray, selectProject, className } = this.props;
     const projectTiles = projectsArray.map(project => {
       const { name: projectName, projectId } = project;
       return (
@@ -30,7 +34,7 @@ class ProjectGridContainer extends Component {
       );
     });
     return (
-      <ProjectGrid>
+      <ProjectGrid className={className}>
         {projectTiles}
         <button
           type="button"

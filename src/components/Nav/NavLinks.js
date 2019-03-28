@@ -34,11 +34,5 @@ export const NavLinksAuth = ({ userId, onClick }) => (
         <span className="sidebar__section-name">Tasks</span>
       </NavLink>
     </li>
-    <li className="sidebar__item">
-      <NavLink onClick={onClick} className="sidebar__link" to={ROUTES.ADMIN}>
-        <SidebarIcon name="settings" />
-        <span className="sidebar__section-name">Admin</span>
-      </NavLink>
-    </li>
   </>
 );

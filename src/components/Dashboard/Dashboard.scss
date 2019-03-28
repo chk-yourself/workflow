@@ -38,7 +38,7 @@
 }
 
 .dashboard-panel__content {
- 
+ padding: 8px;
 }
 
 .dashboard-panel {
@@ -69,12 +69,12 @@
   &--tasks-due-soon {
     .dashboard-panel__content {
       box-shadow: 0 5px 20px 0 rgba(21,27,38,.08);
+      background-color: $haze;
     }
   }
   &--notifications {
     .dashboard-panel__content {
       background-color: $haze;
-      padding: 8px;
     }
   }
 }
@@ -99,7 +99,16 @@
 
 .tasks-due-soon__task {
   border-radius: 4px;
+  margin-bottom: 4px;
+  &:focus,
+  &.is-focused {
+    background-color: rgba($white, 0.9);
+  }
   &:first-child {
     box-shadow: none;
   }
+}
+
+.dashboard__project-grid {
+  margin: 0;
 }

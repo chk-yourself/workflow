@@ -42,7 +42,7 @@ export default class SearchBar extends Component {
             name="search"
             className="search-form__input"
             type="text"
-            inputRef={this.inputEl}
+            innerRef={this.inputEl}
             hideLabel
           />
           <Input

@@ -1,2 +1,8 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
+
+.project-grid__header {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}

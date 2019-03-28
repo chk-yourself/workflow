@@ -1,7 +1,11 @@
 import React from 'react';
 
-const ProjectGrid = ({ children }) => (
-  <ul className="project-grid">{children}</ul>
+const ProjectGrid = ({ children, className }) => (
+  <ul className={`project-grid ${className}`}>{children}</ul>
 );
+
+ProjectGrid.defaultProps = {
+  className: ''
+};
 
 export default ProjectGrid;

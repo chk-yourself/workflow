@@ -60,12 +60,12 @@ class PasswordChangeForm extends Component {
         <Button
           disabled={isInvalid}
           type="submit"
-          size="lg"
+          size="md"
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
         >
-          Change My Password
+          Change Password
         </Button>
         {error && <p>{error.message}</p>}
       </form>
