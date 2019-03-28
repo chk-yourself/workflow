@@ -37,8 +37,8 @@ class ProjectGridContainer extends Component {
           className="project-grid__tile project-grid__btn--add"
           onClick={this.props.openProjectComposer}
         >
-          <Icon name="plus-circle" />
-          Create project
+          <Icon name="plus" />
+          <span className="project-grid__btn--text">Create project</span>
         </button>
       </ProjectGrid>
     );

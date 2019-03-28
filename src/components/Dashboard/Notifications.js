@@ -36,7 +36,7 @@ class Notifications extends Component {
     const { isLoading } = this.state;
     const { notifications, onTaskClick } = this.props;
     if (isLoading) return null;
-    return <DashboardPanel icon="bell" name="Notifications" size="sm">
+    return <DashboardPanel className="notifications" name="Notifications" size="sm">
     <ul className="notifications__list">
     {notifications.map(notification => (
       <Notification key={notification.notificationId} onTaskClick={notification.source.type === 'comment' ? onTaskClick : null} {...notification} />

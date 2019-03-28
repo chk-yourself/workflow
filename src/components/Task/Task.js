@@ -21,6 +21,10 @@ import { Avatar } from '../Avatar';
 import './Task.scss';
 
 class Task extends Component {
+  static defaultProps = {
+    className: ''
+  };
+  
   state = {
     isFocused: false,
     name: this.props.name,
@@ -128,7 +132,8 @@ class Task extends Component {
       projectId,
       listName,
       selectedProjectId,
-      taskMembers
+      taskMembers,
+      className
     } = this.props;
     const { isFocused, name } = this.state;
     const draggableProps = provided ? provided.draggableProps : {};
@@ -145,7 +150,7 @@ class Task extends Component {
 
     return (
       <li
-        className={`task ${isFocused ? 'is-focused' : ''}`}
+        className={`task ${className || ''} ${isFocused ? 'is-focused' : ''}`}
         onClick={this.handleTaskClick}
         tabIndex={0}
         ref={innerRef}

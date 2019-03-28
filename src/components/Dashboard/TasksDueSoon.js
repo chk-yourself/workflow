@@ -36,13 +36,14 @@ class TasksDueSoon extends Component {
     if (isLoading) return null;
     return (
       <DashboardPanel
-        icon="check-square"
+        className="tasks-due-soon"
         size="md"
         name="Tasks Due Soon"
         link={{ path: `/0/${currentUserId}/tasks`, text: 'View all tasks' }}
       >
         {tasksDueSoon.map((task, i) => (
           <Task
+            className="tasks-due-soon__task"
             index={i}
             key={task.taskId}
             onTaskClick={onTaskClick}

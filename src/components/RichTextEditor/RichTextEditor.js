@@ -172,7 +172,8 @@ class RichTextEditor extends Component {
                   .moveToRangeOfNode(value.focusBlock)
                   .setBlocks(DEFAULT_BLOCK)
                   .moveToRangeOfNode(parent)
-                  .unwrapBlock(parent.type);
+                  .unwrapBlock(parent.type)
+                  .normalize(document);
               } else {
                 editor.unwrapBlock(parent.type);
               }

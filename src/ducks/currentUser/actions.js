@@ -558,6 +558,7 @@ export const syncNotifications = userId => {
       const subscription = await firebase
         .getDocRef('users', userId)
         .collection('notifications')
+        .where('isActive', '==', true)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad = changes.every(

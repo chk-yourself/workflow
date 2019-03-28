@@ -2,11 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
 
-const DashboardPanel = ({ name, icon, children, size, link }) => (
-  <section className={`dashboard-panel dashboard-panel--${size}`}>
+const DashboardPanel = ({ className, name, children, size, link }) => (
+  <section className={`dashboard-panel ${className ? `dashboard-panel--${className}` : ''} dashboard-panel--${size}`}>
     <header className="dashboard-panel__header">
       <h2 className="dashboard-panel__name">
-        <Icon name={icon} className="dashboard-panel__icon" />
         {name}
       </h2>
       {link && (
@@ -21,7 +20,8 @@ const DashboardPanel = ({ name, icon, children, size, link }) => (
 
 DashboardPanel.defaultProps = {
   size: 'lg',
-  link: null
+  link: null,
+  className: ''
 };
 
 export default DashboardPanel;

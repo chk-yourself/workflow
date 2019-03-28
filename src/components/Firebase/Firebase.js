@@ -1036,7 +1036,8 @@ class Firebase {
     .add({
       source,
       event,
-      createdAt: this.getTimestamp()
+      createdAt: this.getTimestamp(),
+      isActive: true
     })
   };
 }

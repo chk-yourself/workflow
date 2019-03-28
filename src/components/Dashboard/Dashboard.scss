@@ -15,7 +15,7 @@
   font-size: 1.6rem;
   font-weight: 600;
   margin: 0 0 24px 0;
-  color: $grey-900;
+  color: $grey-800;
   width: 100%;
 }
 
@@ -25,30 +25,28 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  @include md {
-    padding: 8px 16px;
-  }
 }
 
 .dashboard-panel__name {
   font-size: 12px;
   margin: 0;
-  font-weight: 400;
+  font-weight: 600;
   text-transform: uppercase;
-  color: $grey-700;
+  color: $grey-600;
   padding: 0;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 .dashboard-panel__content {
+ 
 }
 
 .dashboard-panel {
-  background-color: $white;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+ // background-color: $white;
+  //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   padding: 4px;
   border: 1px solid transparent;
-  margin: 0 0 8px 0;
+  margin: 0 0 16px 0;
   @include md {
     margin: 0 8px 16px 8px;
     padding: 8px 4px;
@@ -59,13 +57,24 @@
   &--md {
     width: 100%;
     @include md {
-      width: calc(60% - 16px);
+      width: calc(55% - 16px);
     }
   }
   &--sm {
     width: 100%;
     @include md {
-      width: calc(40% - 16px);
+      width: calc(45% - 16px);
+    }
+  }
+  &--tasks-due-soon {
+    .dashboard-panel__content {
+      box-shadow: 0 5px 20px 0 rgba(21,27,38,.08);
+    }
+  }
+  &--notifications {
+    .dashboard-panel__content {
+      background-color: $haze;
+      padding: 8px;
     }
   }
 }
@@ -86,4 +95,11 @@
   text-transform: none;
   font-size: 12px;
   font-weight: 500;
+}
+
+.tasks-due-soon__task {
+  border-radius: 4px;
+  &:first-child {
+    box-shadow: none;
+  }
 }
