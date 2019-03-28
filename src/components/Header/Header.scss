@@ -33,10 +33,7 @@
     }
     .sidebar,
     .sidebar__canvas {
-      width: 240px;
-      @include md {
-        width: 200px;
-      }
+      width: 200px;
     }
     .sidebar__section-name {
       display: inline-block;
@@ -44,18 +41,24 @@
     }
     .sidebar__btn--toggle {
       top: 2px;
-      right: 32px;
+      right: 24px;
       left: auto;
       position: absolute;
       .feather-arrow-right {
         transform: rotate(180deg);
+      }
+      @include md {
+        right: 32px;
+      }
+      @include lg {
+        right: 38px;
       }
     }
     @include md {
       + .main,
       + main {
         width: calc(100% - 200px);
-        left: 200px;
+        left: 100px;
       }
     }
     .topbar {

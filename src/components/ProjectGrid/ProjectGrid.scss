@@ -26,7 +26,7 @@
 }
 
 .project-grid__tile {
-  background: $primary-dk; /* fallback for old browsers */
+  background: $primary-dk;
   border-radius: 8px;
   width: calc(50% - 16px);
   margin: 0 8px 8px 8px;
@@ -44,6 +44,7 @@
   }
   @include md {
     width: calc(25% - 32px);
+    min-width: 140px;
   }
   @include lg {
     width: calc(20% - 32px);

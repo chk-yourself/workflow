@@ -8,6 +8,12 @@
   min-width: 100%;
 }
 
+.header.expand-nav + .board-container {
+  @include md {
+    left: 200px;
+  }
+}
+
 .board-container {
   padding: 4px 8px;
   width: 100%;

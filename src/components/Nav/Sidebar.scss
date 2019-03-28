@@ -2,13 +2,13 @@
 @import '../../styles/mixins';
 
 .sidebar {
+  overflow: hidden;
   position: fixed;
   min-height: 100%;
   border-right: 1px solid $grey-300;
   top: 0;
   left: 0;
   background-color: $white;
-  overflow-y: scroll;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   z-index: 98;
@@ -19,6 +19,14 @@
 }
 
 .sidebar__list {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background-color: transparent;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -29,7 +37,6 @@
   @include lg {
     height: calc(100vh - 160px);
   }
-  overflow: scroll;
 }
 
 .sidebar__item {
@@ -91,7 +98,7 @@
 .sidebar__logo {
   margin: 0;
   text-align: center;
-  padding: 64px 12px 26px;
+  padding: 64px 0 26px;
   display: flex;
   border-bottom: 1px solid $grey-300;
   height: 140px;

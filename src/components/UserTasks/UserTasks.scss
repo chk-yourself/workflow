@@ -1,6 +1,12 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.header.expand-nav + .main.user-tasks__container {
+  @include md {
+    left: 200px;
+  }
+}
+
 .user-tasks__container {
   position: relative;
   min-height: 100vh;

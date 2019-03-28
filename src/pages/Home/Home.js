@@ -87,7 +87,7 @@ class HomePage extends Component {
           <Route
             path={ROUTES.USER_PROJECTS}
             render={props => (
-              <Main title="Projects" classes={{title: "project-grid__header"}}>
+              <Main title="Projects" classes={{main: 'project-grid__container', title: "project-grid__header"}}>
                 <ProjectGridContainer
                   userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
