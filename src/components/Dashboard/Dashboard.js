@@ -8,6 +8,7 @@ import {
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { ProjectGridContainer } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
+import Notifications from './Notifications';
 import DashboardPanel from './DashboardPanel';
 import { TaskEditor } from '../TaskEditor';
 import { Main } from '../Main';
@@ -49,7 +50,7 @@ class Dashboard extends Component {
         classes={{ main: 'dashboard', title: 'dashboard__header' }}
       >
         <TasksDueSoon onTaskClick={this.handleTaskClick} />
-        <DashboardPanel name="Notifications" icon="bell" size="sm" />
+        <Notifications onTaskClick={this.handleTaskClick} />
         <DashboardPanel name="Projects" icon="grid">
           <ProjectGridContainer openProjectComposer={toggleProjectComposer} />
         </DashboardPanel>

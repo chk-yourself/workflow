@@ -14,6 +14,13 @@ const currentUser = (state = null, action) => {
         folders
       };
     }
+    case types.LOAD_NOTIFICATIONS: {
+      const { notifications } = action;
+      return {
+        ...state,
+        notifications
+      };
+    }
     case types.LOAD_USER_TAGS: {
       const { tags } = action;
       return {
@@ -71,6 +78,40 @@ const currentUser = (state = null, action) => {
       return {
         ...state,
         folders: restOfFolders
+      };
+    }
+    case types.ADD_NOTIFICATION: {
+      const { notificationId, notificationData } = action;
+      return {
+        ...state,
+        notifications: {
+          ...state.notifications,
+          [notificationId]: {
+            notificationId,
+            ...notificationData
+          }
+        }
+      };
+    }
+    case types.REMOVE_NOTIFICATION: {
+      const { notificationId } = action;
+      const { [notificationId]: removedNotification, ...restOfNotifications } = state.notifications;
+      return {
+        ...state,
+        notifications: restOfNotifications
+      };
+    }
+    case types.UPDATE_NOTIFICATION: {
+      const { notificationId, notificationData } = action;
+      return {
+        ...state,
+        notifications: {
+          ...state.notifications,
+          [notificationId]: {
+            ...state.notifications[notificationId],
+            ...notificationData
+          }
+        }
       };
     }
     case types.LOAD_ASSIGNED_TASKS: {

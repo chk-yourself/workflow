@@ -984,11 +984,11 @@ class Firebase {
 
   // Comment API
 
-  addComment = ({ from, to = [], projectId, taskId, content }) => {
+  addComment = ({ from, to = [], projectId, taskId, content, createdAt = this.getTimestamp() }) => {
     this.db
       .collection('comments')
       .add({
-        createdAt: this.getTimestamp(),
+        createdAt,
         lastUpdatedAt: null,
         isPinned: false,
         likes: {},
@@ -1002,7 +1002,42 @@ class Firebase {
         this.updateDoc(['tasks', taskId], {
           commentIds: this.addToArray(ref.id)
         });
+
+        if (to.length > 0) {
+          to.forEach(user => {
+            this.createNotification({
+              userId: user.userId,
+              source: {
+                user: from,
+                type: 'comment',
+                commentId: ref.id,
+                taskId,
+                projectId
+              },
+              event: {
+                type: 'mention',
+                publishedAt: createdAt
+              }
+            })
+          });
+        }
       });
+  };
+
+  /**
+   * @param {String} userId - user id of recipient
+   * @param {Object} source - info about where and by whom the event was triggered { userId, taskId, commentId, projectId }
+   * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
+   */
+
+  createNotification = ({ userId, source, event }) => {
+    this.getDocRef('users', userId)
+    .collection('notifications')
+    .add({
+      source,
+      event,
+      createdAt: this.getTimestamp()
+    })
   };
 }
 

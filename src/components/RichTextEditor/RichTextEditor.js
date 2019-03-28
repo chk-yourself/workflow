@@ -50,18 +50,6 @@ class RichTextEditor extends Component {
     isFocused: false
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { isFocused } = this.state;
-    if (!prevState.isFocused && isFocused) {
-      this.scrollToBottom();
-    }
-  }
-
-  scrollToBottom = () => {
-    if (!this.end) return;
-    this.end.scrollIntoView({ behavior: 'smooth' });
-  };
-
   isEmpty = () => {
     const { value } = this.state;
     return isEqual(initialValue, value.toJSON());
@@ -183,7 +171,6 @@ class RichTextEditor extends Component {
   };
 
   onChange = ({ value }) => {
-    console.log(value);
     this.setState({
       value,
       query: this.getMention(value)
@@ -247,8 +234,8 @@ class RichTextEditor extends Component {
       this.setState(prevState => ({
         isFocused: !prevState.isFocused
       }));
-      if (!isFocused) {
-        this.editor.focus().moveToEnd();
+      if (this.editor && !isFocused) {
+        this.editor.focus();
       }
     }, 0);
   };
@@ -258,6 +245,7 @@ class RichTextEditor extends Component {
   };
 
   onBlur = e => {
+    const { isFocused } = this.state;
     const { value: prevValue, onBlur } = this.props;
     this.toggleFocus();
     if (prevValue && this.hasChanges() && onBlur) {
@@ -340,9 +328,9 @@ class RichTextEditor extends Component {
 
   onOutsideClick = e => {
     const { isFocused } = this.state;
-    const { value } = this.props;
-    if (!isFocused) return;
-    this.editor.blur();
+    if (this.editor && isFocused) {
+      this.editor.blur();
+    }
   };
 
   render() {
@@ -431,10 +419,10 @@ class RichTextEditor extends Component {
           ref={this.ref}
           value={value}
           placeholder={placeholder}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
+          onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
           className={`rich-text-editor ${classes.editor || ''}`}
           renderMark={this.renderMark}
           renderNode={this.renderNode}
@@ -456,10 +444,6 @@ class RichTextEditor extends Component {
             }}
           />
         )}
-        <div
-          style={{ float: 'left', clear: 'both' }}
-          ref={el => (this.end = el)}
-        />
       </div>
     );
   }

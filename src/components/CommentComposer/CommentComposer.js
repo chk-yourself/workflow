@@ -5,7 +5,7 @@ import { Avatar } from '../Avatar';
 import * as keys from '../../constants/keys';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { userSelectors } from '../../ducks/users';
-import { RichTextEditor, getUserIdsFromMentions } from '../RichTextEditor';
+import { RichTextEditor, getMentionedUsers } from '../RichTextEditor';
 import './CommentComposer.scss';
 
 class CommentComposer extends Component {
@@ -21,12 +21,15 @@ class CommentComposer extends Component {
   addComment = (value, e) => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { currentUser, firebase, taskId, projectId } = this.props;
-    const userIds = getUserIdsFromMentions(value);
-    const { userId } = currentUser;
+    const users = getMentionedUsers(value);
     firebase.addComment({
       content: value.toJSON(),
-      to: userIds,
-      from: userId,
+      to: users,
+      from: {
+        userId: currentUser.userId,
+        name: currentUser.name,
+        username: currentUser.username
+      },
       taskId,
       projectId
     });

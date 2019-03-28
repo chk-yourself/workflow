@@ -16,6 +16,23 @@ export const getFolders = state => {
   return currentUser.folders;
 };
 
+export const getNotifications = state => {
+  const { currentUser } = state;
+  if (!currentUser) return null;
+  return currentUser.notifications;
+};
+
+export const getNotificationsArray = state => {
+  const { currentUser } = state;
+  if (!currentUser) return [];
+  const { notifications } = currentUser;
+  if (!notifications) return [];
+  const getMillis = obj => obj.createdAt ? obj.createdAt.toMillis() : Date.now();
+  return Object.keys(notifications).map(notificationId => notifications[notificationId]).sort((a, b) => {
+    return getMillis(b) - getMillis(a);
+  });
+};
+
 export const getTaskSettings = state => {
   const { currentUser } = state;
   if (!currentUser) return null;

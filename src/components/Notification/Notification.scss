@@ -1,0 +1,30 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+
+.notification {
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  color: $grey-700;
+}
+
+.notification__link {
+  text-decoration: none;
+  color: $primary;
+  font-weight: 500;
+  &--task {
+    margin-left: 4px;
+  }
+  &--user-profile {
+    margin-right: 4px;
+  }
+}
+
+.notification__timestamp {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+  margin-top: 2px;
+  color: $grey-600;
+}

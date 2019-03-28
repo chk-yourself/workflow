@@ -138,7 +138,7 @@ class Comment extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.from),
+    user: userSelectors.getUserData(state, ownProps.from.userId),
     currentUserId: currentUserSelectors.getCurrentUserId(state)
   };
 };

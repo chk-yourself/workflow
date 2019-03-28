@@ -38,6 +38,9 @@
   }
   &--comments {
     padding-bottom: 96px;
+    @include sm {
+      padding-bottom: 0;
+    }
   }
 }
 

@@ -93,6 +93,36 @@ export const loadFolders = folders => {
   };
 };
 
+export const loadNotifications = notifications => {
+  return {
+    type: types.LOAD_NOTIFICATIONS,
+    notifications
+  };
+};
+
+export const addNotification = ({ notificationId, notificationData }) => {
+  return {
+    type: types.ADD_NOTIFICATION,
+    notificationId,
+    notificationData
+  };
+};
+
+export const updateNotification = ({ notificationId, notificationData }) => {
+  return {
+    type: types.UPDATE_NOTIFICATION,
+    notificationId,
+    notificationData
+  };
+};
+
+export const removeNotification = notificationId => {
+  return {
+    type: types.REMOVE_NOTIFICATION,
+    notificationId,
+  };
+};
+
 export const fetchFolders = userId => {
   return async dispatch => {
     try {
@@ -518,6 +548,64 @@ export const syncCurrentUserData = userId => {
       return subscription;
     } catch (error) {
       console.error(error);
+    }
+  };
+};
+
+export const syncNotifications = userId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .getDocRef('users', userId)
+        .collection('notifications')
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
+          if (isInitialLoad && changes.length > 1) {
+            const notificationsById = {};
+            changes.forEach(change => {
+              const notificationId = change.doc.id;
+              const notificationData = change.doc.data();
+              notificationsById[notificationId] = {
+                notificationId,
+                ...notificationData
+              };
+            });
+            await dispatch(loadNotifications(notificationsById));
+          } else {
+            changes.forEach(async change => {
+              const [notificationId, notificationData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { notifications } = getState().currentUser;
+              switch (changeType) {
+                case 'added': {
+                  if (notifications && notificationId in notifications) return;
+                  dispatch(addNotification({ notificationId, notificationData }));
+                  console.log('notification added');
+                  break;
+                }
+                case 'removed': {
+                  if (!change.doc.exists && notifications && notificationId in notifications) {
+                    dispatch(removeNotification(notificationId));
+                  }
+                  break;
+                }
+                default: {
+                  dispatch(updateNotification({ notificationId, notificationData }));
+                  break;
+                }
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
     }
   };
 };
