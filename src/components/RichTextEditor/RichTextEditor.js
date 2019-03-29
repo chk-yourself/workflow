@@ -202,6 +202,7 @@ class RichTextEditor extends Component {
       value,
       query: this.getMention(value)
     });
+    console.log(value.toJSON());
   };
 
   onClickMark = e => {

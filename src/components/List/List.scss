@@ -87,6 +87,13 @@
 }
 
 .list__cards {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background-color: transparent;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   overflow-x: visible;
   overflow-y: auto;
   min-height: 16px;

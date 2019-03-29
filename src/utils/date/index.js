@@ -12,18 +12,18 @@ export const getMonthFirstDay = (monthIndex, year) =>
   new Date(year, monthIndex, 1).getDay();
 
 export const isToday = date =>
-  new Date().setHours(0, 0, 0, 0) === date.setHours(0, 0, 0, 0);
+  new Date().setHours(0, 0, 0, 0) === new Date(+date).setHours(0, 0, 0, 0);
 
 export const isYesterday = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today.setDate(today.getDate() - 1) === date.setHours(0, 0, 0, 0);
+  return today.setDate(today.getDate() - 1) === new Date(+date).setHours(0, 0, 0, 0);
 };
 
 export const isTomorrow = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today.setDate(today.getDate() + 1) === date.setHours(0, 0, 0, 0);
+  return today.setDate(today.getDate() + 1) === new Date(+date).setHours(0, 0, 0, 0);
 };
 
 export const isThisYear = date => {
@@ -124,7 +124,13 @@ export const getNextYears = (num, startingYear = new Date().getFullYear()) => {
   });
 };
 
-export const zeroPad = (value, length) => {
+/**
+ * Pads the start of given value with zero until it reaches the given length
+ * @param {Number|String} value - The string to pad
+ * @param {Number} length - The target length
+ */
+
+export const padZero = (value, length) => {
   return `${value}`.padStart(length, '0');
 };
 
@@ -140,7 +146,7 @@ export const toSimpleDateString = date => {
     : undefined;
   if (!simpleDate) return '';
   const { day, month, year } = simpleDate;
-  return `${zeroPad(month + 1, 2)}-${zeroPad(day, 2)}-${year - 2000}`;
+  return `${padZero(month + 1, 2)}-${padZero(day, 2)}-${year - 2000}`;
 };
 
 /**
@@ -223,20 +229,19 @@ export const toDateString = (
           const month = date.getMonth();
           if (value === 'numeric') {
             return month + 1;
-          } if (value === '2-digit') {
-            return zeroPad(month + 1, 2);
-          } else {
-            return MONTHS[month][value];
           }
+          if (value === '2-digit') {
+            return padZero(month + 1, 2);
+          }
+          return MONTHS[month][value];
         }
         case 'day': {
           const value = format[key];
           const day = date.getDate();
           if (value === '2-digit') {
-            return zeroPad(day, 2);
-          } else {
-            return day;
+            return padZero(day, 2);
           }
+          return day;
         }
         case 'year': {
           const value = format[key];
@@ -246,12 +251,48 @@ export const toDateString = (
           }
           if (value === '2-digit') {
             return `'${+year.slice(2)}`;
-          } else {
-            return year;
           }
+          return year;
+        }
+        default: {
+          return key;
         }
       }
     })
     .join(' ')
     .trim();
+};
+
+export const toTimeString = (date, { format = 'h:mm:ss', hour12 = true }) => {
+  try {
+    if (!isDate(date)) {
+      throw new TypeError('Not a Date object');
+    }
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const timeString = format
+      .split(':')
+      .map((unit, i) => {
+        const digits = unit.length;
+        if (i === 0) {
+          const h = hour12 && hours > 12 ? hours - 12 : hours;
+          return digits > 1 && h < 10 ? padZero(h, digits) : h;
+        }
+        if (i === 1) {
+          return digits > 1 && minutes < 10
+            ? padZero(minutes, digits)
+            : minutes;
+        }
+        if (i === 2) {
+          return digits > 1 && seconds < 10
+            ? padZero(seconds, digits)
+            : seconds;
+        }
+      })
+      .join(':');
+    return hour12 ? `${timeString} ${hours < 12 ? 'AM' : 'PM'}` : timeString;
+  } catch (e) {
+    console.error(e);
+  }
 };

@@ -1010,7 +1010,10 @@ class Firebase {
               source: {
                 user: from,
                 type: 'comment',
-                commentId: ref.id,
+                id: ref.id
+              },
+              location: {
+                type: 'task',
                 taskId,
                 projectId
               },
@@ -1018,7 +1021,7 @@ class Firebase {
                 type: 'mention',
                 publishedAt: createdAt
               }
-            })
+            });
           });
         }
       });
@@ -1030,15 +1033,16 @@ class Firebase {
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ userId, source, event }) => {
+  createNotification = ({ userId, source, location, event }) => {
     this.getDocRef('users', userId)
     .collection('notifications')
     .add({
       source,
+      location,
       event,
       createdAt: this.getTimestamp(),
       isActive: true
-    })
+    });
   };
 }
 
