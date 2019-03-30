@@ -104,6 +104,7 @@ class Folder extends Component {
                       onBlur={this.onBlur}
                       onClick={this.toggleFolder}
                     />
+                    {/*
                     <PopoverWrapper
                       classes={{
                         wrapper: 'folder__popover-wrapper',
@@ -121,6 +122,7 @@ class Folder extends Component {
                         <MenuItem />
                       </Menu>
                     </PopoverWrapper>
+                    */}
                   </>
                 )
               }}

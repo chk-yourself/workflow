@@ -8,6 +8,7 @@
   flex-direction: column;
   overflow-x: visible;
   position: relative;
+  background-color: $haze;
   .list__popover-wrapper {
     position: absolute;
     top: 8px;
@@ -16,7 +17,8 @@
   }
   &.is-list-view {
     width: 100%;
-    margin: 0 0 8px 0;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
     .list__input--title {
       font-size: 18px;
     }
@@ -24,7 +26,6 @@
   &.is-board-view {
     min-width: 272px;
     width: 272px;
-    background-color: $haze;
     margin: 0 6px;
   }
 }

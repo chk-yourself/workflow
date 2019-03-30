@@ -2,21 +2,25 @@ import React, { Component } from 'react';
 import { Logo } from '../Logo';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
+import { withOutsideClick } from '../withOutsideClick';
 import './Sidebar.scss';
 
 export const SidebarIcon = ({ name }) => {
   return <Icon name={name} className="sidebar__icon" />;
 };
 
-export default class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-  }
+class Sidebar extends Component {
+  onOutsideClick = e => {
+    const { isExpanded } = this.props;
+    if (!isExpanded || e.target.matches('.sidebar__btn--toggle')) return;
+    const { onToggle } = this.props;
+    onToggle();
+  };
 
   render() {
-    const { onToggle, children } = this.props;
+    const { onToggle, children, innerRef } = this.props;
     return (
-      <div className="sidebar__canvas">
+      <div ref={innerRef} className="sidebar__canvas">
         <Button
           type="button"
           onClick={onToggle}
@@ -38,3 +42,5 @@ export default class Sidebar extends Component {
     );
   }
 }
+
+export default withOutsideClick(Sidebar);

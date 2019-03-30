@@ -77,7 +77,6 @@
   }
 }
 
-
 .project-composer__radio-label {
   display: inline-block;
   position: relative;
@@ -90,14 +89,14 @@
   &:before {
     content: '';
     position: absolute;
-   width: 14px;
-   height: 14px;
-   display: inline-block;
-   border-radius: 50%;
-   border: 1px solid $grey-500;
-   left: 0;
-   top: calc(50% - 7px);
-   vertical-align: middle;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid $grey-500;
+    left: 0;
+    top: calc(50% - 7px);
+    vertical-align: middle;
   }
   .feather {
     width: 18px;
@@ -131,6 +130,7 @@
 
 .project-composer__color-picker {
   top: 100%;
+  z-index: 3;
   @include box-shadow(2);
   &::before,
   &::after {

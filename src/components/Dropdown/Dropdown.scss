@@ -1,6 +1,10 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.dropdown__wrapper {
+  z-index: 3;
+}
+
 .dropdown__menu {
   background-color: $white;
   @include box-shadow(2);

@@ -6,7 +6,7 @@ import * as ROUTES from '../../constants/routes';
 import { userActions } from '../../ducks/users';
 import { ProjectGridContainer } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
-import { BoardContainer } from '../../components/Board';
+import { ProjectContainer } from '../../components/Project';
 import { projectSelectors } from '../../ducks/projects';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
@@ -76,7 +76,7 @@ class HomePage extends Component {
           <Route
             path={ROUTES.PROJECT}
             render={props => (
-              <BoardContainer
+              <ProjectContainer
                 userId={userId}
                 projectId={props.match.params.id}
                 projectName={projectsById[props.match.params.id].name}

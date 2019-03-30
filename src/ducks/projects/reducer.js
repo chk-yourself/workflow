@@ -1,5 +1,4 @@
 import * as types from './types';
-import { ADD_LIST, REMOVE_LIST } from '../lists/types';
 
 const projectsById = (state = {}, action) => {
   switch (action.type) {
@@ -22,14 +21,16 @@ const projectsById = (state = {}, action) => {
     }
     case types.ADD_PROJECT: {
       const { projectId, projectData } = action;
+      const { listIds } = projectData;
+      const listCount = listIds.length;
       return {
         ...state,
         [projectId]: {
           projectId,
           isLoaded: {
-            subtasks: false,
-            tasks: false,
-            lists: false
+            subtasks: listCount === 0,
+            tasks: listCount === 0,
+            lists: listCount === 0
           },
           ...projectData
         }
@@ -70,27 +71,6 @@ const projectsById = (state = {}, action) => {
         [projectId]: {
           ...state[projectId],
           listIds
-        }
-      };
-    }
-    case ADD_LIST: {
-      const { listId, listData } = action;
-      const { projectId } = listData;
-      return {
-        ...state,
-        [projectId]: {
-          ...state[projectId],
-          listIds: [...state[projectId].listIds, listId]
-        }
-      };
-    }
-    case REMOVE_LIST: {
-      const { listId, projectId } = action;
-      return {
-        ...state,
-        [projectId]: {
-          ...state[projectId],
-          listIds: state[projectId].listIds.filter(id => id !== listId)
         }
       };
     }

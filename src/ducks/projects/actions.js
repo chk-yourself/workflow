@@ -12,6 +12,7 @@ export const loadProjectsById = projectsById => {
 };
 
 export const setProjectLoadedState = (projectId, key) => {
+  console.log(key);
   return {
     type: types.SET_PROJECT_LOADED_STATE,
     projectId,
@@ -152,7 +153,6 @@ export const updateProject = ({ projectId, projectData }) => {
 };
 
 export const addProject = ({ projectId, projectData }) => {
-  console.log(projectData);
   return {
     type: types.ADD_PROJECT,
     projectId,
@@ -186,10 +186,12 @@ export const updateProjectTags = (projectId, tags) => {
 export const syncProject = projectId => {
   return async dispatch => {
     try {
-      const subscription = await firebase.getDocRef('projects', projectId).onSnapshot(snapshot => {
-        const projectData = snapshot.data();
-        dispatch(updateProject({ projectId, projectData }));
-      });
+      const subscription = await firebase
+        .getDocRef('projects', projectId)
+        .onSnapshot(snapshot => {
+          const projectData = snapshot.data();
+          dispatch(updateProject({ projectId, projectData }));
+        });
       return subscription;
     } catch (error) {
       console.error(error);
@@ -204,22 +206,26 @@ export const syncUserProjects = userId => {
         .queryCollection('projects', ['memberIds', 'array-contains', userId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(change => change.type === 'added');
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
 
           if (isInitialLoad && changes.length > 1) {
-            const projectsById = {};
+            const projects = {};
             changes.forEach(change => {
-              projectsById[change.doc.id] = {
-                projectId: change.doc.id,
+              const projectId = change.doc.id;
+              const projectData = change.doc.data();
+              projects[projectId] = {
+                projectId,
                 isLoaded: {
-                  subtasks: false,
-                  tasks: false,
-                  lists: false
+                  subtasks: projectData.listIds.length === 0,
+                  tasks: projectData.listIds.length === 0,
+                  lists: projectData.listIds.length === 0
                 },
-                ...change.doc.data()
+                ...projectData
               };
             });
-            dispatch(loadProjectsById(projectsById));
+            dispatch(loadProjectsById(projects));
           } else {
             changes.forEach(async change => {
               const [projectId, projectData, changeType] = await Promise.all([

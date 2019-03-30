@@ -179,7 +179,7 @@ export const syncProjectTasks = projectId => {
     try {
       const subscription = await firebase
         .queryCollection('tasks', ['projectId', '==', projectId])
-        .onSnapshot(async snapshot => {
+        .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad = changes.every(
             change => change.type === 'added'
@@ -198,7 +198,6 @@ export const syncProjectTasks = projectId => {
               };
             });
             dispatch(loadTasksById(tasksById));
-            dispatch(setProjectLoadedState(projectId, 'tasks'));
           } else {
             changes.forEach(async change => {
               const [taskId, taskData, changeType] = await Promise.all([
@@ -221,6 +220,9 @@ export const syncProjectTasks = projectId => {
                 console.log(`Updated Task: ${taskData.name}`);
               }
             });
+          }
+          if (isInitialLoad) {
+            dispatch(setProjectLoadedState(projectId, 'tasks'));
           }
         });
       return subscription;

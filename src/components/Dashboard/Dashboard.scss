@@ -38,11 +38,11 @@
 }
 
 .dashboard-panel__content {
- padding: 8px;
+  padding: 8px;
 }
 
 .dashboard-panel {
- // background-color: $white;
+  // background-color: $white;
   //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   padding: 4px;
   border: 1px solid transparent;
@@ -68,12 +68,13 @@
   }
   &--tasks-due-soon {
     .dashboard-panel__content {
-      box-shadow: 0 5px 20px 0 rgba(21,27,38,.08);
+      box-shadow: 0 5px 20px 0 rgba(21, 27, 38, 0.08);
       background-color: $haze;
     }
   }
   &--notifications {
     .dashboard-panel__content {
+      box-shadow: 0 5px 20px 0 rgba(21, 27, 38, 0.08);
       background-color: $haze;
     }
   }
@@ -100,6 +101,7 @@
 .tasks-due-soon__task {
   border-radius: 4px;
   margin-bottom: 4px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   &:focus,
   &.is-focused {
     background-color: rgba($white, 0.9);

@@ -97,7 +97,9 @@ export const syncTaskSubtasks = taskId => {
         .where('taskId', '==', taskId)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(change => change.type === 'added');
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
 
           if (isInitialLoad && changes.length > 1) {
             const subtasks = {};
@@ -105,13 +107,13 @@ export const syncTaskSubtasks = taskId => {
               const subtaskId = change.doc.id;
               if (subtaskId in getState().subtasksById) return;
               const subtaskData = change.doc.data();
-            subtasks[subtaskId] = {
-              subtaskId,
-              ...subtaskData
-            };
-          });
-          dispatch(loadSubtasksById(subtasks));
-          dispatch(setTaskLoadedState(taskId, 'subtasks'));
+              subtasks[subtaskId] = {
+                subtaskId,
+                ...subtaskData
+              };
+            });
+            dispatch(loadSubtasksById(subtasks));
+            dispatch(setTaskLoadedState(taskId, 'subtasks'));
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -171,8 +173,9 @@ export const syncProjectSubtasks = projectId => {
         .queryCollection('subtasks', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(change => change.type === 'added');
-
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
           if (isInitialLoad && changes.length > 1) {
             const subtasksById = {};
             changes.forEach(change => {
@@ -184,7 +187,6 @@ export const syncProjectSubtasks = projectId => {
               };
             });
             dispatch(loadSubtasksById(subtasksById));
-            dispatch(setProjectLoadedState(projectId, 'subtasks'));
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -207,6 +209,9 @@ export const syncProjectSubtasks = projectId => {
                 console.log(`Subtask updated: ${subtaskData.name}`);
               }
             });
+          }
+          if (isInitialLoad) {
+            dispatch(setProjectLoadedState(projectId, 'subtasks'));
           }
         });
       return subscription;

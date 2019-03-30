@@ -1,5 +1,4 @@
 import * as types from './types';
-import { ADD_TASK, REMOVE_TASK } from '../tasks/types';
 
 const listsById = (state = {}, action) => {
   switch (action.type) {
@@ -35,29 +34,6 @@ const listsById = (state = {}, action) => {
       const { listId } = action;
       const { [listId]: deletedList, ...restOfLists } = state;
       return restOfLists;
-    }
-    case ADD_TASK: {
-      const { taskId, taskData } = action;
-      const { listId } = taskData;
-      if (!listId) return state;
-      return {
-        ...state,
-        [listId]: {
-          ...state[listId],
-          taskIds: [...state[listId].taskIds, taskId]
-        }
-      };
-    }
-    case REMOVE_TASK: {
-      const { taskId, listId } = action;
-      if (!listId || !(listId in state)) return state;
-      return {
-        ...state,
-        [listId]: {
-          ...state[listId],
-          listIds: state[listId].taskIds.filter(id => id !== taskId)
-        }
-      };
     }
     default:
       return state;

@@ -14,21 +14,18 @@ import {
 import { listActions, listSelectors } from '../../ducks/lists';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
-import Board from './Board';
+import Project from './Project';
 import { Input } from '../Input';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
-import './Board.scss';
+import './Project.scss';
 
-class BoardContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isTaskEditorOpen: false,
-      projectName: props.projectName
-    };
-  }
+class ProjectContainer extends Component {
+  state = {
+    isTaskEditorOpen: false,
+    projectName: this.props.projectName
+  };
 
   async componentDidMount() {
     const {
@@ -158,13 +155,15 @@ class BoardContainer extends Component {
       projectId,
       userId,
       selectedTaskId,
-      isLoaded
+      isLoaded,
+      project
     } = this.props;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
-      <main className="board-container">
+      <main className={`project-container ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
+      <div className="project__header">
         <Input
-          className="board__input--title"
+          className="project__input--title"
           name="projectName"
           type="text"
           value={projectName}
@@ -173,11 +172,13 @@ class BoardContainer extends Component {
           hideLabel
           onBlur={this.onNameBlur}
         />
+        </div>
+        <div className="project__wrapper">
         <DragDropContext
           onDragEnd={this.onDragEnd}
           onDragStart={this.onDragStart}
         >
-          <Board projectId={projectId}>
+          <Project projectId={projectId} view={project.view}>
             {lists.map((list, i) => {
               const { listId, name: listName, taskIds } = list;
               return (
@@ -189,21 +190,22 @@ class BoardContainer extends Component {
                   taskIds={taskIds}
                   onTaskClick={this.handleTaskClick}
                   projectId={projectId}
-                  view="board"
+                  view={project.view}
                   isRestricted={false}
                 />
               );
             })}
-          </Board>
+          </Project>
         </DragDropContext>
         {isTaskEditorOpen && (
           <TaskEditor
             {...tasksById[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
-            view="board"
+            view={project.view}
           />
         )}
+        </div>
       </main>
     );
   }
@@ -263,5 +265,5 @@ export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(BoardContainer)
+  )(ProjectContainer)
 );

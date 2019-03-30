@@ -1,20 +1,40 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.board {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  min-width: 100%;
+.project {
+  width: 100%;
+  &.is-board-view {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-width: 100%;
+  }
+  &.is-list-view {
+    @include md {
+      padding: 0 8px;
+    }
+  }
 }
 
-.header.expand-nav + .board-container {
+.header.expand-nav + .project-container {
   @include md {
     left: 200px;
   }
 }
 
-.board-container {
+.project__header {
+  width: 100%;
+}
+
+.project__wrapper {
+  display: flex;
+  .list-composer {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+.project-container {
   padding: 4px 8px;
   width: 100%;
   position: relative;
@@ -25,13 +45,18 @@
   @include md {
     padding: 8px;
     margin-top: 40px;
+    &.show-task-editor {
+      .project.is-list-view {
+        margin-right: 16px;
+      }
+    }
   }
   @include xl {
     margin-top: 40px;
   }
 }
 
-.board__input--title {
+.project__input--title {
   background-color: transparent;
   border-color: transparent;
   width: auto;

@@ -146,7 +146,9 @@ export const syncProjectLists = projectId => {
         .queryCollection('lists', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(change => change.type === 'added');
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
           if (isInitialLoad && changes.length > 1) {
             const listsById = {};
             changes.forEach(change => {
@@ -156,28 +158,31 @@ export const syncProjectLists = projectId => {
               };
             });
             dispatch(loadListsById(listsById));
+          } else {
+            changes.forEach(async change => {
+              const [listId, listData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              if (changeType === 'added') {
+                if (listId in getState().listsById) return;
+                dispatch(addList({ listId, listData }));
+                console.log(`List added: ${listData.name}`);
+              } else if (changeType === 'removed') {
+                dispatch(deleteList({ listId, projectId }));
+                console.log(`List deleted: ${listData.name}`);
+              } else {
+                dispatch(updateList({ listId, listData }));
+                console.log(`List updated: ${listData.name}`);
+              }
+            });
+          }
+          if (isInitialLoad) {
             dispatch(setProjectLoadedState(projectId, 'lists'));
           }
-          changes.forEach(async change => {
-            const [listId, listData, changeType] = await Promise.all([
-              change.doc.id,
-              change.doc.data(),
-              change.type
-            ]);
-            if (changeType === 'added') {
-              if (listId in getState().listsById) return;
-              dispatch(addList({ listId, listData }));
-              console.log(`List added: ${listData.name}`);
-            } else if (changeType === 'removed') {
-              dispatch(deleteList({ listId, projectId }));
-              console.log(`List deleted: ${listData.name}`);
-            } else {
-              dispatch(updateList({ listId, listData }));
-              console.log(`List updated: ${listData.name}`);
-            }
-          });
         });
-        return subscription;
+      return subscription;
     } catch (error) {
       console.log(error);
     }

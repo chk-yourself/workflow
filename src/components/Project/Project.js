@@ -3,27 +3,27 @@ import { Droppable } from 'react-beautiful-dnd';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { ListComposer } from '../ListComposer';
 
-const Board = props => {
-  const { projectId, children } = props;
+const Project = props => {
+  const { projectId, children, view } = props;
   return (
     <Droppable
       droppableId={projectId}
       type={droppableTypes.LIST}
-      direction="horizontal"
+      direction={view === 'board' ? 'horizontal' : 'vertical'}
     >
       {provided => (
         <div
-          className="board"
+          className={`project is-${view}-view`}
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
           {children}
           {provided.placeholder}
-          <ListComposer projectId={projectId} />
+          <ListComposer view={view} projectId={projectId} />
         </div>
       )}
     </Droppable>
   );
 };
 
-export default Board;
+export default Project;

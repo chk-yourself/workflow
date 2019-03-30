@@ -10,15 +10,9 @@ export default class Header extends Component {
     isNavExpanded: false
   };
 
-  toggleNav = () => {
+  toggleNav = e => {
     this.setState(prevState => ({
       isNavExpanded: !prevState.isNavExpanded
-    }));
-  };
-
-  handleClick = e => {
-    this.setState(state => ({
-      isNavExpanded: false
     }));
   };
 
@@ -30,8 +24,11 @@ export default class Header extends Component {
           {authUser =>
             authUser ? (
               <>
-                <Sidebar onToggle={this.toggleNav}>
-                  <NavLinksAuth onClick={this.toggleNav} userId={authUser.uid} />
+                <Sidebar isExpanded={isNavExpanded} onToggle={this.toggleNav}>
+                  <NavLinksAuth
+                    onClick={this.toggleNav}
+                    userId={authUser.uid}
+                  />
                 </Sidebar>
                 <Topbar />
               </>
