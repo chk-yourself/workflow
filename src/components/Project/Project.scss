@@ -10,6 +10,7 @@
     min-width: 100%;
   }
   &.is-list-view {
+    max-width: 960px;
     @include md {
       padding: 0 8px;
     }
@@ -28,27 +29,42 @@
 
 .project__wrapper {
   display: flex;
+  justify-content: center;
 }
 
 .project-container {
   padding: 4px 8px;
   width: 100%;
   position: relative;
-  overflow-y: hidden;
-  overflow-x: visible;
+  overflow: visible;
   margin-top: 40px;
-  min-width: 100%;
   @include md {
     padding: 8px;
     margin-top: 40px;
     &.show-task-editor {
-      .project.is-list-view {
-        margin-right: 16px;
+      &.is-list-view {
+        .project__header {
+          margin-left: 0;
+          margin-right: 0;
+        }
+        .project {
+          margin-right: 16px;
+        }
       }
     }
   }
   @include xl {
     margin-top: 40px;
+  }
+  &.is-board-view {
+    overflow-y: hidden;
+    min-width: 100%;
+  }
+  &.is-list-view {
+    .project__header {
+      max-width: 960px;
+      margin: 0 auto;
+    }
   }
 }
 

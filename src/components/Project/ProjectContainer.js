@@ -160,7 +160,7 @@ class ProjectContainer extends Component {
     } = this.props;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
-      <main className={`project-container ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
+      <main className={`project-container is-${project.view}-view ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
       <div className="project__header">
         <Input
           className="project__input--title"

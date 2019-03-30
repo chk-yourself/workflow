@@ -238,6 +238,10 @@
   }
 }
 
+.task-editor__member-assigner {
+  z-index: 3;
+}
+
 .task-editor__popover {
   border: 1px solid $grey-300;
   border-radius: 4px;

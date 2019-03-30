@@ -421,6 +421,7 @@ class TaskEditor extends Component {
             </div>
             <div className="task-editor__members">
               <MemberAssigner
+                classes={{ memberAssigner: 'task-editor__member-assigner'}}
                 placeholder="Assign or remove member"
                 memberIds={assignedTo}
                 onSelectMember={this.assignMember}

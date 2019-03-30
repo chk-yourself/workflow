@@ -28,7 +28,7 @@
 }
 
 .dashboard-panel__name {
-  font-size: 12px;
+  font-size: 13px;
   margin: 0;
   font-weight: 600;
   text-transform: uppercase;
@@ -100,9 +100,6 @@
   &:focus,
   &.is-focused {
     background-color: rgba($white, 0.9);
-  }
-  &:first-child {
-    box-shadow: none;
   }
 }
 
