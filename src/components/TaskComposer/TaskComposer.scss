@@ -4,7 +4,7 @@
 .task-composer {
   padding: 0 8px;
   @include md {
-    padding: 0 16px;
+    padding: 0 12px;
   }
   &.is-active {
     .task-composer__btn--submit {

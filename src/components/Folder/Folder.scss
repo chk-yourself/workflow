@@ -2,16 +2,14 @@
 @import '../../styles/mixins';
 
 .folder {
-  box-sizing: border-box;
-  border-radius: 4px;
   display: flex;
   flex-direction: column;
   overflow-x: visible;
   position: relative;
   width: 100%;
   margin: 0 0 16px 0;
-  background-color: $white;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+  //background-color: $white;
+ // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   .folder__popover-wrapper {
     position: absolute;
     top: 0;
@@ -99,9 +97,6 @@
 .folder__content {
   padding: 0 4px;
   margin: 0;
-  .task:first-child {
-    box-shadow: inset 0px 3px 1px -2px $grey-200, inset 0px -3px 1px -2px $grey-200;
-  }
 }
 
 .folder__btn--toggle {

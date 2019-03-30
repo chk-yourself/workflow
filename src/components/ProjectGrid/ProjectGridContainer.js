@@ -22,27 +22,25 @@ class ProjectGridContainer extends Component {
 
   render() {
     const { projectsArray, selectProject, className } = this.props;
-    const projectTiles = projectsArray.map(project => {
-      const { name: projectName, projectId } = project;
-      return (
-        <ProjectTile
-          key={projectId}
-          projectName={projectName}
-          projectId={projectId}
-          onClick={() => selectProject(projectId)}
-        />
-      );
-    });
     return (
       <ProjectGrid className={className}>
-        {projectTiles}
+        {projectsArray.map(project => (
+        <ProjectTile
+          key={project.projectId}
+          view={project.view}
+          name={project.name}
+          color={project.color}
+          projectId={project.projectId}
+          onClick={() => selectProject(project.projectId)}
+        />
+      ))}
         <button
           type="button"
           className="project-grid__tile project-grid__btn--add"
           onClick={this.props.openProjectComposer}
         >
+        <span className="project-grid__btn--text">Create project</span>
           <Icon name="plus" />
-          <span className="project-grid__btn--text">Create project</span>
         </button>
       </ProjectGrid>
     );

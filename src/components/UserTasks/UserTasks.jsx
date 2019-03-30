@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { withAuthorization } from '../Session';
+import { withFirebase } from '../Firebase';
 import {
   currentUserActions,
   currentUserSelectors
@@ -27,9 +27,9 @@ class UserTasks extends Component {
   };
 
   async componentDidMount() {
-    const { userId, syncUserTasks, syncFolders } = this.props;
+    const { currentUserId, syncUserTasks, syncFolders } = this.props;
 
-    await Promise.all([syncUserTasks(userId), syncFolders(userId)]).then(
+    await Promise.all([syncUserTasks(currentUserId), syncFolders(currentUserId)]).then(
       listeners => {
         this.unsubscribe = listeners;
         this.setState({
@@ -358,9 +358,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = authUser => !!authUser;
-
-export default withAuthorization(condition)(
+export default withFirebase(
   connect(
     mapStateToProps,
     mapDispatchToProps

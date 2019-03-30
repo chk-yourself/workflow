@@ -9,9 +9,8 @@
   padding: 2px 0;
   border: 1px solid transparent;
   &--default {
-    background-color: $grey-100;
-    color: $grey-800;
-    border-color: $grey-400;
+    background-color: $grey-700;
+    color: $white;
   }
   &--blue {
     background-color: $blue;

@@ -44,6 +44,9 @@ class ListComposer extends Component {
     this.setState({
       isActive: true
     });
+    if (e.target.matches('button')) {
+      this.input.focus();
+    }
   };
 
   onBlur = e => {
@@ -52,6 +55,10 @@ class ListComposer extends Component {
         isActive: false
       });
     }
+  };
+
+  inputRef = ref => {
+    this.input = ref;
   };
 
   render() {
@@ -64,7 +71,14 @@ class ListComposer extends Component {
         onBlur={this.onBlur}
       >
         <form className="list-composer__form" onSubmit={this.onSubmit}>
+        {!isActive && view === "list" && (
+        <Button onClick={this.onFocus} color="primary" className="list-composer__btn--icon" iconOnly>
+          <Icon name="plus-circle" />
+        </Button>
+        )
+        }
           <Input
+            innerRef={this.inputRef}
             onChange={this.onChange}
             value={name}
             placeholder={isActive ? 'Enter list name...' : 'Add a list'}
@@ -81,16 +95,20 @@ class ListComposer extends Component {
                 onClick={this.onSubmit}
                 color="primary"
                 variant="contained"
+                size="sm"
               >
                 Add List
               </Button>
+              {view === "board" &&
               <Button
                 className="list-composer__btn list-composer__btn--close"
                 type="reset"
                 onClick={this.onReset}
+                size="sm"
               >
                 Cancel
               </Button>
+              }
             </div>
           )}
         </form>

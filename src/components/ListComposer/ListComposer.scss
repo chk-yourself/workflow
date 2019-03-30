@@ -1,4 +1,5 @@
-@import '../../styles/variables.scss';
+@import '../../styles/variables';
+@import '../../styles/mixins';
 
 .list-composer {
   width: 272px;
@@ -20,20 +21,52 @@
   &.is-list-view {
     width: 100%;
     margin: 0;
-    background-color: $white;
+    background-color: transparent;
     border-radius: 0;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+   // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
     .list-composer__input {
       border: none;
-      border-radius: 0;
+      margin-bottom: 0;
+      padding: 16px 4px;
+      background-color: transparent;
+      &::placeholder {
+        color: $primary;
+      }
+    }
+    .list-composer__form {
+      display: flex;
+      border-radius: 4px;
+      padding: 6px 0;
+    }
+    .list-composer__footer {
+      margin-left: 4px;
+      flex: none;
+    }
+    .list-composer__btn {
+       padding: 10px 6px;
+    }
+    .list-composer__btn--icon {
+      border: none;
+      width: 38px;
+      height: 38px;
+      .feather {
+        width: 18px;
+        height: 18px;
+      }
     }
     &.is-active {
       .list-composer__input {
-        border-bottom: 1px solid $grey-800;
+        &::placeholder {
+          color: $grey-600;
+        }
       }
-      .list-composer__footer {
-        padding: 8px 0;
+      .list-composer__form {
+        background-color: $haze;
+        padding: 6px;
       }
+    }
+    @include md {
+      padding: 8px 12px;
     }
   }
 }
@@ -51,4 +84,5 @@
 
 .list-composer__btn {
   font-size: 14px;
+  padding: 8px;
 }

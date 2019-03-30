@@ -136,4 +136,14 @@
   &::after {
     display: none;
   }
+  .color-picker__radio:checked + label.bg--default::after {
+    border-color: white;
+  }
+  .color-picker__swatch {
+    &.bg--default {
+      background-color: $grey-700;
+      color: $white;
+      border: none;
+    }
+  }
 }
