@@ -5,13 +5,12 @@ import { debounce } from '../../utils/function';
 export default class Textarea extends Component {
   static defaultProps = {
     isAutoHeightResizeEnabled: true,
-    minHeight: 0
+    minHeight: 0,
+    tabIndex: 0,
+    onMouseDown: () => null,
+    onMouseUp: () => null,
+    onMouseMove: () => null
   };
-
-  constructor(props) {
-    super(props);
-    this.textareaEl = createRef();
-  }
 
   componentDidMount() {
     const { isAutoHeightResizeEnabled } = this.props;
@@ -25,14 +24,20 @@ export default class Textarea extends Component {
     window.removeEventListener('resize', this.handleResize);
   }
 
+  ref = el => {
+    this.el = el;
+    const { innerRef } = this.props;
+    if (innerRef) {
+      innerRef(el);
+    }
+  };
+
   autoHeightResize = () => {
     const { isAutoHeightResizeEnabled, minHeight } = this.props;
     if (!isAutoHeightResizeEnabled) return;
 
-    this.textareaEl.current.style.height = `${minHeight}px`; // resets scroll height
-    this.textareaEl.current.style.height = `${
-      this.textareaEl.current.scrollHeight
-    }px`;
+    this.el.style.height = `${minHeight}px`; // resets scroll height
+    this.el.style.height = `${this.el.scrollHeight}px`;
   };
 
   render() {
@@ -47,7 +52,11 @@ export default class Textarea extends Component {
       onFocus,
       onKeyDown,
       onDragStart,
-      isReadOnly
+      isReadOnly,
+      onMouseDown,
+      onMouseUp,
+      onMouseMove,
+      tabIndex
     } = this.props;
 
     return (
@@ -61,11 +70,15 @@ export default class Textarea extends Component {
         required={isRequired}
         onBlur={onBlur}
         onInput={this.autoHeightResize}
-        ref={this.textareaEl}
+        ref={this.ref}
         onFocus={onFocus}
         onKeyDown={onKeyDown}
         onDragStart={onDragStart}
         readOnly={isReadOnly}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onMouseMove={onMouseMove}
+        tabIndex={tabIndex}
       />
     );
   }

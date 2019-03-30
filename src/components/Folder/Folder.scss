@@ -22,10 +22,12 @@
 }
 
 .folder__header {
-  padding: 4px;
+  padding: 4px 0;
   position: relative;
+  margin: 0 4px;
   @include md {
-    padding: 8px;
+    padding: 8px 0;
+    margin: 0 8px;
   }
 }
 
@@ -94,10 +96,12 @@
   }
 }
 
-.folder__tasks {
-  padding: 0 8px;
+.folder__content {
+  padding: 0 4px;
   margin: 0;
-  list-style-type: none;
+  .task:first-child {
+    box-shadow: inset 0px 3px 1px -2px $grey-200, inset 0px -3px 1px -2px $grey-200;
+  }
 }
 
 .folder__btn--toggle {

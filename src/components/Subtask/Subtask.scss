@@ -10,11 +10,17 @@
 }
 
 .subtask {
+  position: relative;
   width: 100%;
   padding: 0;
   list-style: none;
   margin-left: auto;
   overflow: visible;
+  display: flex;
+  vertical-align: middle;
+  &:focus {
+    outline: none;
+  }
 }
 
 .subtask__checkbox {
@@ -32,6 +38,7 @@
   padding: 8px 6px;
   width: 30px;
   height: 34px;
+  flex: none;
   .feather {
     width: 12px;
     height: 12px;

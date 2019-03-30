@@ -2,9 +2,7 @@
 @import '../../styles/mixins';
 
 .task-editor {
-  @include md {
-    padding: 16px;
-  }
+  padding: 16px;
   @include lg {
     padding: 24px;
   }

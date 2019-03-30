@@ -17,6 +17,25 @@
       margin-bottom: 8px;
     }
   }
+  &.is-list-view {
+    width: 100%;
+    margin: 0;
+    background-color: $white;
+    border-radius: 0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    .list-composer__input {
+      border: none;
+      border-radius: 0;
+    }
+    &.is-active {
+      .list-composer__input {
+        border-bottom: 1px solid $grey-800;
+      }
+      .list-composer__footer {
+        padding: 8px 0;
+      }
+    }
+  }
 }
 
 .list-composer__input {
@@ -28,4 +47,8 @@
 .list-composer__btn--add {
   margin: 0;
   vertical-align: top;
+}
+
+.list-composer__btn {
+  font-size: 14px;
 }

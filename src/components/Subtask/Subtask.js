@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
+import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
+import { DragHandle } from '../DragHandle';
 import * as keys from '../../constants/keys';
 import './Subtask.scss';
 
@@ -21,13 +23,6 @@ class Subtask extends Component {
   componentDidMount() {
     appRoot.appendChild(this.portal);
   }
-
-  onDragStart = e => {
-    console.log('dragstart');
-    this.setState({
-      isReadOnly: true
-    });
-  };
 
   onChange = e => {
     this.setState({
@@ -59,6 +54,10 @@ class Subtask extends Component {
     });
   };
 
+  setTextareaRef = el => {
+    this.textarea = el;
+  };
+
   componentWillUnmount() {
     appRoot.removeChild(this.portal);
   }
@@ -78,6 +77,7 @@ class Subtask extends Component {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
+              <DragHandle isActive={snapshot.isDragging} {...provided.dragHandleProps} />
               <Checkbox
                 id={`cb-${subtaskId}`}
                 value={subtaskId}
@@ -88,13 +88,13 @@ class Subtask extends Component {
                 labelClass="subtask__checkbox-label"
               />
               <Textarea
+                innerRef={this.setTextareaRef}
                 value={name}
                 onChange={this.onChange}
                 onBlur={this.onBlur}
                 name={subtaskId}
                 className="subtask__textarea"
                 onKeyDown={this.deleteSubtask}
-                onDragStart={this.onDragStart}
               />
             </li>
           );

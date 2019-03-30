@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.drag-handle__icon {
+  width: 16px;
+  height: 16px;
+  fill: $grey-300;
+  vertical-align: top;
+  position: relative;
+  top: 1px;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0;
+  left: -12px;
+  display: inline-block;
+  padding: 8px 0;
+  height: 34px;
+  &:hover,
+  &.is-active {
+    .drag-handle__icon {
+      fill: $grey-600;
+    }
+  }
+}

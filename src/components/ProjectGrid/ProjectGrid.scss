@@ -29,10 +29,11 @@
   background: $primary-dk;
   border-radius: 8px;
   width: calc(50% - 16px);
-  margin: 0 8px 8px 8px;
+  margin: 0 8px 16px 8px;
   height: 120px;
+  @include box-shadow(1);
   &:hover {
-    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    @include box-shadow(2);
     background: darken($primary, 0.3);
   }
   @include xs {
@@ -54,11 +55,12 @@
 .project-grid__btn--add {
   background-color: transparent;
   text-align: center;
-  border: 2px dashed $grey-400;
-  color: $grey-500;
+  border: 2px dashed $grey-500;
+  color: $grey-600;
   font-weight: 600;
   position: relative;
   font-size: 14px;
+  box-shadow: none;
   &:hover {
     background-color: transparent;
     border-color: $grey-600;

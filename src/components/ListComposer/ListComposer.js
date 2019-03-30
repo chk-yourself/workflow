@@ -56,9 +56,10 @@ class ListComposer extends Component {
 
   render() {
     const { name, isActive } = this.state;
+    const { view } = this.props;
     return (
       <div
-        className={`list-composer${isActive ? ' is-active' : ''}`}
+        className={`list-composer${isActive ? ' is-active' : ''} is-${view}-view`}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
       >
@@ -66,7 +67,7 @@ class ListComposer extends Component {
           <Input
             onChange={this.onChange}
             value={name}
-            placeholder={isActive ? 'Enter list title...' : 'Add a list'}
+            placeholder={isActive ? 'Enter list name...' : 'Add a list'}
             required
             name="name"
             hideLabel
@@ -75,7 +76,7 @@ class ListComposer extends Component {
           {isActive && (
             <div className="list-composer__footer">
               <Button
-                className="list-composer__btn--add"
+                className="list-composer__btn list-composer__btn--add"
                 type="submit"
                 onClick={this.onSubmit}
                 color="primary"
@@ -84,13 +85,11 @@ class ListComposer extends Component {
                 Add List
               </Button>
               <Button
-                className="list-composer__btn--close"
+                className="list-composer__btn list-composer__btn--close"
                 type="reset"
                 onClick={this.onReset}
-                size="sm"
-                iconOnly
               >
-                <Icon name="x" />
+                Cancel
               </Button>
             </div>
           )}

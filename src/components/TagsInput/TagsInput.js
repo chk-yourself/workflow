@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { Tag } from '../Tag';
 import { Input } from '../Input';
 import { ColorPicker } from '../ColorPicker';
+import { withOutsideClick } from '../withOutsideClick';
 import * as keys from '../../constants/keys';
 import './TagsInput.scss';
 
-export default class TagsInput extends Component {
+class TagsInput extends Component {
   state = {
     value: '',
     isActive: false,
-    isTouchEnabled: false,
     selectedTag: '',
     focusedTag: '',
     selectedIndex: null,
@@ -17,27 +17,11 @@ export default class TagsInput extends Component {
     filteredList: []
   };
 
-  componentDidMount() {
-    document.addEventListener('touchstart', this.handleTouch);
-    document.addEventListener('click', this.handleOutsideClick, false);
-  }
-
   shouldComponentUpdate(nextProps) {
     if (nextProps.assignedTags.indexOf(undefined) !== -1) {
       return false;
     }
     return true;
-  }
-
-  componentWillUnmount() {
-    const { isTouchEnabled } = this.state;
-
-    if (isTouchEnabled) {
-      document.removeEventListener('touchstart', this.handleOutsideClick);
-    } else {
-      document.removeEventListener('click', this.handleOutsideClick);
-      document.removeEventListener('touchstart', this.handleTouch);
-    }
   }
 
   onFocus = () => {
@@ -161,24 +145,10 @@ export default class TagsInput extends Component {
     e.preventDefault();
   };
 
-  handleOutsideClick = e => {
-    if (this.el.contains(e.target)) return;
-
+  onOutsideClick = e => {
     this.setState({
       isActive: false
     });
-  };
-
-  handleTouch = () => {
-    this.setState({
-      isTouchEnabled: true
-    });
-    // remove touch handler to prevent unnecessary refires
-    document.removeEventListener('touchstart', this.handleTouch);
-    // remove outside click handler from click events
-    document.removeEventListener('click', this.handleOutsideClick);
-    // reattach outside click handler to touchstart events
-    document.addEventListener('touchstart', this.handleOutsideClick);
   };
 
   handleTagDelete = tag => {
@@ -194,7 +164,8 @@ export default class TagsInput extends Component {
       hideColorPicker,
       assignedTags,
       setTagColor,
-      currentTag
+      currentTag,
+      innerRef
     } = this.props;
     const {
       value,
@@ -224,7 +195,7 @@ export default class TagsInput extends Component {
         className={`tags__container ${isActive ? 'is-active' : ''} ${
           !hasTags ? 'no-tags' : ''
         }`}
-        ref={el => (this.el = el)}
+        ref={innerRef}
       >
         {assignedTags.map(tag => (
           <Tag
@@ -293,3 +264,5 @@ export default class TagsInput extends Component {
     );
   }
 }
+
+export default withOutsideClick(TagsInput);
