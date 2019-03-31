@@ -9,19 +9,24 @@ import * as keys from '../../constants/keys';
 import './Subtask.scss';
 
 class Subtask extends Component {
-  constructor(props) {
-    super(props);
-    this.portal = document.createElement('div');
-    this.state = {
-      name: props.name
-    };
-  }
+  static defaultProps = {
+    usePortal: false
+  };
+
+  state = {
+    name: this.props.name
+  };
 
   componentDidMount() {
+    const { usePortal } = this.props;
+    if (!usePortal) return;
+    this.portal = document.createElement('div');
     document.body.appendChild(this.portal);
   }
 
   componentWillUnmount() {
+    const { usePortal } = this.props;
+    if (!usePortal) return;
     document.body.removeChild(this.portal);
   }
 
@@ -60,8 +65,7 @@ class Subtask extends Component {
   };
 
   render() {
-    const { subtaskId, index, isCompleted } = this.props;
-
+    const { subtaskId, index, isCompleted, usePortal } = this.props;
     const { name } = this.state;
 
     return (
@@ -94,7 +98,7 @@ class Subtask extends Component {
               />
             </li>
           );
-          return snapshot.isDragging
+          return usePortal && snapshot.isDragging
             ? ReactDOM.createPortal(inner, this.portal)
             : inner;
         }}

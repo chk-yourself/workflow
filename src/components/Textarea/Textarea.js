@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import './Textarea.scss';
 import { debounce } from '../../utils/function';
 

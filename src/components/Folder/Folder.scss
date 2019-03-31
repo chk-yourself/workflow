@@ -77,24 +77,8 @@
   }
 }
 
-.folder__content {
+.folder__tasks {
   position: relative;
-}
-
-.folder__cards {
-  overflow-x: visible;
-  overflow-y: auto;
-  min-height: 16px;
-  max-height: calc(100vh - 274px);
-  @include md {
-    max-height: calc(100vh - 290px);
-  }
-  @include xl {
-    max-height: calc(100vh - 300px);
-  }
-}
-
-.folder__content {
   padding: 0 4px;
   margin: 0;
 }

@@ -27,6 +27,7 @@ import { CommentComposer } from '../CommentComposer';
 import { Comments } from '../Comments';
 import { MemberAssigner } from '../MemberAssigner';
 import { NotesEditor } from '../NotesEditor';
+import { debounce } from '../../utils/function';
 
 
 const TaskEditorWrapper = ({
@@ -66,8 +67,23 @@ class TaskEditor extends Component {
       isMemberSearchActive: false,
       prevProps: {
         name: props.name
-      }
+      },
+      viewportWidth: null
     };
+  }
+
+  componentDidMount() {
+    const { view } = this.props;
+    if (view !== 'board') return;
+    this.setViewportWidth();
+    this.handleResize = debounce(200, this.setViewportWidth);
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  componentWillUnmount() {
+    if (this.handleResize) {
+      window.removeEventListener('resize', this.handleResize);
+    }
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -81,6 +97,12 @@ class TaskEditor extends Component {
     }
     return null;
   }
+
+  setViewportWidth = () => {
+    this.setState({
+      viewportWidth: window.innerWidth
+    });
+  };
 
   onChange = e => {
     this.setState({
@@ -293,7 +315,8 @@ class TaskEditor extends Component {
       name,
       isColorPickerActive,
       isDatePickerActive,
-      currentTag
+      currentTag,
+      viewportWidth
     } = this.state;
     const hasSubtasks = subtaskIds && subtaskIds.length > 0;
     const hasComments = commentIds && commentIds.length > 0;
@@ -481,6 +504,7 @@ class TaskEditor extends Component {
               taskId={taskId}
               subtaskIds={subtaskIds}
               projectId={projectId}
+              usePortal={view === 'board' && viewportWidth >= 576}
             />
           )}
           <SubtaskComposer

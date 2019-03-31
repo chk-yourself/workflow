@@ -10,6 +10,10 @@ import { getSelectedProjectId } from '../../ducks/selectedProject';
 import './Subtasks.scss';
 
 class Subtasks extends Component {
+  static defaultProps = {
+    usePortal: false
+  };
+
   state = {
     isLoading: !this.props.isLoaded.subtasks
   };
@@ -47,7 +51,7 @@ class Subtasks extends Component {
   }
 
   render() {
-    const { taskId, subtasks } = this.props;
+    const { taskId, subtasks, usePortal } = this.props;
     const { isLoading } = this.state;
     return (
       <DragDropContext onDragEnd={this.moveSubtask}>
@@ -68,6 +72,7 @@ class Subtasks extends Component {
                       name={subtask.name}
                       isCompleted={subtask.isCompleted}
                       key={subtask.subtaskId}
+                      usePortal={usePortal}
                     />
                   );
                 })}

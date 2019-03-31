@@ -259,7 +259,9 @@ export const getTasksDueSoonById = state => {
 };
 
 export const getTasksDueSoonArr = state => {
-  const { tasksDueSoon } = state.currentUser;
+  const { currentUser } = state;
+  if (!currentUser) return [];
+  const { tasksDueSoon } = currentUser;
   if (!tasksDueSoon) return [];
   return Object.keys(tasksDueSoon).map(taskId => tasksDueSoon[taskId]);
 };
