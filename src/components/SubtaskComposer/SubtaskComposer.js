@@ -7,10 +7,12 @@ import { Textarea } from '../Textarea';
 import { Icon } from '../Icon';
 import * as keys from '../../constants/keys';
 import { currentUserSelectors } from '../../ducks/currentUser';
+import './SubtaskComposer.scss';
 
 class SubtaskComposer extends Component {
   static defaultProps = {
     classes: {
+      composer: '',
       icon: '',
       iconWrapper: '',
       form: '',
@@ -60,18 +62,18 @@ class SubtaskComposer extends Component {
     const { name, isFocused } = this.state;
     const { currentUser, classes } = this.props;
     return (
-      <>
-      <div className={classes.iconWrapper || ''}>
-        <Icon name="plus-circle" className={classes.icon || ''} />
+      <div className={`subtask-composer ${isFocused ? 'is-active' : ''} ${classes.composer || ''}`}>
+      <div className={`subtask-composer__icon-wrapper ${classes.iconWrapper || ''}`}>
+        <Icon name="plus-circle" className={`subtask-composer__icon ${classes.icon || ''}`} />
       </div>
       <form
             name="newSubtaskForm"
-            className={`${classes.form || ''} ${
+            className={`subtask-composer__form ${classes.form || ''} ${
               isFocused ? 'is-focused' : ''
             }`}
           >
             <Textarea
-              className={classes.textarea || ''}
+              className={`subtask-composer__textarea ${classes.textarea || ''}`}
               name="subtask"
               value={name}
               onChange={this.onChange}
@@ -94,7 +96,7 @@ class SubtaskComposer extends Component {
               </Button>
             )}
           </form>
-          </>
+          </div>
     );
   }
 }

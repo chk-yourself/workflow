@@ -1,0 +1,10 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.subtask-composer {
+  &.is-active {
+    .subtask-composer__icon {
+      color: $primary;
+    }
+  }
+}

@@ -2,8 +2,7 @@
 @import '../../styles/mixins';
 
 .task-editor {
-  padding: 12px;
- // transform: none;
+  padding: 8px;
   @include xs {
     padding: 16px;
   }
@@ -70,6 +69,7 @@
   border-radius: 4px;
   vertical-align: top;
   font-size: 14px;
+  background-color: transparent;
 }
 
 .task-editor__textarea--description {
@@ -78,11 +78,23 @@
   margin-left: 4px;
 }
 
-.task-editor__textarea--comment,
+.task-editor__textarea--comment {
+  width: 100%;
+  padding: 0;
+  border: none;
+}
+
 .task-editor__textarea--new-subtask {
   width: 100%;
   padding: 0;
   border: none;
+  line-height: 1.4;
+  overflow: hidden;
+  margin-top: 0;
+  border-radius: 4px;
+  vertical-align: top;
+  font-size: 14px;
+  background-color: transparent;
 }
 
 .is-focused > .task-editor__textarea--comment {
@@ -161,7 +173,7 @@
 
 .task-editor__comment-composer,
 .task-editor__new-subtask-form {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   width: calc(100% - 34px);
   border: 1px solid transparent;
@@ -452,4 +464,14 @@
   padding: 0;
   font-weight: 400;
   color: $grey-600;
+}
+
+.task-editor__subtasks-container {
+  width: 100%;
+  background-color: $grey-100;
+  border-radius: 4px;
+  padding: 4px 0;
+}
+.task-editor__subtask-composer {
+  padding: 0 8px 0 24px;
 }

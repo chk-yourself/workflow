@@ -482,6 +482,7 @@ class TaskEditor extends Component {
             </h3>
             <hr className="task-editor__hr" />
           </div>
+          <div className="task-editor__subtasks-container">
           {hasSubtasks && (
             <Subtasks
               taskId={taskId}
@@ -494,13 +495,14 @@ class TaskEditor extends Component {
             taskId={taskId}
             projectId={projectId}
             classes={{
+              composer: 'task-editor__subtask-composer',
               iconWrapper: 'task-editor__section-icon',
               form: 'task-editor__new-subtask-form',
-              textarea:
-                'task-editor__textarea task-editor__textarea--new-subtask',
+              textarea: 'task-editor__textarea--new-subtask',
               button: 'task-editor__btn--add-subtask'
             }}
           />
+          </div>
         </TaskEditorSection>
         <TaskEditorSection className="comments">
           <div className="task-editor__section-header">

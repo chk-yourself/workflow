@@ -13,10 +13,10 @@
 .drag-handle {
   position: absolute;
   top: 0;
-  left: -12px;
+  left: 0;
   display: inline-block;
   padding: 8px 0;
-  height: 34px;
+  height: 100%;
   &:hover,
   &.is-active {
     .drag-handle__icon {

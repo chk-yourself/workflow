@@ -12,14 +12,22 @@
 .subtask {
   position: relative;
   width: 100%;
-  padding: 0;
+  padding: 0 8px;
   list-style: none;
   margin-left: auto;
   overflow: visible;
   display: flex;
   vertical-align: middle;
+  align-items: center;
   &:focus {
     outline: none;
+  }
+  &.is-dragging {
+    @include box-shadow(1);
+    background-color: $grey-100;
+  }
+  &.is-focused {
+    background-color: rgba($grey-300, .5);
   }
 }
 
@@ -38,7 +46,7 @@
   vertical-align: top;
   padding: 0;
   width: 30px;
-  height: 34px;
+  height: 32px;
   flex: none;
   .feather {
     width: 10px;
@@ -57,4 +65,16 @@
   vertical-align: middle;
   font-size: 14px;
   overflow: visible;
+  background-color: transparent;
+  &:focus {
+    border-color: transparent;
+  }
+}
+
+.subtask__drag-handle {
+  left: 6px;
+  position: static;
+  .drag-handle__icon {
+    fill: $grey-400;
+  }
 }

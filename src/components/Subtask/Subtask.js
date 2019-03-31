@@ -14,7 +14,8 @@ class Subtask extends Component {
   };
 
   state = {
-    name: this.props.name
+    name: this.props.name,
+    isFocused: false
   };
 
   componentDidMount() {
@@ -32,6 +33,12 @@ class Subtask extends Component {
     });
   };
 
+  onFocus = () => {
+    this.setState({
+      isFocused: true
+    });
+  }
+
   onBlur = () => {
     const { name, firebase, subtaskId } = this.props;
     const { name: newName } = this.state;
@@ -40,6 +47,9 @@ class Subtask extends Component {
         name: newName
       });
     }
+    this.setState({
+      isFocused: false
+    });
   };
 
   deleteSubtask = e => {
@@ -62,18 +72,18 @@ class Subtask extends Component {
 
   render() {
     const { subtaskId, index, isCompleted, usePortal } = this.props;
-    const { name } = this.state;
+    const { name, isFocused } = this.state;
 
     return (
       <Draggable draggableId={subtaskId} index={index}>
         {(provided, snapshot) => {
           const inner = (
             <li
-              className="subtask"
+              className={`subtask ${snapshot.isDragging ? 'is-dragging' : ''} ${isFocused ? 'is-focused' : ''}`}
               ref={provided.innerRef}
               {...provided.draggableProps}
             >
-              <DragHandle isActive={snapshot.isDragging} {...provided.dragHandleProps} />
+              <DragHandle className="subtask__drag-handle" isActive={snapshot.isDragging} {...provided.dragHandleProps} />
               <Checkbox
                 id={`cb-${subtaskId}`}
                 value={subtaskId}
@@ -87,6 +97,7 @@ class Subtask extends Component {
                 innerRef={this.setTextareaRef}
                 value={name}
                 onChange={this.onChange}
+                onFocus={this.onFocus}
                 onBlur={this.onBlur}
                 name={subtaskId}
                 className="subtask__textarea"
