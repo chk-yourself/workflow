@@ -11,7 +11,6 @@ import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
 import TaskEditorSection from './TaskEditorSection';
 import TaskEditorMoreActions from './TaskEditorMoreActions';
-import * as keys from '../../constants/keys';
 import { Subtasks } from '../Subtasks';
 import { SubtaskComposer } from '../SubtaskComposer';
 import { TagsInput } from '../TagsInput';
@@ -56,21 +55,17 @@ const TaskEditorWrapper = ({
   */
 
 class TaskEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: props.name,
-      currentFocus: null,
-      isColorPickerActive: false,
-      currentTag: null,
-      isDatePickerActive: false,
-      isMemberSearchActive: false,
-      prevProps: {
-        name: props.name
-      },
-      viewportWidth: null
-    };
-  }
+  state = {
+    name: this.props.name,
+    isColorPickerActive: false,
+    currentTag: null,
+    isDatePickerActive: false,
+    isMemberSearchActive: false,
+    prevProps: {
+      name: this.props.name
+    },
+    viewportWidth: null
+  };
 
   componentDidMount() {
     const { view } = this.props;
@@ -129,21 +124,11 @@ class TaskEditor extends Component {
       });
       console.log('Updated task!');
     }
-
-    this.setState({
-      currentFocus: null
-    });
   };
 
   resetForm = key => {
     this.setState({
       [key]: ''
-    });
-  };
-
-  onFocus = e => {
-    this.setState({
-      currentFocus: e.target.name
     });
   };
 
@@ -354,7 +339,6 @@ class TaskEditor extends Component {
         </Toolbar>
         <form
           name="editTaskForm"
-          onFocus={this.onFocus}
           className="task-editor__edit-task-form"
         >
           <Textarea
@@ -364,7 +348,6 @@ class TaskEditor extends Component {
             onChange={this.onChange}
             required
             onBlur={this.onBlur}
-            onFocus={this.onFocus}
           />
           {projectId && (
             <TaskEditorSection size="sm">

@@ -18,15 +18,11 @@ class Subtask extends Component {
   };
 
   componentDidMount() {
-    const { usePortal } = this.props;
-    if (!usePortal) return;
     this.portal = document.createElement('div');
     document.body.appendChild(this.portal);
   }
 
   componentWillUnmount() {
-    const { usePortal } = this.props;
-    if (!usePortal) return;
     document.body.removeChild(this.portal);
   }
 
