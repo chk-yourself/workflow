@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.member-assigner__input {
+  padding: 0 8px;
+}
+
 .member-assigner__search-container {
   display: flex;
   align-items: center;
@@ -44,16 +48,11 @@
   text-align: center;
   .feather {
     color: $primary;
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    line-height: 20px;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
     vertical-align: middle;
-  }
-  &:hover {
-    .feather {
-      color: $grey-800;
-    }
   }
 }
 

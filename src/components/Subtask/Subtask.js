@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
-import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import { DragHandle } from '../DragHandle';
 import * as keys from '../../constants/keys';
@@ -20,6 +19,10 @@ class Subtask extends Component {
 
   componentDidMount() {
     document.body.appendChild(this.portal);
+  }
+
+  componentWillUnmount() {
+    document.body.removeChild(this.portal);
   }
 
   onChange = e => {
@@ -56,10 +59,6 @@ class Subtask extends Component {
     this.textarea = el;
   };
 
-  componentWillUnmount() {
-    document.body.removeChild(this.portal);
-  }
-
   render() {
     const { subtaskId, index, isCompleted } = this.props;
 
@@ -73,7 +72,6 @@ class Subtask extends Component {
               className="subtask"
               ref={provided.innerRef}
               {...provided.draggableProps}
-              {...provided.dragHandleProps}
             >
               <DragHandle isActive={snapshot.isDragging} {...provided.dragHandleProps} />
               <Checkbox
