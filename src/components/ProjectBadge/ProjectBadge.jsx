@@ -21,7 +21,7 @@ const ProjectBadge = ({ projectId, size, variant, name, color, classes }) => (
         className={`project-badge__icon ${classes.icon || ''}`}
       />
     )}
-    {name}
+    <span className="project-badge__name">{name}</span>
   </Link>
 );
 

@@ -2,7 +2,10 @@
 @import '../../styles/mixins';
 
 .task-editor {
-  padding: 16px;
+  padding: 12px;
+  @include xs {
+    padding: 16px;
+  }
   @include lg {
     padding: 24px;
   }
@@ -92,12 +95,13 @@
 .task-editor__section-icon {
   height: 40px;
   line-height: 38px;
-  padding: 4px 6px;
+  padding: 0 6px;
   vertical-align: middle;
   text-align: center;
   display: inline-block;
   color: $grey-600;
   .feather {
+    vertical-align: middle;
     width: 18px;
     height: 18px;
   }
@@ -416,8 +420,7 @@
 
 .task-editor__project-name {
   font-size: 12px;
-  margin-left: 4px;
-  margin-right: 6px;
+  margin: 0 6px;
   height: 24px;
   line-height: 24px;
 }
@@ -443,7 +446,7 @@
 }
 
 .task-editor__project-list-dropdown-btn--toggle {
-  font-size: 13px;
+  font-size: 14px;
   height: 24px;
   padding: 0;
   font-weight: 400;

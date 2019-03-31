@@ -9,8 +9,6 @@ import { DragHandle } from '../DragHandle';
 import * as keys from '../../constants/keys';
 import './Subtask.scss';
 
-const appRoot = document.getElementById('root');
-
 class Subtask extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +19,7 @@ class Subtask extends Component {
   }
 
   componentDidMount() {
-    appRoot.appendChild(this.portal);
+    document.body.appendChild(this.portal);
   }
 
   onChange = e => {
@@ -59,7 +57,7 @@ class Subtask extends Component {
   };
 
   componentWillUnmount() {
-    appRoot.removeChild(this.portal);
+    document.body.removeChild(this.portal);
   }
 
   render() {

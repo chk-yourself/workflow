@@ -24,26 +24,27 @@
 }
 
 .subtask__checkbox {
-  width: 18px;
-  height: 18px;
-  top: 8px;
-  left: 6px;
+  width: 16px;
+  height: 16px;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
   border: 2px solid $grey-500;
   border-radius: 4px;
   display: inline-block;
 }
 
 .subtask__checkbox-label {
+  position: relative;
   vertical-align: top;
-  padding: 8px 6px;
+  padding: 0;
   width: 30px;
   height: 34px;
   flex: none;
   .feather {
-    width: 12px;
-    height: 12px;
-    left: calc(50% - 6px);
-    top: calc(50% - 6px);
+    width: 10px;
+    height: 10px;
+    left: calc(50% - 5px);
+    top: calc(50% - 5px);
     stroke-width: 4px;
   }
 }
