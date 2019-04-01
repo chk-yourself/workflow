@@ -46,3 +46,9 @@ export const getProjectLists = (state, projectId) => {
   const { listIds } = projectsById[projectId];
   return listIds.map(listId => listsById[listId]);
 };
+
+export const getTempProjectSettings = (state, projectId) => {
+  const { projectsById } = state;
+  const { tempSettings } = projectsById[projectId];
+  return tempSettings;
+};

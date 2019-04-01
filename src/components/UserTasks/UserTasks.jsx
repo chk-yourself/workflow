@@ -211,15 +211,16 @@ class UserTasks extends Component {
     });
   };
 
-  toggleSortRuleDropdown = (value = null) => {
+  toggleSortRuleDropdown = () => {
     this.setState(prevState => ({
-      isSortRuleDropdownVisible:
-        value === null ? !prevState.isSortRuleDropdownVisible : value
+      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
     }));
   };
 
   hideSortRuleDropdown = () => {
-    this.toggleSortRuleDropdown(false);
+    this.setState({
+      isSortRuleDropdownVisible: false
+    });
   };
 
   render() {

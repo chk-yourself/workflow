@@ -21,14 +21,16 @@ import { Input } from '../Input';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
-import { ListComposer } from '../ListComposer';
+import { TaskSettings } from '../TaskSettings';
 import './Project.scss';
 
 class ProjectContainer extends Component {
   state = {
     isTaskEditorOpen: false,
     projectName: this.props.projectName,
-    isListComposerActive: false
+    isListComposerActive: false,
+    isTaskSettingsMenuVisible: false,
+    isSortRuleDropdownVisible: false
   };
 
   async componentDidMount() {
@@ -163,8 +165,61 @@ class ProjectContainer extends Component {
     this.listComposerInput.focus();
   };
 
+  saveProjectSettings = () => {
+    const { firebase, projectId, tempProjectSettings } = this.props;
+    firebase.updateDoc(['projects', projectId], {
+      [`settings.tasks.view`]: tempProjectSettings.tasks.view,
+      [`settings.tasks.sortBy`]: tempProjectSettings.tasks.sortBy
+    });
+    this.closeTaskSettingsMenu();
+  };
+
+  setTempProjectSettings = e => {
+    const { projectId } = this.props;
+    const { setTempProjectSettings } = this.props;
+    const { name, value } = e.target;
+    setTempProjectSettings({
+      projectId,
+      [name]: value
+    });
+    if (name === 'sortBy') {
+      this.hideSortRuleDropdown();
+    }
+  };
+
+  toggleTaskSettingsMenu = e => {
+    this.setState(prevState => ({
+      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
+      isSortRuleDropdownVisible:
+        prevState.isSortRuleDropdownVisible &&
+        prevState.isTaskSettingsMenuVisible
+          ? !prevState.isSortRuleDropdownVisible
+          : prevState.isSortRuleDropdownVisible
+    }));
+  };
+
+  closeTaskSettingsMenu = () => {
+    this.setState({
+      isTaskSettingsMenuVisible: false,
+      isSortRuleDropdownVisible: false
+    });
+  };
+
+  toggleSortRuleDropdown = () => {
+    this.setState(prevState => ({
+      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
+    }));
+  };
+
+  hideSortRuleDropdown = () => {
+    this.setState({
+      isSortRuleDropdownVisible: false
+    });
+  };
+
+
   render() {
-    const { isTaskEditorOpen, projectName, isListComposerActive } = this.state;
+    const { isTaskEditorOpen, projectName, isListComposerActive, isTaskSettingsMenuVisible, isSortRuleDropdownVisible } = this.state;
     const {
       lists,
       tasksById,
@@ -172,7 +227,8 @@ class ProjectContainer extends Component {
       userId,
       selectedTaskId,
       isLoaded,
-      project
+      project,
+      tempProjectSettings
     } = this.props;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
@@ -200,6 +256,41 @@ class ProjectContainer extends Component {
           >
             Add List
           </Button>
+          <TaskSettings
+          isVisible={isTaskSettingsMenuVisible}
+          onToggle={this.toggleTaskSettingsMenu}
+          onClose={this.closeTaskSettingsMenu}
+          onSave={this.saveProjectSettings}
+          classes={{
+            wrapper: 'project__task-settings-wrapper',
+            popover: 'project__task-settings',
+            item: 'project__task-settings-item',
+            button: 'project__task-settings-btn'
+          }}
+          filters={[
+            {
+              filter: 'view',
+              options: [
+                { value: 'active', name: 'Active Tasks' },
+                { value: 'completed', name: 'Completed Tasks' },
+                { value: 'all', name: 'All Tasks' }
+              ],
+              value: tempProjectSettings.tasks.view,
+              onChange: this.setTempProjectSettings
+            }
+          ]}
+          sortRule={{
+            options: [
+              { value: 'none', name: 'None' },
+              { value: 'dueDate', name: 'Due Date' }
+            ],
+            value: tempProjectSettings.tasks.sortBy,
+            onChange: this.setTempProjectSettings,
+            isDropdownVisible: isSortRuleDropdownVisible,
+            toggleDropdown: this.toggleSortRuleDropdown,
+            hideDropdown: this.hideSortRuleDropdown
+          }}
+        />
           </Toolbar>
         )
         }
@@ -253,43 +344,27 @@ const mapStateToProps = (state, ownProps) => {
     subtasksById: subtaskSelectors.getSubtasksById(state),
     tasksById: taskSelectors.getTasksById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
-    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId)
+    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
+    tempProjectSettings: projectSelectors.getTempProjectSettings(state, ownProps.projectId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProjectContent: projectId =>
-      dispatch(projectActions.fetchProjectContent(projectId)),
-    updateProject: (projectId, projectData) =>
-      dispatch(projectActions.updateProject(projectId, projectData)),
     selectProject: projectId => dispatch(selectProjectAction(projectId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    fetchListsById: projectId =>
-      dispatch(listActions.fetchListsById(projectId)),
-    updateList: ({ listId, listData }) =>
-      dispatch(listActions.updateList(listId, listData)),
-    fetchProjectTasks: projectId =>
-      dispatch(taskActions.fetchProjectTasks(projectId)),
-    fetchProjectSubtasks: projectId =>
-      dispatch(subtaskActions.fetchProjectSubtasks(projectId)),
     reorderLists: (projectId, listIds) =>
       dispatch(projectActions.reorderLists(projectId, listIds)),
     updateProjectTags: (projectId, tags) =>
       dispatch(projectActions.updateProjectTags(projectId, tags)),
-    addSubtask: ({ subtaskId, subtaskData }) =>
-      dispatch(subtaskActions.addSubtask({ subtaskId, subtaskData })),
-    deleteSubtask: subtaskId =>
-      dispatch(subtaskActions.deleteSubtask(subtaskId)),
-    updateSubtask: ({ subtaskId, subtaskData }) =>
-      dispatch(subtaskActions.updateSubtask({ subtaskId, subtaskData })),
     syncProjectLists: projectId =>
       dispatch(listActions.syncProjectLists(projectId)),
     syncProjectTasks: projectId =>
       dispatch(taskActions.syncProjectTasks(projectId)),
     syncProjectSubtasks: projectId =>
       dispatch(subtaskActions.syncProjectSubtasks(projectId)),
-    syncProject: projectId => dispatch(projectActions.syncProject(projectId))
+    syncProject: projectId => dispatch(projectActions.syncProject(projectId)),
+    setTempProjectSettings: ({projectId, view, sortBy}) => dispatch(projectActions.setTempProjectSettings({projectId, view, sortBy}))
   };
 };
 

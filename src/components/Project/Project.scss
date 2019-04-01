@@ -4,6 +4,12 @@
 .project {
   width: 100%;
   margin-top: 44px;
+  @include md {
+    margin-top: 56px;
+  }
+  @include xl {
+    margin-top: 66px;
+  }
   &.is-board-layout {
     display: flex;
     align-items: flex-start;
@@ -11,32 +17,15 @@
     min-width: 100%;
   }
   &.is-list-layout {
-    margin-top: 84px;
+    margin-top: 72px;
     max-width: 960px;
-    @include xs {
-      margin-top: 44px;
-      .project__toolbar {
-        margin-bottom: 0;
-      }
-    }
     @include md {
+      margin-top: 80px;
       padding: 0 8px;
     }
-    .project__toolbar {
-      margin-bottom: 4px;
-    }
-    @include md {
-      margin-top: 56px;
-    }
     @include xl {
-      margin-top: 66px;
+      margin-top: 82px;
     }
-  }
-  @include md {
-    margin-top: 56px;
-  }
-  @include xl {
-    margin-top: 66px;
   }
 }
 
@@ -49,10 +38,6 @@
     }
     &.show-task-editor {
       &.is-list-layout {
-        .project__header-content {
-          margin-left: 0;
-          margin-right: 0;
-        }
         @include xx {
           .project__header {
             width: calc(100% - 640px);
@@ -73,13 +58,6 @@
   @include xx {
     width: calc(100% - 64px);
     left: 56px;
-  }
-}
-
-.is-list-layout {
-  .project__header-content {
-    max-width: 960px;
-    margin: 0 auto;
   }
 }
 
@@ -104,40 +82,41 @@
   margin-top: 40px;
   @include md {
     padding: 8px;
+  }
+  &.is-board-layout {
+    overflow-y: hidden;
+    min-width: 100%;
+  }
+  &.is-list-layout {
+    .project__header-content {
+      max-width: 960px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    .project__input--title {
+      @include md {
+        padding: 8px 12px;
+      }
+      @include xl {
+        padding: 8px 14px;
+      }
+    }
     &.show-task-editor {
-      &.is-list-layout {
+      @include md {
         .project__header {
-          margin-left: 0;
-          margin-right: 0;
+          width: calc(100% - 440px);
         }
         .project {
-          margin-top: 84px;
           margin-right: 16px;
         }
         .project__input--title {
           width: 100%;
         }
-        @include lg {
-          .project {
-            margin-top: 44px;
-          }
-          .project__input--title {
-            width: auto;
-          }
-        }
-        @include md {
-          .project {
-          margin-top: 56px;
-          }
-        }
-        @include xl {
-          .project {
-          margin-top: 66px;
-          }
-        }
       }
-      .project__header {
-        width: calc(100% - 440px);
+      @include lg {
+        .project__input--title {
+          width: auto;
+        }
       }
       @include xx {
         .project__header {
@@ -145,10 +124,6 @@
         }
       }
     }
-  }
-  &.is-board-layout {
-    overflow-y: hidden;
-    min-width: 100%;
   }
 }
 
@@ -181,10 +156,46 @@
 }
 
 .project__btn {
-  padding: 8px 6px;
+  padding: 6px;
 }
 
 .project__toolbar {
-  display: inline-flex;
-  padding: 0 8px;
+  padding: 0 10px;
+  width: 100%;
+  justify-content: space-between;
+  @include md {
+    padding: 0 20px;
+  }
+}
+
+.project__task-settings-wrapper {
+  display: inline-block;
+  z-index: 4;
+}
+
+.project__task-settings {
+  background-color: $white;
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 200px;
+  line-height: 1.15;
+  @include box-shadow(2);
+}
+
+.project__task-settings-item {
+  text-transform: capitalize;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $grey-800;
+}
+
+.project__task-settings-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  .feather {
+    vertical-align: middle;
+  }
 }

@@ -11,6 +11,15 @@ export const loadProjectsById = projectsById => {
   };
 };
 
+export const setTempProjectSettings = ({ projectId, view, sortBy }) => {
+  return {
+    type: types.SET_TEMP_PROJECT_SETTINGS,
+    projectId,
+    view,
+    sortBy
+  };
+};
+
 export const setProjectLoadedState = (projectId, key) => {
   console.log(key);
   return {
@@ -156,7 +165,14 @@ export const addProject = ({ projectId, projectData }) => {
   return {
     type: types.ADD_PROJECT,
     projectId,
-    projectData
+    projectData: {
+      tempSettings: {
+        tasks: {
+          ...projectData.settings.tasks
+        }
+      },
+      ...projectData
+    }
   };
 };
 
@@ -221,6 +237,9 @@ export const syncUserProjects = userId => {
                   subtasks: projectData.listIds.length === 0,
                   tasks: projectData.listIds.length === 0,
                   lists: projectData.listIds.length === 0
+                },
+                tempSettings: {
+                  tasks: {...projectData.settings.tasks}
                 },
                 ...projectData
               };

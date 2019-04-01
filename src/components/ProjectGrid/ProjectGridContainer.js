@@ -15,11 +15,6 @@ class ProjectGridContainer extends Component {
     className: ''
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
     const { projectsArray, selectProject, className } = this.props;
     return (
@@ -80,14 +75,19 @@ export default compose(
     onLoad: props => changes => {
       const projectsById = {};
       changes.forEach(change => {
-        projectsById[change.doc.id] = {
-          projectId: change.doc.id,
+        const projectId = change.doc.id;
+        const projectData = change.doc.data();
+        projectsById[projectId] = {
+          projectId,
           isLoaded: {
             subtasks: false,
             tasks: false,
             lists: false
           },
-          ...change.doc.data()
+          tempSettings: {
+            tasks: {...projectData.settings.tasks}
+          },
+          ...projectData
         };
       });
       props.loadProjectsById(projectsById);

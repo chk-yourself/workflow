@@ -385,11 +385,17 @@ class Firebase {
         lastUpdatedAt: null,
         listIds: [],
         ownerId: userId,
+        settings: {
+          isPrivate,
+          tasks: {
+            view: 'all',
+            sortBy: 'none'
+          }
+        },
         memberIds,
         notes,
         color,
         layout,
-        isPrivate,
         name
       })
       .then(ref => {
