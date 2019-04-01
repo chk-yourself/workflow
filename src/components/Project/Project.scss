@@ -3,12 +3,12 @@
 
 .project {
   width: 100%;
-  margin-top: 44px;
+  margin-top: 80px;
   @include md {
-    margin-top: 56px;
+    margin-top: 88px;
   }
   @include xl {
-    margin-top: 66px;
+    margin-top: 90px;
   }
   &.is-board-layout {
     display: flex;
@@ -17,14 +17,9 @@
     min-width: 100%;
   }
   &.is-list-layout {
-    margin-top: 72px;
     max-width: 960px;
     @include md {
-      margin-top: 80px;
       padding: 0 8px;
-    }
-    @include xl {
-      margin-top: 82px;
     }
   }
 }
@@ -93,14 +88,6 @@
       margin-right: auto;
       margin-left: auto;
     }
-    .project__input--title {
-      @include md {
-        padding: 8px 12px;
-      }
-      @include xl {
-        padding: 8px 14px;
-      }
-    }
     &.show-task-editor {
       @include md {
         .project__header {
@@ -146,12 +133,12 @@
   }
   @include md {
     font-size: 1.35rem;
-    padding: 10px 12px;
+    padding: 8px 12px;
     margin: 8px 6px;
   }
   @include xl {
     font-size: 1.45rem;
-    padding: 14px;
+    padding: 8px 14px;
   }
 }
 

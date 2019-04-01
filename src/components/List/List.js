@@ -73,7 +73,9 @@ class List extends Component {
       isRestricted,
       projectId,
       projectName,
-      layout
+      layout,
+      viewFilter,
+      sortBy
     } = this.props;
     if (isFetchingTasks) return null;
 
@@ -134,6 +136,8 @@ class List extends Component {
               </header>
               <div className="list__content">
                 <Tasks
+                  viewFilter={viewFilter}
+                  sortBy={sortBy}
                   tasks={tasks}
                   listId={listId}
                   onTaskClick={onTaskClick}

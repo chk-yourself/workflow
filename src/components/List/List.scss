@@ -120,12 +120,12 @@
   overflow-x: visible;
   overflow-y: auto;
   min-height: 16px;
-  max-height: calc(100vh - 274px);
+  max-height: calc(100vh - 310px);
   @include md {
-    max-height: calc(100vh - 290px);
+    max-height: calc(100vh - 322px);
   }
   @include xl {
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 324px);
   }
 }
 

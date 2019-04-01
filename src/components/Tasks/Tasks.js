@@ -29,6 +29,37 @@ export default class Tasks extends Component {
     this.listEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
+  applyViewFilter = tasks => {
+    const { viewFilter } = this.props;
+    switch (viewFilter) {
+      case 'completed': {
+        return tasks.filter(task => task.isCompleted);
+      }
+      case 'active': {
+        return tasks.filter(task => !task.isCompleted);
+      }
+      default: {
+        return tasks;
+      }
+    }
+  };
+
+  applySortRule = tasks => {
+    const { sortBy } = this.props;
+    switch (sortBy) {
+      case 'dueDate': {
+        return [...tasks].sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
+      }
+      default: {
+        return tasks;
+      }
+    }
+  };
+
+  applyTaskSettings = tasks => {
+    return this.applySortRule(this.applyViewFilter(tasks));
+  };
+
   render() {
     const {
       listId,
@@ -38,11 +69,13 @@ export default class Tasks extends Component {
       onTaskClick,
       folderId,
       layout,
-      dropType
+      dropType,
+      viewFilter,
+      sortBy
     } = this.props;
     const isBoardLayout = layout === 'board';
 
-    const inner = tasks.map((task, taskIndex) => {
+    const inner = this.applyTaskSettings(tasks).map((task, taskIndex) => {
       return isBoardLayout ? (
         <Card
           key={task.taskId}

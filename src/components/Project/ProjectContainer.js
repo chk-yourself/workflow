@@ -245,7 +245,6 @@ class ProjectContainer extends Component {
           hideLabel
           onBlur={this.onNameBlur}
         />
-        {project.layout === 'list' && (
           <Toolbar className="project__toolbar">
           <Button
             className="project__btn project__btn--add-list"
@@ -292,8 +291,6 @@ class ProjectContainer extends Component {
           }}
         />
           </Toolbar>
-        )
-        }
         </div>
         </div>
         <div className="project__wrapper">
@@ -306,6 +303,8 @@ class ProjectContainer extends Component {
               const { listId, name: listName, taskIds } = list;
               return (
                 <List
+                  viewFilter={tempProjectSettings.tasks.view}
+                  sortBy={tempProjectSettings.tasks.sortBy}
                   listId={listId}
                   key={listId}
                   index={i}
