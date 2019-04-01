@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
 
-const ProjectTile = ({ projectId, name, view, onClick, color }) => {
+const ProjectTile = ({ projectId, name, layout, onClick, color }) => {
   return (
     <li className={`project-grid__tile project-grid__tile--${color}`}>
       <Link
@@ -12,7 +12,7 @@ const ProjectTile = ({ projectId, name, view, onClick, color }) => {
       >
         <span className="project-grid__title">{name}</span>
         <span className="project-grid__icon">
-          <Icon name={view === 'board' ? 'trello' : 'list'} />
+          <Icon name={layout === 'board' ? 'trello' : 'list'} />
         </span>
       </Link>
     </li>

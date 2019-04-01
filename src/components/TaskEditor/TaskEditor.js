@@ -30,12 +30,12 @@ import { debounce } from '../../utils/function';
 
 
 const TaskEditorWrapper = ({
-  view,
+  layout,
   handleTaskEditorClose,
   onOutsideClick,
   children
 }) => {
-  return view === 'board' ? (
+  return layout === 'board' ? (
     <Modal
       onModalClose={handleTaskEditorClose}
       classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
@@ -68,8 +68,8 @@ class TaskEditor extends Component {
   };
 
   componentDidMount() {
-    const { view } = this.props;
-    if (view !== 'board') return;
+    const { layout } = this.props;
+    if (layout !== 'board') return;
     this.setViewportWidth();
     this.handleResize = debounce(200, this.setViewportWidth);
     window.addEventListener('resize', this.handleResize);
@@ -290,7 +290,7 @@ class TaskEditor extends Component {
       subtaskIds,
       projectId,
       completedSubtasks,
-      view,
+      layout,
       listName,
       listId,
       isCompleted,
@@ -321,7 +321,7 @@ class TaskEditor extends Component {
       <TaskEditorWrapper
         handleTaskEditorClose={handleTaskEditorClose}
         onOutsideClick={this.onOutsideClick}
-        view={view}
+        layout={layout}
       >
         <Toolbar className="task-editor__toolbar">
           <Button
@@ -488,7 +488,7 @@ class TaskEditor extends Component {
               taskId={taskId}
               subtaskIds={subtaskIds}
               projectId={projectId}
-              usePortal={view === 'board' && viewportWidth >= 576}
+              usePortal={layout === 'board' && viewportWidth >= 576}
             />
           )}
           <SubtaskComposer
@@ -496,7 +496,7 @@ class TaskEditor extends Component {
             projectId={projectId}
             classes={{
               composer: 'task-editor__subtask-composer',
-              iconWrapper: 'task-editor__section-icon',
+              iconWrapper: 'task-editor__subtask-composer-icon-wrapper',
               form: 'task-editor__new-subtask-form',
               textarea: 'task-editor__textarea--new-subtask',
               button: 'task-editor__btn--add-subtask'

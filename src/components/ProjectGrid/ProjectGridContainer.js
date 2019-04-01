@@ -27,7 +27,7 @@ class ProjectGridContainer extends Component {
         {projectsArray.map(project => (
         <ProjectTile
           key={project.projectId}
-          view={project.view}
+          layout={project.layout}
           name={project.name}
           color={project.color}
           projectId={project.projectId}

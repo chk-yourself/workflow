@@ -73,11 +73,11 @@ class List extends Component {
       isRestricted,
       projectId,
       projectName,
-      view
+      layout
     } = this.props;
     if (isFetchingTasks) return null;
 
-    const isBoardView = view === 'board';
+    const isBoardView = layout === 'board';
 
     const { name, isMoreActionsMenuVisible } = this.state;
 
@@ -86,7 +86,7 @@ class List extends Component {
         {provided => (
           <>
             <section
-              className={`list is-${view}-view`}
+              className={`list is-${layout}-layout`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -137,7 +137,7 @@ class List extends Component {
                   tasks={tasks}
                   listId={listId}
                   onTaskClick={onTaskClick}
-                  view={view}
+                  layout={layout}
                 />
               </div>
               {provided.placeholder}

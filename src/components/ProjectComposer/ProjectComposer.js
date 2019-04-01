@@ -19,7 +19,7 @@ class ProjectComposer extends Component {
     this.state = {
       name: '',
       notes: '',
-      view: 'board',
+      layout: 'board',
       color: 'default',
       privacy: 'public',
       memberIds: [props.userId],
@@ -33,7 +33,7 @@ class ProjectComposer extends Component {
     this.setState({
       name: '',
       notes: '',
-      view: 'board',
+      layout: 'board',
       color: 'default',
       privacy: 'public',
       memberIds: [userId],
@@ -44,14 +44,14 @@ class ProjectComposer extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { name, notes, color, view, privacy, memberIds } = this.state;
+    const { name, notes, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, userId } = this.props;
     firebase.addProject({
       userId,
       name,
       color,
-      view,
+      layout,
       isPrivate,
       memberIds,
       notes
@@ -108,7 +108,7 @@ class ProjectComposer extends Component {
     const {
       name,
       notes,
-      view,
+      layout,
       privacy,
       color,
       memberIds,
@@ -128,7 +128,7 @@ class ProjectComposer extends Component {
           }
         ]
       },
-      view: {
+      layout: {
         options: [
           {
             value: 'board',
@@ -221,14 +221,14 @@ class ProjectComposer extends Component {
             </div>
           )}
           <div className="project-composer__control-group">
-            <h4 className="project-composer__subheading">View</h4>
-            {settings.view.options.map(option => (
+            <h4 className="project-composer__subheading">Layout</h4>
+            {settings.layout.options.map(option => (
               <Radio
                 key={option.value}
                 onChange={this.onChange}
-                isChecked={view === option.value}
+                isChecked={layout === option.value}
                 label={option.label}
-                name="view"
+                name="layout"
                 id={option.value}
                 value={option.value}
                 classes={{

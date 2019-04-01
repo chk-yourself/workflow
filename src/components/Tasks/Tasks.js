@@ -37,13 +37,13 @@ export default class Tasks extends Component {
       tasks,
       onTaskClick,
       folderId,
-      view,
+      layout,
       dropType
     } = this.props;
-    const isBoardView = view === 'board';
+    const isBoardLayout = layout === 'board';
 
     const inner = tasks.map((task, taskIndex) => {
-      return isBoardView ? (
+      return isBoardLayout ? (
         <Card
           key={task.taskId}
           taskIndex={taskIndex}
@@ -69,7 +69,7 @@ export default class Tasks extends Component {
         type={dropType}
       >
         {(provided, snapshot) =>
-          isBoardView ? (
+          isBoardLayout ? (
             <div
               className="list__cards"
               ref={provided.innerRef}

@@ -14,7 +14,7 @@
     right: 0;
     z-index: 4;
   }
-  &.is-list-view {
+  &.is-list-layout {
     width: 100%;
     margin-bottom: 8px;
     padding-bottom: 16px;
@@ -44,7 +44,7 @@
       }
     }
   }
-  &.is-board-view {
+  &.is-board-layout {
     min-width: 272px;
     width: 272px;
     margin: 0 6px;

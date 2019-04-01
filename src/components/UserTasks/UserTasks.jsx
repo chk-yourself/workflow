@@ -321,7 +321,7 @@ class UserTasks extends Component {
               {...tasksById[selectedTaskId]}
               handleTaskEditorClose={this.toggleTaskEditor}
               userId={userId}
-              view="list"
+              layout="list"
               key={selectedTaskId}
             />
           )}

@@ -15,22 +15,24 @@ import { listActions, listSelectors } from '../../ducks/lists';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
 import Project from './Project';
+import { Toolbar } from '../Toolbar';
+import { Button } from '../Button';
 import { Input } from '../Input';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
+import { ListComposer } from '../ListComposer';
 import './Project.scss';
 
 class ProjectContainer extends Component {
   state = {
     isTaskEditorOpen: false,
-    projectName: this.props.projectName
+    projectName: this.props.projectName,
+    isListComposerActive: false
   };
 
   async componentDidMount() {
     const {
-      firebase,
-      updateProject,
       projectId,
       selectProject,
       selectedProjectId,
@@ -63,6 +65,16 @@ class ProjectContainer extends Component {
     selectProject(null);
     this.unsubscribe.forEach(func => func());
   }
+
+  toggleListComposer = e => {
+    this.setState(prevState => ({
+      isListComposerActive: !prevState.isListComposerActive
+    }));
+  };
+
+  inputRef = ref => {
+    this.listComposerInput = ref;
+  };
 
   onDragStart = () => {
     this.setState({
@@ -147,8 +159,12 @@ class ProjectContainer extends Component {
     }
   };
 
+  activateListComposer = e => {
+    this.listComposerInput.focus();
+  };
+
   render() {
-    const { isTaskEditorOpen, projectName } = this.state;
+    const { isTaskEditorOpen, projectName, isListComposerActive } = this.state;
     const {
       lists,
       tasksById,
@@ -160,8 +176,9 @@ class ProjectContainer extends Component {
     } = this.props;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
-      <main className={`project-container is-${project.view}-view ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
+      <main className={`project-container is-${project.layout}-layout ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
       <div className="project__header">
+        <div className="project__header-content">
         <Input
           className="project__input--title"
           name="projectName"
@@ -172,13 +189,28 @@ class ProjectContainer extends Component {
           hideLabel
           onBlur={this.onNameBlur}
         />
+        {project.layout === 'list' && (
+          <Toolbar className="project__toolbar">
+          <Button
+            className="project__btn project__btn--add-list"
+            onClick={this.activateListComposer}
+            color="primary"
+            variant="contained"
+            size="sm"
+          >
+            Add List
+          </Button>
+          </Toolbar>
+        )
+        }
+        </div>
         </div>
         <div className="project__wrapper">
         <DragDropContext
           onDragEnd={this.onDragEnd}
           onDragStart={this.onDragStart}
         >
-          <Project projectId={projectId} view={project.view}>
+          <Project projectId={projectId} layout={project.layout} inputRef={this.inputRef} toggleListComposer={this.toggleListComposer} isListComposerActive={isListComposerActive}>
             {lists.map((list, i) => {
               const { listId, name: listName, taskIds } = list;
               return (
@@ -190,7 +222,7 @@ class ProjectContainer extends Component {
                   taskIds={taskIds}
                   onTaskClick={this.handleTaskClick}
                   projectId={projectId}
-                  view={project.view}
+                  layout={project.layout}
                   isRestricted={false}
                 />
               );
@@ -202,7 +234,7 @@ class ProjectContainer extends Component {
             {...tasksById[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
-            view={project.view}
+            layout={project.layout}
           />
         )}
         </div>

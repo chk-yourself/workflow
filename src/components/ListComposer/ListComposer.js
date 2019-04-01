@@ -7,71 +7,68 @@ import { projectSelectors } from '../../ducks/projects';
 import { Button } from '../Button';
 import './ListComposer.scss';
 
-const INITIAL_STATE = {
-  name: '',
-  isActive: false
-};
-
 class ListComposer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  state = {
+    name: ''
+  };
 
-  resetForm = () => {
+  clear = () => {
     this.setState({ name: '' });
   };
 
-  onReset = e => {
-    this.setState({ ...INITIAL_STATE });
-  };
+  reset = () => {
+    this.clear();
+    const { toggle } = this.props;
+    this.input.blur();
+    toggle();
+  }
 
   onSubmit = e => {
     e.preventDefault();
     const { name } = this.state;
     const { projectId, firebase } = this.props;
     firebase.addList({ projectId, name });
-    this.resetForm();
+    this.clear();
   };
 
   onChange = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      name: e.target.value
     });
   };
 
   onFocus = e => {
-    this.setState({
-      isActive: true
-    });
+    const { toggle } = this.props;
+    toggle(e);
     if (e.target.matches('button')) {
       this.input.focus();
     }
   };
 
   onBlur = e => {
-    if (e.target.value === '') {
-      this.setState({
-        isActive: false
-      });
-    }
+    const { name } = this.state;
+    if (name !== '') return;
+    const { toggle } = this.props;
+    toggle(e);
   };
 
   inputRef = ref => {
     this.input = ref;
+    const { inputRef } = this.props;
+    inputRef(ref);
   };
 
   render() {
-    const { name, isActive } = this.state;
-    const { view } = this.props;
+    const { name } = this.state;
+    const { layout, isActive } = this.props;
     return (
       <div
-        className={`list-composer${isActive ? ' is-active' : ''} is-${view}-view`}
+        className={`list-composer${isActive ? ' is-active' : ''} is-${layout}-layout`}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
       >
         <form className="list-composer__form" onSubmit={this.onSubmit}>
-        {!isActive && view === "list" && (
+        {!isActive && layout === "list" && (
         <Button onClick={this.onFocus} color="primary" className="list-composer__btn--icon" iconOnly>
           <Icon name="plus-circle" />
         </Button>
@@ -99,11 +96,11 @@ class ListComposer extends Component {
               >
                 Add List
               </Button>
-              {view === "board" &&
+              {layout === "board" &&
               <Button
                 className="list-composer__btn list-composer__btn--close"
                 type="reset"
-                onClick={this.onReset}
+                onClick={this.reset}
                 size="sm"
               >
                 Cancel

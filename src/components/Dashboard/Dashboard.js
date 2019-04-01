@@ -59,7 +59,7 @@ class Dashboard extends Component {
             {...tasksDueSoon[selectedTaskId]}
             handleTaskEditorClose={this.toggleTaskEditor}
             userId={userId}
-            view="board"
+            layout="board"
           />
         )}
       </Main>

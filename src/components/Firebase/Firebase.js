@@ -373,7 +373,7 @@ class Firebase {
     userId,
     name,
     color = 'default',
-    view = 'board',
+    layout = 'board',
     isPrivate = false,
     memberIds = [],
     notes = ''
@@ -388,7 +388,7 @@ class Firebase {
         memberIds,
         notes,
         color,
-        view,
+        layout,
         isPrivate,
         name
       })

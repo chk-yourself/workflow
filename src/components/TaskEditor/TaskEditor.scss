@@ -120,6 +120,21 @@
   }
 }
 
+.task-editor__subtask-composer-icon-wrapper {
+  height: 40px;
+  line-height: 34px;
+  padding: 0 6px;
+  vertical-align: middle;
+  text-align: center;
+  display: inline-block;
+  color: $grey-600;
+  .feather {
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .task-editor__due-date-icon {
   padding: 4px;
   vertical-align: middle;
@@ -471,7 +486,8 @@
   background-color: $grey-100;
   border-radius: 4px;
   padding: 4px 0;
+  margin: 0 6px;
 }
 .task-editor__subtask-composer {
-  padding: 0 8px 0 24px;
+  padding: 0 4px 0 20px;
 }

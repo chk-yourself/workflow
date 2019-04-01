@@ -136,7 +136,7 @@ class Folder extends Component {
                   dueDate={dueDate}
                   onTaskClick={onTaskClick}
                   dropType={!userPermissions.enableTaskAdd ? (projectId || folderId || dueDate) : droppableTypes.TASK }
-                  view="list"
+                  layout="list"
                 />
               </div>
               {userPermissions.enableTaskAdd && (

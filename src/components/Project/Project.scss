@@ -3,27 +3,91 @@
 
 .project {
   width: 100%;
-  &.is-board-view {
+  margin-top: 44px;
+  &.is-board-layout {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     min-width: 100%;
   }
-  &.is-list-view {
+  &.is-list-layout {
+    margin-top: 84px;
     max-width: 960px;
+    @include xs {
+      margin-top: 44px;
+      .project__toolbar {
+        margin-bottom: 0;
+      }
+    }
     @include md {
       padding: 0 8px;
     }
+    .project__toolbar {
+      margin-bottom: 4px;
+    }
+    @include md {
+      margin-top: 56px;
+    }
+    @include xl {
+      margin-top: 66px;
+    }
+  }
+  @include md {
+    margin-top: 56px;
+  }
+  @include xl {
+    margin-top: 66px;
   }
 }
 
 .header.expand-nav + .project-container {
   @include md {
     left: 200px;
+    .project__header {
+      left: 208px;
+      width: calc(100% - 216px);
+    }
+    &.show-task-editor {
+      &.is-list-layout {
+        .project__header-content {
+          margin-left: 0;
+          margin-right: 0;
+        }
+        @include xx {
+          .project__header {
+            width: calc(100% - 640px);
+          }
+        }
+      }
+    }
   }
 }
 
 .project__header {
+  background-color: $cloud;
+  left: 8px;
+  width: calc(100% - 16px);
+  position: fixed;
+  top: 40px;
+  z-index: 5;
+  @include xx {
+    width: calc(100% - 64px);
+    left: 56px;
+  }
+}
+
+.is-list-layout {
+  .project__header-content {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+}
+
+.project__header-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
@@ -40,56 +104,87 @@
   margin-top: 40px;
   @include md {
     padding: 8px;
-    margin-top: 40px;
     &.show-task-editor {
-      &.is-list-view {
+      &.is-list-layout {
         .project__header {
           margin-left: 0;
           margin-right: 0;
         }
         .project {
+          margin-top: 84px;
           margin-right: 16px;
+        }
+        .project__input--title {
+          width: 100%;
+        }
+        @include lg {
+          .project {
+            margin-top: 44px;
+          }
+          .project__input--title {
+            width: auto;
+          }
+        }
+        @include md {
+          .project {
+          margin-top: 56px;
+          }
+        }
+        @include xl {
+          .project {
+          margin-top: 66px;
+          }
+        }
+      }
+      .project__header {
+        width: calc(100% - 440px);
+      }
+      @include xx {
+        .project__header {
+          width: calc(100% - 488px)
         }
       }
     }
   }
-  @include xl {
-    margin-top: 40px;
-  }
-  &.is-board-view {
+  &.is-board-layout {
     overflow-y: hidden;
     min-width: 100%;
-  }
-  &.is-list-view {
-    .project__header {
-      max-width: 960px;
-      margin: 0 auto;
-    }
   }
 }
 
 .project__input--title {
   background-color: transparent;
   border-color: transparent;
-  width: auto;
-  margin: 0 6px;
+  width: 100%;
+  margin: 4px 0;
   font-size: 1.1rem;
   font-family: $heading-font;
   font-weight: 600;
   padding: 8px 10px;
-  margin-bottom: 4px;
   height: auto;
   color: $grey-900;
   &:focus {
     background-color: rgba(#fff, 0.6);
   }
+  @include xs {
+    width: auto;
+  }
   @include md {
     font-size: 1.35rem;
     padding: 10px 12px;
-    margin-bottom: 8px;
+    margin: 8px 6px;
   }
   @include xl {
     font-size: 1.45rem;
     padding: 14px;
   }
+}
+
+.project__btn {
+  padding: 8px 6px;
+}
+
+.project__toolbar {
+  display: inline-flex;
+  padding: 0 8px;
 }
