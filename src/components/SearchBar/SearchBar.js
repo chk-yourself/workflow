@@ -1,48 +1,47 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import * as keys from '../../constants/keys';
 import { withOutsideClick } from '../withOutsideClick';
+import { currentUserSelectors } from '../../ducks/currentUser';
+import SearchSuggestions from './SearchSuggestions';
 import './SearchBar.scss';
 
 class SearchBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isExpanded: false,
+  state = {
+    isExpanded: false,
+    query: '',
+    selectedItem: null,
+    selectedIndex: null,
+    hasExactMatch: null,
+    filteredList: []
+  };
+
+  reset = e => {
+    this.setState({
       query: '',
-      selectedValue: '',
-      focusedTag: '',
+      isActive: false,
+      selectedItem: null,
       selectedIndex: null,
-      hasExactMatch: null,
       filteredList: []
-    };
-    this.inputEl = createRef();
-  }
+    });
+  };
 
   onChange = e => {
-    const { suggestions } = this.props;
-    const { selectedValue, selectedIndex } = this.state;
-    const { value } = e.target;
-    const filteredList = suggestions.filter(tag => this.matchTag(tag, value));
-    const hasExactMatch =
-      filteredList.findIndex(item => item.name === value) !== -1;
-    const newIndex = filteredList.indexOf(selectedValue);
-    const persistSelectedValue = newIndex !== -1;
-
+    const { selectedItem, filteredList } = this.state;
+    const { projects, tags } = this.props;
+    const newIndex = selectedItem ? filteredList.findIndex(item => item.name === selectedItem.name) : -1;
+    const persistSelectedItem = newIndex !== -1;
+    
     this.setState({
-      selectedValue: persistSelectedValue
-        ? selectedValue
-        : filteredList.length > 0
-        ? filteredList[0].name
-        : '',
-      selectedIndex: persistSelectedValue ? newIndex : 0,
-      value,
-      filteredList: hasExactMatch
-        ? filteredList
-        : [...filteredList, { name: value, color: 'default' }],
-      hasExactMatch
+      query: e.target.value,
+      selectedItem: persistSelectedItem
+        ? selectedItem
+        : null,
+      selectedIndex: persistSelectedItem ? newIndex : -1,
+      filteredList: [...projects, ...tags].filter(item => this.matchItem(item))
     });
   };
 
@@ -51,23 +50,13 @@ class SearchBar extends Component {
       e.key !== keys.TAB &&
       e.key !== keys.ARROW_DOWN &&
       e.key !== keys.ARROW_UP &&
-      e.key !== keys.ENTER &&
-      e.key !== keys.BACKSPACE
+      e.key !== keys.ENTER
     )
       return;
 
-    const {
-      filteredList,
-      selectedIndex,
-      selectedValue,
-      value,
-      focusedTag
-    } = this.state;
-    const { addTag, removeTag, assignedTags } = this.props;
+    const { filteredList, selectedIndex, selectedItem } = this.state;
     const nextIndex =
-      selectedIndex === filteredList.length - 1 || selectedIndex === null
-        ? 0
-        : selectedIndex + 1;
+      selectedIndex === filteredList.length - 1 ? 0 : selectedIndex + 1;
     const prevIndex =
       selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
 
@@ -77,36 +66,24 @@ class SearchBar extends Component {
       // eslint-disable-next-line no-fallthrough
       case keys.TAB: {
         this.setState({
-          selectedValue: filteredList[nextIndex].name,
+          selectedItem: filteredList[nextIndex],
           selectedIndex: nextIndex
         });
         break;
       }
       case keys.ARROW_UP: {
         this.setState({
-          selectedValue: filteredList[prevIndex].name,
+          selectedItem: filteredList[prevIndex],
           selectedIndex: prevIndex
         });
         break;
       }
       case keys.ENTER: {
-        if (selectedValue === '' && value === '') return;
-        this.resetForm();
-        addTag(selectedValue === '' ? value : selectedValue);
+        if (selectedItem === null) return;
         break;
       }
-      case keys.BACKSPACE: {
-        if (value !== '') return;
-        if (focusedTag === '') {
-          this.setState({
-            focusedTag: assignedTags[assignedTags.length - 1].name
-          });
-        } else {
-          this.resetForm();
-          removeTag(focusedTag);
-        }
-      }
     }
+
     e.preventDefault();
   };
 
@@ -116,7 +93,7 @@ class SearchBar extends Component {
     e.stopPropagation();
     if (name === 'search' || query !== '') return;
     if (name === 'toggle') {
-      this.inputEl.current.focus();
+      this.input.focus();
     }
     this.toggleSearchBar();
   };
@@ -137,9 +114,21 @@ class SearchBar extends Component {
     this.toggleSearchBar();
   };
 
+  matchItem = ({ name }) => {
+    const { query } = this.state;
+    if (query === '') return false;
+    const regExp = new RegExp(query, 'i');
+    return regExp.test(name);
+  };
+
+  inputRef = ref => {
+    this.input = ref;
+  };
+
   render() {
-    const { innerRef } = this.props;
-    const { isExpanded } = this.state;
+    const { innerRef, projects, tags } = this.props;
+    const { isExpanded, selectedItem, query } = this.state;
+    console.log(this.state.filteredList, selectedItem);
     return (
       <div
         ref={innerRef}
@@ -151,8 +140,10 @@ class SearchBar extends Component {
             name="search"
             className="search-form__input"
             type="text"
-            innerRef={this.inputEl}
+            innerRef={this.inputRef}
             hideLabel
+            onChange={this.onChange}
+            onKeyDown={this.onKeyDown}
           />
           <Input
             name="submit"
@@ -170,9 +161,26 @@ class SearchBar extends Component {
             <Icon name="search" />
           </Button>
         </form>
+        {query !== '' &&
+        <ul className="search-suggestions__categories">
+        <SearchSuggestions category="Projects" items={projects} filter={this.matchItem} selectedItem={selectedItem} />
+        <SearchSuggestions category="Tags" items={tags} filter={this.matchItem} selectedItem={selectedItem} />
+        </ul>
+        }
       </div>
     );
   }
 }
 
-export default withOutsideClick(SearchBar);
+const mapStateToProps = (state, ownProps) => {
+  return {
+    projects: currentUserSelectors.getCurrentUserProjects(state),
+    tags: currentUserSelectors.getAllMergedTags(state)
+  };
+};
+
+export default withOutsideClick(
+  connect(
+    mapStateToProps
+  )(SearchBar)
+  );

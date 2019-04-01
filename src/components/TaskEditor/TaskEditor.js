@@ -547,7 +547,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
-    mergedTags: currentUserSelectors.getMergedTags(state),
+    mergedTags: currentUserSelectors.getMergedProjectTags(state),
     projectTags: projectSelectors.getProjectTags(state, ownProps.projectId),
     completedSubtasks: subtaskSelectors.getCompletedSubtasks(
       state,

@@ -266,7 +266,7 @@ export const getTasksDueSoonArr = state => {
   return Object.keys(tasksDueSoon).map(taskId => tasksDueSoon[taskId]);
 };
 
-export const getMergedTags = state => {
+export const getMergedProjectTags = state => {
   const {
     selectedProject: projectId,
     projectsById,
@@ -279,4 +279,34 @@ export const getMergedTags = state => {
   const { tags: userTags } = usersById[userId];
   const mergedTags = { ...userTags, ...projectTags };
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);
+};
+
+
+export const getAllMergedTags = state => {
+  const {
+    projectsById,
+    usersById,
+    currentUser
+  } = state;
+  if (!currentUser) return [];
+  const { tags: userTags, projectIds } = currentUser;
+  const projectTags = projectIds.reduce((tags, projectId) => {
+    const project = projectsById[projectId];
+    if (project && project.tags) {
+      tags = {
+        ...tags,
+        ...project.tags
+      };
+    }
+    return tags;
+  }, {});
+  const mergedTags = { ...userTags, ...projectTags };
+  return Object.keys(mergedTags).map(tag => mergedTags[tag]);
+};
+
+export const getCurrentUserProjects = state => {
+  const { currentUser, projectsById } = state;
+  if (!currentUser) return [];
+  const { projectIds } = currentUser;
+  return projectIds.map(projectId => projectsById[projectId]);
 };

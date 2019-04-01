@@ -21,7 +21,6 @@ export const setTempProjectSettings = ({ projectId, view, sortBy }) => {
 };
 
 export const setProjectLoadedState = (projectId, key) => {
-  console.log(key);
   return {
     type: types.SET_PROJECT_LOADED_STATE,
     projectId,
