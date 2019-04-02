@@ -26,7 +26,6 @@ import './Project.scss';
 
 class ProjectContainer extends Component {
   state = {
-    isTaskEditorOpen: false,
     projectName: this.props.projectName,
     isListComposerActive: false,
     isTaskSettingsMenuVisible: false,
@@ -127,21 +126,14 @@ class ProjectContainer extends Component {
     }
   };
 
-  toggleTaskEditor = () => {
-    const { isTaskEditorOpen } = this.state;
-    if (isTaskEditorOpen) {
-      const { selectTask } = this.props;
-      selectTask(null);
-    }
-    this.setState(prevState => ({
-      isTaskEditorOpen: !prevState.isTaskEditorOpen
-    }));
+  closeTaskEditor = taskId => {
+    const { selectTask } = this.props;
+    selectTask(null);
   };
 
   handleTaskClick = taskId => {
     const { selectTask } = this.props;
     selectTask(taskId);
-    this.toggleTaskEditor();
   };
 
   onNameChange = e => {
@@ -219,7 +211,7 @@ class ProjectContainer extends Component {
 
 
   render() {
-    const { isTaskEditorOpen, projectName, isListComposerActive, isTaskSettingsMenuVisible, isSortRuleDropdownVisible } = this.state;
+    const { projectName, isListComposerActive, isTaskSettingsMenuVisible, isSortRuleDropdownVisible } = this.state;
     const {
       lists,
       tasksById,
@@ -230,6 +222,7 @@ class ProjectContainer extends Component {
       project,
       tempProjectSettings
     } = this.props;
+    const isTaskEditorOpen = !!selectedTaskId;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main className={`project-container is-${project.layout}-layout ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
@@ -322,7 +315,7 @@ class ProjectContainer extends Component {
         {isTaskEditorOpen && (
           <TaskEditor
             {...tasksById[selectedTaskId]}
-            handleTaskEditorClose={this.toggleTaskEditor}
+            handleTaskEditorClose={this.closeTaskEditor}
             userId={userId}
             layout={project.layout}
           />

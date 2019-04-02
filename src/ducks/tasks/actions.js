@@ -231,3 +231,59 @@ export const syncProjectTasks = projectId => {
     }
   };
 };
+
+export const syncTaggedTasks = ({ projectId, tag }) => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('tasks', ['projectId', '==', projectId])
+        .where('tags', 'array-contains', tag)
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad = changes.every(
+            change => change.type === 'added'
+          );
+
+          if (isInitialLoad && changes.length > 1) {
+            const tasksById = {};
+            changes.forEach(change => {
+              tasksById[change.doc.id] = {
+                taskId: change.doc.id,
+                isLoaded: {
+                  subtasks: false,
+                  comments: false
+                },
+                ...change.doc.data()
+              };
+            });
+            dispatch(loadTasksById(tasksById));
+          } else {
+            changes.forEach(async change => {
+              const [taskId, taskData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { tasksById } = getState();
+              if (changeType === 'added') {
+                if (taskId in tasksById) return;
+                dispatch(addTask({ taskId, taskData }));
+                console.log(`Task added: ${taskData.name}`);
+              } else if (changeType === 'removed') {
+                if (taskId in tasksById === false) return;
+                const { listId } = taskData;
+                dispatch(removeTask({ taskId, listId }));
+                console.log(`Removed Task: ${taskData.name}`);
+              } else {
+                dispatch(updateTask({ taskId, taskData }));
+                console.log(`Updated Task: ${taskData.name}`);
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};

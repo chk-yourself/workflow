@@ -13,6 +13,7 @@ import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
 import { UserProfile } from '../UserProfile';
+import { TagSearchResults } from '../../components/SearchBar';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -25,20 +26,22 @@ class HomePage extends Component {
   }
 
   async componentDidMount() {
-    const {
-      fetchUsersById,
-      userId,
-      firebase,
-      syncUserTags
-    } = this.props;
+    const { fetchUsersById, currentUser, syncUserTags } = this.props;
+    const { userId } = currentUser;
     console.log('mounted home');
 
-    await Promise.all([fetchUsersById(), syncUserTags(userId)]).then(listeners => {
-      this.unsubscribe = listeners[1];
-      this.setState({
-        isLoading: false
-      })
-    });
+    await Promise.all([fetchUsersById(), syncUserTags(userId)]).then(
+      listeners => {
+        this.unsubscribe = listeners[1];
+        this.setState({
+          isLoading: false
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   toggleProjectComposer = () => {
@@ -47,10 +50,6 @@ class HomePage extends Component {
     }));
   };
 
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-
   render() {
     const { isProjectComposerOpen, isLoading } = this.state;
     if (isLoading) return null;
@@ -58,9 +57,7 @@ class HomePage extends Component {
     return (
       <>
         {isProjectComposerOpen && (
-          <ProjectComposer
-            onClose={this.toggleProjectComposer}
-          />
+          <ProjectComposer onClose={this.toggleProjectComposer} />
         )}
         <Switch>
           <Route
@@ -87,7 +84,13 @@ class HomePage extends Component {
           <Route
             path={ROUTES.USER_PROJECTS}
             render={props => (
-              <Main title="Projects" classes={{main: 'project-grid__container', title: "project-grid__header"}}>
+              <Main
+                title="Projects"
+                classes={{
+                  main: 'project-grid__container',
+                  title: 'project-grid__header'
+                }}
+              >
                 <ProjectGridContainer
                   userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
@@ -102,7 +105,15 @@ class HomePage extends Component {
           />
           <Route
             path={ROUTES.USER_PROFILE}
-            render={props => <UserProfile userId={props.match.params.id} {...props} />}
+            render={props => (
+              <UserProfile userId={props.match.params.id} {...props} />
+            )}
+          />
+          <Route
+            path={ROUTES.TAG_SEARCH_RESULTS}
+            render={props => (
+              <TagSearchResults tag={props.match.params.query} {...props} />
+            )}
           />
         </Switch>
       </>
@@ -123,7 +134,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = authUser => !!authUser;
+const condition = currentUser => !!currentUser;
 
 export default withAuthorization(condition)(
   connect(

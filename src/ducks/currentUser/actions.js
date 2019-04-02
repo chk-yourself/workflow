@@ -23,12 +23,7 @@ export const setTempTaskSettings = ({ view, sortBy }) => {
   };
 };
 
-export const loadUserTags = tags => {
-  return {
-    type: types.LOAD_USER_TAGS,
-    tags
-  };
-};
+// Assigned Tasks
 
 export const loadAssignedTasks = assignedTasks => {
   return {
@@ -51,40 +46,7 @@ export const removeAssignedTask = taskId => {
   };
 };
 
-export const fetchCurrentUserData = userId => {
-  return async dispatch => {
-    try {
-      const currentUser = await firebase
-        .getDocRef('users', userId)
-        .get()
-        .then(doc => doc.data());
-      dispatch(setCurrentUser(currentUser));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
-export const fetchUserTags = userId => {
-  return async dispatch => {
-    try {
-      const userTags = await firebase
-        .getDocRef('users', userId)
-        .collection('tags')
-        .get()
-        .then(snapshot => {
-          const tags = {};
-          snapshot.forEach(doc => {
-            tags[doc.id] = doc.data();
-          });
-          return tags;
-        });
-      dispatch(loadUserTags(userTags));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
+// Folders
 
 export const loadFolders = folders => {
   return {
@@ -92,6 +54,39 @@ export const loadFolders = folders => {
     folders
   };
 };
+
+export const addFolder = ({ folderId, folderData }) => {
+  return {
+    type: types.ADD_FOLDER,
+    folderId,
+    folderData
+  };
+};
+
+export const updateFolder = ({ folderId, folderData }) => {
+  return {
+    type: types.UPDATE_FOLDER,
+    folderId,
+    folderData
+  };
+};
+
+export const removeFolder = folderId => {
+  return {
+    type: types.REMOVE_FOLDER,
+    folderId
+  };
+};
+
+export const reorderFolders = (userId, folderIds) => {
+  return {
+    type: types.REORDER_FOLDERS,
+    userId,
+    folderIds
+  };
+};
+
+// Notifications
 
 export const loadNotifications = notifications => {
   return {
@@ -119,80 +114,16 @@ export const updateNotification = ({ notificationId, notificationData }) => {
 export const removeNotification = notificationId => {
   return {
     type: types.REMOVE_NOTIFICATION,
-    notificationId,
+    notificationId
   };
 };
 
-export const fetchFolders = userId => {
-  return async dispatch => {
-    try {
-      const folders = await firebase
-        .getDocRef('users', userId)
-        .collection('folders')
-        .get()
-        .then(snapshot => {
-          const foldersById = {};
-          snapshot.forEach(doc => {
-            foldersById[doc.id] = {
-              folderId: doc.id,
-              ...doc.data()
-            };
-          });
-          return foldersById;
-        });
-      dispatch(loadFolders(folders));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
+// Tags
 
-export const addFolder = ({ folderId, folderData }) => {
+export const loadUserTags = tags => {
   return {
-    type: types.ADD_FOLDER,
-    folderId,
-    folderData
-  };
-};
-
-export const updateFolder = ({ folderId, folderData }) => {
-  return {
-    type: types.UPDATE_FOLDER,
-    folderId,
-    folderData
-  };
-};
-
-export const removeFolder = folderId => {
-  return {
-    type: types.REMOVE_FOLDER,
-    folderId
-  };
-};
-
-export const deleteFolder = ({ userId, folderId }) => {
-  return async dispatch => {
-    try {
-      await firebase.getDocRef('users', userId, 'folders', folderId).delete();
-      dispatch(removeFolder(folderId));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-};
-
-export const reorderFolders = (userId, folderIds) => {
-  return {
-    type: types.REORDER_FOLDERS,
-    userId,
-    folderIds
-  };
-};
-
-export const loadTasksDueSoon = tasksDueSoon => {
-  return {
-    type: types.LOAD_TASKS_DUE_SOON,
-    tasksDueSoon
+    type: types.LOAD_USER_TAGS,
+    tags
   };
 };
 
@@ -219,36 +150,50 @@ export const deleteTag = name => {
   };
 };
 
-export const fetchTasksDueWithinDays = (userId, days) => {
-  const startingDate = new Date();
-  const timeStart = new Date(startingDate.setHours(0, 0, 0, 0));
-  const endingDate = new Date(startingDate);
-  const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + days));
-
+export const deleteFolder = ({ userId, folderId }) => {
   return async dispatch => {
     try {
-      const tasksDueSoon = await firebase.db
-        .collection('tasks')
-        .where('assignedTo', 'array-contains', userId)
-        .where('dueDate', '<=', timeEnd)
-        .orderBy('dueDate', 'asc')
-        .get()
-        .then(snapshot => {
-          const tasks = {};
-          snapshot.forEach(doc => {
-            tasks[doc.id] = {
-              taskId: doc.id,
-              ...doc.data()
-            };
-          });
-          return tasks;
-        });
-      dispatch(loadTasksDueSoon(tasksDueSoon));
+      await firebase.getDocRef('users', userId, 'folders', folderId).delete();
+      dispatch(removeFolder(folderId));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 };
+
+// Tasks due soon
+
+export const loadTasksDueSoon = tasksDueSoon => {
+  return {
+    type: types.LOAD_TASKS_DUE_SOON,
+    tasksDueSoon
+  };
+};
+
+export const addTaskDueSoon = ({ taskId, taskData }) => {
+  return {
+    type: types.ADD_TASK_DUE_SOON,
+    taskId,
+    taskData
+  };
+};
+
+export const removeTaskDueSoon = taskId => {
+  return {
+    type: types.REMOVE_TASK_DUE_SOON,
+    taskId
+  };
+};
+
+export const updateTaskDueSoon = ({ taskId, taskData }) => {
+  return {
+    type: types.UPDATE_TASK_DUE_SOON,
+    taskId,
+    taskData
+  };
+};
+
+// Thunks
 
 export const syncTasksDueWithinDays = (userId, days) => {
   const startingDate = new Date();
@@ -304,29 +249,6 @@ export const syncTasksDueWithinDays = (userId, days) => {
     } catch (error) {
       console.log(error);
     }
-  };
-};
-
-export const addTaskDueSoon = ({ taskId, taskData }) => {
-  return {
-    type: types.ADD_TASK_DUE_SOON,
-    taskId,
-    taskData
-  };
-};
-
-export const removeTaskDueSoon = taskId => {
-  return {
-    type: types.REMOVE_TASK_DUE_SOON,
-    taskId
-  };
-};
-
-export const updateTaskDueSoon = ({ taskId, taskData }) => {
-  return {
-    type: types.UPDATE_TASK_DUE_SOON,
-    taskId,
-    taskData
   };
 };
 
@@ -577,7 +499,11 @@ export const syncNotifications = userId => {
             await dispatch(loadNotifications(notificationsById));
           } else {
             changes.forEach(async change => {
-              const [notificationId, notificationData, changeType] = await Promise.all([
+              const [
+                notificationId,
+                notificationData,
+                changeType
+              ] = await Promise.all([
                 change.doc.id,
                 change.doc.data(),
                 change.type
@@ -586,18 +512,26 @@ export const syncNotifications = userId => {
               switch (changeType) {
                 case 'added': {
                   if (notifications && notificationId in notifications) return;
-                  dispatch(addNotification({ notificationId, notificationData }));
+                  dispatch(
+                    addNotification({ notificationId, notificationData })
+                  );
                   console.log('notification added');
                   break;
                 }
                 case 'removed': {
-                  if (!change.doc.exists && notifications && notificationId in notifications) {
+                  if (
+                    !change.doc.exists &&
+                    notifications &&
+                    notificationId in notifications
+                  ) {
                     dispatch(removeNotification(notificationId));
                   }
                   break;
                 }
                 default: {
-                  dispatch(updateNotification({ notificationId, notificationData }));
+                  dispatch(
+                    updateNotification({ notificationId, notificationData })
+                  );
                   break;
                 }
               }

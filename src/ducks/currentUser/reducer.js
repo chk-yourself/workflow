@@ -1,7 +1,7 @@
 import * as types from './types';
 import { UPDATE_USER } from '../users/types';
 
-const currentUser = (state = null, action) => {
+export default (state = null, action) => {
   switch (action.type) {
     case types.SET_CURRENT_USER: {
       const { currentUser } = action;
@@ -95,7 +95,10 @@ const currentUser = (state = null, action) => {
     }
     case types.REMOVE_NOTIFICATION: {
       const { notificationId } = action;
-      const { [notificationId]: removedNotification, ...restOfNotifications } = state.notifications;
+      const {
+        [notificationId]: removedNotification,
+        ...restOfNotifications
+      } = state.notifications;
       return {
         ...state,
         notifications: restOfNotifications
@@ -210,18 +213,16 @@ const currentUser = (state = null, action) => {
             sortBy: sortBy || state.tempSettings.tasks.sortBy
           }
         }
-      }
+      };
     }
     case UPDATE_USER: {
       const { userData } = action;
       return {
         ...state,
         ...userData
-      }
+      };
     }
     default:
       return state;
   }
 };
-
-export default currentUser;

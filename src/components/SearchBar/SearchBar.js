@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
@@ -7,6 +9,9 @@ import * as keys from '../../constants/keys';
 import { withOutsideClick } from '../withOutsideClick';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import SearchSuggestions from './SearchSuggestions';
+import {
+  selectTask as selectTaskAction
+} from '../../ducks/selectedTask';
 import './SearchBar.scss';
 
 class SearchBar extends Component {
@@ -15,14 +20,13 @@ class SearchBar extends Component {
     query: '',
     selectedItem: null,
     selectedIndex: null,
-    hasExactMatch: null,
     filteredList: []
   };
 
   reset = e => {
     this.setState({
       query: '',
-      isActive: false,
+      isExpanded: false,
       selectedItem: null,
       selectedIndex: null,
       filteredList: []
@@ -79,12 +83,36 @@ class SearchBar extends Component {
         break;
       }
       case keys.ENTER: {
+        const { history } = this.props;
         if (selectedItem === null) return;
+        if (selectedItem.projectId) {
+          history.push(`/0/project/${selectedItem.projectId}`);
+        } else if (selectedItem.taskId) {
+          const { selectTask } = this.props;
+          selectTask(selectedItem.taskId);
+        } else {
+          history.push(`/0/search/${selectedItem.name}/tags`)
+        }
+        this.reset();
         break;
       }
     }
 
     e.preventDefault();
+  };
+
+  onClickProject = e => {
+    const { history } = this.props;
+    if (!e.target.matches('li')) return;
+    history.push(`/0/project/${e.target.dataset.id}`);
+    this.reset();
+  };
+
+  onClickTag = e => {
+    const { history } = this.props;
+    if (!e.target.matches('li')) return;
+    history.push(`/0/search/${e.target.dataset.id}/tags`);
+    this.reset();
   };
 
   handleClick = e => {
@@ -109,8 +137,8 @@ class SearchBar extends Component {
   };
 
   onOutsideClick = e => {
-    const { isExpanded } = this.state;
-    if (!isExpanded) return;
+    const { isExpanded, query } = this.state;
+    if (!isExpanded || query !== '') return;
     this.toggleSearchBar();
   };
 
@@ -128,7 +156,6 @@ class SearchBar extends Component {
   render() {
     const { innerRef, projects, tags } = this.props;
     const { isExpanded, selectedItem, query } = this.state;
-    console.log(this.state.filteredList, selectedItem);
     return (
       <div
         ref={innerRef}
@@ -137,6 +164,7 @@ class SearchBar extends Component {
       >
         <form className="search-form" onSubmit={this.handleSubmit}>
           <Input
+            value={query}
             name="search"
             className="search-form__input"
             type="text"
@@ -163,8 +191,8 @@ class SearchBar extends Component {
         </form>
         {query !== '' &&
         <ul className="search-suggestions__categories">
-        <SearchSuggestions category="Projects" items={projects} filter={this.matchItem} selectedItem={selectedItem} />
-        <SearchSuggestions category="Tags" items={tags} filter={this.matchItem} selectedItem={selectedItem} />
+        <SearchSuggestions onClick={this.onClickProject} category="Projects" items={projects} filter={this.matchItem} selectedItem={selectedItem} />
+        <SearchSuggestions onClick={this.onClickTag} category="Tags" items={tags} filter={this.matchItem} selectedItem={selectedItem} />
         </ul>
         }
       </div>
@@ -179,8 +207,18 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default withOutsideClick(
+const mapDispatchToProps = dispatch => {
+  return {
+    selectTask: taskId => dispatch(selectTaskAction(taskId))
+  }
+};
+
+
+export default compose(
+  withRouter,
   connect(
-    mapStateToProps
-  )(SearchBar)
-  );
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  withOutsideClick
+  )(SearchBar);

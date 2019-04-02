@@ -51,3 +51,11 @@ export const getTaskLoadedState = (state, taskId) => {
   if (!task) return {};
   return task.isLoaded;
 }
+
+export const getTaggedTasks = (state, tag) => {
+  const { tasksById } = state;
+  return Object.keys(tasksById).map(taskId => tasksById[taskId])
+  .filter(task => {
+    return task.tags && task.tags.includes(tag);
+  });
+};

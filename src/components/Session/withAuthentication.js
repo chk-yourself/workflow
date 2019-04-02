@@ -5,7 +5,10 @@ import { compose } from 'recompose';
 import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { currentUserActions } from '../../ducks/currentUser';
+import {
+  currentUserActions,
+  currentUserSelectors
+} from '../../ducks/currentUser';
 
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
@@ -48,13 +51,20 @@ const withAuthentication = Component => {
     }
 
     render() {
+      const { currentUser } = this.props;
       return (
-        <AuthUserContext.Provider value={this.state.authUser}>
+        <AuthUserContext.Provider value={currentUser}>
           <Component {...this.props} />
         </AuthUserContext.Provider>
       );
     }
   }
+
+  const mapStateToProps = state => {
+    return {
+      currentUser: currentUserSelectors.getCurrentUser(state)
+    };
+  };
 
   const mapDispatchToProps = dispatch => ({
     syncCurrentUserData: userId =>
@@ -67,7 +77,7 @@ const withAuthentication = Component => {
     withRouter,
     withFirebase,
     connect(
-      null,
+      mapStateToProps,
       mapDispatchToProps
     )
   )(WithAuthentication);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
 import {
@@ -14,13 +14,10 @@ class TasksDueSoon extends Component {
   };
 
   async componentDidMount() {
-    const {
-      currentUserId,
-      syncTasksDueWithinDays,
-      firebase
-    } = this.props;
-    
-    this.unsubscribe = await syncTasksDueWithinDays(currentUserId, 7);
+    const { currentUser, syncTasksDueWithinDays } = this.props;
+    const { userId } = currentUser;
+
+    this.unsubscribe = await syncTasksDueWithinDays(userId, 7);
     this.setState({
       isLoading: false
     });
@@ -32,14 +29,15 @@ class TasksDueSoon extends Component {
 
   render() {
     const { isLoading } = this.state;
-    const { tasksDueSoon, onTaskClick, currentUserId } = this.props;
+    const { tasksDueSoon, onTaskClick, currentUser } = this.props;
+    const { userId } = currentUser;
     if (isLoading) return null;
     return (
       <DashboardPanel
         className="tasks-due-soon"
         size="md"
         name="Tasks Due Soon"
-        link={{ path: `/0/${currentUserId}/tasks`, text: 'View all tasks' }}
+        link={{ path: `/0/${userId}/tasks`, text: 'View all tasks' }}
       >
         {tasksDueSoon.map((task, i) => (
           <Task
@@ -55,9 +53,8 @@ class TasksDueSoon extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    currentUserId: currentUserSelectors.getCurrentUserId(state),
     tasksDueSoon: currentUserSelectors.getTasksDueSoonArr(state)
   };
 };
@@ -69,7 +66,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withFirebase(
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps

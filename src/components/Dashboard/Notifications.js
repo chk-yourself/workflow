@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import DashboardPanel from './DashboardPanel';
 import { Notification } from '../Notification';
 import {
@@ -15,13 +15,10 @@ class Notifications extends Component {
   };
 
   async componentDidMount() {
-    const {
-      currentUserId,
-      syncNotifications,
-      firebase
-    } = this.props;
-    
-    this.unsubscribe = await syncNotifications(currentUserId);
+    const { currentUser, syncNotifications } = this.props;
+    const { userId } = currentUser;
+
+    this.unsubscribe = await syncNotifications(userId);
     this.setState({
       isLoading: false
     });
@@ -31,26 +28,30 @@ class Notifications extends Component {
     this.unsubscribe();
   }
 
-
   render() {
     const { isLoading } = this.state;
     const { notifications, onTaskClick } = this.props;
     if (isLoading) return null;
-    return <DashboardPanel className="notifications" name="Notifications" size="sm">
-    <ul className="notifications__list">
-    {notifications.map(notification => (
-      <Notification key={notification.notificationId} onTaskClick={notification.source.type === 'comment' ? onTaskClick : null} {...notification} />
-    ))
-    }
-    </ul>
-    </DashboardPanel>
-    ;
+    return (
+      <DashboardPanel className="notifications" name="Notifications" size="sm">
+        <ul className="notifications__list">
+          {notifications.map(notification => (
+            <Notification
+              key={notification.notificationId}
+              onTaskClick={
+                notification.source.type === 'comment' ? onTaskClick : null
+              }
+              {...notification}
+            />
+          ))}
+        </ul>
+      </DashboardPanel>
+    );
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    currentUserId: currentUserSelectors.getCurrentUserId(state),
     notifications: currentUserSelectors.getNotificationsArray(state)
   };
 };
@@ -62,7 +63,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withFirebase(
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps

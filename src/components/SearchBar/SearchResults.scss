@@ -1,0 +1,16 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.search-results__title {
+  font-size: 1.4rem;
+}
+
+.search-results__subheading {
+  font-size: 1.1rem;
+  .feather {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+}

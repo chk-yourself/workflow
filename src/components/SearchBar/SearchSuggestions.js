@@ -22,6 +22,11 @@ const SearchSuggestions = ({ items, filter, onClick, selectedItem, category }) =
         }`}
         onClick={onClick}
         tabIndex={0}
+        data-id={category === 'Projects' 
+        ? item.projectId
+        : category === 'Tasks'
+        ? item.taskId
+        : item.name }
       >
         {{
           Tags: <Tag name={item.name} color={item.color} size="sm" />,
@@ -36,5 +41,9 @@ const SearchSuggestions = ({ items, filter, onClick, selectedItem, category }) =
 </ul>
 </li>
 )};
+
+SearchSuggestions.defaultProps = {
+  onClick: () => null
+};
 
 export default SearchSuggestions;

@@ -15,35 +15,25 @@ import { Main } from '../Main';
 import './Dashboard.scss';
 
 class Dashboard extends Component {
-  state = {
-    isTaskEditorOpen: false
-  };
-
-  toggleTaskEditor = () => {
-    const { isTaskEditorOpen } = this.state;
-    if (isTaskEditorOpen) {
-      const { selectTask } = this.props;
-      selectTask(null);
-    }
-    this.setState(prevState => ({
-      isTaskEditorOpen: !prevState.isTaskEditorOpen
-    }));
+  closeTaskEditor = () => {
+    const { selectTask } = this.props;
+    selectTask(null);
   };
 
   handleTaskClick = taskId => {
     const { selectTask } = this.props;
     selectTask(taskId);
-    this.toggleTaskEditor();
   };
 
   render() {
     const {
       tasksDueSoon,
       toggleProjectComposer,
-      userId,
+      currentUser,
       selectedTaskId
     } = this.props;
-    const { isTaskEditorOpen } = this.state;
+    const { userId } = currentUser;
+    const isTaskEditorOpen = !!selectedTaskId;
     return (
       <Main
         title="Home"
@@ -52,12 +42,15 @@ class Dashboard extends Component {
         <TasksDueSoon onTaskClick={this.handleTaskClick} />
         <Notifications onTaskClick={this.handleTaskClick} />
         <DashboardPanel className="projects" name="Projects" icon="grid">
-          <ProjectGridContainer className="dashboard__project-grid" openProjectComposer={toggleProjectComposer} />
+          <ProjectGridContainer
+            className="dashboard__project-grid"
+            openProjectComposer={toggleProjectComposer}
+          />
         </DashboardPanel>
         {isTaskEditorOpen && (
           <TaskEditor
             {...tasksDueSoon[selectedTaskId]}
-            handleTaskEditorClose={this.toggleTaskEditor}
+            handleTaskEditorClose={this.closeTaskEditor}
             userId={userId}
             layout="board"
           />
@@ -80,7 +73,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = authUser => !!authUser;
+const condition = currentUser => !!currentUser;
 
 export default withAuthorization(condition)(
   connect(

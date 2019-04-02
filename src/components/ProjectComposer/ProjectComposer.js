@@ -9,7 +9,6 @@ import { Icon } from '../Icon';
 import { ColorPicker } from '../ColorPicker';
 import { ProjectIcon } from '../ProjectIcon';
 import { MemberAssigner } from '../MemberAssigner';
-import { userSelectors } from '../../ducks/users';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import './ProjectComposer.scss';
 
@@ -23,8 +22,7 @@ class ProjectComposer extends Component {
       color: 'default',
       privacy: 'public',
       memberIds: [props.userId],
-      isColorPickerActive: false,
-      isMemberSearchActive: false
+      isColorPickerActive: false
     };
   }
 
@@ -37,8 +35,7 @@ class ProjectComposer extends Component {
       color: 'default',
       privacy: 'public',
       memberIds: [userId],
-      isColorPickerActive: false,
-      isMemberSearchActive: false
+      isColorPickerActive: false
     });
   };
 
@@ -163,7 +160,7 @@ class ProjectComposer extends Component {
           <Input
             name="name"
             label="Project Name"
-            labelClass={'project-composer__label'}
+            labelClass="project-composer__label"
             value={name}
             onChange={this.onChange}
             type="text"
