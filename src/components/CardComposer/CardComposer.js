@@ -93,22 +93,22 @@ class CardComposer extends Component {
           {isActive && (
             <div className="card-composer__footer">
               <Button
-                className="card-composer__btn--add"
+                className="card-composer__btn"
                 type="submit"
                 onClick={this.onSubmit}
                 color="primary"
                 variant="contained"
+                size="sm"
               >
                 Add Card
               </Button>
               <Button
-                className="card-composer__btn--close"
+                className="card-composer__btn"
                 type="reset"
                 onClick={this.onReset}
                 size="sm"
-                iconOnly
               >
-                <Icon name="x" />
+                Cancel
               </Button>
             </div>
           )}

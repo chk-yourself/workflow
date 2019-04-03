@@ -13,7 +13,13 @@ export const getTask = (state, taskId) => {
 
 export const getListTasks = (state, taskIds) => {
   const { tasksById } = state;
-  return taskIds.map(taskId => tasksById[taskId]);
+  let tasks = [];
+  taskIds.forEach(taskId => {
+    const task = tasksById[taskId];
+    if (!task) return;
+    tasks = tasks.concat(task);
+  });
+  return tasks;
 };
 
 export const getFolderTasks = (state, taskIds) => {

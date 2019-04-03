@@ -9,21 +9,6 @@ const tasksById = (state = {}, action) => {
         ...tasksById
       };
     }
-    case types.LOAD_PROJECT_TASKS: {
-      const { tasks } = action;
-      return {
-        ...state,
-        ...tasks
-      };
-    }
-    case types.UPDATE_TASKS_BY_ID: {
-      const { task } = action;
-      console.log('tasks updated');
-      return {
-        ...state,
-        ...task
-      };
-    }
     case types.ADD_TASK: {
       const { taskId, taskData } = action;
       return {

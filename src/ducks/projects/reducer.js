@@ -21,7 +21,7 @@ const projectsById = (state = {}, action) => {
     }
     case types.ADD_PROJECT: {
       const { projectId, projectData } = action;
-      const { listIds } = projectData;
+      const { listIds, settings } = projectData;
       const listCount = listIds.length;
       return {
         ...state,
@@ -31,6 +31,9 @@ const projectsById = (state = {}, action) => {
             subtasks: listCount === 0,
             tasks: listCount === 0,
             lists: listCount === 0
+          },
+          tempSettings: {
+            tasks: { ...settings.tasks }
           },
           ...projectData
         }
@@ -101,7 +104,7 @@ const projectsById = (state = {}, action) => {
             }
           }
         }
-      }
+      };
     }
     default:
       return state;

@@ -14,22 +14,6 @@ export const loadTasksById = tasksById => {
   };
 };
 
-export const loadProjectTasks = (projectId, tasks) => {
-  return {
-    type: types.LOAD_PROJECT_TASKS,
-    projectId,
-    tasks
-  };
-};
-
-export const loadUserTasks = (userId, tasksById) => {
-  return {
-    type: types.LOAD_USER_TASKS,
-    userId,
-    tasksById
-  };
-};
-
 export const addTask = ({ taskId, taskData }) => {
   return {
     type: types.ADD_TASK,
@@ -39,7 +23,6 @@ export const addTask = ({ taskId, taskData }) => {
 };
 
 export const removeTask = ({ taskId, listId }) => {
-  console.log(taskId, ' removed');
   return {
     type: types.REMOVE_TASK,
     taskId,
@@ -52,13 +35,6 @@ export const updateTask = ({ taskId, taskData }) => {
     type: types.UPDATE_TASK,
     taskId,
     taskData
-  };
-};
-
-export const updateTasksById = task => {
-  return {
-    type: types.UPDATE_TASKS_BY_ID,
-    task
   };
 };
 
@@ -144,34 +120,6 @@ export const deleteTask = ({ taskId, listId = null }) => {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-};
-
-export const fetchProjectTasks = projectId => {
-  return async dispatch => {
-    try {
-      const tasksById = await firebase.db
-        .collection('tasks')
-        .where('projectId', '==', projectId)
-        .get()
-        .then(snapshot => {
-          const tasks = {};
-          snapshot.forEach(doc => {
-            tasks[doc.id] = {
-              taskId: doc.id,
-              isLoaded: {
-                subtasks: false,
-                comments: false
-              },
-              ...doc.data()
-            };
-          });
-          return tasks;
-        });
-      dispatch(loadTasksById(tasksById));
-    } catch (error) {
-      console.log(error);
     }
   };
 };

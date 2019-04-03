@@ -14,7 +14,8 @@ import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
 import { UserProfile } from '../UserProfile';
-import { TagSearchResults } from '../../components/SearchBar';
+import { TagSearchResults } from '../../components/Search';
+import { getParams } from '../../utils/string';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -124,10 +125,16 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={ROUTES.TAG_SEARCH_RESULTS}
-            render={props => (
-              <TagSearchResults tag={props.match.params.query} {...props} />
-            )}
+            path={ROUTES.SEARCH_RESULTS}
+            render={props => {
+              const { search } = props.location;
+              const params = getParams(search);
+              if (params.tag) {
+                return (
+              <TagSearchResults tag={params.tag} {...props} />
+              )
+              }
+            }}
           />
         </Switch>
       </>

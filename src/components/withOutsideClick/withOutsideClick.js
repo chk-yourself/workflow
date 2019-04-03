@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { getDisplayName } from '../../utils/react';
 
 const withOutsideClick = WrappedComponent => {
@@ -8,7 +8,6 @@ const withOutsideClick = WrappedComponent => {
       this.state = {
         isTouchEnabled: false
       };
-      this.componentInstance = createRef();
     }
 
     componentDidMount() {
@@ -40,18 +39,25 @@ const withOutsideClick = WrappedComponent => {
       document.addEventListener('touchstart', this.handleOutsideClick);
     };
 
+    setRef = ref => {
+      this.component = ref;
+    };
+
+    setInstance = ref => {
+      this.instance = ref;
+    };
+
     handleOutsideClick = e => {
-      if (!this.componentEl) {
+      if (!this.component) {
         throw new Error('Must set component ref to prop innerRef!');
       }
       if (
-        this.componentEl.contains(e.target) ||
-        (!this.componentInstance.current.onOutsideClick &&
-          !this.props.onOutsideClick)
+        this.component.contains(e.target) ||
+        (!this.instance.onOutsideClick && !this.props.onOutsideClick)
       )
         return;
-      if (this.componentInstance.current.onOutsideClick) {
-        this.componentInstance.current.onOutsideClick(e);
+      if (this.instance.onOutsideClick) {
+        this.instance.onOutsideClick(e);
       } else {
         const { onOutsideClick } = this.props;
         if (onOutsideClick) {
@@ -64,8 +70,8 @@ const withOutsideClick = WrappedComponent => {
     render() {
       return (
         <WrappedComponent
-          ref={this.componentInstance}
-          innerRef={el => (this.componentEl = el)}
+          ref={this.setInstance}
+          innerRef={this.setRef}
           {...this.props}
         />
       );

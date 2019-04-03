@@ -6,7 +6,7 @@ import { PopoverWrapper } from '../Popover';
 import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
 import { SignOutButton } from '../SignOutButton';
-import { SearchBar } from '../SearchBar';
+import { SearchTypeahead } from '../Search';
 import * as ROUTES from '../../constants/routes';
 import './Topbar.scss';
 
@@ -15,7 +15,7 @@ class Topbar extends Component {
     const { currentUser } = this.props;
     return (
       <div className="topbar">
-        <SearchBar />
+        <SearchTypeahead />
         {currentUser && (
           <PopoverWrapper
             classes={{
@@ -48,7 +48,10 @@ class Topbar extends Component {
                 </NavLink>
               </MenuItem>
               <MenuItem>
-                <NavLink className="topbar__link" to={`/0/${currentUser.userId}/profile`}>
+                <NavLink
+                  className="topbar__link"
+                  to={`/0/${currentUser.userId}/profile`}
+                >
                   My Profile
                 </NavLink>
               </MenuItem>

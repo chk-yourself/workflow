@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
-import { Button } from '../Button';
-import { Input } from '../Input';
 import { Icon } from '../Icon';
 import * as keys from '../../constants/keys';
-import { withOutsideClick } from '../withOutsideClick';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import SearchSuggestions from './SearchSuggestions';
+import SearchBar from './SearchBar';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
-import './SearchBar.scss';
+import './SearchTypeahead.scss';
 
-class SearchBar extends Component {
+class SearchTypeahead extends Component {
   state = {
-    isExpanded: false,
+    isSearchBarExpanded: false,
     query: '',
     selectedItem: null,
     selectedIndex: null,
@@ -25,7 +22,7 @@ class SearchBar extends Component {
   reset = e => {
     this.setState({
       query: '',
-      isExpanded: false,
+      isSearchBarExpanded: false,
       selectedItem: null,
       selectedIndex: null,
       filteredList: []
@@ -33,19 +30,21 @@ class SearchBar extends Component {
   };
 
   onChange = e => {
+    const { value } = e.target;
     const { selectedItem, filteredList } = this.state;
-    const { projects, tags } = this.props;
+    const { projects, tasks, tags } = this.props;
     const newIndex = selectedItem
       ? filteredList.findIndex(item => item.name === selectedItem.name)
       : -1;
     const persistSelectedItem = newIndex !== -1;
-
-    this.setState({
-      query: e.target.value,
+    this.setState(() => ({
+      query: value,
       selectedItem: persistSelectedItem ? selectedItem : null,
       selectedIndex: persistSelectedItem ? newIndex : -1,
-      filteredList: [...projects, ...tags].filter(item => this.matchItem(item))
-    });
+      filteredList: [...projects, ...tasks, ...tags].filter(item =>
+        this.matchItem(item)
+      )
+    }));
   };
 
   onKeyDown = e => {
@@ -84,13 +83,13 @@ class SearchBar extends Component {
       case keys.ENTER: {
         const { history } = this.props;
         if (selectedItem === null) return;
-        if (selectedItem.projectId) {
-          history.push(`/0/project/${selectedItem.projectId}`);
-        } else if (selectedItem.taskId) {
+        if (selectedItem.taskId) {
           const { selectTask } = this.props;
           selectTask(selectedItem.taskId);
+        } else if (selectedItem.projectId) {
+          history.push(`/0/project/${selectedItem.projectId}`);
         } else {
-          history.push(`/0/search/${selectedItem.name}/tags`);
+          history.push(`/0/search?tag=${selectedItem.name}`);
         }
         this.reset();
         break;
@@ -117,24 +116,21 @@ class SearchBar extends Component {
   onClickTag = e => {
     const { history } = this.props;
     if (!e.target.matches('li')) return;
-    history.push(`/0/search/${e.target.dataset.id}/tags`);
+    history.push(`/0/search?tag=${e.target.dataset.id}`);
     this.reset();
   };
 
   handleClick = e => {
     const { query } = this.state;
     const { name } = e.target;
+    if (name === 'search' || (name === 'submit' && query !== '')) return;
     e.stopPropagation();
-    if (name === 'search' || query !== '') return;
-    if (name === 'toggle') {
-      this.input.focus();
-    }
     this.toggleSearchBar();
   };
 
   toggleSearchBar = () => {
     this.setState(prevState => ({
-      isExpanded: !prevState.isExpanded
+      isSearchBarExpanded: !prevState.isSearchBarExpanded
     }));
   };
 
@@ -143,16 +139,25 @@ class SearchBar extends Component {
   };
 
   onOutsideClick = e => {
-    const { isExpanded, query } = this.state;
-    if (!isExpanded || query !== '') return;
+    const { isSearchBarExpanded, query } = this.state;
+    if (
+      !isSearchBarExpanded ||
+      query !== '' ||
+      (this.suggestions && this.suggestions.contains(e.target))
+    )
+      return;
     this.toggleSearchBar();
   };
 
   matchItem = ({ name }) => {
-    const { query } = this.state;
-    if (query === '') return false;
-    const regExp = new RegExp(`\\b${query}`, 'i');
+    const { value } = this.input;
+    if (value === '') return false;
+    const regExp = new RegExp(`\\b${value}`, 'i');
     return regExp.test(name);
+  };
+
+  suggestionsRef = ref => {
+    this.suggestions = ref;
   };
 
   inputRef = ref => {
@@ -160,50 +165,32 @@ class SearchBar extends Component {
   };
 
   render() {
-    const { innerRef, projects, tasks, tags } = this.props;
-    const { isExpanded, selectedItem, query } = this.state;
+    const { projects, tasks, tags } = this.props;
+    const { isSearchBarExpanded, selectedItem, query } = this.state;
     return (
-      <div
-        ref={innerRef}
-        onClick={this.handleClick}
-        className={`search-bar${isExpanded ? ' is-expanded' : ''}`}
-      >
-        <form className="search-form" onSubmit={this.handleSubmit}>
-          <Input
-            autoComplete="off"
-            value={query}
-            name="search"
-            className="search-form__input"
-            type="text"
-            innerRef={this.inputRef}
-            hideLabel
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
-          />
-          <Input
-            name="submit"
-            className="search-form__submit"
-            type="submit"
-            hideLabel
-          />
-          <Button
-            type="button"
-            onClick={this.handleClick}
-            className="search-form__btn"
-            name="toggle"
-            iconOnly
-          >
-            <Icon name="search" />
-          </Button>
-        </form>
+      <div className="search-typeahead">
+        <SearchBar
+          setInputRef={this.inputRef}
+          onClick={this.handleClick}
+          onOutsideClick={this.onOutsideClick}
+          onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
+          onSubmit={this.handleSubmit}
+          isExpanded={isSearchBarExpanded}
+          value={query}
+        />
         {query !== '' && (
-          <ul className="search-suggestions__categories">
+          <ul
+            ref={this.suggestionsRef}
+            className="search-suggestions__categories"
+          >
             <SearchSuggestions
               onClick={this.onClickProject}
               category="Projects"
               items={projects}
               filter={this.matchItem}
               selectedItem={selectedItem}
+              query={query}
             />
             <SearchSuggestions
               onClick={this.onClickTask}
@@ -211,6 +198,7 @@ class SearchBar extends Component {
               items={tasks}
               filter={this.matchItem}
               selectedItem={selectedItem}
+              query={query}
             />
             <SearchSuggestions
               onClick={this.onClickTag}
@@ -218,6 +206,7 @@ class SearchBar extends Component {
               items={tags}
               filter={this.matchItem}
               selectedItem={selectedItem}
+              query={query}
             />
           </ul>
         )}
@@ -240,11 +229,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default compose(
-  withRouter,
+export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  ),
-  withOutsideClick
-)(SearchBar);
+  )(SearchTypeahead)
+);

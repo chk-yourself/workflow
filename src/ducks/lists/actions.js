@@ -1,6 +1,10 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
-import { removeTask, removeTaskTag } from '../tasks/actions';
+import {
+  removeTask,
+  removeTaskTag,
+  setTaskLoadedState
+} from '../tasks/actions';
 import { setProjectLoadedState } from '../projects/actions';
 
 export const loadListsById = listsById => {
@@ -56,7 +60,6 @@ export const deleteList = ({ listId, projectId }) => {
       return batch
         .commit()
         .then(() => {
-          dispatch(removeList({ listId, projectId }));
           if (taskIds.length > 0) {
             taskIds.forEach(async taskId => {
               const {
@@ -77,8 +80,6 @@ export const deleteList = ({ listId, projectId }) => {
                 projectId,
                 dueDate
               });
-              dispatch(removeTask({ taskId, listId: null }));
-              console.log({ tags });
             });
           }
         })
@@ -146,40 +147,52 @@ export const syncProjectLists = projectId => {
         .queryCollection('lists', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
+          const { projectsById } = getState();
+          const project = projectsById[projectId];
           const isInitialLoad =
             snapshot.size === changes.length &&
+            !project.isLoaded.lists &&
             changes.every(change => change.type === 'added');
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const listsById = {};
-            changes.forEach(change => {
-              listsById[change.doc.id] = {
-                listId: change.doc.id,
-                ...change.doc.data()
-              };
-            });
-            dispatch(loadListsById(listsById));
+
+            if (changes.length > 0) {
+              changes.forEach(change => {
+                const listId = change.doc.id;
+                const listData = change.doc.data();
+                const { taskIds } = listData;
+                listsById[listId] = {
+                  listId,
+                  ...listData
+                };
+                taskIds.forEach(taskId =>
+                  dispatch(setTaskLoadedState(taskId, 'subtasks'))
+                );
+              });
+              dispatch(loadListsById(listsById));
+            }
+            dispatch(setProjectLoadedState(projectId, 'lists'));
           } else {
             changes.forEach(async change => {
+              const { listsById } = getState();
               const [listId, listData, changeType] = await Promise.all([
                 change.doc.id,
                 change.doc.data(),
                 change.type
               ]);
               if (changeType === 'added') {
-                if (listId in getState().listsById) return;
+                if (listId in listsById) return;
                 dispatch(addList({ listId, listData }));
                 console.log(`List added: ${listData.name}`);
               } else if (changeType === 'removed') {
-                dispatch(deleteList({ listId, projectId }));
+                if (!(listId in listsById)) return;
+                dispatch(removeList({ listId, projectId }));
                 console.log(`List deleted: ${listData.name}`);
               } else {
                 dispatch(updateList({ listId, listData }));
                 console.log(`List updated: ${listData.name}`);
               }
             });
-          }
-          if (isInitialLoad) {
-            dispatch(setProjectLoadedState(projectId, 'lists'));
           }
         });
       return subscription;

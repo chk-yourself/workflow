@@ -35,59 +35,7 @@ export const updateSubtask = ({ subtaskId, subtaskData }) => {
   };
 };
 
-export const fetchSubtasksById = () => {
-  return async dispatch => {
-    try {
-      const subtasksById = await firebase.db
-        .collection('subtasks')
-        .get()
-        .then(snapshot => {
-          const subtasks = {};
-          snapshot.forEach(doc => {
-            subtasks[doc.id] = {
-              subtaskId: doc.id,
-              ...doc.data()
-            };
-          });
-          return subtasks;
-        });
-      dispatch(loadSubtasksById(subtasksById));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
-export const updateSubtasksById = subtask => {
-  return {
-    type: types.UPDATE_SUBTASKS_BY_ID,
-    subtask
-  };
-};
-
-export const fetchProjectSubtasks = projectId => {
-  return async dispatch => {
-    try {
-      const subtasksById = await firebase.db
-        .collection('subtasks')
-        .where('projectId', '==', projectId)
-        .get()
-        .then(snapshot => {
-          const subtasks = {};
-          snapshot.forEach(doc => {
-            subtasks[doc.id] = {
-              subtaskId: doc.id,
-              ...doc.data()
-            };
-          });
-          return subtasks;
-        });
-      dispatch(loadSubtasksById(subtasksById));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
+// Thunks
 
 export const syncTaskSubtasks = taskId => {
   return async (dispatch, getState) => {
@@ -97,22 +45,28 @@ export const syncTaskSubtasks = taskId => {
         .where('taskId', '==', taskId)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
+          const { tasksById, subtasksById } = getState();
+          const task = tasksById[taskId];
           const isInitialLoad =
             snapshot.size === changes.length &&
-            changes.every(change => change.type === 'added');
+            changes.every(change => change.type === 'added') &&
+            !task.isLoaded.subtasks;
 
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const subtasks = {};
-            changes.forEach(change => {
-              const subtaskId = change.doc.id;
-              if (subtaskId in getState().subtasksById) return;
-              const subtaskData = change.doc.data();
-              subtasks[subtaskId] = {
-                subtaskId,
-                ...subtaskData
-              };
-            });
-            dispatch(loadSubtasksById(subtasks));
+            if (changes.length > 0) {
+              changes.forEach(change => {
+                const subtaskId = change.doc.id;
+                if (subtaskId in getState().subtasksById) return;
+                const subtaskData = change.doc.data();
+                subtasks[subtaskId] = {
+                  subtaskId,
+                  ...subtaskData
+                };
+              });
+              dispatch(loadSubtasksById(subtasks));
+            }
+            dispatch(setTaskLoadedState(taskId, 'subtasks'));
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -121,10 +75,11 @@ export const syncTaskSubtasks = taskId => {
                 change.type
               ]);
               if (changeType === 'added') {
-                if (subtaskId in getState().subtasksById) return;
+                if (subtaskId in subtasksById) return;
                 dispatch(addSubtask({ subtaskId, subtaskData }));
                 console.log(`Subtask added: ${subtaskData.name}`);
               } else if (changeType === 'removed') {
+                if (!(subtaskId in subtasksById)) return;
                 dispatch(removeSubtask({ subtaskId, taskId }));
                 console.log(`Subtask removed: ${subtaskData.name}`);
               } else {
@@ -132,9 +87,6 @@ export const syncTaskSubtasks = taskId => {
                 console.log(`Subtask modified: ${subtaskData.name}`);
               }
             });
-          }
-          if (isInitialLoad) {
-            dispatch(setTaskLoadedState(taskId, 'subtasks'));
           }
         });
       return subscription;
@@ -217,31 +169,6 @@ export const syncProjectSubtasks = projectId => {
           }
         });
       return subscription;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
-export const fetchTaskSubtasks = taskId => {
-  return async dispatch => {
-    try {
-      const subtasksById = await firebase.db
-        .collection('subtasks')
-        .where('taskId', '==', taskId)
-        .get()
-        .then(snapshot => {
-          const subtasks = {};
-          snapshot.forEach(doc => {
-            subtasks[doc.id] = {
-              subtaskId: doc.id,
-              ...doc.data()
-            };
-          });
-          return subtasks;
-        });
-      dispatch(loadSubtasksById(subtasksById));
-      dispatch(setTaskLoadedState(taskId, 'subtasks'));
     } catch (error) {
       console.log(error);
     }
