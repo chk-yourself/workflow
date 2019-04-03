@@ -2,6 +2,11 @@ export const getTasksById = state => {
   return state.tasksById;
 };
 
+export const getTasksArray = state => {
+  const { tasksById } = state;
+  return Object.keys(tasksById).map(taskId => tasksById[taskId]);
+};
+
 export const getTask = (state, taskId) => {
   return state.tasksById[taskId];
 };
@@ -13,7 +18,13 @@ export const getListTasks = (state, taskIds) => {
 
 export const getFolderTasks = (state, taskIds) => {
   const { tasksById } = state;
-  return taskIds.map(taskId => tasksById[taskId]);
+  let tasks = [];
+  taskIds.forEach(taskId => {
+    const task = tasksById[taskId];
+    if (!task) return;
+    tasks = tasks.concat(task);
+  });
+  return tasks;
 };
 
 export const getSimpleTasks = (state, taskIds) => {
@@ -50,12 +61,13 @@ export const getTaskLoadedState = (state, taskId) => {
   const task = tasksById[taskId];
   if (!task) return {};
   return task.isLoaded;
-}
+};
 
 export const getTaggedTasks = (state, tag) => {
   const { tasksById } = state;
-  return Object.keys(tasksById).map(taskId => tasksById[taskId])
-  .filter(task => {
-    return task.tags && task.tags.includes(tag);
-  });
+  return Object.keys(tasksById)
+    .map(taskId => tasksById[taskId])
+    .filter(task => {
+      return task.tags && task.tags.includes(tag);
+    });
 };

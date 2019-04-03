@@ -97,9 +97,9 @@ export const syncTaskSubtasks = taskId => {
         .where('taskId', '==', taskId)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
 
           if (isInitialLoad && changes.length > 1) {
             const subtasks = {};
@@ -113,7 +113,6 @@ export const syncTaskSubtasks = taskId => {
               };
             });
             dispatch(loadSubtasksById(subtasks));
-            dispatch(setTaskLoadedState(taskId, 'subtasks'));
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -133,6 +132,9 @@ export const syncTaskSubtasks = taskId => {
                 console.log(`Subtask modified: ${subtaskData.name}`);
               }
             });
+          }
+          if (isInitialLoad) {
+            dispatch(setTaskLoadedState(taskId, 'subtasks'));
           }
         });
       return subscription;
@@ -173,9 +175,9 @@ export const syncProjectSubtasks = projectId => {
         .queryCollection('subtasks', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad && changes.length > 1) {
             const subtasksById = {};
             changes.forEach(change => {

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { AuthUserContext } from '../Session';
 import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
-import { Avatar } from '../Avatar';
 import { Topbar } from '../Topbar';
 import './Header.scss';
 
@@ -21,13 +20,13 @@ export default class Header extends Component {
     return (
       <header className={`header ${isNavExpanded ? 'expand-nav' : ''}`}>
         <AuthUserContext.Consumer>
-          {authUser =>
-            authUser ? (
+          {currentUser =>
+            currentUser ? (
               <>
                 <Sidebar isExpanded={isNavExpanded} onToggle={this.toggleNav}>
                   <NavLinksAuth
                     onClick={this.toggleNav}
-                    userId={authUser.uid}
+                    userId={currentUser.userId}
                   />
                 </Sidebar>
                 <Topbar />

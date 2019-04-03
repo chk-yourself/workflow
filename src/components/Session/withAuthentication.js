@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -9,9 +9,10 @@ import {
   currentUserActions,
   currentUserSelectors
 } from '../../ducks/currentUser';
+import { getDisplayName } from '../../utils/react';
 
-const withAuthentication = Component => {
-  class WithAuthentication extends React.Component {
+const withAuthentication = WrappedComponent => {
+  class WithAuthentication extends Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -54,11 +55,15 @@ const withAuthentication = Component => {
       const { currentUser } = this.props;
       return (
         <AuthUserContext.Provider value={currentUser}>
-          <Component {...this.props} />
+          <WrappedComponent {...this.props} />
         </AuthUserContext.Provider>
       );
     }
   }
+
+  WithAuthentication.displayName = `WithAuthentication(${getDisplayName(
+    WrappedComponent
+  )})`;
 
   const mapStateToProps = state => {
     return {

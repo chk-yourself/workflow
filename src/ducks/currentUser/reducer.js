@@ -118,10 +118,11 @@ export default (state = null, action) => {
       };
     }
     case types.LOAD_ASSIGNED_TASKS: {
+      const currentAssignedTasks = state.assignedTasks || [];
       const { assignedTasks } = action;
       return {
         ...state,
-        assignedTasks
+        assignedTasks: [...currentAssignedTasks, ...assignedTasks]
       };
     }
     case types.ADD_ASSIGNED_TASK: {

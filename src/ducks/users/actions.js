@@ -15,6 +15,31 @@ export const loadUsersById = usersById => {
   };
 };
 
+export const addUser = ({ userId, userData }) => {
+  return {
+    type: types.ADD_USER,
+    userId,
+    userData
+  };
+};
+
+export const removeUser = userId => {
+  return {
+    type: types.REMOVE_USER,
+    userId
+  };
+};
+
+export const updateUser = ({ userId, userData }) => {
+  return {
+    type: types.UPDATE_USER,
+    userId,
+    userData
+  };
+};
+
+// Thunks
+
 export const fetchUsersById = () => {
   return async dispatch => {
     try {
@@ -38,6 +63,61 @@ export const fetchUsersById = () => {
   };
 };
 
+export const syncUsersById = () => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase.db
+        .collection('users')
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad && changes.length > 1) {
+            const users = {};
+            changes.forEach(change => {
+              const userId = change.doc.id;
+              const userData = change.doc.data();
+              users[userId] = {
+                userId,
+                ...userData
+              };
+            });
+            dispatch(loadUsersById(users));
+          } else {
+            const { usersById } = getState();
+            changes.forEach(async change => {
+              const [userId, userData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              switch (changeType) {
+                case 'added': {
+                  if (userId in usersById) return;
+                  dispatch(addUser({ userId, userData }));
+                  break;
+                }
+                case 'removed': {
+                  if (!(userId in usersById)) return;
+                  dispatch(removeUser(userId));
+                  break;
+                }
+                default: {
+                  dispatch(updateUser({ userId, userData }));
+                }
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const fetchUserData = userId => {
   return async dispatch => {
     try {
@@ -49,28 +129,5 @@ export const fetchUserData = userId => {
     } catch (error) {
       console.log(error);
     }
-  };
-};
-
-export const addUser = ({ userId, userData }) => {
-  return {
-    type: types.ADD_USER,
-    userId,
-    userData
-  };
-};
-
-export const deleteUser = userId => {
-  return {
-    type: types.DELETE_USER,
-    userId
-  };
-};
-
-export const updateUser = ({ userId, userData }) => {
-  return {
-    type: types.UPDATE_USER,
-    userId,
-    userData
   };
 };

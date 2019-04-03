@@ -40,6 +40,7 @@ export const addAssignedTask = taskId => {
 };
 
 export const removeAssignedTask = taskId => {
+  console.log(`Removed assigned task: ${taskId}`);
   return {
     type: types.REMOVE_ASSIGNED_TASK,
     taskId
@@ -197,7 +198,7 @@ export const updateTaskDueSoon = ({ taskId, taskData }) => {
 
 export const syncTasksDueWithinDays = (userId, days) => {
   const startingDate = new Date();
-  const timeStart = new Date(startingDate.setHours(0, 0, 0, 0));
+  startingDate.setHours(0, 0, 0, 0);
   const endingDate = new Date(startingDate);
   const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + days));
 
@@ -210,9 +211,9 @@ export const syncTasksDueWithinDays = (userId, days) => {
         .orderBy('dueDate', 'asc')
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
 
           if (isInitialLoad) {
             const tasks = {};
@@ -260,9 +261,9 @@ export const syncFolders = userId => {
         .collection('folders')
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad && changes.length > 1) {
             const foldersById = {};
             changes.forEach(change => {
@@ -351,9 +352,9 @@ export const syncUserTags = userId => {
         .collection('tags')
         .onSnapshot(async snapshot => {
           const changes = await snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad) {
             const tags = {};
             snapshot.forEach(doc => {
@@ -396,9 +397,9 @@ export const syncUserTasks = userId => {
         .queryCollection('tasks', ['assignedTo', 'array-contains', userId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
             changes.forEach(change => {
@@ -483,9 +484,9 @@ export const syncNotifications = userId => {
         .where('isActive', '==', true)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad && changes.length > 1) {
             const notificationsById = {};
             changes.forEach(change => {

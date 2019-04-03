@@ -146,9 +146,9 @@ export const syncProjectLists = projectId => {
         .queryCollection('lists', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
           if (isInitialLoad && changes.length > 1) {
             const listsById = {};
             changes.forEach(change => {

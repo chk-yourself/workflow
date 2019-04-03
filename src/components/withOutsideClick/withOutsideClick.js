@@ -1,8 +1,5 @@
 import React, { Component, createRef } from 'react';
-
-function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
+import { getDisplayName } from '../../utils/react';
 
 const withOutsideClick = WrappedComponent => {
   class WithOutsideClick extends Component {
@@ -53,15 +50,15 @@ const withOutsideClick = WrappedComponent => {
           !this.props.onOutsideClick)
       )
         return;
-        if (this.componentInstance.current.onOutsideClick) {
-          this.componentInstance.current.onOutsideClick(e);
-        } else {
-          const { onOutsideClick } = this.props;
-      if (onOutsideClick) {
-        onOutsideClick(e);
-      }
+      if (this.componentInstance.current.onOutsideClick) {
+        this.componentInstance.current.onOutsideClick(e);
+      } else {
+        const { onOutsideClick } = this.props;
+        if (onOutsideClick) {
+          onOutsideClick(e);
         }
-        e.stopPropagation();
+      }
+      e.stopPropagation();
     };
 
     render() {

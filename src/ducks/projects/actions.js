@@ -217,13 +217,13 @@ export const syncProject = projectId => {
 export const syncUserProjects = userId => {
   return async (dispatch, getState) => {
     try {
-      firebase
+      const subscription = await firebase
         .queryCollection('projects', ['memberIds', 'array-contains', userId])
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
 
           if (isInitialLoad && changes.length > 1) {
             const projects = {};
@@ -238,13 +238,14 @@ export const syncUserProjects = userId => {
                   lists: projectData.listIds.length === 0
                 },
                 tempSettings: {
-                  tasks: {...projectData.settings.tasks}
+                  tasks: { ...projectData.settings.tasks }
                 },
                 ...projectData
               };
             });
             dispatch(loadProjectsById(projects));
           } else {
+            const { projectsById } = getState();
             changes.forEach(async change => {
               const [projectId, projectData, changeType] = await Promise.all([
                 change.doc.id,
@@ -252,10 +253,11 @@ export const syncUserProjects = userId => {
                 change.type
               ]);
               if (changeType === 'added') {
-                if (projectId in getState().projectsById) return;
+                if (projectId in projectsById) return;
                 dispatch(addProject({ projectId, projectData }));
                 console.log(`Added Project: ${projectData.name}`);
               } else if (changeType === 'removed') {
+                if (!(projectId in projectsById)) return;
                 dispatch(removeProject(projectId));
                 console.log(`Deleted Project: ${projectData.name}`);
               } else {
@@ -265,6 +267,7 @@ export const syncUserProjects = userId => {
             });
           }
         });
+      return subscription;
     } catch (error) {
       console.log(error);
     }

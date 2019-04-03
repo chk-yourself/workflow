@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { withFirebase } from '../Firebase';
 import AuthUserContext from './context';
 import * as ROUTES from '../../constants/routes';
+import { getDisplayName } from '../../utils/react';
 
-const withAuthorization = condition => Component => {
-  class WithAuthorization extends React.Component {
+const withAuthorization = condition => WrappedComponent => {
+  class WithAuthorization extends Component {
     componentDidMount() {
       const { firebase, history } = this.props;
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
@@ -25,13 +26,18 @@ const withAuthorization = condition => Component => {
         <AuthUserContext.Consumer>
           {currentUser =>
             condition(currentUser) ? (
-              <Component currentUser={currentUser} {...this.props} />
+              <WrappedComponent currentUser={currentUser} {...this.props} />
             ) : null
           }
         </AuthUserContext.Consumer>
       );
     }
   }
+
+  WithAuthorization.displayName = `WithAuthorization(${getDisplayName(
+    WrappedComponent
+  )})`;
+
   return compose(
     withRouter,
     withFirebase

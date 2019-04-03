@@ -26,21 +26,16 @@ class UserTasks extends Component {
   };
 
   async componentDidMount() {
-    const { currentUser, syncUserTasks, syncFolders } = this.props;
+    const { currentUser, syncFolders } = this.props;
     const { userId } = currentUser;
-
-    await Promise.all([syncUserTasks(userId), syncFolders(userId)]).then(
-      listeners => {
-        this.unsubscribe = listeners;
-        this.setState({
-          isLoading: false
-        });
-      }
-    );
+    this.unsubscribe = await syncFolders(userId);
+    this.setState({
+      isLoading: false
+    });
   }
 
   componentWillUnmount() {
-    this.unsubscribe.forEach(func => func());
+    this.unsubscribe();
   }
 
   closeTaskEditor = () => {

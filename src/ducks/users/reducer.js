@@ -36,7 +36,7 @@ const usersById = (state = {}, action) => {
         }
       };
     }
-    case types.DELETE_USER: {
+    case types.REMOVE_USER: {
       const { userId } = action;
       const { [userId]: deletedUser, ...restOfUsers } = state;
       return restOfUsers;

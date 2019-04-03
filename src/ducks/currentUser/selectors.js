@@ -27,10 +27,13 @@ export const getNotificationsArray = state => {
   if (!currentUser) return [];
   const { notifications } = currentUser;
   if (!notifications) return [];
-  const getMillis = obj => obj.createdAt ? obj.createdAt.toMillis() : Date.now();
-  return Object.keys(notifications).map(notificationId => notifications[notificationId]).sort((a, b) => {
-    return getMillis(b) - getMillis(a);
-  });
+  const getMillis = obj =>
+    obj.createdAt ? obj.createdAt.toMillis() : Date.now();
+  return Object.keys(notifications)
+    .map(notificationId => notifications[notificationId])
+    .sort((a, b) => {
+      return getMillis(b) - getMillis(a);
+    });
 };
 
 export const getTaskSettings = state => {
@@ -48,6 +51,7 @@ export const getTempTaskSettings = state => {
 export const getAssignedTasks = state => {
   const { currentUser } = state;
   if (!currentUser) return null;
+
   return currentUser.assignedTasks;
 };
 
@@ -71,45 +75,55 @@ export const getSortedFilteredTaskGroups = state => {
       const { projectIds } = currentUser;
       const projectTasks = projectIds.reduce((tasksByProject, projectId) => {
         const { name, taskIds } = folders[projectId];
-        return tasksByProject.concat(taskIds.length > 0 ? {
-          taskIds: view === 'active'
-          ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-          : view === 'completed'
-          ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
-          : taskIds,
-          projectId,
-          name,
-          projectName: name,
-          dueDate: null,
-          folderId: projectId,
-          userPermissions: {
-            enableNameChange: false,
-            enableTaskAdd: false,
-            enableDragNDrop: true
-          }
-        } : []);
+        return tasksByProject.concat(
+          taskIds.length > 0
+            ? {
+                taskIds:
+                  view === 'active'
+                    ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
+                    : view === 'completed'
+                    ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
+                    : taskIds,
+                projectId,
+                name,
+                projectName: name,
+                dueDate: null,
+                folderId: projectId,
+                userPermissions: {
+                  enableNameChange: false,
+                  enableTaskAdd: false,
+                  enableDragNDrop: true
+                }
+              }
+            : []
+        );
       }, []);
       const miscFolder = folders['4'];
-      const noProject = miscFolder.taskIds.length > 0 ? {
-        ...miscFolder,
-        projectId: null,
-        projectName: null,
-        dueDate: null,
-        taskIds: view === 'active'
-        ? miscFolder.taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-        : view === 'completed'
-        ? miscFolder.taskIds.filter(taskId => tasksById[taskId].isCompleted)
-        : miscFolder.taskIds,
-        userPermissions: {
-          enableNameChange: false,
-          enableTaskAdd: true,
-          enableDragNDrop: true
-        }
-      } : null;
-      return [
-        ...projectTasks,
-        ...(noProject ? [noProject] : [])
-      ];
+      const noProject =
+        miscFolder.taskIds.length > 0
+          ? {
+              ...miscFolder,
+              projectId: null,
+              projectName: null,
+              dueDate: null,
+              taskIds:
+                view === 'active'
+                  ? miscFolder.taskIds.filter(
+                      taskId => !tasksById[taskId].isCompleted
+                    )
+                  : view === 'completed'
+                  ? miscFolder.taskIds.filter(
+                      taskId => tasksById[taskId].isCompleted
+                    )
+                  : miscFolder.taskIds,
+              userPermissions: {
+                enableNameChange: false,
+                enableTaskAdd: true,
+                enableDragNDrop: true
+              }
+            }
+          : null;
+      return [...projectTasks, ...(noProject ? [noProject] : [])];
     }
     case 'folder': {
       if (!folders) return [];
@@ -119,7 +133,8 @@ export const getSortedFilteredTaskGroups = state => {
         const { taskIds } = folders[folderId];
         return {
           ...folders[folderId],
-          taskIds: view === 'active'
+          taskIds:
+            view === 'active'
               ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
               : view === 'completed'
               ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
@@ -196,47 +211,64 @@ export const getSortedFilteredTaskGroups = state => {
         return tasksByDueDate;
       }, {});
       const unscheduled = folders['5'];
-      const noDueDate = unscheduled.taskIds.length > 0 ? {
-        ...unscheduled,
-        taskIds: view === 'active'
-          ? unscheduled.taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-          : view === 'completed'
-          ? unscheduled.taskIds.filter(taskId => tasksById[taskId].isCompleted)
-          : unscheduled.taskIds,
-        projectId: null,
-        projectName: null,
-        dueDate: null,
-        userPermissions: {
-        enableNameChange: false,
-        enableTaskAdd: true,
-        enableDragNDrop: true
-        }
-      } : null;
-      const { pastDue, ...restOfDueTasks } = dueTasks;
-      const sortedDueDates = [...dueDates].sort((a, b) => a - b);
-      return [
-        ...(pastDue ? [pastDue] : []),
-        ...sortedDueDates.map(date => `${date}` in folders ? ({
-          ...folders[`${date}`],
-          taskIds: view === 'active'
-          ? folders[`${date}`].taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-          : view === 'completed'
-          ? folders[`${date}`].taskIds.filter(taskId => tasksById[taskId].isCompleted)
-          : folders[`${date}`].taskIds,
-          projectId: null,
-              name: toDateString(new Date(date), {
-                useRelative: true,
-                format: { weekday: 'short', month: 'short', day: 'numeric' }
-              }),
+      const noDueDate =
+        unscheduled.taskIds.length > 0
+          ? {
+              ...unscheduled,
+              taskIds:
+                view === 'active'
+                  ? unscheduled.taskIds.filter(
+                      taskId => !tasksById[taskId].isCompleted
+                    )
+                  : view === 'completed'
+                  ? unscheduled.taskIds.filter(
+                      taskId => tasksById[taskId].isCompleted
+                    )
+                  : unscheduled.taskIds,
+              projectId: null,
               projectName: null,
-              folderId: `${date}`,
-              dueDate: date,
+              dueDate: null,
               userPermissions: {
                 enableNameChange: false,
                 enableTaskAdd: true,
                 enableDragNDrop: true
               }
-        }) : restOfDueTasks[`${date}`]),
+            }
+          : null;
+      const { pastDue, ...restOfDueTasks } = dueTasks;
+      const sortedDueDates = [...dueDates].sort((a, b) => a - b);
+      return [
+        ...(pastDue ? [pastDue] : []),
+        ...sortedDueDates.map(date =>
+          `${date}` in folders
+            ? {
+                ...folders[`${date}`],
+                taskIds:
+                  view === 'active'
+                    ? folders[`${date}`].taskIds.filter(
+                        taskId => !tasksById[taskId].isCompleted
+                      )
+                    : view === 'completed'
+                    ? folders[`${date}`].taskIds.filter(
+                        taskId => tasksById[taskId].isCompleted
+                      )
+                    : folders[`${date}`].taskIds,
+                projectId: null,
+                name: toDateString(new Date(date), {
+                  useRelative: true,
+                  format: { weekday: 'short', month: 'short', day: 'numeric' }
+                }),
+                projectName: null,
+                folderId: `${date}`,
+                dueDate: date,
+                userPermissions: {
+                  enableNameChange: false,
+                  enableTaskAdd: true,
+                  enableDragNDrop: true
+                }
+              }
+            : restOfDueTasks[`${date}`]
+        ),
         ...(noDueDate ? [noDueDate] : [])
       ];
     }
@@ -252,18 +284,25 @@ export const getFolder = (state, folderId) => {
   return currentUser.folders[folderId];
 };
 
-export const getTasksDueSoonById = state => {
-  const { currentUser } = state;
-  if (!currentUser) return {};
-  return currentUser.tasksDueSoon;
-};
-
-export const getTasksDueSoonArr = state => {
-  const { currentUser } = state;
+// Returns array of tasks due within given number of days
+export const getTasksDueWithinDays = (state, days = 7) => {
+  const { currentUser, tasksById } = state;
   if (!currentUser) return [];
-  const { tasksDueSoon } = currentUser;
-  if (!tasksDueSoon) return [];
-  return Object.keys(tasksDueSoon).map(taskId => tasksDueSoon[taskId]);
+  const { assignedTasks } = currentUser;
+  if (!assignedTasks) return [];
+  const startingDate = new Date();
+  startingDate.setHours(0, 0, 0, 0);
+  const endingDate = new Date(startingDate);
+  const timeEnd = +new Date(endingDate.setDate(endingDate.getDate() + days));
+  return assignedTasks
+    .reduce((tasksDueSoon, taskId) => {
+      const task = tasksById[taskId];
+      if (task && task.dueDate && task.dueDate.toMillis() <= timeEnd) {
+        return tasksDueSoon.concat(task);
+      }
+      return tasksDueSoon;
+    }, [])
+    .sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
 };
 
 export const getMergedProjectTags = state => {
@@ -281,13 +320,8 @@ export const getMergedProjectTags = state => {
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);
 };
 
-
 export const getAllMergedTags = state => {
-  const {
-    projectsById,
-    usersById,
-    currentUser
-  } = state;
+  const { projectsById, usersById, currentUser } = state;
   if (!currentUser) return [];
   const { tags: userTags, projectIds } = currentUser;
   const projectTags = projectIds.reduce((tags, projectId) => {

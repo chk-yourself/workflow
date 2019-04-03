@@ -5,8 +5,8 @@ import {
   selectTask as selectTaskAction,
   getSelectedTaskId
 } from '../../ducks/selectedTask';
-import { currentUserSelectors } from '../../ducks/currentUser';
-import { ProjectGridContainer } from '../ProjectGrid';
+import { taskSelectors } from '../../ducks/tasks';
+import { ProjectGrid } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
 import Notifications from './Notifications';
 import DashboardPanel from './DashboardPanel';
@@ -27,7 +27,7 @@ class Dashboard extends Component {
 
   render() {
     const {
-      tasksDueSoon,
+      tasksById,
       toggleProjectComposer,
       currentUser,
       selectedTaskId
@@ -42,14 +42,14 @@ class Dashboard extends Component {
         <TasksDueSoon onTaskClick={this.handleTaskClick} />
         <Notifications onTaskClick={this.handleTaskClick} />
         <DashboardPanel className="projects" name="Projects" icon="grid">
-          <ProjectGridContainer
+          <ProjectGrid
             className="dashboard__project-grid"
             openProjectComposer={toggleProjectComposer}
           />
         </DashboardPanel>
         {isTaskEditorOpen && (
           <TaskEditor
-            {...tasksDueSoon[selectedTaskId]}
+            {...tasksById[selectedTaskId]}
             handleTaskEditorClose={this.closeTaskEditor}
             userId={userId}
             layout="board"
@@ -63,7 +63,7 @@ class Dashboard extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     selectedTaskId: getSelectedTaskId(state),
-    tasksDueSoon: currentUserSelectors.getTasksDueSoonById(state)
+    tasksById: taskSelectors.getTasksById(state)
   };
 };
 

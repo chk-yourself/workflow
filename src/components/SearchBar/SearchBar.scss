@@ -100,16 +100,17 @@ input[type='search'].search-form__input {
   border: 1px solid $grey-300;
   background-color: #fff;
   z-index: 7;
-  box-shadow: 0 5px 20px 0 rgba(21,27,38,.08);
+  box-shadow: 0 5px 20px 0 rgba(21, 27, 38, 0.08);
   list-style: none;
   padding: 0;
 }
 
 .search-suggestions__category-name {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: $grey-600;
-  padding: 8px;
+  padding: 16px 0 0 16px;
   display: inline-block;
 }
 
@@ -122,18 +123,22 @@ input[type='search'].search-form__input {
 }
 
 .search-suggestion {
-  padding: 8px 16px;
+  padding: 8px 24px;
   cursor: pointer;
   &:focus,
   &.is-selected {
     background-color: $primary-lt;
     outline: none;
   }
+  span {
+    pointer-events: none;
+  }
 }
 
+.search-suggestion__task,
 .search-suggestion__link {
   color: $grey-800;
-  font-size: 14px;
+  font-size: 13px;
   text-decoration: none;
   font-weight: 500;
   display: inline-block;

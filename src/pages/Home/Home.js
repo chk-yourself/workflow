@@ -4,10 +4,11 @@ import { Route, Switch } from 'react-router-dom';
 import { withAuthorization } from '../../components/Session';
 import * as ROUTES from '../../constants/routes';
 import { userActions } from '../../ducks/users';
-import { ProjectGridContainer } from '../../components/ProjectGrid';
+import { ProjectGrid } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { ProjectContainer } from '../../components/Project';
-import { projectSelectors } from '../../ducks/projects';
+import { projectActions, projectSelectors } from '../../ducks/projects';
+import { taskActions } from '../../ducks/tasks';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
@@ -26,22 +27,35 @@ class HomePage extends Component {
   }
 
   async componentDidMount() {
-    const { fetchUsersById, currentUser, syncUserTags } = this.props;
-    const { userId } = currentUser;
+    const {
+      syncUsersById,
+      currentUser,
+      syncUserProjects,
+      syncUserProjectTasks,
+      syncUserMiscTasks,
+      syncUserTags
+    } = this.props;
+    const { userId, projectIds } = currentUser;
     console.log('mounted home');
 
-    await Promise.all([fetchUsersById(), syncUserTags(userId)]).then(
-      listeners => {
-        this.unsubscribe = listeners[1];
-        this.setState({
-          isLoading: false
-        });
-      }
-    );
+    await Promise.all([
+      syncUsersById(),
+      syncUserProjects(userId),
+      syncUserMiscTasks(userId),
+      syncUserTags(userId),
+      ...projectIds.map(projectId =>
+        syncUserProjectTasks({ userId, projectId })
+      )
+    ]).then(listeners => {
+      this.unsubscribe = listeners;
+      this.setState({
+        isLoading: false
+      });
+    });
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    this.unsubscribe.forEach(func => func());
   }
 
   toggleProjectComposer = () => {
@@ -91,7 +105,7 @@ class HomePage extends Component {
                   title: 'project-grid__header'
                 }}
               >
-                <ProjectGridContainer
+                <ProjectGrid
                   userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
                   {...props}
@@ -129,8 +143,13 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchUsersById: () => dispatch(userActions.fetchUsersById()),
-    syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
+    syncUsersById: () => dispatch(userActions.syncUsersById()),
+    syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId)),
+    syncUserProjects: userId =>
+      dispatch(projectActions.syncUserProjects(userId)),
+    syncUserProjectTasks: ({ userId, projectId }) =>
+      dispatch(taskActions.syncUserProjectTasks({ userId, projectId })),
+    syncUserMiscTasks: userId => dispatch(taskActions.syncUserMiscTasks(userId))
   };
 };
 

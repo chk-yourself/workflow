@@ -15,15 +15,11 @@ class Subtasks extends Component {
   };
 
   state = {
-    isLoading: !this.props.isLoaded.subtasks
+    isLoading: !this.props.isLoaded
   };
 
   async componentDidMount() {
-    const {
-      syncTaskSubtasks,
-      taskId,
-      selectedProjectId
-    } = this.props;
+    const { syncTaskSubtasks, taskId, selectedProjectId } = this.props;
     if (!selectedProjectId) {
       this.unsubscribe = await syncTaskSubtasks(taskId);
       this.setState({
@@ -90,7 +86,7 @@ const mapStateToProps = (state, ownProps) => {
     subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
     subtasksById: subtaskSelectors.getSubtasksById(state),
     selectedProjectId: getSelectedProjectId(state),
-    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId)
+    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId).subtasks
   };
 };
 

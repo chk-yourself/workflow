@@ -12,8 +12,8 @@ import { selectedProject } from '../ducks/selectedProject';
 export default combineReducers({
   currentUser,
   projectsById,
-  tasksById,
   listsById,
+  tasksById,
   usersById,
   subtasksById,
   commentsById,

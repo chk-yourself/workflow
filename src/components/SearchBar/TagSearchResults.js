@@ -13,27 +13,6 @@ import { Icon } from '../Icon';
 import './SearchResults.scss';
 
 class TagSearchResults extends Component {
-  state = {
-    isLoading: true
-  };
-
-  async componentDidMount() {
-    const { currentUser, syncTaggedTasks, tag } = this.props;
-
-    const { projectIds } = currentUser;
-    await Promise.all(
-      projectIds.map(projectId => syncTaggedTasks({ projectId, tag }))
-    ).then(listeners => {
-      this.unsubscribe = listeners;
-      this.setState({
-        isLoading: false
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
 
   onTaskClick = taskId => {
     const { selectTask } = this.props;
@@ -46,7 +25,6 @@ class TagSearchResults extends Component {
   };
 
   render() {
-    const { isLoading } = this.state;
     const {
       taggedTasks,
       currentUser,
@@ -56,7 +34,6 @@ class TagSearchResults extends Component {
     } = this.props;
     const { userId } = currentUser;
     const isTaskEditorOpen = !!selectedTaskId;
-    if (isLoading) return null;
     return (
       <Main
         title="Search Results"

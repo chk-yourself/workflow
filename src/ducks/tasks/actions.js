@@ -1,7 +1,11 @@
 import * as types from './types';
 import firebase from '../../store/firebase';
 import { setProjectLoadedState } from '../projects/actions';
-import { removeAssignedTask } from '../currentUser/actions';
+import {
+  loadAssignedTasks,
+  addAssignedTask,
+  removeAssignedTask
+} from '../currentUser/actions';
 
 export const loadTasksById = tasksById => {
   return {
@@ -133,8 +137,6 @@ export const deleteTask = ({ taskId, listId = null }) => {
         dueDate,
         projectId
       });
-      dispatch(removeAssignedTask(taskId));
-      dispatch(removeTask({ taskId, listId }));
       if (tags && tags.length > 0) {
         tags.forEach(name => {
           dispatch(removeTaskTag({ taskId: null, name, userId, projectId }));
@@ -181,20 +183,22 @@ export const syncProjectTasks = projectId => {
         .queryCollection('tasks', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
 
           if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
             changes.forEach(change => {
-              tasksById[change.doc.id] = {
-                taskId: change.doc.id,
+              const taskId = change.doc.id;
+              const taskData = change.doc.data();
+              tasksById[taskId] = {
                 isLoaded: {
-                  subtasks: true,
+                  subtasks: false,
                   comments: false
                 },
-                ...change.doc.data()
+                taskId,
+                ...taskData
               };
             });
             dispatch(loadTasksById(tasksById));
@@ -232,6 +236,147 @@ export const syncProjectTasks = projectId => {
   };
 };
 
+export const syncUserProjectTasks = ({ userId, projectId }) => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('tasks', ['projectId', '==', projectId])
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad && changes.length > 1) {
+            const tasksById = {};
+            let assignedTasks = [];
+            changes.forEach(change => {
+              const taskId = change.doc.id;
+              const taskData = change.doc.data();
+              const { subtaskIds, commentIds } = taskData;
+              tasksById[taskId] = {
+                isLoaded: {
+                  subtasks: subtaskIds.length === 0,
+                  comments: commentIds.length === 0
+                },
+                taskId,
+                ...taskData
+              };
+              if (taskData.assignedTo.includes(userId)) {
+                assignedTasks = assignedTasks.concat(taskId);
+              }
+            });
+            dispatch(loadTasksById(tasksById));
+            dispatch(loadAssignedTasks(assignedTasks));
+          } else {
+            const { tasksById, currentUser } = getState();
+            const { assignedTasks } = currentUser;
+            changes.forEach(async change => {
+              const [taskId, taskData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+
+              const isAssignedToUser = taskData.assignedTo.includes(userId);
+              const isMarkedAsAssigned = assignedTasks.includes(taskId);
+              if (changeType === 'added') {
+                if (taskId in tasksById) return;
+                dispatch(addTask({ taskId, taskData }));
+                console.log(`Task added: ${taskData.name}`);
+                if (isAssignedToUser) {
+                  dispatch(addAssignedTask(taskId));
+                }
+              } else if (changeType === 'removed') {
+                if (taskId in tasksById === false) return;
+                const { listId } = taskData;
+                if (isAssignedToUser) {
+                  dispatch(removeAssignedTask(taskId));
+                }
+                dispatch(removeTask({ taskId, listId }));
+                console.log(`Deleted Task: ${taskData.name}`);
+              } else {
+                if (!isAssignedToUser && isMarkedAsAssigned) {
+                  dispatch(removeAssignedTask(taskId));
+                }
+                dispatch(updateTask({ taskId, taskData }));
+                console.log(`Updated Task: ${taskData.name}`);
+                if (isAssignedToUser && !isMarkedAsAssigned) {
+                  dispatch(addAssignedTask(taskId));
+                }
+              }
+            });
+          }
+          if (isInitialLoad) {
+            dispatch(setProjectLoadedState(projectId, 'tasks'));
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const syncUserMiscTasks = userId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('tasks', ['ownerId', '==', userId])
+        .where('projectId', '==', null)
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad && changes.length > 1) {
+            const tasksById = {};
+            changes.forEach(change => {
+              tasksById[change.doc.id] = {
+                taskId: change.doc.id,
+                isLoaded: {
+                  subtasks: false,
+                  comments: false
+                },
+                ...change.doc.data()
+              };
+            });
+            dispatch(loadTasksById(tasksById));
+            dispatch(loadAssignedTasks(Object.keys(tasksById)));
+          } else {
+            changes.forEach(async change => {
+              const [taskId, taskData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { tasksById } = getState();
+              if (changeType === 'added') {
+                if (taskId in tasksById) return;
+                dispatch(addTask({ taskId, taskData }));
+                dispatch(addAssignedTask(taskId));
+                console.log(`Task added: ${taskData.name}`);
+              } else if (changeType === 'removed') {
+                if (taskId in tasksById === false) return;
+                const { listId } = taskData;
+                dispatch(removeAssignedTask(taskId));
+                dispatch(removeTask({ taskId, listId }));
+                console.log(`Task removed: ${taskData.name}`);
+              } else {
+                dispatch(updateTask({ taskId, taskData }));
+                console.log(`Task updated: ${taskData.name}`);
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const syncTaggedTasks = ({ projectId, tag }) => {
   return async (dispatch, getState) => {
     try {
@@ -240,9 +385,9 @@ export const syncTaggedTasks = ({ projectId, tag }) => {
         .where('tags', 'array-contains', tag)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const isInitialLoad = changes.every(
-            change => change.type === 'added'
-          );
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
 
           if (isInitialLoad && changes.length > 1) {
             const tasksById = {};

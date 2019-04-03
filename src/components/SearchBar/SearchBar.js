@@ -9,9 +9,8 @@ import * as keys from '../../constants/keys';
 import { withOutsideClick } from '../withOutsideClick';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import SearchSuggestions from './SearchSuggestions';
-import {
-  selectTask as selectTaskAction
-} from '../../ducks/selectedTask';
+import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
+import { taskSelectors } from '../../ducks/tasks';
 import './SearchBar.scss';
 
 class SearchBar extends Component {
@@ -36,14 +35,14 @@ class SearchBar extends Component {
   onChange = e => {
     const { selectedItem, filteredList } = this.state;
     const { projects, tags } = this.props;
-    const newIndex = selectedItem ? filteredList.findIndex(item => item.name === selectedItem.name) : -1;
+    const newIndex = selectedItem
+      ? filteredList.findIndex(item => item.name === selectedItem.name)
+      : -1;
     const persistSelectedItem = newIndex !== -1;
-    
+
     this.setState({
       query: e.target.value,
-      selectedItem: persistSelectedItem
-        ? selectedItem
-        : null,
+      selectedItem: persistSelectedItem ? selectedItem : null,
       selectedIndex: persistSelectedItem ? newIndex : -1,
       filteredList: [...projects, ...tags].filter(item => this.matchItem(item))
     });
@@ -91,7 +90,7 @@ class SearchBar extends Component {
           const { selectTask } = this.props;
           selectTask(selectedItem.taskId);
         } else {
-          history.push(`/0/search/${selectedItem.name}/tags`)
+          history.push(`/0/search/${selectedItem.name}/tags`);
         }
         this.reset();
         break;
@@ -105,6 +104,13 @@ class SearchBar extends Component {
     const { history } = this.props;
     if (!e.target.matches('li')) return;
     history.push(`/0/project/${e.target.dataset.id}`);
+    this.reset();
+  };
+
+  onClickTask = e => {
+    if (!e.target.matches('li')) return;
+    const { selectTask } = this.props;
+    selectTask(e.target.dataset.id);
     this.reset();
   };
 
@@ -145,7 +151,7 @@ class SearchBar extends Component {
   matchItem = ({ name }) => {
     const { query } = this.state;
     if (query === '') return false;
-    const regExp = new RegExp(query, 'i');
+    const regExp = new RegExp(`\\b${query}`, 'i');
     return regExp.test(name);
   };
 
@@ -154,7 +160,7 @@ class SearchBar extends Component {
   };
 
   render() {
-    const { innerRef, projects, tags } = this.props;
+    const { innerRef, projects, tasks, tags } = this.props;
     const { isExpanded, selectedItem, query } = this.state;
     return (
       <div
@@ -164,6 +170,7 @@ class SearchBar extends Component {
       >
         <form className="search-form" onSubmit={this.handleSubmit}>
           <Input
+            autoComplete="off"
             value={query}
             name="search"
             className="search-form__input"
@@ -189,12 +196,31 @@ class SearchBar extends Component {
             <Icon name="search" />
           </Button>
         </form>
-        {query !== '' &&
-        <ul className="search-suggestions__categories">
-        <SearchSuggestions onClick={this.onClickProject} category="Projects" items={projects} filter={this.matchItem} selectedItem={selectedItem} />
-        <SearchSuggestions onClick={this.onClickTag} category="Tags" items={tags} filter={this.matchItem} selectedItem={selectedItem} />
-        </ul>
-        }
+        {query !== '' && (
+          <ul className="search-suggestions__categories">
+            <SearchSuggestions
+              onClick={this.onClickProject}
+              category="Projects"
+              items={projects}
+              filter={this.matchItem}
+              selectedItem={selectedItem}
+            />
+            <SearchSuggestions
+              onClick={this.onClickTask}
+              category="Tasks"
+              items={tasks}
+              filter={this.matchItem}
+              selectedItem={selectedItem}
+            />
+            <SearchSuggestions
+              onClick={this.onClickTag}
+              category="Tags"
+              items={tags}
+              filter={this.matchItem}
+              selectedItem={selectedItem}
+            />
+          </ul>
+        )}
       </div>
     );
   }
@@ -203,16 +229,16 @@ class SearchBar extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     projects: currentUserSelectors.getCurrentUserProjects(state),
-    tags: currentUserSelectors.getAllMergedTags(state)
+    tags: currentUserSelectors.getAllMergedTags(state),
+    tasks: taskSelectors.getTasksArray(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     selectTask: taskId => dispatch(selectTaskAction(taskId))
-  }
+  };
 };
-
 
 export default compose(
   withRouter,
@@ -221,4 +247,4 @@ export default compose(
     mapDispatchToProps
   ),
   withOutsideClick
-  )(SearchBar);
+)(SearchBar);

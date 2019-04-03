@@ -38,9 +38,7 @@ class ProjectContainer extends Component {
       selectProject,
       selectedProjectId,
       syncProjectLists,
-      syncProjectTasks,
-      syncProjectSubtasks,
-      syncProject
+      syncProjectSubtasks
     } = this.props;
 
     if (selectedProjectId !== projectId) {
@@ -48,15 +46,10 @@ class ProjectContainer extends Component {
     }
 
     await Promise.all([
-      syncProject(projectId),
       syncProjectLists(projectId),
-      syncProjectTasks(projectId),
       syncProjectSubtasks(projectId)
     ]).then(listeners => {
       this.unsubscribe = listeners;
-      this.setState({
-        isLoading: false
-      });
     });
     console.log('mounted');
   }
@@ -209,9 +202,13 @@ class ProjectContainer extends Component {
     });
   };
 
-
   render() {
-    const { projectName, isListComposerActive, isTaskSettingsMenuVisible, isSortRuleDropdownVisible } = this.state;
+    const {
+      projectName,
+      isListComposerActive,
+      isTaskSettingsMenuVisible,
+      isSortRuleDropdownVisible
+    } = this.state;
     const {
       lists,
       tasksById,
@@ -225,101 +222,111 @@ class ProjectContainer extends Component {
     const isTaskEditorOpen = !!selectedTaskId;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
-      <main className={`project-container is-${project.layout}-layout ${isTaskEditorOpen ? 'show-task-editor' : ''}`}>
-      <div className="project__header">
-        <div className="project__header-content">
-        <Input
-          className="project__input--title"
-          name="projectName"
-          type="text"
-          value={projectName}
-          onChange={this.onNameChange}
-          required
-          hideLabel
-          onBlur={this.onNameBlur}
-        />
-          <Toolbar className="project__toolbar">
-          <Button
-            className="project__btn project__btn--add-list"
-            onClick={this.activateListComposer}
-            color="primary"
-            variant="contained"
-            size="sm"
-          >
-            Add List
-          </Button>
-          <TaskSettings
-          isVisible={isTaskSettingsMenuVisible}
-          onToggle={this.toggleTaskSettingsMenu}
-          onClose={this.closeTaskSettingsMenu}
-          onSave={this.saveProjectSettings}
-          classes={{
-            wrapper: 'project__task-settings-wrapper',
-            popover: 'project__task-settings',
-            item: 'project__task-settings-item',
-            button: 'project__task-settings-btn'
-          }}
-          filters={[
-            {
-              filter: 'view',
-              options: [
-                { value: 'active', name: 'Active Tasks' },
-                { value: 'completed', name: 'Completed Tasks' },
-                { value: 'all', name: 'All Tasks' }
-              ],
-              value: tempProjectSettings.tasks.view,
-              onChange: this.setTempProjectSettings
-            }
-          ]}
-          sortRule={{
-            options: [
-              { value: 'none', name: 'None' },
-              { value: 'dueDate', name: 'Due Date' }
-            ],
-            value: tempProjectSettings.tasks.sortBy,
-            onChange: this.setTempProjectSettings,
-            isDropdownVisible: isSortRuleDropdownVisible,
-            toggleDropdown: this.toggleSortRuleDropdown,
-            hideDropdown: this.hideSortRuleDropdown
-          }}
-        />
-          </Toolbar>
-        </div>
+      <main
+        className={`project-container is-${project.layout}-layout ${
+          isTaskEditorOpen ? 'show-task-editor' : ''
+        }`}
+      >
+        <div className="project__header">
+          <div className="project__header-content">
+            <Input
+              className="project__input--title"
+              name="projectName"
+              type="text"
+              value={projectName}
+              onChange={this.onNameChange}
+              required
+              hideLabel
+              onBlur={this.onNameBlur}
+            />
+            <Toolbar className="project__toolbar">
+              <Button
+                className="project__btn project__btn--add-list"
+                onClick={this.activateListComposer}
+                color="primary"
+                variant="contained"
+                size="sm"
+              >
+                Add List
+              </Button>
+              <TaskSettings
+                isVisible={isTaskSettingsMenuVisible}
+                onToggle={this.toggleTaskSettingsMenu}
+                onClose={this.closeTaskSettingsMenu}
+                onSave={this.saveProjectSettings}
+                classes={{
+                  wrapper: 'project__task-settings-wrapper',
+                  popover: 'project__task-settings',
+                  item: 'project__task-settings-item',
+                  button: 'project__task-settings-btn'
+                }}
+                filters={[
+                  {
+                    filter: 'view',
+                    options: [
+                      { value: 'active', name: 'Active Tasks' },
+                      { value: 'completed', name: 'Completed Tasks' },
+                      { value: 'all', name: 'All Tasks' }
+                    ],
+                    value: tempProjectSettings.tasks.view,
+                    onChange: this.setTempProjectSettings
+                  }
+                ]}
+                sortRule={{
+                  options: [
+                    { value: 'none', name: 'None' },
+                    { value: 'dueDate', name: 'Due Date' }
+                  ],
+                  value: tempProjectSettings.tasks.sortBy,
+                  onChange: this.setTempProjectSettings,
+                  isDropdownVisible: isSortRuleDropdownVisible,
+                  toggleDropdown: this.toggleSortRuleDropdown,
+                  hideDropdown: this.hideSortRuleDropdown
+                }}
+              />
+            </Toolbar>
+          </div>
         </div>
         <div className="project__wrapper">
-        <DragDropContext
-          onDragEnd={this.onDragEnd}
-          onDragStart={this.onDragStart}
-        >
-          <Project projectId={projectId} layout={project.layout} inputRef={this.inputRef} toggleListComposer={this.toggleListComposer} isListComposerActive={isListComposerActive}>
-            {lists.map((list, i) => {
-              const { listId, name: listName, taskIds } = list;
-              return (
-                <List
-                  viewFilter={tempProjectSettings.tasks.view}
-                  sortBy={tempProjectSettings.tasks.sortBy}
-                  listId={listId}
-                  key={listId}
-                  index={i}
-                  name={listName}
-                  taskIds={taskIds}
-                  onTaskClick={this.handleTaskClick}
-                  projectId={projectId}
-                  layout={project.layout}
-                  isRestricted={false}
-                />
-              );
-            })}
-          </Project>
-        </DragDropContext>
-        {isTaskEditorOpen && (
-          <TaskEditor
-            {...tasksById[selectedTaskId]}
-            handleTaskEditorClose={this.closeTaskEditor}
-            userId={userId}
-            layout={project.layout}
-          />
-        )}
+          <DragDropContext
+            onDragEnd={this.onDragEnd}
+            onDragStart={this.onDragStart}
+          >
+            <Project
+              projectId={projectId}
+              layout={project.layout}
+              inputRef={this.inputRef}
+              toggleListComposer={this.toggleListComposer}
+              isListComposerActive={isListComposerActive}
+            >
+              {lists.map((list, i) => {
+                const { listId, name: listName, taskIds } = list;
+                return (
+                  <List
+                    viewFilter={tempProjectSettings.tasks.view}
+                    sortBy={tempProjectSettings.tasks.sortBy}
+                    listId={listId}
+                    key={listId}
+                    index={i}
+                    name={listName}
+                    taskIds={taskIds}
+                    onTaskClick={this.handleTaskClick}
+                    projectId={projectId}
+                    layout={project.layout}
+                    isRestricted={false}
+                  />
+                );
+              })}
+            </Project>
+          </DragDropContext>
+          {isTaskEditorOpen && (
+            <TaskEditor
+              {...tasksById[selectedTaskId]}
+              handleTaskEditorClose={this.closeTaskEditor}
+              userId={userId}
+              layout={project.layout}
+            />
+          )}
         </div>
       </main>
     );
@@ -328,6 +335,7 @@ class ProjectContainer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    state: state,
     projectsById: projectSelectors.getProjectsById(state),
     selectedProjectId: getSelectedProjectId(state),
     selectedTaskId: getSelectedTaskId(state),
@@ -337,7 +345,10 @@ const mapStateToProps = (state, ownProps) => {
     tasksById: taskSelectors.getTasksById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
-    tempProjectSettings: projectSelectors.getTempProjectSettings(state, ownProps.projectId)
+    tempProjectSettings: projectSelectors.getTempProjectSettings(
+      state,
+      ownProps.projectId
+    )
   };
 };
 
@@ -356,7 +367,10 @@ const mapDispatchToProps = dispatch => {
     syncProjectSubtasks: projectId =>
       dispatch(subtaskActions.syncProjectSubtasks(projectId)),
     syncProject: projectId => dispatch(projectActions.syncProject(projectId)),
-    setTempProjectSettings: ({projectId, view, sortBy}) => dispatch(projectActions.setTempProjectSettings({projectId, view, sortBy}))
+    setTempProjectSettings: ({ projectId, view, sortBy }) =>
+      dispatch(
+        projectActions.setTempProjectSettings({ projectId, view, sortBy })
+      )
   };
 };
 
