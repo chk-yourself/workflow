@@ -8,6 +8,7 @@ import SearchSuggestions from './SearchSuggestions';
 import SearchBar from './SearchBar';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
+import Highlight from './Highlight';
 import './SearchTypeahead.scss';
 
 class SearchTypeahead extends Component {
@@ -156,6 +157,17 @@ class SearchTypeahead extends Component {
     return regExp.test(name);
   };
 
+  // If separator is a regular expression that contains capturing parentheses (), matched results are included in the array.
+
+  highlightMatch = ({ name }) => {
+    const { value } = this.input;
+    if (value === '') return name;
+    const regExp = new RegExp(`(\\b${value})`, 'gi');
+    return name.split(regExp).map(text => (
+      regExp.test(text) ? <Highlight>{text}</Highlight> : text
+    ));
+  };
+
   suggestionsRef = ref => {
     this.suggestions = ref;
   };
@@ -191,6 +203,7 @@ class SearchTypeahead extends Component {
               filter={this.matchItem}
               selectedItem={selectedItem}
               query={query}
+              highlight={this.highlightMatch}
             />
             <SearchSuggestions
               onClick={this.onClickTask}
@@ -199,6 +212,7 @@ class SearchTypeahead extends Component {
               filter={this.matchItem}
               selectedItem={selectedItem}
               query={query}
+              highlight={this.highlightMatch}
             />
             <SearchSuggestions
               onClick={this.onClickTag}
@@ -207,6 +221,7 @@ class SearchTypeahead extends Component {
               filter={this.matchItem}
               selectedItem={selectedItem}
               query={query}
+              highlight={this.highlightMatch}
             />
           </ul>
         )}

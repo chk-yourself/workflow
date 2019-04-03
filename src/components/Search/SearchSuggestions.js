@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Tag } from '../Tag';
-import SearchHighlight from './SearchHighlight';
 
 const SearchSuggestions = ({
   items,
@@ -9,7 +8,7 @@ const SearchSuggestions = ({
   onClick,
   selectedItem,
   category,
-  query
+  highlight
 }) => {
   const filteredItems = items.filter(item => filter(item));
   if (filteredItems.length === 0) return null;
@@ -42,17 +41,21 @@ const SearchSuggestions = ({
             >
               {
                 {
-                  Tags: <Tag name={item.name} color={item.color} size="sm" />,
+                  Tags: (
+                    <Tag name={highlight(item)} color={item.color} size="sm" />
+                  ),
                   Projects: (
                     <Link
                       className="search-suggestion__link"
                       to={`/0/project/${item.projectId}`}
                     >
-                      {item.name}
+                      {highlight(item)}
                     </Link>
                   ),
                   Tasks: (
-                    <span className="search-suggestion__task">{item.name}</span>
+                    <span className="search-suggestion__task">
+                      {highlight(item)}
+                    </span>
                   )
                 }[category]
               }
