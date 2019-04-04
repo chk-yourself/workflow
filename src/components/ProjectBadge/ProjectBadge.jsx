@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { projectSelectors } from '../../ducks/projects';
 import './ProjectBadge.scss';
-import { Badge } from '../Badge';
 import { ProjectIcon } from '../ProjectIcon';
 
 const ProjectBadge = ({ projectId, size, variant, name, color, classes }) => (
   <Link
-    to={`/0/project/${projectId}`}
+    to={`/0/projects/${projectId}`}
     className={`project-badge project-badge--${size} ${
       variant === 'contained'
         ? `project-badge--contained project-badge--${color}`

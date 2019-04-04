@@ -14,7 +14,8 @@ import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
 import { UserProfile } from '../UserProfile';
-import { TagSearchResults } from '../../components/Search';
+import { SearchResults, TagSearchResults } from '../../components/Search';
+import { AccountPage } from '../Account';
 import { getParams } from '../../utils/string';
 import './Home.scss';
 
@@ -57,6 +58,7 @@ class HomePage extends Component {
 
   componentWillUnmount() {
     this.unsubscribe.forEach(func => func());
+    console.log('home unmounted');
   }
 
   toggleProjectComposer = () => {
@@ -125,17 +127,24 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={ROUTES.SEARCH_RESULTS}
+            path={ROUTES.GLOBAL_SEARCH}
+            render={props => {
+              const { search } = props.location;
+              const params = getParams(search);
+              return <SearchResults query={params.q} {...props} />;
+            }}
+          />
+          <Route
+            path={ROUTES.TASK_SEARCH}
             render={props => {
               const { search } = props.location;
               const params = getParams(search);
               if (params.tag) {
-                return (
-              <TagSearchResults tag={params.tag} {...props} />
-              )
+                return <TagSearchResults tag={params.tag} {...props} />;
               }
             }}
           />
+          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
         </Switch>
       </>
     );

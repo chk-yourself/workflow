@@ -13,7 +13,6 @@ import { Icon } from '../Icon';
 import './SearchResults.scss';
 
 class TagSearchResults extends Component {
-
   onTaskClick = taskId => {
     const { selectTask } = this.props;
     selectTask(taskId);
@@ -46,16 +45,18 @@ class TagSearchResults extends Component {
           <Icon name="tag" />
           {tag}
         </h2>
-        <div>
-          {taggedTasks.map((task, i) => (
-            <Task
-              className="search-results__task"
-              index={i}
-              key={task.taskId}
-              onTaskClick={this.onTaskClick}
-              {...task}
-            />
-          ))}
+        <div className="search-results__tasks-wrapper">
+          <div className="search-results__tasks">
+            {taggedTasks.map((task, i) => (
+              <Task
+                className="search-results__task"
+                index={i}
+                key={task.taskId}
+                onTaskClick={this.onTaskClick}
+                {...task}
+              />
+            ))}
+          </div>
           {isTaskEditorOpen && (
             <TaskEditor
               {...tasksById[selectedTaskId]}

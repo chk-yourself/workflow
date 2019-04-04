@@ -5,12 +5,40 @@
   font-size: 1.4rem;
 }
 
-.search-results__subheading {
-  font-size: 1.1rem;
-  .feather {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin-right: 6px;
+.header.expand-nav + main.search-results {
+  @include md {
+    left: 200px;
   }
+}
+
+.search-results {
+  &.show-task-editor {
+    @include md {
+      .search-results__tasks {
+        margin-right: 16px;
+      }
+    }
+  }
+}
+
+.search-results__subheading {
+  font-size: 18px;
+  margin-left: 16px;
+  margin-top: -16px;
+  .feather {
+    width: 18px;
+    height: 18px;
+    vertical-align: top;
+    margin-right: 8px;
+    color: $grey-600;
+  }
+}
+
+.search-results__tasks-wrapper {
+  display: flex;
+}
+
+.search-results__tasks {
+  width: 100%;
+  max-width: 960px;
 }

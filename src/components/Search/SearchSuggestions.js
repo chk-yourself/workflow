@@ -1,22 +1,19 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Tag } from '../Tag';
 
 const SearchSuggestions = ({
   items,
-  filter,
   onClick,
   selectedItem,
   category,
-  highlight
+  renderMatch
 }) => {
-  const filteredItems = items.filter(item => filter(item));
-  if (filteredItems.length === 0) return null;
+  if (items.length === 0) return null;
   return (
-    <li className="search-suggestions__category">
-      <span className="search-suggestions__category-name">{category}</span>
+    <li className="search-suggestions__item">
+      <span className="search-suggestions__name">{category}</span>
       <ul className="search-suggestions__list">
-        {filteredItems.map((item, i) => {
+        {items.map(item => {
           const isSelected =
             selectedItem === null
               ? false
@@ -27,38 +24,14 @@ const SearchSuggestions = ({
                 (category === 'Tasks' && selectedItem.taskId === item.taskId);
           return (
             <li
-              key={item.name}
+              key={item.taskId || item.projectId || item.name}
               className={`search-suggestion ${isSelected ? 'is-selected' : ''}`}
               onClick={onClick}
               tabIndex={0}
-              data-id={
-                category === 'Projects'
-                  ? item.projectId
-                  : category === 'Tasks'
-                  ? item.taskId
-                  : item.name
-              }
+              data-id={item.taskId || item.projectId || item.name}
+              data-project-id={item.projectId || ''}
             >
-              {
-                {
-                  Tags: (
-                    <Tag name={highlight(item)} color={item.color} size="sm" />
-                  ),
-                  Projects: (
-                    <Link
-                      className="search-suggestion__link"
-                      to={`/0/project/${item.projectId}`}
-                    >
-                      {highlight(item)}
-                    </Link>
-                  ),
-                  Tasks: (
-                    <span className="search-suggestion__task">
-                      {highlight(item)}
-                    </span>
-                  )
-                }[category]
-              }
+              {renderMatch(item)}
             </li>
           );
         })}

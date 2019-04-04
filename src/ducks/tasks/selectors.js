@@ -7,6 +7,17 @@ export const getTasksArray = state => {
   return Object.keys(tasksById).map(taskId => tasksById[taskId]);
 };
 
+export const getTasksMatchingQuery = (state, query) => {
+  const regExp = new RegExp(`\\b${query}`, 'i');
+  return getTasksArray(state).filter(task => {
+    return (
+      regExp.test(task.name) ||
+      regExp.test(task.projectName) ||
+      (task.tags && task.tags.some(tag => regExp.test(tag)))
+    );
+  });
+};
+
 export const getTask = (state, taskId) => {
   return state.tasksById[taskId];
 };

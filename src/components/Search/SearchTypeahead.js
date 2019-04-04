@@ -8,6 +8,7 @@ import SearchSuggestions from './SearchSuggestions';
 import SearchBar from './SearchBar';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
+import { generateKey } from '../../utils/react';
 import Highlight from './Highlight';
 import './SearchTypeahead.scss';
 
@@ -41,10 +42,10 @@ class SearchTypeahead extends Component {
     this.setState(() => ({
       query: value,
       selectedItem: persistSelectedItem ? selectedItem : null,
-      selectedIndex: persistSelectedItem ? newIndex : -1,
-      filteredList: [...projects, ...tasks, ...tags].filter(item =>
-        this.matchItem(item)
-      )
+      selectedIndex: persistSelectedItem ? newIndex : 0,
+      filteredList: [null, ...projects, ...tasks, ...tags].filter(item => {
+        return item === null || this.matchItem(item);
+      })
     }));
   };
 
@@ -82,15 +83,19 @@ class SearchTypeahead extends Component {
         break;
       }
       case keys.ENTER: {
-        const { history } = this.props;
-        if (selectedItem === null) return;
-        if (selectedItem.taskId) {
-          const { selectTask } = this.props;
-          selectTask(selectedItem.taskId);
+        const { history, selectTask, userId } = this.props;
+        if (selectedItem === null) {
+          this.handleSubmit(e);
         } else if (selectedItem.projectId) {
-          history.push(`/0/project/${selectedItem.projectId}`);
+          history.push(`/0/projects/${selectedItem.projectId}`);
+          if (selectedItem.taskId) {
+            selectTask(selectedItem.taskId);
+          }
+        } else if (selectedItem.taskId) {
+          history.push(`/0/${userId}/tasks`);
+          selectTask(selectedItem.taskId);
         } else {
-          history.push(`/0/search?tag=${selectedItem.name}`);
+          history.push(`/0/tasks?tag=${selectedItem.name}`);
         }
         this.reset();
         break;
@@ -103,21 +108,27 @@ class SearchTypeahead extends Component {
   onClickProject = e => {
     const { history } = this.props;
     if (!e.target.matches('li')) return;
-    history.push(`/0/project/${e.target.dataset.id}`);
+    history.push(`/0/projects/${e.target.dataset.id}`);
     this.reset();
   };
 
   onClickTask = e => {
     if (!e.target.matches('li')) return;
-    const { selectTask } = this.props;
-    selectTask(e.target.dataset.id);
+    const { history, userId, selectTask } = this.props;
+    const { id, projectId } = e.target.dataset;
+    if (projectId) {
+      history.push(`/0/projects/${projectId}`);
+    } else {
+      history.push(`/0/${userId}/tasks`);
+    }
+    selectTask(id);
     this.reset();
   };
 
   onClickTag = e => {
     const { history } = this.props;
     if (!e.target.matches('li')) return;
-    history.push(`/0/search?tag=${e.target.dataset.id}`);
+    history.push(`/0/tasks?tag=${e.target.dataset.id}`);
     this.reset();
   };
 
@@ -136,6 +147,9 @@ class SearchTypeahead extends Component {
   };
 
   handleSubmit = e => {
+    const { history } = this.props;
+    const { query } = this.state;
+    history.push(`/0/search?q=${query}`);
     e.preventDefault();
   };
 
@@ -163,9 +177,15 @@ class SearchTypeahead extends Component {
     const { value } = this.input;
     if (value === '') return name;
     const regExp = new RegExp(`(\\b${value})`, 'gi');
-    return name.split(regExp).map(text => (
-      regExp.test(text) ? <Highlight>{text}</Highlight> : text
-    ));
+    return name
+      .split(regExp)
+      .map(text =>
+        regExp.test(text) ? (
+          <Highlight key={generateKey()}>{text}</Highlight>
+        ) : (
+          text
+        )
+      );
   };
 
   suggestionsRef = ref => {
@@ -192,36 +212,55 @@ class SearchTypeahead extends Component {
           value={query}
         />
         {query !== '' && (
-          <ul
-            ref={this.suggestionsRef}
-            className="search-suggestions__categories"
-          >
+          <ul ref={this.suggestionsRef} className="search-suggestions">
+            <li
+              tabIndex={0}
+              onClick={this.handleSubmit}
+              className={`search-suggestions__item search-suggestion ${
+                selectedItem === null ? 'is-selected' : ''
+              }`}
+            >
+              <Icon name="search" />
+              Items with <Highlight>{query}</Highlight>
+            </li>
             <SearchSuggestions
               onClick={this.onClickProject}
               category="Projects"
-              items={projects}
-              filter={this.matchItem}
+              items={projects.filter(item => this.matchItem(item))}
               selectedItem={selectedItem}
               query={query}
-              highlight={this.highlightMatch}
+              renderMatch={item => (
+                <>
+                  <Icon name={item.layout === 'board' ? 'trello' : 'list'} />
+                  {this.highlightMatch(item)}
+                </>
+              )}
             />
             <SearchSuggestions
               onClick={this.onClickTask}
               category="Tasks"
-              items={tasks}
-              filter={this.matchItem}
+              items={tasks.filter(item => this.matchItem(item))}
               selectedItem={selectedItem}
               query={query}
-              highlight={this.highlightMatch}
+              renderMatch={item => (
+                <>
+                  <Icon name="check-square" />
+                  {this.highlightMatch(item)}
+                </>
+              )}
             />
             <SearchSuggestions
               onClick={this.onClickTag}
               category="Tags"
-              items={tags}
-              filter={this.matchItem}
+              items={tags.filter(item => this.matchItem(item))}
               selectedItem={selectedItem}
               query={query}
-              highlight={this.highlightMatch}
+              renderMatch={item => (
+                <>
+                  <Icon name="tag" />
+                  {this.highlightMatch(item)}
+                </>
+              )}
             />
           </ul>
         )}
@@ -232,6 +271,7 @@ class SearchTypeahead extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    userId: currentUserSelectors.getCurrentUserId(state),
     projects: currentUserSelectors.getCurrentUserProjects(state),
     tags: currentUserSelectors.getAllMergedTags(state),
     tasks: taskSelectors.getTasksArray(state)
