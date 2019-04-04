@@ -3,20 +3,31 @@
 
 .search-bar {
   position: relative;
+  max-width: 360px;
   width: 0%;
   min-width: 32px;
   height: 32px;
   border-radius: 4px;
-  background-color: transparent;
+  background-color: $white;
   box-shadow: none;
   border: 1px solid transparent;
-  float: left;
-  -webkit-transition: width 0.3s ease;
-  -moz-transition: width 0.3s ease;
-  transition: width 0.3s ease;
+  float: right;
+  transition: width 0.3s ease-out;
   -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: hidden;
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -16px;
+    width: 16px;
+    height: 100%;
+    background-image: linear-gradient(to left, #fff, rgba(255, 255, 255, 0));
+  }
   &.is-expanded {
-    width: 100%;
+    width: calc(100% + 24px);
     max-width: 360px;
     border: 1px solid $grey-400;
     .search-form__btn {

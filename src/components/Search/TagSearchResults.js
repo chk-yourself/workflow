@@ -35,16 +35,16 @@ class TagSearchResults extends Component {
     const isTaskEditorOpen = !!selectedTaskId;
     return (
       <Main
-        title="Search Results"
+        title={<>
+        <Icon name="tag" />
+          {tag}
+          </>
+          }
         classes={{
           main: 'search-results',
           title: 'search-results__title'
         }}
       >
-        <h2 className="search-results__subheading">
-          <Icon name="tag" />
-          {tag}
-        </h2>
         <div className="search-results__tasks-wrapper">
           <div className="search-results__tasks">
             {taggedTasks.map((task, i) => (

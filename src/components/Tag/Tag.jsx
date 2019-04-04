@@ -1,16 +1,19 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import './Tag.scss';
 
-const Tag = ({ name, color, size, onDelete, className, tagRef, variant }) => (
+const Tag = ({ name, color, size, onDelete, className, innerRef, variant }) => (
   <span
     className={`tag tag--${size} bg--${color} ${
       variant !== 'default' ? `tag--${variant}` : ''
     } ${className}`}
-    ref={tagRef}
+    ref={innerRef}
   >
-    {name}
+    <Link to={`/0/tasks?tag=${name}`} className="tag__link">
+      {name}
+    </Link>
     {size === 'md' && (
       <Button
         type="button"

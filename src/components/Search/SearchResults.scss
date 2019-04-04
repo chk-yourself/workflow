@@ -2,7 +2,16 @@
 @import '../../styles/mixins.scss';
 
 .search-results__title {
-  font-size: 1.4rem;
+  font-size: 22px;
+  .feather {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 10px;
+    color: $grey-600;
+    position: relative;
+    top: -1px;
+  }
 }
 
 .header.expand-nav + main.search-results {
@@ -24,12 +33,12 @@
 .search-results__subheading {
   font-size: 18px;
   margin-left: 16px;
-  margin-top: -16px;
+  margin-top: -12px;
   .feather {
     width: 18px;
     height: 18px;
     vertical-align: top;
-    margin-right: 8px;
+    margin-right: 10px;
     color: $grey-600;
   }
 }

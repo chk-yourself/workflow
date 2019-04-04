@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { Icon } from '../Icon';
 import * as keys from '../../constants/keys';
@@ -9,11 +10,14 @@ import SearchBar from './SearchBar';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
 import { generateKey } from '../../utils/react';
+import { withOutsideClick } from '../withOutsideClick';
 import Highlight from './Highlight';
+import * as ROUTES from '../../constants/routes';
 import './SearchTypeahead.scss';
 
 class SearchTypeahead extends Component {
   state = {
+    isActive: false,
     isSearchBarExpanded: false,
     query: '',
     selectedItem: null,
@@ -23,6 +27,7 @@ class SearchTypeahead extends Component {
 
   reset = e => {
     this.setState({
+      isActive: false,
       query: '',
       isSearchBarExpanded: false,
       selectedItem: null,
@@ -57,6 +62,7 @@ class SearchTypeahead extends Component {
       e.key !== keys.ENTER
     )
       return;
+    e.preventDefault();
 
     const { filteredList, selectedIndex, selectedItem } = this.state;
     const nextIndex =
@@ -86,23 +92,23 @@ class SearchTypeahead extends Component {
         const { history, selectTask, userId } = this.props;
         if (selectedItem === null) {
           this.handleSubmit(e);
-        } else if (selectedItem.projectId) {
-          history.push(`/0/projects/${selectedItem.projectId}`);
-          if (selectedItem.taskId) {
-            selectTask(selectedItem.taskId);
-          }
-        } else if (selectedItem.taskId) {
-          history.push(`/0/${userId}/tasks`);
-          selectTask(selectedItem.taskId);
+          this.input.blur();
         } else {
-          history.push(`/0/tasks?tag=${selectedItem.name}`);
+          if (selectedItem.projectId) {
+            history.push(`/0/projects/${selectedItem.projectId}`);
+            if (selectedItem.taskId) {
+              selectTask(selectedItem.taskId);
+            }
+          } else if (selectedItem.taskId) {
+            history.push(`/0/${userId}/tasks`);
+            selectTask(selectedItem.taskId);
+          } else {
+            history.push(`/0/tasks?tag=${selectedItem.name}`);
+          }
+          this.reset();
         }
-        this.reset();
-        break;
       }
     }
-
-    e.preventDefault();
   };
 
   onClickProject = e => {
@@ -147,21 +153,31 @@ class SearchTypeahead extends Component {
   };
 
   handleSubmit = e => {
+    e.preventDefault();
     const { history } = this.props;
     const { query } = this.state;
+    if (query === '') return;
     history.push(`/0/search?q=${query}`);
-    e.preventDefault();
+    this.toggleSuggestions();
   };
 
   onOutsideClick = e => {
-    const { isSearchBarExpanded, query } = this.state;
+    const { isSearchBarExpanded, isActive, query } = this.state;
     if (
       !isSearchBarExpanded ||
-      query !== '' ||
+      !isActive ||
       (this.suggestions && this.suggestions.contains(e.target))
     )
       return;
-    this.toggleSearchBar();
+
+    if (query === '') {
+      this.setState({
+        isActive: false,
+        isSearchBarExpanded: false
+      });
+    } else {
+      this.toggleSuggestions();
+    }
   };
 
   matchItem = ({ name }) => {
@@ -196,22 +212,34 @@ class SearchTypeahead extends Component {
     this.input = ref;
   };
 
+  toggleSuggestions = e => {
+    this.setState(prevState => ({
+      isActive: !prevState.isActive
+    }));
+  };
+
+  onFocus = () => {
+    const { isActive } = this.state;
+    if (isActive) return;
+    this.toggleSuggestions();
+  };
+
   render() {
-    const { projects, tasks, tags } = this.props;
-    const { isSearchBarExpanded, selectedItem, query } = this.state;
+    const { projects, tasks, tags, innerRef } = this.props;
+    const { isActive, isSearchBarExpanded, selectedItem, query } = this.state;
     return (
-      <div className="search-typeahead">
+      <div className="search-typeahead" ref={innerRef}>
         <SearchBar
           setInputRef={this.inputRef}
+          onFocus={this.onFocus}
           onClick={this.handleClick}
-          onOutsideClick={this.onOutsideClick}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           onSubmit={this.handleSubmit}
           isExpanded={isSearchBarExpanded}
           value={query}
         />
-        {query !== '' && (
+        {query !== '' && isActive && (
           <ul ref={this.suggestionsRef} className="search-suggestions">
             <li
               tabIndex={0}
@@ -284,9 +312,11 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
+export default compose(
+  withRouter,
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(SearchTypeahead)
-);
+  ),
+  withOutsideClick
+)(SearchTypeahead);

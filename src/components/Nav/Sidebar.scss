@@ -11,7 +11,7 @@
   background-color: $white;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
-  z-index: 98;
+  z-index: 2;
   width: 0;
   @include xx {
     width: 48px;
@@ -67,7 +67,7 @@
 .sidebar__btn--toggle {
   padding: 0;
   display: block;
-  z-index: 99;
+  z-index: 3;
   position: absolute;
   margin: 0;
   top: calc(50% - 16px);

@@ -56,7 +56,7 @@ class TagsInput extends Component {
 
   onChange = e => {
     const { tagSuggestions } = this.props;
-    const { selectedTag, selectedIndex } = this.state;
+    const { selectedTag } = this.state;
     const { value } = e.target;
     const filteredList = tagSuggestions.filter(tag =>
       this.matchTag(tag, value)
@@ -205,7 +205,7 @@ class TagsInput extends Component {
             name={tag.name}
             onDelete={() => this.handleTagDelete(tag.name)}
             className={focusedTag === tag.name ? 'is-focused' : ''}
-            tagRef={
+            innerRef={
               currentTag === tag.name ? el => (this.currentTagEl = el) : null
             }
           />

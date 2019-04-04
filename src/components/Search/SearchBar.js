@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
-import { withOutsideClick } from '../withOutsideClick';
 import './SearchBar.scss';
 
-class SearchBar extends Component {
+export default class SearchBar extends Component {
 
   componentDidUpdate(prevProps) {
     const { isExpanded } = this.props;
@@ -23,27 +22,23 @@ class SearchBar extends Component {
     setInputRef(ref);
   };
 
-  onClick = e => {
-    console.log(e.target);
-  };
-
   render() {
     const {
-      innerRef,
       value,
       onClick,
       onChange,
       onKeyDown,
       onSubmit,
-      isExpanded
+      isExpanded,
+      onFocus
     } = this.props;
     return (
       <div
-        ref={innerRef}
-        className={`search-bar${isExpanded ? ' is-expanded' : ''}`}
+        className={`search-bar${isExpanded ? ' is-expanded' : ''} clearfix`}
       >
         <form className="search-form" onClick={onClick} onSubmit={onSubmit}>
           <Input
+            onFocus={onFocus}
             autoComplete="off"
             value={value}
             name="search"
@@ -73,5 +68,3 @@ class SearchBar extends Component {
     );
   }
 }
-
-export default withOutsideClick(SearchBar);
