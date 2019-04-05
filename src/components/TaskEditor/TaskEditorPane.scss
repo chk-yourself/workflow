@@ -17,6 +17,7 @@
   max-height: 100vh;
   -webkit-overflow-scrolling: touch;
   @include md {
+    margin-top: 48px;
     height: auto;
     min-height: auto;
     align-self: flex-start;

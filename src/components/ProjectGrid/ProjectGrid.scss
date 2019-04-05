@@ -171,12 +171,9 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 8px;
+  padding: 0 8px;
   text-align: center;
   color: $white;
-  @include md {
-    padding: 32px 16px;
-  }
 }
 .project-grid__title {
   font-size: 15px;
@@ -184,7 +181,11 @@
   font-family: $heading-font;
   line-height: 1.3;
   display: inline-block;
+  width: 100%;
   margin-bottom: 8px;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
   @include md {
     margin-bottom: 12px;
   }

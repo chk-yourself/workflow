@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import { projectActions, projectSelectors } from '../../ducks/projects';
 import {
   selectTask as selectTaskAction,
+  getSelectedTask,
   getSelectedTaskId
 } from '../../ducks/selectedTask';
 import {
@@ -12,25 +13,15 @@ import {
   getSelectedProjectId
 } from '../../ducks/selectedProject';
 import { listActions, listSelectors } from '../../ducks/lists';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
-import { subtaskActions, subtaskSelectors } from '../../ducks/subtasks';
+import { taskActions } from '../../ducks/tasks';
+import { subtaskActions } from '../../ducks/subtasks';
 import Project from './Project';
-import { Toolbar } from '../Toolbar';
-import { Button } from '../Button';
-import { Input } from '../Input';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
 import * as droppableTypes from '../../constants/droppableTypes';
-import { TaskSettings } from '../TaskSettings';
 import './Project.scss';
 
 class ProjectContainer extends Component {
-  state = {
-    projectName: this.props.projectName,
-    isListComposerActive: false,
-    isTaskSettingsMenuVisible: false,
-    isSortRuleDropdownVisible: false
-  };
 
   async componentDidMount() {
     const {
@@ -59,16 +50,6 @@ class ProjectContainer extends Component {
     selectProject(null);
     this.unsubscribe.forEach(func => func());
   }
-
-  toggleListComposer = e => {
-    this.setState(prevState => ({
-      isListComposerActive: !prevState.isListComposerActive
-    }));
-  };
-
-  inputRef = ref => {
-    this.listComposerInput = ref;
-  };
 
   onDragStart = () => {
     this.setState({
@@ -108,8 +89,8 @@ class ProjectContainer extends Component {
     }
 
     if (type === droppableTypes.LIST) {
-      const { projectsById, projectId, reorderLists } = this.props;
-      const updatedListIds = [...projectsById[projectId].listIds];
+      const { project, projectId, reorderLists } = this.props;
+      const updatedListIds = [...project.listIds];
       updatedListIds.splice(source.index, 1);
       updatedListIds.splice(destination.index, 0, draggableId);
       firebase.updateDoc(['projects', projectId], {
@@ -119,7 +100,7 @@ class ProjectContainer extends Component {
     }
   };
 
-  closeTaskEditor = taskId => {
+  closeTaskEditor = () => {
     const { selectTask } = this.props;
     selectTask(null);
   };
@@ -129,89 +110,10 @@ class ProjectContainer extends Component {
     selectTask(taskId);
   };
 
-  onNameChange = e => {
-    this.setState({
-      projectName: e.target.value
-    });
-  };
-
-  onNameBlur = e => {
-    const { projectName, projectId, firebase } = this.props;
-    const { projectName: newProjectName } = this.state;
-
-    // When field loses focus, update list title if change is detected
-
-    if (newProjectName !== projectName) {
-      firebase.updateProjectName({ projectId, name: newProjectName });
-    }
-  };
-
-  activateListComposer = e => {
-    this.listComposerInput.focus();
-  };
-
-  saveProjectSettings = () => {
-    const { firebase, projectId, tempProjectSettings } = this.props;
-    firebase.updateDoc(['projects', projectId], {
-      [`settings.tasks.view`]: tempProjectSettings.tasks.view,
-      [`settings.tasks.sortBy`]: tempProjectSettings.tasks.sortBy
-    });
-    this.closeTaskSettingsMenu();
-  };
-
-  setTempProjectSettings = e => {
-    const { projectId } = this.props;
-    const { setTempProjectSettings } = this.props;
-    const { name, value } = e.target;
-    setTempProjectSettings({
-      projectId,
-      [name]: value
-    });
-    if (name === 'sortBy') {
-      this.hideSortRuleDropdown();
-    }
-  };
-
-  toggleTaskSettingsMenu = e => {
-    this.setState(prevState => ({
-      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
-      isSortRuleDropdownVisible:
-        prevState.isSortRuleDropdownVisible &&
-        prevState.isTaskSettingsMenuVisible
-          ? !prevState.isSortRuleDropdownVisible
-          : prevState.isSortRuleDropdownVisible
-    }));
-  };
-
-  closeTaskSettingsMenu = () => {
-    this.setState({
-      isTaskSettingsMenuVisible: false,
-      isSortRuleDropdownVisible: false
-    });
-  };
-
-  toggleSortRuleDropdown = () => {
-    this.setState(prevState => ({
-      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
-    }));
-  };
-
-  hideSortRuleDropdown = () => {
-    this.setState({
-      isSortRuleDropdownVisible: false
-    });
-  };
-
   render() {
     const {
-      projectName,
-      isListComposerActive,
-      isTaskSettingsMenuVisible,
-      isSortRuleDropdownVisible
-    } = this.state;
-    const {
       lists,
-      tasksById,
+      selectedTask,
       projectId,
       userId,
       selectedTaskId,
@@ -227,78 +129,12 @@ class ProjectContainer extends Component {
           isTaskEditorOpen ? 'show-task-editor' : ''
         }`}
       >
-        <div className="project__header">
-          <div className="project__header-content">
-            <Input
-              className="project__input--title"
-              name="projectName"
-              type="text"
-              value={projectName}
-              onChange={this.onNameChange}
-              required
-              hideLabel
-              onBlur={this.onNameBlur}
-            />
-            <Toolbar className="project__toolbar">
-              <Button
-                className="project__btn project__btn--add-list"
-                onClick={this.activateListComposer}
-                color="primary"
-                variant="contained"
-                size="sm"
-              >
-                Add List
-              </Button>
-              <TaskSettings
-                isVisible={isTaskSettingsMenuVisible}
-                onToggle={this.toggleTaskSettingsMenu}
-                onClose={this.closeTaskSettingsMenu}
-                onSave={this.saveProjectSettings}
-                classes={{
-                  wrapper: 'project__task-settings-wrapper',
-                  popover: 'project__task-settings',
-                  item: 'project__task-settings-item',
-                  button: 'project__task-settings-btn'
-                }}
-                filters={[
-                  {
-                    filter: 'view',
-                    options: [
-                      { value: 'active', name: 'Active Tasks' },
-                      { value: 'completed', name: 'Completed Tasks' },
-                      { value: 'all', name: 'All Tasks' }
-                    ],
-                    value: tempProjectSettings.tasks.view,
-                    onChange: this.setTempProjectSettings
-                  }
-                ]}
-                sortRule={{
-                  options: [
-                    { value: 'none', name: 'None' },
-                    { value: 'dueDate', name: 'Due Date' }
-                  ],
-                  value: tempProjectSettings.tasks.sortBy,
-                  onChange: this.setTempProjectSettings,
-                  isDropdownVisible: isSortRuleDropdownVisible,
-                  toggleDropdown: this.toggleSortRuleDropdown,
-                  hideDropdown: this.hideSortRuleDropdown
-                }}
-              />
-            </Toolbar>
-          </div>
-        </div>
         <div className="project__wrapper">
           <DragDropContext
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}
           >
-            <Project
-              projectId={projectId}
-              layout={project.layout}
-              inputRef={this.inputRef}
-              toggleListComposer={this.toggleListComposer}
-              isListComposerActive={isListComposerActive}
-            >
+            <Project {...project}>
               {lists.map((list, i) => {
                 const { listId, name: listName, taskIds } = list;
                 return (
@@ -321,7 +157,7 @@ class ProjectContainer extends Component {
           </DragDropContext>
           {isTaskEditorOpen && (
             <TaskEditor
-              {...tasksById[selectedTaskId]}
+              {...selectedTask}
               handleTaskEditorClose={this.closeTaskEditor}
               userId={userId}
               layout={project.layout}
@@ -335,14 +171,11 @@ class ProjectContainer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    state: state,
-    projectsById: projectSelectors.getProjectsById(state),
     selectedProjectId: getSelectedProjectId(state),
     selectedTaskId: getSelectedTaskId(state),
+    selectedTask: getSelectedTask(state),
     listsById: listSelectors.getListsById(state),
     lists: listSelectors.getSelectedProjectLists(state),
-    subtasksById: subtaskSelectors.getSubtasksById(state),
-    tasksById: taskSelectors.getTasksById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
     tempProjectSettings: projectSelectors.getTempProjectSettings(
@@ -374,7 +207,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withFirebase(
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps

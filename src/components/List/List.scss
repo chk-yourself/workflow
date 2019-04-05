@@ -30,6 +30,7 @@
     .list__header {
       margin: 0 8px;
       padding: 4px 0;
+      box-shadow: inset 0px -3px 1px -2px $grey-600;
       @include md {
         padding-top: 8px;
       }
@@ -125,7 +126,7 @@
     max-height: calc(100vh - 322px);
   }
   @include xl {
-    max-height: calc(100vh - 324px);
+    max-height: calc(100vh - 328px);
   }
 }
 

@@ -3,21 +3,70 @@
 
 .project {
   width: 100%;
-  margin-top: 80px;
+  margin-top: 44px;
+  display: flex;
+  flex-direction: column;
   @include md {
-    margin-top: 88px;
+    margin-top: 48px;
   }
   @include xl {
-    margin-top: 90px;
+    margin-top: 54px;
   }
   &.is-board-layout {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
     min-width: 100%;
+    margin-top: 78px;
+    @include md {
+      margin-top: 82px;
+    }
+    @include xx {
+      margin-top: 88px;
+    }
+    .project__lists {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .project__toolbar {
+      width: 100%;
+      padding: 0 8px;
+      position: fixed;
+      max-width: calc(100vw - 16px);
+      top: 88px;
+      @include md {
+        top: 96px;
+      }
+      @include xx {
+        top: 102px;
+        max-width: calc(100% - 62px);
+      }
+    }
   }
   &.is-list-layout {
     max-width: 960px;
+    background-color: $white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    .project__header {
+      width: 100%;
+      flex: none;
+    }
+    .project__toolbar {
+      flex: none;
+      padding: 8px;
+      z-index: 5;
+      box-shadow: inset 0px -3px 1px -2px $grey-300;
+    }
+    .project__lists {
+      display: inline-flex;
+      flex-direction: column;
+      max-height: calc(100vh - 132px);
+      overflow-y: auto;
+      @include md {
+        max-height: calc(100vh - 140px);
+      }
+      @include xl {
+        max-height: calc(100vh - 146px);
+      }
+    }
     @include md {
       padding: 0 8px;
     }
@@ -28,14 +77,19 @@
   @include md {
     left: 200px;
     .project__header {
-      left: 208px;
-      width: calc(100% - 216px);
+      left: 200px;
+      width: calc(100% - 200px);
+    }
+    &.is-board-layout {
+      .project__toolbar {
+        max-width: calc(100% - 216px);
+      }
     }
     &.show-task-editor {
       &.is-list-layout {
-        @include xx {
-          .project__header {
-            width: calc(100% - 640px);
+        @include md {
+          .project {
+            left: 200px;
           }
         }
       }
@@ -45,23 +99,25 @@
 
 .project__header {
   background-color: $cloud;
-  left: 8px;
-  width: calc(100% - 16px);
+  left: 0;
+  width: 100%;
   position: fixed;
   top: 40px;
   z-index: 5;
+  padding: 0 4px;
   @include xx {
-    width: calc(100% - 64px);
-    left: 56px;
+    width: calc(100% - 48px);
+    left: 48px;
   }
 }
 
 .project__header-content {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 100%;
+  position: relative;
 }
 
 .project__wrapper {
@@ -70,6 +126,8 @@
 }
 
 .project-container {
+  display: flex;
+  flex-direction: column;
   padding: 4px 8px;
   width: 100%;
   position: relative;
@@ -90,56 +148,86 @@
     }
     &.show-task-editor {
       @include md {
-        .project__header {
-          width: calc(100% - 440px);
-        }
         .project {
           margin-right: 16px;
         }
-        .project__input--title {
+        .project__input--name {
           width: 100%;
-        }
-      }
-      @include lg {
-        .project__input--title {
-          width: auto;
-        }
-      }
-      @include xx {
-        .project__header {
-          width: calc(100% - 488px)
         }
       }
     }
   }
 }
 
-.project__input--title {
+.project__input--name {
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   background-color: transparent;
-  border-color: transparent;
+  border: 2px solid transparent;
   width: 100%;
+  max-width: calc(100% - 18px);
   margin: 4px 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
+  line-height: 1.2;
   font-family: $heading-font;
   font-weight: 600;
-  padding: 8px 10px;
+  padding: 6px 10px 6px 28px;
   height: auto;
+  z-index: 3;
   color: $grey-900;
   &:focus {
     background-color: rgba(#fff, 0.6);
   }
-  @include xs {
-    width: auto;
-  }
   @include md {
-    font-size: 1.35rem;
-    padding: 8px 12px;
     margin: 8px 6px;
+    max-width: 600px;
   }
   @include xl {
-    font-size: 1.45rem;
-    padding: 8px 14px;
+    font-size: 1.4rem;
+    padding: 8px 14px 8px 32px;
   }
+}
+
+.project__name-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  height: auto;
+  font-size: 0;
+}
+
+.project__name {
+  width: auto;
+  display: inline-block;
+  visibility: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: $heading-font;
+  font-weight: 600;
+  border: 2px solid transparent;
+  padding: 6px 0 6px 18px;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  text-align: center;
+  margin: 4px 0;
+  @include md {
+    margin: 8px 0;
+  }
+  @include xl {
+    font-size: 1.4rem;
+    padding: 8px 0 8px 18px;
+  }
+}
+
+.project__icon {
+  position: absolute;
+  top: calc(50% - 6px);
+  left: 0;
 }
 
 .project__btn {
@@ -147,12 +235,7 @@
 }
 
 .project__toolbar {
-  padding: 0 10px;
-  width: 100%;
   justify-content: space-between;
-  @include md {
-    padding: 0 20px;
-  }
 }
 
 .project__task-settings-wrapper {
