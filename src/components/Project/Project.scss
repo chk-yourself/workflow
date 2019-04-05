@@ -3,72 +3,77 @@
 
 .project {
   width: 100%;
-  margin-top: 44px;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.project--board {
+  min-width: 100%;
+  margin-top: 78px;
   @include md {
-    margin-top: 48px;
+    margin-top: 86px;
   }
   @include xl {
-    margin-top: 54px;
+    margin-top: 92px;
   }
-  &.is-board-layout {
-    min-width: 100%;
-    margin-top: 78px;
+  .project__lists {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .project__toolbar {
+    width: 100%;
+    left: 0;
+    top: 82px;
+    position: fixed;
+    padding: 0 8px 8px 14px;
+    background-color: $cloud;
     @include md {
-      margin-top: 82px;
+      top: 90px;
+    }
+    @include xl {
+      top: 96px;
     }
     @include xx {
-      margin-top: 88px;
-    }
-    .project__lists {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
-    .project__toolbar {
-      width: 100%;
-      padding: 0 8px;
-      position: fixed;
-      max-width: calc(100vw - 16px);
-      top: 88px;
-      @include md {
-        top: 96px;
-      }
-      @include xx {
-        top: 102px;
-        max-width: calc(100% - 62px);
-      }
+      left: 48px;
+      max-width: calc(100% - 48px);
     }
   }
-  &.is-list-layout {
-    max-width: 960px;
-    background-color: $white;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-    .project__header {
-      width: 100%;
-      flex: none;
-    }
-    .project__toolbar {
-      flex: none;
-      padding: 8px;
-      z-index: 5;
-      box-shadow: inset 0px -3px 1px -2px $grey-300;
-    }
-    .project__lists {
-      display: inline-flex;
-      flex-direction: column;
-      max-height: calc(100vh - 132px);
-      overflow-y: auto;
-      @include md {
-        max-height: calc(100vh - 140px);
-      }
-      @include xl {
-        max-height: calc(100vh - 146px);
-      }
-    }
+}
+
+.project--list {
+  margin-top: 42px;
+  max-width: 960px;
+  background-color: $white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+  @include md {
+    margin-top: 50px;
+  }
+  @include xl {
+    margin-top: 56px;
+  }
+  .project__header {
+    width: 100%;
+    flex: none;
+  }
+  .project__toolbar {
+    flex: none;
+    padding: 8px;
+    z-index: 5;
+    box-shadow: inset 0px -3px 1px -2px $grey-300;
+  }
+  .project__lists {
+    -webkit-overflow-scrolling: touch;
+    display: inline-flex;
+    flex-direction: column;
+    max-height: calc(100vh - 134px);
+    overflow-y: auto;
     @include md {
-      padding: 0 8px;
+      max-height: calc(100vh - 142px);
+    }
+    @include xl {
+      max-height: calc(100vh - 148px);
     }
   }
 }
@@ -80,18 +85,21 @@
       left: 200px;
       width: calc(100% - 200px);
     }
-    &.is-board-layout {
-      .project__toolbar {
-        max-width: calc(100% - 216px);
-      }
-    }
     &.show-task-editor {
-      &.is-list-layout {
+      &--list {
         @include md {
           .project {
             left: 200px;
           }
         }
+      }
+    }
+  }
+  &--board {
+    @include md {
+      .project__toolbar {
+        left: 200px;
+        max-width: calc(100% - 200px);
       }
     }
   }
@@ -128,19 +136,16 @@
 .project-container {
   display: flex;
   flex-direction: column;
-  padding: 4px 8px;
+  padding: 0 8px;
   width: 100%;
   position: relative;
   overflow: visible;
   margin-top: 40px;
-  @include md {
-    padding: 8px;
-  }
-  &.is-board-layout {
+  &--board {
     overflow-y: hidden;
     min-width: 100%;
   }
-  &.is-list-layout {
+  &--list {
     .project__header-content {
       max-width: 960px;
       margin-right: auto;
@@ -160,33 +165,43 @@
 }
 
 .project__input--name {
-  text-align: center;
+  background-color: transparent;
+  width: 100%;
+  height: auto;
+  z-index: 3;
+  max-width: calc(100% - 18px);
+  &:focus {
+    padding-left: 8px;
+    text-align: left;
+    background-color: $white;
+    border-color: $grey-600;
+    box-shadow: inset 0 1px $grey-300;
+    @include xl {
+      padding-left: 10px;
+    }
+  }
+}
+
+.project__input--name,
+.project__name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  background-color: transparent;
-  border: 2px solid transparent;
-  width: 100%;
-  max-width: calc(100% - 18px);
+  font-size: 20px;
   margin: 4px 0;
-  font-size: 1.3rem;
   line-height: 1.2;
-  font-family: $heading-font;
-  font-weight: 600;
-  padding: 6px 10px 6px 28px;
-  height: auto;
-  z-index: 3;
   color: $grey-900;
-  &:focus {
-    background-color: rgba(#fff, 0.6);
-  }
+  padding: 4px 8px 4px 18px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  text-align: center;
   @include md {
-    margin: 8px 6px;
-    max-width: 600px;
+    margin: 8px 0;
+    max-width: 400px;
   }
   @include xl {
     font-size: 1.4rem;
-    padding: 8px 14px 8px 32px;
+    padding: 6px 10px 6px 20px;
   }
 }
 
@@ -198,30 +213,13 @@
   width: auto;
   height: auto;
   font-size: 0;
+  max-width: calc(100% - 18px);
 }
 
 .project__name {
   width: auto;
   display: inline-block;
   visibility: hidden;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-family: $heading-font;
-  font-weight: 600;
-  border: 2px solid transparent;
-  padding: 6px 0 6px 18px;
-  font-size: 1.3rem;
-  line-height: 1.2;
-  text-align: center;
-  margin: 4px 0;
-  @include md {
-    margin: 8px 0;
-  }
-  @include xl {
-    font-size: 1.4rem;
-    padding: 8px 0 8px 18px;
-  }
 }
 
 .project__icon {
@@ -235,7 +233,10 @@
 }
 
 .project__toolbar {
+  display: flex;
   justify-content: space-between;
+  padding: 8px;
+  z-index: 5;
 }
 
 .project__task-settings-wrapper {

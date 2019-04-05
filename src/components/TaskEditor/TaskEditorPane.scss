@@ -17,12 +17,15 @@
   max-height: 100vh;
   -webkit-overflow-scrolling: touch;
   @include md {
-    margin-top: 48px;
+    margin-top: 50px;
     height: auto;
     min-height: auto;
     align-self: flex-start;
     max-width: 400px;
     position: relative;
+  }
+  @include xl {
+    margin-top: 56px;
   }
 }
 

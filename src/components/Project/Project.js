@@ -112,7 +112,7 @@ class Project extends Component {
       isSortRuleDropdownVisible
     } = this.state;
     return (
-      <div className={`project is-${layout}-layout`}>
+      <div className={`project project--${layout}`}>
         <div className="project__header">
           <div className="project__header-content">
             <div className="project__name-wrapper">

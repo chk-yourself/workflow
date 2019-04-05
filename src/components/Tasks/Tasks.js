@@ -48,7 +48,12 @@ export default class Tasks extends Component {
     const { sortBy } = this.props;
     switch (sortBy) {
       case 'dueDate': {
-        return [...tasks].sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
+        const noDueDate = Date.now();
+        return [...tasks].sort((a, b) => {
+          const dueDateA = a.dueDate ? a.dueDate.toMillis() : noDueDate;
+          const dueDateB = b.dueDate ? b.dueDate.toMillis() : noDueDate;
+          return dueDateA - dueDateB;
+        });
       }
       default: {
         return tasks;

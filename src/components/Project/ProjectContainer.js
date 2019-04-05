@@ -125,7 +125,7 @@ class ProjectContainer extends Component {
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main
-        className={`project-container is-${project.layout}-layout ${
+        className={`project-container project-container--${project.layout} ${
           isTaskEditorOpen ? 'show-task-editor' : ''
         }`}
       >
