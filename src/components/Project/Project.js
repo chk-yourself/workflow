@@ -14,10 +14,21 @@ import { ProjectIcon } from '../ProjectIcon';
 class Project extends Component {
   state = {
     name: this.props.name,
+    prevName: this.props.name,
     isListComposerActive: false,
     isTaskSettingsMenuVisible: false,
     isSortRuleDropdownVisible: false
   };
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.name !== state.prevName) {
+      return {
+        name: props.name,
+        prevName: props.name
+      };
+    }
+    return null;
+  }
 
   toggleListComposer = () => {
     this.setState(prevState => ({

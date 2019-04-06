@@ -1,31 +1,62 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.task-editor__wrapper {
+  padding: 0 16px;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  max-height: calc(100vh - 44px);
+  @include md {
+    max-height: calc(100vh - 158px);
+  }
+  @include xl {
+    max-height: calc(100vh - 164px);
+  }
+}
+
 .task-editor-pane {
   background-color: $white;
   transition: 0.2s ease-out;
-  padding: 16px;
+  padding: 44px 0 16px;
   max-width: 100%;
   width: 100%;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-  overflow-y: auto;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 6;
+  z-index: 7;
   min-height: 100vh;
   max-height: 100vh;
-  -webkit-overflow-scrolling: touch;
   @include md {
     margin-top: 50px;
     height: auto;
     min-height: auto;
     align-self: flex-start;
-    max-width: 400px;
+    max-width: 360px;
     position: relative;
+    flex: 1 0 360px;
+    max-height: calc(100vh - 90px);
+  }
+  @include lg {
+    max-width: 400px;
+    flex: 0 0 400px;
   }
   @include xl {
     margin-top: 56px;
+    max-height: calc(100vh - 96px);
+  }
+}
+
+.header.expand-nav + main {
+  .task-editor-pane {
+    @include md {
+      max-width: 260px;
+      flex: 0 0 260px;
+    }
+    @include lg {
+      max-width: 400px;
+      flex: 0 0 400px;
+    }
   }
 }
 

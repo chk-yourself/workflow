@@ -337,6 +337,7 @@ class TaskEditor extends Component {
           </Button>
           <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
+        <div className="task-editor__wrapper">
         <form
           name="editTaskForm"
           className="task-editor__edit-task-form"
@@ -538,6 +539,7 @@ class TaskEditor extends Component {
             }}
           />
         </TaskEditorSection>
+        </div>
       </TaskEditorWrapper>
     );
   }

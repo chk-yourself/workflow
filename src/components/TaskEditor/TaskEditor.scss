@@ -2,15 +2,35 @@
 @import '../../styles/mixins';
 
 .task-editor {
-  padding: 8px;
+  padding: 44px 0 8px;
   @include xs {
-    padding: 16px;
+    padding: 44px 0 16px;
   }
   @include lg {
-    padding: 24px;
+    padding: 44px 0 24px;
   }
   @include xl {
     max-width: 700px;
+  }
+}
+
+.task-editor__wrapper {
+  width: 100%;
+  padding: 0 8px;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  max-height: calc(100vh - 44px);
+  @include xs {
+    padding: 0 16px;
+  }
+  @include md {
+    max-height: calc(100vh - 158px);
+  }
+  @include lg {
+    padding: 0 24px;
+  }
+  @include xl {
+    max-height: calc(100vh - 164px);
   }
 }
 
@@ -182,7 +202,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 42px;
   min-height: min-content;
 }
 
@@ -483,7 +502,7 @@
 
 .task-editor__subtasks-container {
   width: 100%;
-  background-color: $grey-100;
+  background-color: $grey-000;
   border-radius: 4px;
   padding: 4px 0;
   margin: 0 6px;

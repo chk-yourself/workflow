@@ -58,12 +58,16 @@
     flex: none;
   }
   .project__toolbar {
-    flex: none;
+    position: fixed;
     padding: 8px;
     z-index: 5;
+    width: calc(100% - 16px);
+    max-width: 960px;
+    background-color: $white;
     box-shadow: inset 0px -3px 1px -2px $grey-300;
   }
   .project__lists {
+    margin-top: 44px;
     -webkit-overflow-scrolling: touch;
     display: inline-flex;
     flex-direction: column;
@@ -85,21 +89,31 @@
       left: 200px;
       width: calc(100% - 200px);
     }
-    &.show-task-editor {
-      &--list {
-        @include md {
-          .project {
-            left: 200px;
-          }
-        }
-      }
-    }
   }
   &--board {
     @include md {
       .project__toolbar {
         left: 200px;
         max-width: calc(100% - 200px);
+      }
+    }
+  }
+  &--list {
+    &.show-task-editor {
+      @include md {
+        .project__toolbar {
+          width: calc(100% - 492px);
+        }
+      }
+      @include lg {
+        .project__toolbar {
+          width: calc(100% - 632px);
+        }
+      }
+    }
+    @include md {
+      .project__toolbar {
+        width: calc(100% - 216px);
       }
     }
   }
@@ -111,7 +125,7 @@
   width: 100%;
   position: fixed;
   top: 40px;
-  z-index: 5;
+  z-index: 6;
   padding: 0 4px;
   @include xx {
     width: calc(100% - 48px);
@@ -153,11 +167,19 @@
     }
     &.show-task-editor {
       @include md {
+        .project__toolbar {
+          width: calc(100% - 392px);
+        }
         .project {
           margin-right: 16px;
         }
         .project__input--name {
           width: 100%;
+        }
+      }
+      @include lg {
+        .project__toolbar {
+          width: calc(100% - 432px);
         }
       }
     }
@@ -168,7 +190,8 @@
   background-color: transparent;
   width: 100%;
   height: auto;
-  z-index: 3;
+  z-index: 4;
+  position: relative;
   max-width: calc(100% - 18px);
   &:focus {
     padding-left: 8px;
@@ -191,7 +214,7 @@
   margin: 4px 0;
   line-height: 1.2;
   color: $grey-900;
-  padding: 4px 8px 4px 18px;
+  padding: 4px 8px 4px 26px;
   border: 1px solid transparent;
   font-weight: 600;
   text-align: center;
@@ -201,12 +224,13 @@
   }
   @include xl {
     font-size: 1.4rem;
-    padding: 6px 10px 6px 20px;
+    padding: 6px 10px 6px 28px;
   }
 }
 
 .project__name-wrapper {
   position: absolute;
+  pointer-events: none;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -214,6 +238,9 @@
   height: auto;
   font-size: 0;
   max-width: calc(100% - 18px);
+  span {
+    pointer-events: none;
+  }
 }
 
 .project__name {
@@ -225,7 +252,7 @@
 .project__icon {
   position: absolute;
   top: calc(50% - 6px);
-  left: 0;
+  left: 8px;
 }
 
 .project__btn {

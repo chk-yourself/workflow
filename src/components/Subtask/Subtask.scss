@@ -12,13 +12,14 @@
 .subtask {
   position: relative;
   width: 100%;
-  padding: 0 4px;
+  padding: 4px;
   list-style: none;
   margin-left: auto;
   overflow: visible;
   display: flex;
   vertical-align: middle;
   align-items: center;
+  box-shadow: inset 0px -3px 1px -2px $grey-200;
   &:focus {
     outline: none;
   }
@@ -27,7 +28,7 @@
     background-color: $grey-100;
   }
   &.is-focused {
-    background-color: rgba($grey-300, .5);
+    background-color: rgba($grey-300, 0.5);
   }
 }
 

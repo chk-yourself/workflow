@@ -12,7 +12,6 @@ import { taskSelectors } from '../../ducks/tasks';
 import { generateKey } from '../../utils/react';
 import { withOutsideClick } from '../withOutsideClick';
 import Highlight from './Highlight';
-import * as ROUTES from '../../constants/routes';
 import './SearchTypeahead.scss';
 
 class SearchTypeahead extends Component {
@@ -89,52 +88,59 @@ class SearchTypeahead extends Component {
         break;
       }
       case keys.ENTER: {
-        const { history, selectTask, userId } = this.props;
         if (selectedItem === null) {
           this.handleSubmit(e);
           this.input.blur();
         } else {
-          if (selectedItem.projectId) {
-            history.push(`/0/projects/${selectedItem.projectId}`);
-            if (selectedItem.taskId) {
-              selectTask(selectedItem.taskId);
-            }
-          } else if (selectedItem.taskId) {
-            history.push(`/0/${userId}/tasks`);
-            selectTask(selectedItem.taskId);
+          const { taskId, projectId, name } = selectedItem;
+          if (taskId) {
+            this.openTask({ taskId, projectId });
+          } else if (projectId) {
+            this.openProject(projectId);
           } else {
-            history.push(`/0/tasks?tag=${selectedItem.name}`);
+            this.openTaggedTasks(name);
           }
-          this.reset();
         }
       }
     }
   };
 
   onClickProject = e => {
-    const { history } = this.props;
     if (!e.target.matches('li')) return;
-    history.push(`/0/projects/${e.target.dataset.id}`);
-    this.reset();
+    this.openProject(e.target.dataset.id);
   };
 
   onClickTask = e => {
     if (!e.target.matches('li')) return;
-    const { history, userId, selectTask } = this.props;
-    const { id, projectId } = e.target.dataset;
-    if (projectId) {
-      history.push(`/0/projects/${projectId}`);
-    } else {
-      history.push(`/0/${userId}/tasks`);
-    }
-    selectTask(id);
-    this.reset();
+    const { id: taskId, projectId } = e.target.dataset;
+    this.openTask({ taskId, projectId });
   };
 
   onClickTag = e => {
-    const { history } = this.props;
     if (!e.target.matches('li')) return;
-    history.push(`/0/tasks?tag=${e.target.dataset.id}`);
+    this.openTaggedTasks(e.target.dataset.id);
+  };
+
+  openTaggedTasks = tag => {
+    const { history } = this.props;
+    history.push(`/0/tasks?tag=${tag}`);
+    this.reset();
+  };
+
+  openProject = projectId => {
+    const { history } = this.props;
+    history.push(`/0/projects/${projectId}`);
+    this.reset();
+  };
+
+  openTask = ({ taskId, projectId }) => {
+    const { history, userId, selectTask } = this.props;
+    if (projectId) {
+      this.openProject(projectId);
+    } else {
+      history.push(`/0/${userId}/tasks`);
+    }
+    selectTask(taskId);
     this.reset();
   };
 
@@ -158,7 +164,7 @@ class SearchTypeahead extends Component {
     const { query } = this.state;
     if (query === '') return;
     history.push(`/0/search?q=${query}`);
-    this.toggleSuggestions();
+    this.reset();
   };
 
   onOutsideClick = e => {
