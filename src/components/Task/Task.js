@@ -28,7 +28,9 @@ class Task extends Component {
   state = {
     isFocused: false,
     name: this.props.name,
-    prevPropsName: this.props.name
+    prevPropsName: this.props.name,
+    pointX: null,
+    pointY: null
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -121,6 +123,33 @@ class Task extends Component {
     }
   };
 
+  onMouseDown = e => {
+    const { provided } = this.props;
+    if (provided && provided.dragHandleProps) {
+      provided.dragHandleProps.onMouseDown(e);
+    }
+    if (e.target.matches('input') || e.target.matches('label')) return;
+    this.setState({
+      pointX: e.pageX,
+      pointY: e.pageY
+    });
+  };
+
+  onMouseUp = e => {
+    const { pointX, pointY } = this.state;
+    if (e.pageX === pointX && e.pageY === pointY) {
+      this.textarea.focus();
+    }
+    this.setState({
+      pointX: null,
+      pointY: null
+    });
+  };
+
+  setTextareaRef = ref => {
+    this.textarea = ref;
+  };
+
   render() {
     const {
       taskId,
@@ -130,7 +159,6 @@ class Task extends Component {
       provided,
       dueDate,
       projectId,
-      listName,
       selectedProjectId,
       taskMembers,
       className
@@ -157,6 +185,8 @@ class Task extends Component {
         {...draggableProps}
         {...dragHandleProps}
         onKeyDown={this.onKeyDown}
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}
       >
         <Checkbox
           id={`cb-${taskId}`}
@@ -221,6 +251,7 @@ class Task extends Component {
             )}
           </div>
           <Textarea
+            innerRef={this.setTextareaRef}
             value={name}
             onFocus={this.onFocus}
             onChange={this.onChange}

@@ -15,7 +15,10 @@ class Subtask extends Component {
 
   state = {
     name: this.props.name,
-    isFocused: false
+    isFocused: false,
+    pointX: null,
+    pointY: null,
+    isDragging: false
   };
 
   componentDidMount() {
@@ -37,7 +40,7 @@ class Subtask extends Component {
     this.setState({
       isFocused: true
     });
-  }
+  };
 
   onBlur = () => {
     const { name, firebase, subtaskId } = this.props;
@@ -70,6 +73,25 @@ class Subtask extends Component {
     this.textarea = el;
   };
 
+  onMouseDown = e => {
+    if (e.target.matches('input') || e.target.matches('label')) return;
+    this.setState({
+      pointX: e.pageX,
+      pointY: e.pageY
+    });
+  };
+
+  onMouseUp = e => {
+    const { pointX, pointY } = this.state;
+    if (e.pageX === pointX && e.pageY === pointY) {
+      this.textarea.focus();
+    }
+    this.setState({
+      pointX: null,
+      pointY: null
+    });
+  };
+
   render() {
     const { subtaskId, index, isCompleted, usePortal } = this.props;
     const { name, isFocused } = this.state;
@@ -79,11 +101,18 @@ class Subtask extends Component {
         {(provided, snapshot) => {
           const inner = (
             <li
-              className={`subtask ${snapshot.isDragging ? 'is-dragging' : ''} ${isFocused ? 'is-focused' : ''}`}
+              onMouseUp={this.onMouseUp}
+              className={`subtask ${snapshot.isDragging ? 'is-dragging' : ''} ${
+                isFocused ? 'is-focused' : ''
+              }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              onMouseDown={e => {
+                this.onMouseDown(e);
+                provided.dragHandleProps.onMouseDown(e);
+              }}
             >
-              <DragHandle className="subtask__drag-handle" isActive={snapshot.isDragging} {...provided.dragHandleProps} />
               <Checkbox
                 id={`cb-${subtaskId}`}
                 value={subtaskId}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { Task } from '../Task';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { taskSelectors } from '../../ducks/tasks';
 import {
   selectTask as selectTaskAction,
   getSelectedTaskId
@@ -13,6 +13,13 @@ import { Icon } from '../Icon';
 import './SearchResults.scss';
 
 class SearchResults extends Component {
+  componentWillUnmount() {
+    const { selectedTaskId, selectTask } = this.props;
+    if (selectedTaskId) {
+      selectTask(null);
+    }
+  }
+
   onTaskClick = taskId => {
     const { selectTask } = this.props;
     selectTask(taskId);

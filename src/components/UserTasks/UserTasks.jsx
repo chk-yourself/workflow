@@ -36,6 +36,10 @@ class UserTasks extends Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+    const { selectedTaskId, selectTask } = this.props;
+    if (selectedTaskId) {
+      selectTask(null);
+    }
   }
 
   closeTaskEditor = () => {
@@ -218,7 +222,7 @@ class UserTasks extends Component {
     if (isLoading) return null;
     return (
       <Main
-        title="All Tasks"
+        title="My Tasks"
         classes={{
           main: `user-tasks__container ${
             isTaskEditorOpen ? 'show-task-editor' : ''

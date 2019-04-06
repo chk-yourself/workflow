@@ -46,16 +46,13 @@ class ProjectContainer extends Component {
   }
 
   componentWillUnmount() {
-    const { selectProject } = this.props;
+    const { selectProject, selectTask, selectedTaskId } = this.props;
     selectProject(null);
+    if (selectedTaskId) {
+      selectTask(null);
+    }
     this.unsubscribe.forEach(func => func());
   }
-
-  onDragStart = () => {
-    this.setState({
-      isDragging: true
-    });
-  };
 
   onDragEnd = ({ destination, draggableId, source, type }) => {
     if (!destination) return;

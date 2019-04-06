@@ -102,6 +102,9 @@
     background-color: rgba($white, 0.85);
     box-shadow: none;
   }
+  &:before {
+    box-shadow: none;
+  }
 }
 
 .dashboard__project-grid {

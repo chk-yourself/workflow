@@ -28,6 +28,12 @@ class Subtasks extends Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
   moveSubtask = ({ destination, draggableId, source }) => {
     if (!destination) return;
     if (destination.index === source.index) return;
@@ -39,12 +45,6 @@ class Subtasks extends Component {
       subtaskIds: updatedSubtaskIds
     });
   };
-
-  componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-  }
 
   render() {
     const { taskId, subtasks, usePortal } = this.props;

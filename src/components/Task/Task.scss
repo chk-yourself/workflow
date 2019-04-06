@@ -6,7 +6,6 @@
   list-style-type: none;
   margin-left: auto;
   overflow: visible;
-  box-shadow: inset 0px -3px 1px -2px $grey-200;
   position: relative;
   padding: 2px 4px;
   display: flex;
@@ -14,19 +13,30 @@
   background-color: $white;
   &:focus,
   &.is-focused {
-    box-shadow: inset 0px -3px 1px -2px rgba($primary, 0.8);
+    box-shadow: inset 0px -3px 1px -2px rgba($primary, 0.8),
+      inset 0px 3px 1px -2px rgba($primary, 0.8);
     outline: none;
+    &:before {
+      z-index: 0;
+      box-shadow: none;
+    }
   }
   // Prevent task textarea focus on mobile for smoother transition to task editor
   &::before {
     content: '';
+    cursor: pointer;
     display: block;
     position: absolute;
     top: 0;
-    left: 38px;
     height: 100%;
+    z-index: 3;
+    box-shadow: inset 0px -2px 1px -1px $grey-200;
+    left: 38px;
     width: calc(100% - 38px);
-    z-index: 2;
+    @include md {
+      left: 44px;
+      width: calc(100% - 44px);
+    }
   }
   .task__avatar {
     width: 19px;
@@ -39,11 +49,6 @@
   .task__avatar-placeholder {
     font-size: 9px;
     font-weight: 600;
-  }
-  @include sm {
-    &::before {
-      display: none;
-    }
   }
   @include md {
     padding: 2px 8px;
