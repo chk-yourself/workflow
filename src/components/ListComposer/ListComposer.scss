@@ -37,6 +37,7 @@
       display: flex;
       border-radius: 4px;
       padding: 6px 0;
+      border: 1px solid transparent;
     }
     .list-composer__footer {
       margin-left: 4px;
@@ -61,7 +62,8 @@
         }
       }
       .list-composer__form {
-        background-color: $haze;
+        border-color: $grey-600;
+        box-shadow: inset 0 1px $grey-300;
         padding: 6px;
       }
     }
