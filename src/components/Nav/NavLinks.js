@@ -30,7 +30,7 @@ export const NavLinksAuth = ({ userId, onClick }) => (
     </li>
     <li className="sidebar__item">
       <NavLink onClick={onClick} className="sidebar__link" to={`/0/${userId}/tasks`}>
-        <SidebarIcon name="check-square" />
+        <SidebarIcon name="check-circle" />
         <span className="sidebar__section-name">Tasks</span>
       </NavLink>
     </li>

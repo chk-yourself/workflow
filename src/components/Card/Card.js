@@ -113,7 +113,7 @@ class Card extends Component {
                 </CardDetail>
               )}
               {subtaskIds && subtaskIds.length > 0 && (
-                <CardDetail icon="check-square">
+                <CardDetail icon="check-circle">
                   {completedSubtasks.length}/{subtaskIds.length}
                 </CardDetail>
               )}

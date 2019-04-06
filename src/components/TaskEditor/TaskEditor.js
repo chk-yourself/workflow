@@ -471,7 +471,7 @@ class TaskEditor extends Component {
         <TaskEditorSection>
           <div className="task-editor__section-header">
             <div className="task-editor__section-icon">
-              <Icon name="check-square" />
+              <Icon name="check-circle" />
             </div>
             <h3 className="task-editor__section-title">
               {hasSubtasks && (

@@ -52,8 +52,12 @@
   top: calc(50% - 8px);
   left: calc(50% - 8px);
   border: 2px solid $grey-500;
-  border-radius: 4px;
+  border-radius: 50%;
   display: inline-block;
+  &:checked {
+    background-color: $success;
+    border: 2px solid $success;
+  }
 }
 
 .subtask__checkbox-label {
@@ -69,6 +73,8 @@
     left: calc(50% - 5px);
     top: calc(50% - 5px);
     stroke-width: 4px;
+    color: $white;
+    z-index: 2;
   }
 }
 

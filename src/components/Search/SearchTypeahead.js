@@ -278,7 +278,7 @@ class SearchTypeahead extends Component {
               query={query}
               renderMatch={item => (
                 <>
-                  <Icon name="check-square" />
+                  <Icon name="check-circle" />
                   {this.highlightMatch(item)}
                 </>
               )}
