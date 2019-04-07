@@ -266,12 +266,12 @@
   z-index: 5;
 }
 
-.project__task-settings-wrapper {
+.project__settings-wrapper {
   display: inline-block;
   z-index: 4;
 }
 
-.project__task-settings {
+.project__settings {
   background-color: $white;
   border: 1px solid $grey-300;
   border-radius: 4px;
@@ -281,15 +281,7 @@
   @include box-shadow(2);
 }
 
-.project__task-settings-item {
-  text-transform: capitalize;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: $grey-800;
-}
-
-.project__task-settings-btn {
+.project__settings-btn {
   width: 28px;
   height: 28px;
   padding: 0;

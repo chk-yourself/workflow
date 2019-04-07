@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { taskSelectors } from '../../ducks/tasks';
 import { listActions } from '../../ducks/lists';
 import { projectSelectors } from '../../ducks/projects';
 import { TaskComposer } from '../TaskComposer';
@@ -145,20 +145,15 @@ class List extends Component {
                 />
               </div>
               {provided.placeholder}
-              {isBoardView ? (
-                <CardComposer
-                  listId={listId}
-                  listName={listName}
-                  projectId={projectId}
-                  projectName={projectName}
-                />
-              ) : (
-                <TaskComposer
-                  listId={listId}
-                  listName={listName}
-                  projectId={projectId}
-                  projectName={projectName}
-                />
+              {createElement(
+                isBoardView ? CardComposer : TaskComposer,
+                {
+                  listId,
+                  listName,
+                  projectId,
+                  projectName
+                },
+                null
               )}
             </section>
             {provided.placeholder}

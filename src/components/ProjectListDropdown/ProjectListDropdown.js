@@ -1,36 +1,41 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dropdown } from '../Dropdown';
+import { SelectDropdown } from '../SelectDropdown';
 import { projectSelectors, projectActions } from '../../ducks/projects';
 
 class ProjectListDropdown extends Component {
   state = {
-    isLoadingLists: !this.props.projectLoadedState.lists
+    isLoading: !this.props.isLoaded
   };
 
   async componentDidMount() {
-    const { projectLoadedState, fetchProjectLists, projectId } = this.props;
-    const { lists: isLoaded } = projectLoadedState;
+    const { isLoaded, fetchProjectLists, projectId } = this.props;
 
     if (!isLoaded) {
       await fetchProjectLists(projectId);
       this.setState({
-        isLoadingLists: false
+        isLoading: false
       });
     }
   }
 
   render() {
-    const { isLoadingLists } = this.state;
-    const { isActive, onToggle, onChange, lists, selectedList, classes } = this.props;
+    const { isLoading } = this.state;
+    const { onChange, lists, selectedList, classes } = this.props;
+    if (isLoading) return null;
     return (
-      <Dropdown
-        options={
-          !isLoadingLists
-            ? lists.map(list => ({ value: list.listId, label: list.name }))
-            : []
-        }
-        selectedOption={selectedList}
+      <SelectDropdown
+        options={lists.reduce(
+          (listsById, list) => ({
+            ...listsById,
+            [list.listId]: {
+              value: list.listId,
+              name: list.name
+            }
+          }),
+          {}
+        )}
+        value={selectedList}
         name="list"
         align={{ inner: 'right' }}
         onChange={onChange}
@@ -43,11 +48,8 @@ class ProjectListDropdown extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     lists: projectSelectors.getProjectLists(state, ownProps.projectId),
-    projectsById: projectSelectors.getProjectsById(state),
-    projectLoadedState: projectSelectors.getProjectLoadedState(
-      state,
-      ownProps.projectId
-    )
+    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId)
+      .lists
   };
 };
 

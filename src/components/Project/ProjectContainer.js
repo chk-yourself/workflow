@@ -118,11 +118,12 @@ class ProjectContainer extends Component {
       project,
       tempProjectSettings
     } = this.props;
+    const { layout } = tempProjectSettings;
     const isTaskEditorOpen = !!selectedTaskId;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main
-        className={`project-container project-container--${project.layout} ${
+        className={`project-container project-container--${layout} ${
           isTaskEditorOpen ? 'show-task-editor' : ''
         }`}
       >
@@ -145,7 +146,7 @@ class ProjectContainer extends Component {
                     taskIds={taskIds}
                     onTaskClick={this.handleTaskClick}
                     projectId={projectId}
-                    layout={project.layout}
+                    layout={layout}
                     isRestricted={false}
                   />
                 );
@@ -157,7 +158,7 @@ class ProjectContainer extends Component {
               {...selectedTask}
               handleTaskEditorClose={this.closeTaskEditor}
               userId={userId}
-              layout={project.layout}
+              layout={layout}
             />
           )}
         </div>

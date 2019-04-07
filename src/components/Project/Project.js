@@ -7,7 +7,8 @@ import { ListComposer } from '../ListComposer';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Toolbar } from '../Toolbar';
-import { TaskSettings } from '../TaskSettings';
+import { Icon } from '../Icon';
+import { Settings } from '../Settings';
 import { projectActions } from '../../ducks/projects';
 import { ProjectIcon } from '../ProjectIcon';
 
@@ -16,7 +17,7 @@ class Project extends Component {
     name: this.props.name,
     prevName: this.props.name,
     isListComposerActive: false,
-    isTaskSettingsMenuVisible: false,
+    isProjectSettingsActive: false,
     isSortRuleDropdownVisible: false
   };
 
@@ -64,6 +65,7 @@ class Project extends Component {
   saveProjectSettings = () => {
     const { firebase, projectId, tempProjectSettings } = this.props;
     firebase.updateDoc(['projects', projectId], {
+      [`settings.layout`]: tempProjectSettings.layout,
       [`settings.tasks.view`]: tempProjectSettings.tasks.view,
       [`settings.tasks.sortBy`]: tempProjectSettings.tasks.sortBy
     });
@@ -85,10 +87,10 @@ class Project extends Component {
 
   toggleTaskSettingsMenu = e => {
     this.setState(prevState => ({
-      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
+      isProjectSettingsActive: !prevState.isProjectSettingsActive,
       isSortRuleDropdownVisible:
         prevState.isSortRuleDropdownVisible &&
-        prevState.isTaskSettingsMenuVisible
+        prevState.isProjectSettingsActive
           ? !prevState.isSortRuleDropdownVisible
           : prevState.isSortRuleDropdownVisible
     }));
@@ -96,7 +98,7 @@ class Project extends Component {
 
   closeTaskSettingsMenu = () => {
     this.setState({
-      isTaskSettingsMenuVisible: false,
+      isProjectSettingsActive: false,
       isSortRuleDropdownVisible: false
     });
   };
@@ -114,21 +116,21 @@ class Project extends Component {
   };
 
   render() {
-    const { projectId, color, children, layout, tempSettings } = this.props;
+    const { projectId, color, children, tempSettings } = this.props;
+    const { layout } = tempSettings;
 
     const {
       name,
       isListComposerActive,
-      isTaskSettingsMenuVisible,
-      isSortRuleDropdownVisible
+      isProjectSettingsActive
     } = this.state;
     return (
       <div className={`project project--${layout}`}>
         <div className="project__header">
           <div className="project__header-content">
             <div className="project__name-wrapper">
-            <ProjectIcon className="project__icon" color={color} />
-            <span className="project__name">{name}</span>
+              <ProjectIcon className="project__icon" color={color} />
+              <span className="project__name">{name}</span>
             </div>
             <Input
               className="project__input--name"
@@ -143,51 +145,64 @@ class Project extends Component {
           </div>
         </div>
         <Toolbar className="project__toolbar">
-              <Button
-                className="project__btn project__btn--add-list"
-                onClick={this.activateListComposer}
-                color="primary"
-                variant="contained"
-                size="sm"
-              >
-                Add List
-              </Button>
-              <TaskSettings
-                isVisible={isTaskSettingsMenuVisible}
-                onToggle={this.toggleTaskSettingsMenu}
-                onClose={this.closeTaskSettingsMenu}
-                onSave={this.saveProjectSettings}
-                classes={{
-                  wrapper: 'project__task-settings-wrapper',
-                  popover: 'project__task-settings',
-                  item: 'project__task-settings-item',
-                  button: 'project__task-settings-btn'
-                }}
-                filters={[
-                  {
-                    filter: 'view',
-                    options: [
-                      { value: 'active', name: 'Active Tasks' },
-                      { value: 'completed', name: 'Completed Tasks' },
-                      { value: 'all', name: 'All Tasks' }
-                    ],
-                    value: tempSettings.tasks.view,
-                    onChange: this.setTempProjectSettings
-                  }
-                ]}
-                sortRule={{
-                  options: [
-                    { value: 'none', name: 'None' },
-                    { value: 'dueDate', name: 'Due Date' }
-                  ],
-                  value: tempSettings.tasks.sortBy,
-                  onChange: this.setTempProjectSettings,
-                  isDropdownVisible: isSortRuleDropdownVisible,
-                  toggleDropdown: this.toggleSortRuleDropdown,
-                  hideDropdown: this.hideSortRuleDropdown
-                }}
-              />
-            </Toolbar>
+          <Button
+            className="project__btn project__btn--add-list"
+            onClick={this.activateListComposer}
+            color="primary"
+            variant="contained"
+            size="sm"
+          >
+            Add List
+          </Button>
+          <Settings
+            icon="sliders"
+            isActive={isProjectSettingsActive}
+            onToggle={this.toggleTaskSettingsMenu}
+            onClose={this.closeTaskSettingsMenu}
+            onSave={this.saveProjectSettings}
+            classes={{
+              wrapper: 'project__settings-wrapper',
+              settings: 'project__settings',
+              button: 'project__settings-btn'
+            }}
+            settings={[
+              {
+                name: 'View',
+                key: 'view',
+                type: 'radio',
+                options: {
+                  active: { value: 'active', name: 'Active Tasks' },
+                  completed: { value: 'completed', name: 'Completed Tasks' },
+                  all: { value: 'all', name: 'All Tasks' }
+                },
+                value: tempSettings.tasks.view,
+                onChange: this.setTempProjectSettings
+              },
+              {
+                name: 'Sort By',
+                key: 'sortBy',
+                type: 'select',
+                options: {
+                  none: { value: 'none', name: 'None' },
+                  dueDate: { value: 'dueDate', name: 'Due Date' }
+                },
+                value: tempSettings.tasks.sortBy,
+                onChange: this.setTempProjectSettings
+              },
+              {
+                name: 'Layout',
+                key: 'layout',
+                type: 'select',
+                options: {
+                  board: { value: 'board', name: 'Board' },
+                  list: { value: 'list', name: 'List' }
+                },
+                value: tempSettings.layout,
+                onChange: this.setTempProjectSettings
+              }
+            ]}
+          />
+        </Toolbar>
         <Droppable
           droppableId={projectId}
           type={droppableTypes.LIST}
@@ -218,9 +233,14 @@ class Project extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setTempProjectSettings: ({ projectId, view, sortBy }) =>
+    setTempProjectSettings: ({ projectId, view, sortBy, layout }) =>
       dispatch(
-        projectActions.setTempProjectSettings({ projectId, view, sortBy })
+        projectActions.setTempProjectSettings({
+          projectId,
+          view,
+          sortBy,
+          layout
+        })
       )
   };
 };

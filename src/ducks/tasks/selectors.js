@@ -44,20 +44,6 @@ export const getFolderTasks = (state, taskIds) => {
   return tasks;
 };
 
-export const getSimpleTasks = (state, taskIds) => {
-  const { tasksById } = state;
-  if (!taskIds) return {};
-
-  return taskIds.reduce((tasks, taskId) => {
-    const { name, isCompleted } = tasksById[taskId];
-    tasks[taskId] = {
-      name,
-      isCompleted
-    };
-    return tasks;
-  }, {});
-};
-
 export const getTaskTags = (state, ownProps) => {
   const { projectId, tags: taskTags } = ownProps;
   const { projectsById, currentUser } = state;

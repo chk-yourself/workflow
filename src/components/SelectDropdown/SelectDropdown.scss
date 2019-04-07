@@ -1,11 +1,11 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.dropdown__wrapper {
+.select-dropdown__wrapper {
   z-index: 4;
 }
 
-.dropdown__menu {
+.select-dropdown__menu {
   background-color: $white;
   @include box-shadow(2);
   min-width: 132px;
@@ -14,7 +14,7 @@
   border: 1px solid $grey-300;
 }
 
-.dropdown__btn--toggle {
+.select-dropdown__btn--toggle {
   padding: 4px 16px 4px 4px;
   min-height: 0;
   position: relative;
@@ -32,9 +32,9 @@
   }
 }
 
-.dropdown__radio {
+.select-dropdown__option {
   display: none;
-  &:checked + .dropdown__label {
+  &:checked + .select-dropdown__label {
     color: $primary;
     &:hover {
       color: $white;
@@ -42,7 +42,7 @@
   }
 }
 
-.dropdown__label {
+.select-dropdown__label {
   position: relative;
   display: inline-block;
   padding: 6px 8px 6px 30px;

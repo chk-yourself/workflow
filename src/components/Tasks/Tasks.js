@@ -75,23 +75,32 @@ export default class Tasks extends Component {
       folderId,
       layout,
       dropType,
-      viewFilter,
-      sortBy
+      sortBy,
+      viewFilter
     } = this.props;
     const isBoardLayout = layout === 'board';
+    const isDefaultSettings = viewFilter === 'all' && sortBy === 'none';
 
-    const inner = this.applyTaskSettings(tasks).map((task, taskIndex) => {
+    const inner = this.applyTaskSettings(tasks).map((task, i) => {
       return isBoardLayout ? (
         <Card
           key={task.taskId}
-          taskIndex={taskIndex}
+          index={
+            isDefaultSettings
+              ? i
+              : tasks.findIndex(item => item.taskId === task.taskId)
+          }
           onCardClick={onTaskClick}
           {...task}
         />
       ) : (
         <DraggableTask
           key={task.taskId}
-          index={taskIndex}
+          index={
+            isDefaultSettings
+              ? i
+              : tasks.findIndex(item => item.taskId === task.taskId)
+          }
           onTaskClick={onTaskClick}
           listId={listId}
           folderId={folderId}

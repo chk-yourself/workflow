@@ -40,7 +40,7 @@ class Card extends Component {
     const {
       name,
       taskId,
-      taskIndex,
+      index,
       taskTags,
       commentIds,
       dueDate,
@@ -60,7 +60,7 @@ class Card extends Component {
     const isDueTmrw = dueDateStr === 'Tomorrow';
     const isPastDue = dueDate && isPriorDate(dueDate.toDate());
     return (
-      <Draggable draggableId={taskId} index={taskIndex}>
+      <Draggable draggableId={taskId} index={index}>
         {provided => (
           <div
             className="card"

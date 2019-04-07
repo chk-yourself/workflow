@@ -28,7 +28,6 @@ import { MemberAssigner } from '../MemberAssigner';
 import { NotesEditor } from '../NotesEditor';
 import { debounce } from '../../utils/function';
 
-
 const TaskEditorWrapper = ({
   layout,
   handleTaskEditorClose,
@@ -291,7 +290,6 @@ class TaskEditor extends Component {
       projectId,
       completedSubtasks,
       layout,
-      listName,
       listId,
       isCompleted,
       notes
@@ -338,207 +336,208 @@ class TaskEditor extends Component {
           <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
         </Toolbar>
         <div className="task-editor__wrapper">
-        <form
-          name="editTaskForm"
-          className="task-editor__edit-task-form"
-        >
-          <Textarea
-            className="task-editor__textarea--title"
-            name="name"
-            value={name}
-            onChange={this.onChange}
-            required
-            onBlur={this.onBlur}
-          />
-          {projectId && (
-            <TaskEditorSection size="sm">
-              <div className="task-editor__project-name">
-                <ProjectBadge
-                  projectId={projectId}
-                  size="md"
-                  variant="icon"
-                  classes={{
-                    badge: 'task-editor__project-badge',
-                    icon: 'task-editor__project-badge-icon'
-                  }}
-                />
+          <form name="editTaskForm" className="task-editor__edit-task-form">
+            <Textarea
+              className="task-editor__textarea--title"
+              name="name"
+              value={name}
+              onChange={this.onChange}
+              required
+              onBlur={this.onBlur}
+            />
+            {projectId && (
+              <TaskEditorSection size="sm">
+                <div className="task-editor__project-name">
+                  <ProjectBadge
+                    projectId={projectId}
+                    size="md"
+                    variant="icon"
+                    classes={{
+                      badge: 'task-editor__project-badge',
+                      icon: 'task-editor__project-badge-icon'
+                    }}
+                  />
+                </div>
+                <div className="task-editor__list-name">
+                  <ProjectListDropdown
+                    classes={{
+                      button: 'task-editor__project-list-dropdown-btn--toggle',
+                      menu: 'task-editor__project-list-dropdown-menu'
+                    }}
+                    projectId={projectId}
+                    selectedList={listId}
+                    onChange={this.moveToList}
+                  />
+                </div>
+              </TaskEditorSection>
+            )}
+            <TaskEditorSection>
+              <Button
+                onClick={this.toggleDatePicker}
+                type="button"
+                className={`task-editor__btn--due-date ${
+                  isDatePickerActive ? 'is-active' : ''
+                }`}
+              >
+                <span className="task-editor__due-date-icon">
+                  <Icon name="calendar" />
+                </span>
+                <span className="task-editor__due-date-wrapper">
+                  {!dueDate ? (
+                    <span className="task-editor__no-due-date">
+                      Set due date
+                    </span>
+                  ) : (
+                    <>
+                      <span className="task-editor__section-title--sm">
+                        Due Date
+                      </span>
+                      <span
+                        className={`task-editor__due-date ${
+                          isDueToday
+                            ? 'is-due-today'
+                            : isDueTmrw
+                            ? 'is-due-tmrw'
+                            : isPastDue
+                            ? 'is-past-due'
+                            : ''
+                        }`}
+                      >
+                        {dueDateStr}
+                      </span>
+                    </>
+                  )}
+                </span>
+              </Button>
+              <DatePicker
+                innerRef={el => (this.datePickerEl = el)}
+                onClose={this.toggleDatePicker}
+                selectedDate={dueDate ? taskDueDate : null}
+                currentMonth={taskDueDate.month}
+                currentYear={taskDueDate.year}
+                selectDate={this.setDueDate}
+                isActive={isDatePickerActive}
+              />
+            </TaskEditorSection>
+            <TaskEditorSection>
+              <div className="task-editor__section-icon">
+                <Icon name="user" />
               </div>
-              <div className="task-editor__list-name">
-                <ProjectListDropdown
-                  classes={{
-                    button: 'task-editor__project-list-dropdown-btn--toggle',
-                    menu: 'task-editor__project-list-dropdown-menu'
-                  }}
-                  projectId={projectId}
-                  selectedList={{ value: listId, label: listName }}
-                  onChange={this.moveToList}
+              <div className="task-editor__members">
+                <MemberAssigner
+                  classes={{ memberAssigner: 'task-editor__member-assigner' }}
+                  placeholder="Assign or remove member"
+                  memberIds={assignedTo}
+                  onSelectMember={this.assignMember}
+                  memberSearchIsDisabled={!projectId}
                 />
               </div>
             </TaskEditorSection>
-          )}
+            <TaskEditorSection>
+              <div className="task-editor__section-icon">
+                <Icon name="tag" />
+              </div>
+              <TagsInput
+                addTag={this.addTag}
+                tagSuggestions={mergedTags}
+                assignedTags={taskTags}
+                hideColorPicker={this.hideColorPicker}
+                isColorPickerActive={isColorPickerActive}
+                setTagColor={this.setTagColor}
+                removeTag={this.removeTag}
+                currentTag={currentTag}
+              />
+            </TaskEditorSection>
+            <TaskEditorSection>
+              <div className="task-editor__section-icon">
+                <Icon name="edit-3" />
+              </div>
+              <NotesEditor
+                placeholder="Add a description"
+                type="task"
+                key={`notes--${taskId}`}
+                id={taskId}
+                value={notes}
+                classes={{
+                  editor:
+                    'task-editor__textarea task-editor__textarea--description'
+                }}
+              />
+            </TaskEditorSection>
+          </form>
           <TaskEditorSection>
-            <Button
-              onClick={this.toggleDatePicker}
-              type="button"
-              className={`task-editor__btn--due-date ${
-                isDatePickerActive ? 'is-active' : ''
-              }`}
-            >
-              <span className="task-editor__due-date-icon">
-                <Icon name="calendar" />
-              </span>
-              <span className="task-editor__due-date-wrapper">
-                {!dueDate ? (
-                  <span className="task-editor__no-due-date">Set due date</span>
-                ) : (
-                  <>
-                    <span className="task-editor__section-title--sm">
-                      Due Date
-                    </span>
-                    <span
-                      className={`task-editor__due-date ${
-                        isDueToday
-                          ? 'is-due-today'
-                          : isDueTmrw
-                          ? 'is-due-tmrw'
-                          : isPastDue
-                          ? 'is-past-due'
-                          : ''
-                      }`}
-                    >
-                      {dueDateStr}
-                    </span>
-                  </>
+            <div className="task-editor__section-header">
+              <div className="task-editor__section-icon">
+                <Icon name="check-circle" />
+              </div>
+              <h3 className="task-editor__section-title">
+                {hasSubtasks && (
+                  <span className="task-editor__section-detail">
+                    {completedSubtasks.length}/{subtaskIds.length}
+                  </span>
                 )}
-              </span>
-            </Button>
-            <DatePicker
-              innerRef={el => (this.datePickerEl = el)}
-              onClose={this.toggleDatePicker}
-              selectedDate={dueDate ? taskDueDate : null}
-              currentMonth={taskDueDate.month}
-              currentYear={taskDueDate.year}
-              selectDate={this.setDueDate}
-              isActive={isDatePickerActive}
-            />
-          </TaskEditorSection>
-          <TaskEditorSection>
-            <div className="task-editor__section-icon">
-              <Icon name="user" />
+                Subtasks
+              </h3>
+              <hr className="task-editor__hr" />
             </div>
-            <div className="task-editor__members">
-              <MemberAssigner
-                classes={{ memberAssigner: 'task-editor__member-assigner'}}
-                placeholder="Assign or remove member"
-                memberIds={assignedTo}
-                onSelectMember={this.assignMember}
-                memberSearchIsDisabled={!projectId}
+            <div className="task-editor__subtasks-container">
+              {hasSubtasks && (
+                <Subtasks
+                  taskId={taskId}
+                  subtaskIds={subtaskIds}
+                  projectId={projectId}
+                  usePortal={layout === 'board' && viewportWidth >= 576}
+                />
+              )}
+              <SubtaskComposer
+                taskId={taskId}
+                projectId={projectId}
+                classes={{
+                  composer: 'task-editor__subtask-composer',
+                  iconWrapper: 'task-editor__subtask-composer-icon-wrapper',
+                  form: 'task-editor__new-subtask-form',
+                  textarea: 'task-editor__textarea--new-subtask',
+                  button: 'task-editor__btn--add-subtask'
+                }}
               />
             </div>
           </TaskEditorSection>
-          <TaskEditorSection>
-            <div className="task-editor__section-icon">
-              <Icon name="tag" />
+          <TaskEditorSection className="comments">
+            <div className="task-editor__section-header">
+              <div className="task-editor__section-icon">
+                <Icon name="message-circle" />
+              </div>
+              <h3 className="task-editor__section-title">
+                {hasComments && (
+                  <span className="task-editor__section-detail">
+                    {commentIds.length}
+                  </span>
+                )}
+                {hasComments && commentIds.length === 1
+                  ? 'Comment'
+                  : 'Comments'}
+              </h3>
+              <hr className="task-editor__hr" />
             </div>
-            <TagsInput
-              addTag={this.addTag}
-              tagSuggestions={mergedTags}
-              assignedTags={taskTags}
-              hideColorPicker={this.hideColorPicker}
-              isColorPickerActive={isColorPickerActive}
-              setTagColor={this.setTagColor}
-              removeTag={this.removeTag}
-              currentTag={currentTag}
-            />
-          </TaskEditorSection>
-          <TaskEditorSection>
-            <div className="task-editor__section-icon">
-              <Icon name="edit-3" />
-            </div>
-            <NotesEditor
-              placeholder="Add a description"
-              type="task"
-              key={`notes--${taskId}`}
-              id={taskId}
-              value={notes}
+
+            {hasComments && (
+              <div className="task-editor__comments">
+                <Comments taskId={taskId} commentIds={commentIds} />
+              </div>
+            )}
+            <CommentComposer
+              key={`comment-composer--${taskId}`}
+              id={`comment-composer--${taskId}`}
+              taskId={taskId}
+              projectId={projectId}
               classes={{
-                editor:
-                  'task-editor__textarea task-editor__textarea--description'
+                avatar: 'task-editor__avatar',
+                avatarPlaceholder: 'task-editor__avatar-placeholder',
+                composer: 'task-editor__comment-composer',
+                button: 'task-editor__btn--submit-comment'
               }}
             />
           </TaskEditorSection>
-        </form>
-        <TaskEditorSection>
-          <div className="task-editor__section-header">
-            <div className="task-editor__section-icon">
-              <Icon name="check-circle" />
-            </div>
-            <h3 className="task-editor__section-title">
-              {hasSubtasks && (
-                <span className="task-editor__section-detail">
-                  {completedSubtasks.length}/{subtaskIds.length}
-                </span>
-              )}
-              Subtasks
-            </h3>
-            <hr className="task-editor__hr" />
-          </div>
-          <div className="task-editor__subtasks-container">
-          {hasSubtasks && (
-            <Subtasks
-              taskId={taskId}
-              subtaskIds={subtaskIds}
-              projectId={projectId}
-              usePortal={layout === 'board' && viewportWidth >= 576}
-            />
-          )}
-          <SubtaskComposer
-            taskId={taskId}
-            projectId={projectId}
-            classes={{
-              composer: 'task-editor__subtask-composer',
-              iconWrapper: 'task-editor__subtask-composer-icon-wrapper',
-              form: 'task-editor__new-subtask-form',
-              textarea: 'task-editor__textarea--new-subtask',
-              button: 'task-editor__btn--add-subtask'
-            }}
-          />
-          </div>
-        </TaskEditorSection>
-        <TaskEditorSection className="comments">
-          <div className="task-editor__section-header">
-            <div className="task-editor__section-icon">
-              <Icon name="message-circle" />
-            </div>
-            <h3 className="task-editor__section-title">
-              {hasComments && (
-                <span className="task-editor__section-detail">
-                  {commentIds.length}
-                </span>
-              )}
-              {hasComments && commentIds.length === 1 ? 'Comment' : 'Comments'}
-            </h3>
-            <hr className="task-editor__hr" />
-          </div>
-
-          {hasComments && (
-            <div className="task-editor__comments">
-              <Comments taskId={taskId} commentIds={commentIds} />
-            </div>
-          )}
-          <CommentComposer
-            key={`comment-composer--${taskId}`}
-            id={`comment-composer--${taskId}`}
-            taskId={taskId}
-            projectId={projectId}
-            classes={{
-              avatar: 'task-editor__avatar',
-              avatarPlaceholder: 'task-editor__avatar-placeholder',
-              composer: 'task-editor__comment-composer',
-              button: 'task-editor__btn--submit-comment'
-            }}
-          />
-        </TaskEditorSection>
         </div>
       </TaskEditorWrapper>
     );

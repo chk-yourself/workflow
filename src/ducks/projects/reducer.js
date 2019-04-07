@@ -90,13 +90,14 @@ const projectsById = (state = {}, action) => {
       };
     }
     case types.SET_TEMP_PROJECT_SETTINGS: {
-      const { projectId, view, sortBy } = action;
+      const { projectId, view, sortBy, layout } = action;
       return {
         ...state,
         [projectId]: {
           ...state[projectId],
           tempSettings: {
             ...state[projectId].tempSettings,
+            layout: layout || state[projectId].tempSettings.layout,
             tasks: {
               ...state[projectId].tempSettings.tasks,
               view: view || state[projectId].tempSettings.tasks.view,
