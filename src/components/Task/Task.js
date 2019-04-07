@@ -16,7 +16,6 @@ import { getSelectedProjectId } from '../../ducks/selectedProject';
 import { Badge } from '../Badge';
 import { ProjectBadge } from '../ProjectBadge';
 import { toDateString, isPriorDate } from '../../utils/date';
-import { ListBadge } from '../ListBadge';
 import { Avatar } from '../Avatar';
 import './Task.scss';
 
@@ -137,7 +136,7 @@ class Task extends Component {
 
   onMouseUp = e => {
     const { pointX, pointY } = this.state;
-    if (e.pageX === pointX && e.pageY === pointY) {
+    if (e.pageX === pointX && e.pageY === pointY && window.innerWidth >= 768) {
       this.textarea.focus();
     }
     this.setState({

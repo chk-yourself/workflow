@@ -2,6 +2,7 @@
 @import '../../styles/mixins';
 
 .list-composer {
+  flex: none;
   width: 272px;
   min-width: 272px;
   margin: 0 6px;
@@ -23,7 +24,7 @@
     margin: 0;
     background-color: transparent;
     border-radius: 0;
-   // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
     .list-composer__input {
       border: none;
       margin-bottom: 0;
@@ -44,7 +45,7 @@
       flex: none;
     }
     .list-composer__btn {
-       padding: 10px 6px;
+      padding: 10px 6px;
     }
     .list-composer__btn--icon {
       border: none;

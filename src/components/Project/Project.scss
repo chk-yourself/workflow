@@ -120,6 +120,7 @@
 }
 
 .project__header {
+  flex: none;
   background-color: $cloud;
   left: 0;
   width: 100%;
@@ -127,6 +128,13 @@
   top: 40px;
   z-index: 6;
   padding: 0 4px;
+  height: 42px;
+  @include md {
+    height: 50px;
+  }
+  @include xl {
+    height: 56px;
+  }
   @include xx {
     width: calc(100% - 48px);
     left: 48px;
