@@ -8,15 +8,15 @@ self.__precacheManifest = [
     "url": "/workflow/static/js/runtime~main.9e0b4b3e.js"
   },
   {
-    "revision": "f05837927310543fcfc1",
-    "url": "/workflow/static/js/main.d6ba7d4c.chunk.js"
+    "revision": "8cc48d5caf449dc7895d",
+    "url": "/workflow/static/js/main.d547d479.chunk.js"
   },
   {
     "revision": "71345d888c6dc120d235",
     "url": "/workflow/static/js/2.c19e4c6b.chunk.js"
   },
   {
-    "revision": "f05837927310543fcfc1",
+    "revision": "8cc48d5caf449dc7895d",
     "url": "/workflow/static/css/main.5d462123.chunk.css"
   },
   {
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/workflow/static/css/2.e64e4d6c.chunk.css"
   },
   {
-    "revision": "088838ac4c2cfb49d5c9b59a0a35bf68",
+    "revision": "2f0109b1905cc54d967c6478d7154bb6",
     "url": "/workflow/index.html"
   }
 ];
