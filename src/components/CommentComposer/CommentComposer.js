@@ -62,8 +62,8 @@ class CommentComposer extends Component {
           }}
           isMentionsEnabled
           mentions={{
-            list: users,
-            map: usersById
+            users,
+            usersById
           }}
           addOns={[
             {

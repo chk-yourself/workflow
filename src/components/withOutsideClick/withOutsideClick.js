@@ -12,7 +12,7 @@ const withOutsideClick = WrappedComponent => {
 
     componentDidMount() {
       document.addEventListener('touchstart', this.handleTouch);
-      document.addEventListener('click', this.handleOutsideClick, false);
+      document.addEventListener('mousedown', this.handleOutsideClick, false);
     }
 
     componentWillUnmount() {
@@ -20,7 +20,7 @@ const withOutsideClick = WrappedComponent => {
       if (isTouchEnabled) {
         document.removeEventListener('touchstart', this.handleOutsideClick);
       } else {
-        document.removeEventListener('click', this.handleOutsideClick);
+        document.removeEventListener('mousedown', this.handleOutsideClick);
         document.removeEventListener('touchstart', this.handleTouch);
       }
     }
@@ -34,7 +34,7 @@ const withOutsideClick = WrappedComponent => {
       // remove touch handler to prevent unnecessary refires
       document.removeEventListener('touchstart', this.handleTouch);
       // remove outside click handler from click events
-      document.removeEventListener('click', this.handleOutsideClick);
+      document.removeEventListener('mousedown', this.handleOutsideClick);
       // reattach outside click handler to touchstart events
       document.addEventListener('touchstart', this.handleOutsideClick);
     };

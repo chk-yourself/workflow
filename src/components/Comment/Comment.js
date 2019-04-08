@@ -6,7 +6,6 @@ import { currentUserSelectors } from '../../ducks/currentUser';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { Avatar } from '../Avatar';
-import { toDateString } from '../../utils/date';
 import { CommentEditor } from '../CommentEditor';
 import { Timestamp } from '../Timestamp';
 import './Comment.scss';

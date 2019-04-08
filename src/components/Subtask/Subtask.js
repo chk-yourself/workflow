@@ -4,7 +4,6 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
 import { withFirebase } from '../Firebase';
-import { DragHandle } from '../DragHandle';
 import * as keys from '../../constants/keys';
 import './Subtask.scss';
 

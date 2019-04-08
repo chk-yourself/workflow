@@ -17,8 +17,7 @@ class Project extends Component {
     name: this.props.name,
     prevName: this.props.name,
     isListComposerActive: false,
-    isProjectSettingsActive: false,
-    isSortRuleDropdownVisible: false
+    isProjectSettingsActive: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -69,7 +68,7 @@ class Project extends Component {
       [`settings.tasks.view`]: tempProjectSettings.tasks.view,
       [`settings.tasks.sortBy`]: tempProjectSettings.tasks.sortBy
     });
-    this.closeTaskSettingsMenu();
+    this.closeSettingsMenu();
   };
 
   setTempProjectSettings = e => {
@@ -80,38 +79,17 @@ class Project extends Component {
       projectId,
       [name]: value
     });
-    if (name === 'sortBy') {
-      this.hideSortRuleDropdown();
-    }
   };
 
-  toggleTaskSettingsMenu = e => {
+  toggleSettingsMenu = e => {
     this.setState(prevState => ({
-      isProjectSettingsActive: !prevState.isProjectSettingsActive,
-      isSortRuleDropdownVisible:
-        prevState.isSortRuleDropdownVisible &&
-        prevState.isProjectSettingsActive
-          ? !prevState.isSortRuleDropdownVisible
-          : prevState.isSortRuleDropdownVisible
+      isProjectSettingsActive: !prevState.isProjectSettingsActive
     }));
   };
 
-  closeTaskSettingsMenu = () => {
+  closeSettingsMenu = () => {
     this.setState({
-      isProjectSettingsActive: false,
-      isSortRuleDropdownVisible: false
-    });
-  };
-
-  toggleSortRuleDropdown = () => {
-    this.setState(prevState => ({
-      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
-    }));
-  };
-
-  hideSortRuleDropdown = () => {
-    this.setState({
-      isSortRuleDropdownVisible: false
+      isProjectSettingsActive: false
     });
   };
 
@@ -119,11 +97,7 @@ class Project extends Component {
     const { projectId, color, children, tempSettings } = this.props;
     const { layout } = tempSettings;
 
-    const {
-      name,
-      isListComposerActive,
-      isProjectSettingsActive
-    } = this.state;
+    const { name, isListComposerActive, isProjectSettingsActive } = this.state;
     return (
       <div className={`project project--${layout}`}>
         <div className="project__header">
@@ -157,8 +131,8 @@ class Project extends Component {
           <Settings
             icon="sliders"
             isActive={isProjectSettingsActive}
-            onToggle={this.toggleTaskSettingsMenu}
-            onClose={this.closeTaskSettingsMenu}
+            onToggle={this.toggleSettingsMenu}
+            onClose={this.closeSettingsMenu}
             onSave={this.saveProjectSettings}
             classes={{
               wrapper: 'project__settings-wrapper',

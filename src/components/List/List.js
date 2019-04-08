@@ -161,7 +161,6 @@ class List extends Component {
               </header>
               <div className="list__content">
                 <Tasks
-                  sortBy={sortBy}
                   tasks={tasks}
                   listId={listId}
                   onTaskClick={onTaskClick}

@@ -50,8 +50,8 @@ class NotesEditor extends Component {
         }}
         isMentionsEnabled
         mentions={{
-          list: users,
-          map: usersById
+          users,
+          usersById
         }}
         marks={[
           {
@@ -75,7 +75,7 @@ class NotesEditor extends Component {
         ]}
         blocks={[
           {
-            type: 'bulleted-list',
+            type: 'unordered-list',
             icon: 'list'
           }
         ]}

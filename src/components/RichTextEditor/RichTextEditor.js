@@ -47,7 +47,10 @@ class RichTextEditor extends Component {
       : Value.fromJSON(initialValue),
     isMentionsListVisible: false,
     query: '',
-    isFocused: false
+    isFocused: false,
+    userSuggestions: this.props.mentions.users,
+    selectedMember: '',
+    selectedIndex: null
   };
 
   isEmpty = () => {
@@ -76,8 +79,10 @@ class RichTextEditor extends Component {
 
   hasBlock = type => {
     const { value } = this.state;
-    if (['numbered-list', 'bulleted-list'].includes(type)) {
-      const { value: { document, blocks } } = this.state;
+    if (['ordered-list', 'unordered-list'].includes(type)) {
+      const {
+        value: { document, blocks }
+      } = this.state;
       if (blocks.size === 0) return false;
       const parent = document.getParent(blocks.first().key);
       return this.hasBlock('list-item') && parent && parent.type === type;
@@ -111,8 +116,10 @@ class RichTextEditor extends Component {
         return <p {...attributes}>{children}</p>;
       case 'block-quote':
         return <blockquote {...attributes}>{children}</blockquote>;
-      case 'bulleted-list':
+      case 'unordered-list':
         return <ul {...attributes}>{children}</ul>;
+      case 'ordered-list':
+        return <ol {...attributes}>{children}</ol>;
       case 'heading-one':
         return <h1 {...attributes}>{children}</h1>;
       case 'heading-two':
@@ -158,6 +165,51 @@ class RichTextEditor extends Component {
       }
       editor.toggleMark(mark);
       e.preventDefault();
+    } else if (
+      (isMentionsListVisible && e.key === keys.TAB) ||
+      e.key === keys.ARROW_DOWN ||
+      e.key === keys.ARROW_UP ||
+      e.key === keys.ENTER
+    ) {
+      const {
+        userSuggestions,
+        selectedIndex,
+        selectedMember,
+        query
+      } = this.state;
+      const lastIndex = userSuggestions.length - 1;
+      const nextIndex = selectedIndex === lastIndex ? 0 : selectedIndex + 1;
+      const prevIndex = selectedIndex === 0 ? lastIndex : selectedIndex - 1;
+      switch (e.key) {
+        case keys.TAB:
+        case keys.ARROW_DOWN: {
+          this.setState({
+            selectedMember: !query
+              ? userSuggestions[0].userId
+              : userSuggestions[nextIndex].userId,
+            selectedIndex: !query ? 0 : nextIndex
+          });
+          break;
+        }
+        case keys.ARROW_UP: {
+          this.setState({
+            selectedMember: !query
+              ? userSuggestions[lastIndex].userId
+              : userSuggestions[prevIndex].userId,
+            selectedIndex: !query ? lastIndex : prevIndex
+          });
+          break;
+        }
+        case keys.ENTER: {
+          if (selectedMember === '') return next();
+          this.insertMention(selectedMember);
+          break;
+        }
+        default: {
+          return next();
+        }
+      }
+      e.preventDefault();
     } else {
       const firstText = document.getFirstText();
       const nextText = document.getNextText(firstText.key);
@@ -177,12 +229,17 @@ class RichTextEditor extends Component {
               } else {
                 editor.unwrapBlock(parent.type);
               }
+              e.preventDefault();
             }
           } else {
             editor.deleteBackward();
-          if (isMentionsEnabled && isMentionsListVisible && lastChar === '@') {
-            setTimeout(this.toggleMentionsList, 0);
-          }
+            if (
+              isMentionsEnabled &&
+              isMentionsListVisible &&
+              lastChar === '@'
+            ) {
+              setTimeout(this.toggleMentionsList, 0);
+            }
           }
           break;
         }
@@ -198,10 +255,35 @@ class RichTextEditor extends Component {
   };
 
   onChange = ({ value }) => {
+    const { mentions } = this.props;
+    const { users } = mentions;
+    const { selectedMember } = this.state;
+    const query = this.getMention(value);
+    const userSuggestions = query
+      ? users.filter(user => this.matchUser(user, query))
+      : users;
+    const newIndex = userSuggestions.findIndex(
+      mention => mention.userId === selectedMember
+    );
+    const persistSelectedMember = newIndex !== -1;
     this.setState({
       value,
-      query: this.getMention(value)
+      query,
+      userSuggestions,
+      selectedMember: persistSelectedMember
+        ? selectedMember
+        : userSuggestions.length > 0
+        ? userSuggestions[0].userId
+        : '',
+      selectedIndex: persistSelectedMember ? newIndex : 0
     });
+  };
+
+  matchUser = (user, query) => {
+    if (query === '') return false;
+    const { name, email, username } = user;
+    const regExp = new RegExp(query, 'i');
+    return regExp.test(name) || regExp.test(email) || regExp.test(username);
   };
 
   onClickMark = e => {
@@ -239,38 +321,37 @@ class RichTextEditor extends Component {
     const { value } = editor;
     const { document } = value;
 
-    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+    if (type !== 'unordered-list' && type !== 'ordered-list') {
       const isActive = this.hasBlock(type);
       const isList = this.hasBlock('list-item');
-      
+
       if (isList) {
-        editor.setBlocks(isActive ? DEFAULT_BLOCK : type)
-          .setBlocks()
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
+        editor
+          .setBlocks(isActive ? DEFAULT_BLOCK : type)
+          .unwrapBlock('unordered-list')
+          .unwrapBlock('ordered-list');
       } else {
         editor.setBlocks(isActive ? DEFAULT_BLOCK : type);
       }
     } else {
-
-      const isList = this.hasBlock('list-item')
+      const isList = this.hasBlock('list-item');
       const isType = value.blocks.some(block => {
-        return !!document.getClosest(block.key, parent => parent.type === type)
-      })
+        return !!document.getClosest(block.key, parent => parent.type === type);
+      });
 
       if (isList && isType) {
         editor
           .setBlocks(DEFAULT_BLOCK)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list')
+          .unwrapBlock('unordered-list')
+          .unwrapBlock('ordered-list');
       } else if (isList) {
         editor
           .unwrapBlock(
-            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+            type === 'unordered-list' ? 'ordered-list' : 'unordered-list'
           )
-          .wrapBlock(type)
+          .wrapBlock(type);
       } else {
-        editor.setBlocks('list-item').wrapBlock(type)
+        editor.setBlocks('list-item').wrapBlock(type);
       }
     }
   };
@@ -314,22 +395,33 @@ class RichTextEditor extends Component {
     }, 0);
   };
 
+  onClick = (event, editor, next) => {
+    if (editor.value.selection.isBlurred) {
+      editor.moveToRangeOfDocument().focus();
+    } else {
+      return next();
+    }
+  };
+
   onFocus = e => {
     console.log('focus');
-    this.toggleFocus();
+    setTimeout(() => {
+      this.setState({
+        isFocused: true
+      });
+    }, 0);
   };
 
   onBlur = (e, editor, next) => {
     console.log('on blur');
-    const { isFocused } = this.state;
     const { value: prevValue, onBlur } = this.props;
-    this.removeFocus();
     if (prevValue !== undefined && this.hasChanges() && onBlur) {
       const { value } = this.state;
       onBlur(value, e);
+    } else {
+      return next();
     }
   };
-
 
   onUpdate = e => {
     e.preventDefault();
@@ -343,8 +435,8 @@ class RichTextEditor extends Component {
 
   insertMention = userId => {
     const { mentions } = this.props;
-    const { map } = mentions;
-    const user = map[userId];
+    const { usersById } = mentions;
+    const user = usersById[userId];
     const { query } = this.state;
 
     this.editor.deleteBackward(query.length + 1);
@@ -375,9 +467,12 @@ class RichTextEditor extends Component {
 
     setTimeout(() => {
       this.setState({
-        query: ''
+        query: '',
+        userSuggestions: this.props.mentions.users,
+        selectedMember: '',
+        selectedIndex: null,
+        isMentionsListVisible: false
       });
-      this.toggleMentionsList();
     }, 0);
   };
 
@@ -408,6 +503,11 @@ class RichTextEditor extends Component {
     const { isFocused } = this.state;
     if (!this.editor || !isFocused) return;
     this.editor.blur();
+    setTimeout(() => {
+      this.setState({
+        isFocused: false
+      });
+    }, 0);
   };
 
   render() {
@@ -424,7 +524,13 @@ class RichTextEditor extends Component {
       isReadOnly,
       innerRef
     } = this.props;
-    const { value, isMentionsListVisible, query, isFocused } = this.state;
+    const {
+      value,
+      isMentionsListVisible,
+      query,
+      isFocused,
+      selectedMember
+    } = this.state;
     return (
       <div
         ref={innerRef}
@@ -496,6 +602,7 @@ class RichTextEditor extends Component {
           ref={this.ref}
           value={value}
           placeholder={placeholder}
+          onClick={this.onClick}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
           onChange={this.onChange}
@@ -510,9 +617,10 @@ class RichTextEditor extends Component {
             key={`member-search--${id}`}
             query={query}
             isActive={isMentionsListVisible}
-            users={mentions.list}
+            users={mentions.users}
             placeholder=""
             assignedMembers={[]}
+            selectedMember={selectedMember}
             onSelectMember={this.insertMention}
             type="hidden"
             classes={{
