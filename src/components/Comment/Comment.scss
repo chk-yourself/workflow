@@ -11,22 +11,39 @@
   width: 100%;
 }
 
+.comment__details {
+  display: inline-flex;
+  align-items: baseline;
+  flex: auto;
+}
+
 .comment__header {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  @include sm {
+    margin-bottom: 6px;
+  }
 }
 
 .comment__timestamp {
-  font-size: 11px;
+  font-size: 9px;
   color: $grey-600;
+  @include sm {
+    font-size: 11px;
+  }
 }
 
 .comment__name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   margin-right: 8px;
   color: $grey-900;
+  @include sm {
+    font-size: 14px;
+  }
 }
 
 .comment__content {
@@ -36,21 +53,33 @@
 
 .comment__likes {
   min-width: 0;
-  padding: 2px 14px 2px 0;
+  padding: 0 14px 0 0;
   position: relative;
   color: $grey-700;
   .feather {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     color: $grey-700;
+    vertical-align: top;
+  }
+  @include sm {
+    padding-right: 16px;
+    .feather {
+      width: 13px;
+      height: 13px;
+    }
   }
 }
 
 .comment__likes-counter {
-  font-size: 11px;
+  font-size: 9px;
   position: absolute;
-  left: 18px;
+  top: 0;
+  left: 14px;
   font-weight: 600;
+  @include sm {
+    left: 15px;
+  }
 }
 
 .comment__avatar {

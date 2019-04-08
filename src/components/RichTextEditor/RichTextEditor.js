@@ -383,18 +383,6 @@ class RichTextEditor extends Component {
     }));
   };
 
-  toggleFocus = () => {
-    const { isFocused } = this.state;
-    setTimeout(() => {
-      this.setState(prevState => ({
-        isFocused: !prevState.isFocused
-      }));
-      if (this.editor && !isFocused) {
-        this.editor.focus();
-      }
-    }, 0);
-  };
-
   onClick = (event, editor, next) => {
     if (editor.value.selection.isBlurred) {
       editor.moveToRangeOfDocument().focus();
