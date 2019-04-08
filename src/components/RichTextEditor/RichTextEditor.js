@@ -166,10 +166,11 @@ class RichTextEditor extends Component {
       editor.toggleMark(mark);
       e.preventDefault();
     } else if (
-      (isMentionsListVisible && e.key === keys.TAB) ||
+      isMentionsListVisible && 
+        (e.key === keys.TAB ||
       e.key === keys.ARROW_DOWN ||
       e.key === keys.ARROW_UP ||
-      e.key === keys.ENTER
+      e.key === keys.ENTER)
     ) {
       const {
         userSuggestions,
@@ -238,7 +239,15 @@ class RichTextEditor extends Component {
               isMentionsListVisible &&
               lastChar === '@'
             ) {
-              setTimeout(this.toggleMentionsList, 0);
+              setTimeout(() => {
+                this.setState({
+                  query: '',
+                  userSuggestions: this.props.mentions.users,
+                  selectedMember: '',
+                  selectedIndex: null,
+                  isMentionsListVisible: false
+                });
+              }, 0);
             }
           }
           break;
