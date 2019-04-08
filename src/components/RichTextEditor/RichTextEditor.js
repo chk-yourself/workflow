@@ -415,6 +415,12 @@ class RichTextEditor extends Component {
   onBlur = (e, editor, next) => {
     console.log('on blur');
     const { value: prevValue, onBlur } = this.props;
+    setTimeout(() => {
+      this.setState({
+        isFocused: false,
+        isMentionsListVisible: false
+      });
+    }, 0);
     if (prevValue !== undefined && this.hasChanges() && onBlur) {
       const { value } = this.state;
       onBlur(value, e);
@@ -503,12 +509,14 @@ class RichTextEditor extends Component {
     const { isFocused } = this.state;
     if (!this.editor || !isFocused) return;
     this.editor.blur();
+    /*
     setTimeout(() => {
       this.setState({
         isFocused: false,
         isMentionsListVisible: false
       });
     }, 0);
+    */
   };
 
   render() {
