@@ -216,6 +216,7 @@ class RichTextEditor extends Component {
       const nextText = document.getNextText(firstText.key);
       switch (e.key) {
         case keys.BACKSPACE: {
+          e.preventDefault();
           if (firstText.text === '' && !nextText) {
             if (this.hasBlock('list-item')) {
               const parent = document.getParent(value.focusBlock.key);
@@ -230,7 +231,6 @@ class RichTextEditor extends Component {
               } else {
                 editor.unwrapBlock(parent.type);
               }
-              e.preventDefault();
             }
           } else {
             editor.deleteBackward();
@@ -395,15 +395,6 @@ class RichTextEditor extends Component {
     }, 0);
   };
 
-  removeFocus = () => {
-    const { isFocused } = this.state;
-    setTimeout(() => {
-      this.setState(() => ({
-        isFocused: false
-      }));
-    }, 0);
-  };
-
   onClick = (event, editor, next) => {
     if (editor.value.selection.isBlurred) {
       editor.moveToRangeOfDocument().focus();
@@ -514,7 +505,8 @@ class RichTextEditor extends Component {
     this.editor.blur();
     setTimeout(() => {
       this.setState({
-        isFocused: false
+        isFocused: false,
+        isMentionsListVisible: false
       });
     }, 0);
   };

@@ -4,11 +4,10 @@ import { withFirebase } from '../Firebase';
 import { Comment } from '../Comment';
 import { commentActions, commentSelectors } from '../../ducks/comments';
 import { taskSelectors } from '../../ducks/tasks';
-import { getSelectedProjectId } from '../../ducks/selectedProject';
 
 class Comments extends Component {
   state = {
-    isLoading: !this.props.isLoaded.comments
+    isLoading: !this.props.isLoaded
   };
 
   async componentDidMount() {
@@ -26,7 +25,7 @@ class Comments extends Component {
   }
 
   render() {
-    const { taskId, comments } = this.props;
+    const { comments } = this.props;
     const { isLoading } = this.state;
     if (isLoading) return null;
     return comments.length > 0 ? comments.map(comment => (
@@ -41,7 +40,7 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.commentIds
     ),
-    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId)
+    isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId).comments
   };
 };
 
