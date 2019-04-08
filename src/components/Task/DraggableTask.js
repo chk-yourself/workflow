@@ -8,9 +8,10 @@ const DraggableTask = ({
   onTaskClick,
   listId,
   folderId,
-  task
+  task,
+  isDragDisabled
 }) => (
-  <Draggable draggableId={taskId} index={index}>
+  <Draggable draggableId={taskId} index={index} isDragDisabled={isDragDisabled}>
     {(provided, snapshot) => (
       <Task
         innerRef={provided.innerRef}
@@ -23,5 +24,9 @@ const DraggableTask = ({
     )}
   </Draggable>
 );
+
+DraggableTask.defaultProps = {
+  isDragDisabled: false
+};
 
 export default DraggableTask;

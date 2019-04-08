@@ -19,7 +19,13 @@ input[type='checkbox'] {
     position: absolute;
     left: calc(50% - 8px);
     top: calc(50% - 8px);
+    visibility: hidden;
     color: $primary;
+  }
+  &.is-checked {
+    .feather {
+      visibility: visible;
+    }
   }
 }
 

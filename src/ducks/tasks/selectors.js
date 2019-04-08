@@ -74,3 +74,89 @@ export const getTaggedTasks = (state, tag) => {
       return task.tags && task.tags.includes(tag);
     });
 };
+
+export const getTasksByViewFilter = (state, taskIds) => {
+  const { tasksById } = state;
+  return taskIds.reduce(
+    (tasksByView, taskId) => {
+      const task = tasksById[taskId];
+      const { all, completed, active } = tasksByView;
+      if (task) {
+        return task.isCompleted
+          ? {
+              active,
+              all: [...all, task],
+              completed: [...completed, task]
+            }
+          : {
+              completed,
+              all: [...all, task],
+              active: [...active, task]
+            };
+      }
+      return tasksByView;
+    },
+    {
+      all: [],
+      completed: [],
+      active: []
+    }
+  );
+};
+
+export const getTaskIdsByViewFilter = (state, { listId, folderId }) => {
+  const { tasksById, listsById, currentUser } = state;
+  const taskIds = listId
+    ? listsById[listId].taskIds
+    : currentUser.folders[folderId].taskIds;
+  return taskIds.reduce(
+    (taskIdsByView, taskId) => {
+      const task = tasksById[taskId];
+      const { completed, active } = taskIdsByView;
+      if (task) {
+        return task.isCompleted
+          ? {
+              ...taskIdsByView,
+              completed: [...completed, taskId]
+            }
+          : {
+              ...taskIdsByView,
+              active: [...active, taskId]
+            };
+      }
+      return taskIdsByView;
+    },
+    {
+      all: taskIds,
+      completed: [],
+      active: []
+    }
+  );
+};
+
+export const getSortedTaskIds = (state, taskIds, sortBy) => {
+  const { tasksById } = state;
+  switch (sortBy) {
+    case 'dueDate': {
+      return [...taskIds].sort((a, b) => {
+        const taskA = tasksById[a];
+        const taskB = tasksById[b];
+        const dueDateA = taskA.dueDate ? taskA.dueDate.toMillis() : null;
+        const dueDateB = taskB.dueDate ? taskB.dueDate.toMillis() : null;
+        if (!dueDateA && dueDateB) {
+          return 1;
+        }
+        if (dueDateA && !dueDateB) {
+          return -1;
+        }
+        if (!dueDateA && !dueDateB) {
+          return 0;
+        }
+        return dueDateA - dueDateB;
+      });
+    }
+    default: {
+      return taskIds;
+    }
+  }
+};

@@ -9,7 +9,8 @@ import {
 import { taskSelectors } from '../../ducks/tasks';
 import {
   selectTask as selectTaskAction,
-  getSelectedTaskId
+  getSelectedTaskId,
+  getSelectedTask
 } from '../../ducks/selectedTask';
 import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../Folder';
@@ -60,27 +61,18 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, currentUser, tasksById } = this.props;
-    const { userId, folders, folderIds, tempSettings } = currentUser;
+    const { firebase, currentUser, state } = this.props;
+    const { userId, folderIds, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
     switch (type) {
       case droppableTypes.TASK: {
         const { droppableId: origFolderId, index: origIndex } = source;
         const { droppableId: newFolderId, index: newIndex } = destination;
         const isMovedWithinFolder = origFolderId === newFolderId;
-        const taskIds = [...folders[newFolderId].taskIds];
-        const completedTaskIds = taskIds.filter(
-          taskId => tasksById[taskId].isCompleted
-        );
-        const activeTaskIds = taskIds.filter(
-          taskId => !tasksById[taskId].isCompleted
-        );
-        const updatedTaskIds =
-          view === 'all'
-            ? taskIds
-            : view === 'active'
-            ? activeTaskIds
-            : completedTaskIds;
+        const taskIdsByView = taskSelectors.getTaskIdsByViewFilter(state, {
+          folderId: newFolderId
+        });
+        const updatedTaskIds = [...taskIdsByView[view]];
 
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
@@ -90,8 +82,8 @@ class UserTasks extends Component {
               view === 'all'
                 ? updatedTaskIds
                 : view === 'active'
-                ? [...completedTaskIds, ...updatedTaskIds]
-                : [...activeTaskIds, ...updatedTaskIds]
+                ? [...taskIdsByView.completed, ...updatedTaskIds]
+                : [...updatedTaskIds, ...taskIdsByView.active]
           });
         } else {
           updatedTaskIds.splice(newIndex, 0, draggableId);
@@ -104,8 +96,8 @@ class UserTasks extends Component {
               view === 'all'
                 ? updatedTaskIds
                 : view === 'active'
-                ? [...completedTaskIds, ...updatedTaskIds]
-                : [...activeTaskIds, ...updatedTaskIds],
+                ? [...taskIdsByView.completed, ...updatedTaskIds]
+                : [...updatedTaskIds, ...taskIdsByView.active],
             type: sortBy === 'folder' ? 'default' : sortBy
           });
         }
@@ -126,19 +118,10 @@ class UserTasks extends Component {
         const { droppableId: origFolderId, index: origIndex } = source;
         const { droppableId: newFolderId, index: newIndex } = destination;
         const isMovedWithinFolder = origFolderId === newFolderId;
-        const taskIds = [...folders[newFolderId].taskIds];
-        const completedTaskIds = taskIds.filter(
-          taskId => tasksById[taskId].isCompleted
-        );
-        const activeTaskIds = taskIds.filter(
-          taskId => !tasksById[taskId].isCompleted
-        );
-        const updatedTaskIds =
-          view === 'all'
-            ? taskIds
-            : view === 'active'
-            ? activeTaskIds
-            : completedTaskIds;
+        const taskIdsByView = taskSelectors.getTaskIdsByViewFilter(state, {
+          folderId: newFolderId
+        });
+        const updatedTaskIds = [...taskIdsByView[view]];
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
@@ -147,8 +130,8 @@ class UserTasks extends Component {
               view === 'all'
                 ? updatedTaskIds
                 : view === 'active'
-                ? [...completedTaskIds, ...updatedTaskIds]
-                : [...activeTaskIds, ...updatedTaskIds]
+                ? [...taskIdsByView.completed, ...updatedTaskIds]
+                : [...updatedTaskIds, ...taskIdsByView.active]
           });
         }
       }
@@ -209,7 +192,12 @@ class UserTasks extends Component {
   };
 
   render() {
-    const { currentUser, selectedTaskId, tasksById, taskGroups } = this.props;
+    const {
+      currentUser,
+      selectedTaskId,
+      selectedTask,
+      taskGroups
+    } = this.props;
     const { userId, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
     const {
@@ -279,7 +267,8 @@ class UserTasks extends Component {
                   />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${sortBy}-${taskGroup[sortBy] || taskGroup[`${sortBy}Id`]}`}
+                      key={`${sortBy}-${taskGroup[sortBy] ||
+                        taskGroup[`${sortBy}Id`]}`}
                       userId={userId}
                       folderId={taskGroup.folderId}
                       projectId={taskGroup.projectId}
@@ -299,7 +288,7 @@ class UserTasks extends Component {
           </DragDropContext>
           {isTaskEditorOpen && (
             <TaskEditor
-              {...tasksById[selectedTaskId]}
+              {...selectedTask}
               handleTaskEditorClose={this.closeTaskEditor}
               userId={userId}
               layout="list"
@@ -314,9 +303,10 @@ class UserTasks extends Component {
 
 const mapStateToProps = state => {
   return {
-    taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state),
-    tasksById: taskSelectors.getTasksById(state),
-    selectedTaskId: getSelectedTaskId(state)
+    state,
+    selectedTask: getSelectedTask(state),
+    selectedTaskId: getSelectedTaskId(state),
+    taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state)
   };
 };
 

@@ -199,7 +199,7 @@ export const getSortedFilteredTaskGroups = state => {
               userPermissions: {
                 enableNameChange: false,
                 enableTaskAdd: false,
-                enableDragNDrop: true
+                enableDragNDrop: false
               }
             };
           }

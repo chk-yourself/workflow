@@ -17,9 +17,9 @@ const Checkbox = ({
     <label
       htmlFor={id}
       onClick={onClick}
-      className={`checkbox__label ${labelClass}`}
+      className={`checkbox__label ${isChecked ? 'is-checked' : ''} ${labelClass}`}
     >
-      {isChecked && <Icon name="check" />}
+      <Icon name="check" />
       <input
         type="checkbox"
         id={id}

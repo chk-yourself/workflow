@@ -6,7 +6,8 @@ import { DraggableTask } from '../Task';
 
 export default class Tasks extends Component {
   static defaultProps = {
-    dropType: droppableTypes.TASK
+    dropType: droppableTypes.TASK,
+    isDragDisabled: false
   };
 
   /*
@@ -29,42 +30,6 @@ export default class Tasks extends Component {
     this.listEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
-  applyViewFilter = tasks => {
-    const { viewFilter } = this.props;
-    switch (viewFilter) {
-      case 'completed': {
-        return tasks.filter(task => task.isCompleted);
-      }
-      case 'active': {
-        return tasks.filter(task => !task.isCompleted);
-      }
-      default: {
-        return tasks;
-      }
-    }
-  };
-
-  applySortRule = tasks => {
-    const { sortBy } = this.props;
-    switch (sortBy) {
-      case 'dueDate': {
-        const noDueDate = Date.now();
-        return [...tasks].sort((a, b) => {
-          const dueDateA = a.dueDate ? a.dueDate.toMillis() : noDueDate;
-          const dueDateB = b.dueDate ? b.dueDate.toMillis() : noDueDate;
-          return dueDateA - dueDateB;
-        });
-      }
-      default: {
-        return tasks;
-      }
-    }
-  };
-
-  applyTaskSettings = tasks => {
-    return this.applySortRule(this.applyViewFilter(tasks));
-  };
-
   render() {
     const {
       listId,
@@ -75,32 +40,18 @@ export default class Tasks extends Component {
       folderId,
       layout,
       dropType,
-      sortBy,
-      viewFilter
+      isDragDisabled
     } = this.props;
     const isBoardLayout = layout === 'board';
-    const isDefaultSettings = viewFilter === 'all' && sortBy === 'none';
 
-    const inner = this.applyTaskSettings(tasks).map((task, i) => {
+    const inner = tasks.map((task, i) => {
       return isBoardLayout ? (
-        <Card
-          key={task.taskId}
-          index={
-            isDefaultSettings
-              ? i
-              : tasks.findIndex(item => item.taskId === task.taskId)
-          }
-          onCardClick={onTaskClick}
-          {...task}
-        />
+        <Card key={task.taskId} index={i} onCardClick={onTaskClick} {...task} />
       ) : (
         <DraggableTask
           key={task.taskId}
-          index={
-            isDefaultSettings
-              ? i
-              : tasks.findIndex(item => item.taskId === task.taskId)
-          }
+          isDragDisabled={isDragDisabled}
+          index={i}
           onTaskClick={onTaskClick}
           listId={listId}
           folderId={folderId}

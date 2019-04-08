@@ -18,7 +18,8 @@ class Folder extends Component {
   static defaultProps = {
     userPermissions: {
       enableNameChange: false,
-      enableTaskAdd: true
+      enableTaskAdd: true,
+      enableDragnDrop: true
     }
   };
 
@@ -135,6 +136,7 @@ class Folder extends Component {
                   projectId={projectId}
                   dueDate={dueDate}
                   onTaskClick={onTaskClick}
+                  isDragDisabled={!userPermissions.enableDragNDrop}
                   dropType={!userPermissions.enableTaskAdd ? (projectId || folderId || dueDate) : droppableTypes.TASK }
                   layout="list"
                 />

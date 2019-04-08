@@ -62,9 +62,34 @@ class List extends Component {
     });
   };
 
+  applySortRule = tasks => {
+    const { sortBy } = this.props;
+    switch (sortBy) {
+      case 'dueDate': {
+        return [...tasks].sort((a, b) => {
+          const dueDateA = a.dueDate ? a.dueDate.toMillis() : null;
+          const dueDateB = b.dueDate ? b.dueDate.toMillis() : null;
+          if (!dueDateA && dueDateB) {
+            return 1;
+          }
+          if (dueDateA && !dueDateB) {
+            return -1;
+          }
+          if (!dueDateA && !dueDateB) {
+            return 0;
+          }
+          return dueDateA - dueDateB;
+        });
+      }
+      default: {
+        return tasks;
+      }
+    }
+  };
+
   render() {
     const {
-      tasks,
+      tasksByViewFilter,
       name: listName,
       onTaskClick,
       listId,
@@ -80,8 +105,8 @@ class List extends Component {
     if (isFetchingTasks) return null;
 
     const isBoardView = layout === 'board';
-
     const { name, isMoreActionsMenuVisible } = this.state;
+    const tasks = this.applySortRule(tasksByViewFilter[viewFilter]);
 
     return (
       <Draggable draggableId={listId} index={index}>
@@ -136,7 +161,6 @@ class List extends Component {
               </header>
               <div className="list__content">
                 <Tasks
-                  viewFilter={viewFilter}
                   sortBy={sortBy}
                   tasks={tasks}
                   listId={listId}
@@ -168,7 +192,7 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasks: taskSelectors.getListTasks(state, ownProps.taskIds),
+    tasksByViewFilter: taskSelectors.getTasksByViewFilter(state, ownProps.taskIds),
     projectName: projectSelectors.getProjectName(state, ownProps.projectId)
   };
 };
