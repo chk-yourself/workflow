@@ -209,7 +209,7 @@ class TaskEditor extends Component {
 
   onOutsideClick = e => {
     const { handleTaskEditorClose } = this.props;
-    if (e.target.matches('.member-search__item')) return;
+    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item')) return;
     handleTaskEditorClose();
   };
 

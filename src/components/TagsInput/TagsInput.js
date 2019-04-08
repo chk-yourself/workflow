@@ -154,6 +154,7 @@ class TagsInput extends Component {
   };
 
   onOutsideClick = e => {
+    if (e.target.matches('.tags-input__item')) return;
     this.setState({
       isActive: false
     });
@@ -231,6 +232,13 @@ class TagsInput extends Component {
     this.currentTag = ref;
   };
 
+  onClickSuggestion = e => {
+    if (!e.target.matches('.tags-input__item')) return;
+    const { tag } = e.target.dataset;
+    this.reset();
+    this.addTag(tag);
+  };
+
   render() {
     const { assignedTags, innerRef } = this.props;
     const {
@@ -294,6 +302,9 @@ class TagsInput extends Component {
                 return (
                   <li
                     key={item.name}
+                    data-tag={item.name}
+                    onClick={this.onClickSuggestion}
+                    tabIndex={0}
                     className={`tags-input__item ${
                       selectedTag === item.name ? 'is-selected' : ''
                     } ${
@@ -304,7 +315,7 @@ class TagsInput extends Component {
                   >
                     {!hasExactMatch && i === filteredList.length - 1 ? (
                       <>
-                        <h4 className="tags-input__item--heading">New Tag</h4>
+                        <span className="tags-input__item--heading">New Tag</span>
                         <span className="tags-input__item--name">
                           {item.name}
                         </span>
