@@ -305,29 +305,23 @@ export const getTasksDueWithinDays = (state, days = 7) => {
     .sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
 };
 
-export const getMergedProjectTags = state => {
-  const {
-    selectedProject: projectId,
-    projectsById,
-    usersById,
-    currentUser
-  } = state;
-  const { userId } = currentUser;
-  if (!projectId) return [];
-  const { tags: projectTags } = projectsById[projectId];
-  const { tags: userTags } = usersById[userId];
+export const getMergedProjectTags = (state, projectId) => {
+  const { projectsById, currentUser } = state;
+  if (!currentUser) return [];
+  const { tags: userTags } = currentUser;
+  const projectTags = projectId ? projectsById[projectId].tags : {};
   const mergedTags = { ...userTags, ...projectTags };
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);
 };
 
 export const getAllMergedTags = state => {
-  const { projectsById, usersById, currentUser } = state;
+  const { projectsById, currentUser } = state;
   if (!currentUser) return [];
   const { tags: userTags, projectIds } = currentUser;
   const projectTags = projectIds.reduce((tags, projectId) => {
     const project = projectsById[projectId];
     if (project && project.tags) {
-      tags = {
+      return {
         ...tags,
         ...project.tags
       };

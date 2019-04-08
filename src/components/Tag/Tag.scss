@@ -16,13 +16,6 @@
   &:first-child {
     margin-left: 0;
   }
-  &.is-focused {
-    background-color: $primary;
-    color: #fff;
-    .tag__btn--delete {
-      color: $white;
-    }
-  }
   .tag__btn--delete {
     position: absolute;
     right: 10.4px;
@@ -152,4 +145,12 @@
 .tag.bg--yellow {
   background-color: $yellow;
   color: $white;
+}
+
+.tag.is-focused {
+  background-color: $primary;
+  color: #fff;
+  .tag__btn--delete {
+    color: $white;
+  }
 }

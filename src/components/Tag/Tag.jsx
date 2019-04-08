@@ -4,11 +4,20 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import './Tag.scss';
 
-const Tag = ({ name, color, size, onDelete, className, innerRef, variant }) => (
+const Tag = ({
+  name,
+  color,
+  size,
+  onDelete,
+  className,
+  innerRef,
+  isFocused,
+  variant
+}) => (
   <span
     className={`tag tag--${size} bg--${color} ${
       variant !== 'default' ? `tag--${variant}` : ''
-    } ${className}`}
+    } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
   >
     <Link to={`/0/tasks?tag=${name}`} className="tag__link">
@@ -33,7 +42,8 @@ Tag.defaultProps = {
   onDelete: () => null,
   color: 'default',
   size: 'md',
-  variant: 'default'
+  variant: 'default',
+  isFocused: false
 };
 
 export default Tag;

@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { withAuthorization } from '../Session';
 import { Tag } from '../Tag';
 import { Input } from '../Input';
 import { ColorPicker } from '../ColorPicker';
 import { withOutsideClick } from '../withOutsideClick';
+import { taskActions } from '../../ducks/tasks';
+import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
 import './TagsInput.scss';
 
@@ -10,7 +15,9 @@ class TagsInput extends Component {
   state = {
     value: '',
     isActive: false,
+    isColorPickerActive: false,
     selectedTag: '',
+    currentTag: null,
     focusedTag: '',
     selectedIndex: null,
     hasExactMatch: null,
@@ -37,13 +44,15 @@ class TagsInput extends Component {
     });
   };
 
-  resetForm = () => {
+  reset = () => {
     this.setState({
       value: '',
+      isColorPickerActive: false,
       selectedTag: '',
       selectedIndex: null,
       hasExactMatch: null,
       focusedTag: '',
+      currentTag: null,
       filteredList: []
     });
   };
@@ -98,7 +107,7 @@ class TagsInput extends Component {
       value,
       focusedTag
     } = this.state;
-    const { addTag, removeTag, assignedTags } = this.props;
+    const { assignedTags } = this.props;
     const nextIndex =
       selectedIndex === filteredList.length - 1 || selectedIndex === null
         ? 0
@@ -126,8 +135,8 @@ class TagsInput extends Component {
       }
       case keys.ENTER: {
         if (selectedTag === '' && value === '') return;
-        this.resetForm();
-        addTag(selectedTag === '' ? value : selectedTag);
+        this.reset();
+        this.addTag(selectedTag === '' ? value : selectedTag);
         break;
       }
       case keys.BACKSPACE: {
@@ -137,8 +146,7 @@ class TagsInput extends Component {
             focusedTag: assignedTags[assignedTags.length - 1].name
           });
         } else {
-          this.resetForm();
-          removeTag(focusedTag);
+          this.removeTag(focusedTag);
         }
       }
     }
@@ -151,27 +159,87 @@ class TagsInput extends Component {
     });
   };
 
-  handleTagDelete = tag => {
-    const { removeTag } = this.props;
-    this.resetForm();
-    console.log(tag);
-    removeTag(tag);
+  toggleColorPicker = () => {
+    this.setState(prevState => ({
+      isColorPickerActive: !prevState.isColorPickerActive
+    }));
+  };
+
+  hideColorPicker = () => {
+    const { isColorPickerActive } = this.state;
+    if (!isColorPickerActive) return;
+    this.toggleColorPicker();
+  };
+
+  addTag = name => {
+    const {
+      firebase,
+      currentUser,
+      projectTags,
+      taskId,
+      projectId
+    } = this.props;
+    const { userId, tags: userTags } = currentUser;
+    const isProjectTag = projectTags && name in projectTags;
+    const isUserTag = userTags && name in userTags;
+    const projectTag = isProjectTag ? projectTags[name] : null;
+    const userTag = isUserTag ? userTags[name] : null;
+    const projectCount = isProjectTag ? projectTag.count + 1 : 1;
+    const userCount = isUserTag ? userTag.count + 1 : 1;
+    const tagData = isProjectTag
+      ? { ...projectTag, projectCount, userCount }
+      : isUserTag
+      ? { ...userTag, projectCount, userCount }
+      : { name, userCount, projectCount };
+
+    firebase
+      .addTag({
+        userId,
+        taskId,
+        projectId,
+        ...tagData
+      })
+      .then(() => {
+        if (!isUserTag && !isProjectTag) {
+          this.setState({
+            currentTag: name
+          });
+          this.toggleColorPicker();
+        }
+      });
+  };
+
+  setTagColor = color => {
+    const { currentUser, projectId, firebase } = this.props;
+    const { userId } = currentUser;
+    const { currentTag: tag } = this.state;
+    firebase.setTagColor({ userId, projectId, tag, color });
+  };
+
+  removeTag = name => {
+    const { taskId, currentUser, projectId, removeTaskTag } = this.props;
+    const { userId } = currentUser;
+    removeTaskTag({ taskId, name, userId, projectId });
+    this.setState({
+      isColorPickerActive: false,
+      focusedTag: '',
+      currentTag: null
+    });
+  };
+
+  setCurrentTagRef = ref => {
+    this.currentTag = ref;
   };
 
   render() {
-    const {
-      isColorPickerActive,
-      hideColorPicker,
-      assignedTags,
-      setTagColor,
-      currentTag,
-      innerRef
-    } = this.props;
+    const { assignedTags, innerRef } = this.props;
     const {
       value,
       isActive,
+      isColorPickerActive,
       filteredList,
       selectedTag,
+      currentTag,
       hasExactMatch,
       focusedTag
     } = this.state;
@@ -179,13 +247,13 @@ class TagsInput extends Component {
     const hasTags = assignedTags && assignedTags.length > 0;
 
     const colorPickerStyle = {};
-    if (this.currentTagEl) {
+    if (this.currentTag) {
       const {
         offsetLeft,
         offsetWidth,
         offsetTop,
         offsetHeight
-      } = this.currentTagEl;
+      } = this.currentTag;
       colorPickerStyle.left = offsetLeft + offsetWidth / 2 - 74; // 74 = 1/2 colorPicker width
       colorPickerStyle.top = offsetTop + offsetHeight + 9; // 9 = colorPicker arrow height
     }
@@ -203,11 +271,9 @@ class TagsInput extends Component {
             color={tag.color}
             size="md"
             name={tag.name}
-            onDelete={() => this.handleTagDelete(tag.name)}
-            className={focusedTag === tag.name ? 'is-focused' : ''}
-            innerRef={
-              currentTag === tag.name ? el => (this.currentTagEl = el) : null
-            }
+            onDelete={() => this.removeTag(tag.name)}
+            isFocused={focusedTag === tag.name}
+            innerRef={currentTag === tag.name ? this.setCurrentTagRef : null}
           />
         ))}
         <div className="tags-input__wrapper">
@@ -255,9 +321,9 @@ class TagsInput extends Component {
         {isActive && (
           <ColorPicker
             isActive={isColorPickerActive}
-            selectColor={setTagColor}
+            selectColor={this.setTagColor}
             style={colorPickerStyle}
-            onOutsideClick={hideColorPicker}
+            onOutsideClick={this.hideColorPicker}
           />
         )}
       </div>
@@ -265,4 +331,22 @@ class TagsInput extends Component {
   }
 }
 
-export default withOutsideClick(TagsInput);
+const mapStateToProps = (state, ownProps) => ({
+  projectTags: projectSelectors.getProjectTags(state, ownProps.projectId)
+});
+
+const mapDispatchToProps = dispatch => ({
+  removeTaskTag: ({ taskId, name, userId, projectId }) =>
+    dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
+});
+
+const condition = currentUser => !!currentUser;
+
+export default compose(
+  withAuthorization(condition),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  withOutsideClick
+)(TagsInput);

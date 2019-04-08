@@ -15,7 +15,6 @@ import { Subtasks } from '../Subtasks';
 import { SubtaskComposer } from '../SubtaskComposer';
 import { TagsInput } from '../TagsInput';
 import './TaskEditor.scss';
-import { projectSelectors } from '../../ducks/projects';
 import { listSelectors } from '../../ducks/lists';
 import { DatePicker } from '../DatePicker';
 import TaskEditorPane from './TaskEditorPane';
@@ -56,8 +55,6 @@ const TaskEditorWrapper = ({
 class TaskEditor extends Component {
   state = {
     name: this.props.name,
-    isColorPickerActive: false,
-    currentTag: null,
     isDatePickerActive: false,
     isMemberSearchActive: false,
     prevProps: {
@@ -162,67 +159,6 @@ class TaskEditor extends Component {
     }
   };
 
-  toggleColorPicker = value => {
-    this.setState({
-      isColorPickerActive: value
-    });
-  };
-
-  hideColorPicker = () => {
-    this.toggleColorPicker(false);
-  };
-
-  addTag = name => {
-    const {
-      firebase,
-      currentUser,
-      projectTags,
-      taskId,
-      projectId
-    } = this.props;
-    const { userId, tags: userTags } = currentUser;
-    const isProjectTag = projectTags && name in projectTags;
-    const isUserTag = userTags && name in userTags;
-    const projectTag = isProjectTag ? projectTags[name] : null;
-    const userTag = isUserTag ? userTags[name] : null;
-    const projectCount = isProjectTag ? projectTag.count + 1 : 1;
-    const userCount = isUserTag ? userTag.count + 1 : 1;
-    const tagData = isProjectTag
-      ? { ...projectTag, projectCount, userCount }
-      : isUserTag
-      ? { ...userTag, projectCount, userCount }
-      : { name, userCount, projectCount };
-
-    firebase
-      .addTag({
-        userId,
-        taskId,
-        projectId,
-        ...tagData
-      })
-      .then(() => {
-        if (!isUserTag && !isProjectTag) {
-          this.setState({
-            currentTag: name
-          });
-          this.toggleColorPicker(true);
-        }
-      });
-  };
-
-  setTagColor = color => {
-    const { userId, projectId, firebase } = this.props;
-    const { currentTag: tag } = this.state;
-    firebase.setTagColor({ userId, projectId, tag, color });
-  };
-
-  removeTag = name => {
-    const { taskId, currentUser, projectId, removeTaskTag } = this.props;
-    const { userId } = currentUser;
-    removeTaskTag({ taskId, name, userId, projectId });
-    this.toggleColorPicker(false);
-  };
-
   setDueDate = newDueDate => {
     const { firebase, taskId, assignedTo, dueDate } = this.props;
     const prevDueDate = dueDate ? new Date(dueDate.toDate()) : null;
@@ -294,13 +230,7 @@ class TaskEditor extends Component {
       isCompleted,
       notes
     } = this.props;
-    const {
-      name,
-      isColorPickerActive,
-      isDatePickerActive,
-      currentTag,
-      viewportWidth
-    } = this.state;
+    const { name, isDatePickerActive, viewportWidth } = this.state;
     const hasSubtasks = subtaskIds && subtaskIds.length > 0;
     const hasComments = commentIds && commentIds.length > 0;
     const taskDueDate = dueDate
@@ -438,14 +368,10 @@ class TaskEditor extends Component {
                 <Icon name="tag" />
               </div>
               <TagsInput
-                addTag={this.addTag}
+                taskId={taskId}
+                projectId={projectId}
                 tagSuggestions={mergedTags}
                 assignedTags={taskTags}
-                hideColorPicker={this.hideColorPicker}
-                isColorPickerActive={isColorPickerActive}
-                setTagColor={this.setTagColor}
-                removeTag={this.removeTag}
-                currentTag={currentTag}
               />
             </TaskEditorSection>
             <TaskEditorSection>
@@ -481,14 +407,12 @@ class TaskEditor extends Component {
               <hr className="task-editor__hr" />
             </div>
             <div className="task-editor__subtasks-container">
-              {hasSubtasks && (
-                <Subtasks
-                  taskId={taskId}
-                  subtaskIds={subtaskIds}
-                  projectId={projectId}
-                  usePortal={layout === 'board' && viewportWidth >= 576}
-                />
-              )}
+              <Subtasks
+                taskId={taskId}
+                subtaskIds={subtaskIds}
+                projectId={projectId}
+                usePortal={layout === 'board' && viewportWidth >= 576}
+              />
               <SubtaskComposer
                 taskId={taskId}
                 projectId={projectId}
@@ -548,8 +472,10 @@ const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state),
     taskTags: taskSelectors.getTaskTags(state, ownProps),
-    mergedTags: currentUserSelectors.getMergedProjectTags(state),
-    projectTags: projectSelectors.getProjectTags(state, ownProps.projectId),
+    mergedTags: currentUserSelectors.getMergedProjectTags(
+      state,
+      ownProps.projectId
+    ),
     completedSubtasks: subtaskSelectors.getCompletedSubtasks(
       state,
       ownProps.subtaskIds
@@ -561,10 +487,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     deleteTask: ({ taskId, listId }) =>
-      dispatch(taskActions.deleteTask({ taskId, listId })),
-    addTag: (taskId, tag) => dispatch(taskActions.addTag(taskId, tag)),
-    removeTaskTag: ({ taskId, name, userId, projectId }) =>
-      dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
+      dispatch(taskActions.deleteTask({ taskId, listId }))
   };
 };
 
