@@ -55,7 +55,8 @@ const Input = ({
 
 Input.defaultProps = {
   className: '',
-  innerRef: null
+  innerRef: null,
+  labelClass: ''
 };
 
 export default Input;

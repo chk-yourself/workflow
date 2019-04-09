@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { toDateString } from '../../utils/date';
 import { Timestamp } from '../Timestamp';
-import {
-  selectTask as selectTaskAction,
-  getSelectedTaskId
-} from '../../ducks/selectedTask';
+import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import './Notification.scss';
 
 class Notification extends Component {

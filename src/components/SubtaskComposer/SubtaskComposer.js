@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
-import { Avatar } from '../Avatar';
 import { Button } from '../Button';
 import { Textarea } from '../Textarea';
 import { Icon } from '../Icon';
@@ -19,7 +18,7 @@ class SubtaskComposer extends Component {
       textarea: '',
       button: ''
     }
-  }
+  };
 
   state = {
     name: '',
@@ -60,43 +59,53 @@ class SubtaskComposer extends Component {
 
   render() {
     const { name, isFocused } = this.state;
-    const { currentUser, classes } = this.props;
+    const { classes } = this.props;
     return (
-      <div className={`subtask-composer ${isFocused ? 'is-active' : ''} ${classes.composer || ''}`}>
-      <div className={`subtask-composer__icon-wrapper ${classes.iconWrapper || ''}`}>
-        <Icon name="plus-circle" className={`subtask-composer__icon ${classes.icon || ''}`} />
+      <div
+        className={`subtask-composer ${
+          isFocused ? 'is-active' : ''
+        } ${classes.composer || ''}`}
+      >
+        <div
+          className={`subtask-composer__icon-wrapper ${classes.iconWrapper ||
+            ''}`}
+        >
+          <Icon
+            name="plus-circle"
+            className={`subtask-composer__icon ${classes.icon || ''}`}
+          />
+        </div>
+        <form
+          name="newSubtaskForm"
+          className={`subtask-composer__form ${classes.form || ''} ${
+            isFocused ? 'is-focused' : ''
+          }`}
+        >
+          <Textarea
+            className={`subtask-composer__textarea ${classes.textarea || ''}`}
+            name="subtask"
+            value={name}
+            onChange={this.onChange}
+            placeholder="Add a subtask"
+            onFocus={this.onFocus}
+            onKeyDown={this.addSubtask}
+            onBlur={this.onBlur}
+          />
+          {isFocused && (
+            <Button
+              type="submit"
+              color="primary"
+              size="small"
+              variant="contained"
+              disabled={name === ''}
+              onClick={this.addSubtask}
+              className={classes.button || ''}
+            >
+              Add subtask
+            </Button>
+          )}
+        </form>
       </div>
-      <form
-            name="newSubtaskForm"
-            className={`subtask-composer__form ${classes.form || ''} ${
-              isFocused ? 'is-focused' : ''
-            }`}
-          >
-            <Textarea
-              className={`subtask-composer__textarea ${classes.textarea || ''}`}
-              name="subtask"
-              value={name}
-              onChange={this.onChange}
-              placeholder="Add a subtask"
-              onFocus={this.onFocus}
-              onKeyDown={this.addSubtask}
-              onBlur={this.onBlur}
-            />
-            {isFocused && (
-              <Button
-                type="submit"
-                color="primary"
-                size="small"
-                variant="contained"
-                disabled={name === ''}
-                onClick={this.addSubtask}
-                className={classes.button || ''}
-              >
-                Add subtask
-              </Button>
-            )}
-          </form>
-          </div>
     );
   }
 }
@@ -107,13 +116,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(SubtaskComposer)
-);
+export default withFirebase(connect(mapStateToProps)(SubtaskComposer));

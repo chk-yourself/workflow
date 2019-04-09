@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { AuthUserContext } from '../Session';
 import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
 import { Topbar } from '../Topbar';
 import './Header.scss';
 
-export default class Header extends Component {
+class Header extends Component {
   state = {
     isNavExpanded: false
   };
@@ -17,8 +18,16 @@ export default class Header extends Component {
 
   render() {
     const { isNavExpanded } = this.state;
+    const {
+      history: { location }
+    } = this.props;
+    const isLoginPage = location.pathname === '/login';
     return (
-      <header className={`header ${isNavExpanded ? 'expand-nav' : ''}`}>
+      <header
+        className={`header ${isLoginPage ? 'header--login' : ''} ${
+          isNavExpanded ? 'expand-nav' : ''
+        }`}
+      >
         <AuthUserContext.Consumer>
           {currentUser =>
             currentUser ? (
@@ -42,3 +51,5 @@ export default class Header extends Component {
     );
   }
 }
+
+export default withRouter(Header);

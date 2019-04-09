@@ -6,9 +6,9 @@ import * as ROUTES from '../../constants/routes';
 import './PasswordForget.scss';
 
 const PasswordForgetLink = () => (
-  <p className="user-form__info">
-    <Link to={ROUTES.PASSWORD_FORGET} className="link--sm">
-      Forgot Password?
+  <p className="user-form__pw-forget">
+    <Link to={ROUTES.PASSWORD_FORGET} className="user-form__link link--sm">
+      Forgot your password?
     </Link>
   </p>
 );

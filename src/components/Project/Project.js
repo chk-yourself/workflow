@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Droppable } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
 import * as droppableTypes from '../../constants/droppableTypes';

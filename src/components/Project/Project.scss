@@ -269,7 +269,7 @@
 
 .project__toolbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 8px;
   z-index: 5;
 }
@@ -293,7 +293,28 @@
   width: 28px;
   height: 28px;
   padding: 0;
+  margin-left: 8px;
   .feather {
     vertical-align: middle;
   }
+  &.is-active {
+    color: $primary;
+  }
+}
+
+.project__link {
+  margin-left: 8px;
+  color: $grey-700;
+  display: inline-block;
+  font-size: 13px;
+  text-decoration: none;
+  padding: 6px 0;
+  .feather {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.project__btn--add-list {
+  margin-right: auto;
 }

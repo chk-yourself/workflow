@@ -2,7 +2,7 @@
 @import '../../styles/mixins';
 
 .settings__dropdown-wrapper {
-  margin-top: 8px;
+  display: inline-block;
 }
 
 .settings {
@@ -22,9 +22,13 @@
 
 .settings__setting {
   padding: 8px 16px;
+}
+
+.settings__name {
   font-size: 12px;
   font-weight: 600;
   color: $grey-800;
+  margin-bottom: 8px;
 }
 
 .settings__select-label {
@@ -76,7 +80,8 @@
 
 .settings__fieldset {
   position: relative;
-  padding: 6px 0;
+  padding: 0 4px;
+  margin: 0;
   border: none;
 }
 

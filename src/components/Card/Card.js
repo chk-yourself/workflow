@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { taskSelectors } from '../../ducks/tasks';
 import { userSelectors } from '../../ducks/users';
 import { subtaskSelectors } from '../../ducks/subtasks';
 import './Card.scss';
@@ -9,20 +9,9 @@ import { Tag } from '../Tag';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { toDateString, isPriorDate } from '../../utils/date';
-
-const CardDetail = ({ icon = null, children, className = '' }) => (
-  <div className={`card__detail ${className}`}>
-    {icon && <Icon name={icon} />}
-    {children}
-  </div>
-);
+import { Badge } from '../Badge';
 
 class Card extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   shouldComponentUpdate(nextProps) {
     if (nextProps.taskTags.indexOf(undefined) !== -1) {
       return false;
@@ -89,16 +78,16 @@ class Card extends Component {
             </div>
             <div className="card__body">
               {isCompleted && (
-                <CardDetail className="card__completed-status">
+                <Badge className="card__detail card__completed-status">
                   <span className="card__completed-status-icon">
                     <Icon name="check" />
                   </span>
-                </CardDetail>
+                </Badge>
               )}
               {dueDate && (
-                <CardDetail
+                <Badge
                   icon="calendar"
-                  className={`card__due-date ${
+                  className={`card__detail card__due-date ${
                     isDueToday
                       ? 'is-due-today'
                       : isDueTmrw
@@ -110,17 +99,17 @@ class Card extends Component {
                   `}
                 >
                   {dueDateStr}
-                </CardDetail>
+                </Badge>
               )}
               {subtaskIds && subtaskIds.length > 0 && (
-                <CardDetail icon="check-circle">
+                <Badge className="card__detail" icon="check-circle">
                   {completedSubtasks.length}/{subtaskIds.length}
-                </CardDetail>
+                </Badge>
               )}
               {commentIds && commentIds.length > 0 && (
-                <CardDetail icon="message-circle">
+                <Badge className="card__detail" icon="message-circle">
                   {commentIds.length}
-                </CardDetail>
+                </Badge>
               )}
             </div>
             <div className="card__footer">
@@ -165,11 +154,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Card);
+export default connect(mapStateToProps)(Card);

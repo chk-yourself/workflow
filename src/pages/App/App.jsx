@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
-import { SignInPage } from '../SignIn';
+import { LoginPage } from '../Login';
 import { PasswordForgetPage } from '../PasswordForget';
 import { HomePage } from '../Home';
 import { AdminPage } from '../Admin';
@@ -16,7 +16,7 @@ const App = () => (
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-      <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+      <Route path={ROUTES.LOG_IN} component={LoginPage} />
       <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
       <Route path={ROUTES.BASE} component={HomePage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />

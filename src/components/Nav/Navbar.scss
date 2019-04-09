@@ -53,15 +53,18 @@
 }
 
 .navbar__links {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   -webkit-transform: translate3d(0, 0, 0);
   list-style: none;
   padding: 0;
   margin: 0;
+  color: $primary;
   li {
-    padding: 0 8px;
+    margin-left: 24px;
+    color: inherit;
   }
   @include md {
     padding: 8px 0;
@@ -71,7 +74,7 @@
   }
   a,
   button {
-    color: $primary;
+    color: inherit;
     font-family: $heading-font;
     font-weight: 600;
   }
@@ -79,14 +82,16 @@
 
 .navbar__logo {
   font-size: 1.2rem;
-  color: $primary;
   font-family: $heading-font;
   font-weight: 600;
   -webkit-font-smoothing: antialiased;
   @include md {
     font-size: 1.4rem;
   }
-  a {
+}
+
+.navbar__link {
+  &.active {
     color: $primary;
   }
 }

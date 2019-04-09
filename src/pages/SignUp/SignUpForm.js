@@ -78,6 +78,7 @@ class SignUpForm extends Component {
           onChange={this.onChange}
           type="text"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="username"
@@ -86,6 +87,7 @@ class SignUpForm extends Component {
           onChange={this.onChange}
           type="text"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="email"
@@ -94,6 +96,7 @@ class SignUpForm extends Component {
           onChange={this.onChange}
           type="email"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="passwordOne"
@@ -102,6 +105,7 @@ class SignUpForm extends Component {
           onChange={this.onChange}
           type="password"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="passwordTwo"
@@ -110,6 +114,7 @@ class SignUpForm extends Component {
           onChange={this.onChange}
           type="password"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Button
           disabled={isInvalid}

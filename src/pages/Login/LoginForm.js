@@ -5,6 +5,7 @@ import { withFirebase } from '../../components/Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { PasswordForgetLink } from '../PasswordForget';
 
 const INITIAL_STATE = {
   email: '',
@@ -12,7 +13,7 @@ const INITIAL_STATE = {
   error: null
 };
 
-class SignInForm extends Component {
+class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
@@ -76,6 +77,7 @@ class SignInForm extends Component {
           onChange={this.onChange}
           type="email"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="password"
@@ -84,14 +86,17 @@ class SignInForm extends Component {
           onChange={this.onChange}
           type="password"
           className="user-form__input"
+          labelClass="user-form__label"
         />
+        <PasswordForgetLink />
         <Button
           disabled={isInvalid}
           type="submit"
-          size="lg"
+          size="md"
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
+          className="login__btn"
         >
           Log In
         </Button>
@@ -104,4 +109,4 @@ class SignInForm extends Component {
 export default compose(
   withRouter,
   withFirebase
-)(SignInForm);
+)(LoginForm);

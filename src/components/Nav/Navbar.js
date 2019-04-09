@@ -106,6 +106,7 @@ export default class Navbar extends Component {
             color="primary"
             onClick={this.toggleMobileNavVisibility}
             iconOnly
+            className="navbar__btn--toggle"
           >
             <Icon name="menu" />
           </Button>

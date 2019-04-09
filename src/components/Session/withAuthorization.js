@@ -12,7 +12,7 @@ const withAuthorization = condition => WrappedComponent => {
       const { firebase, history } = this.props;
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
-          history.push(ROUTES.SIGN_IN);
+          history.push(ROUTES.LOG_IN);
         }
       });
     }

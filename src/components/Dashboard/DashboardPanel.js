@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Icon } from '../Icon';
 
 const DashboardPanel = ({ className, name, children, size, link }) => (
   <section className={`dashboard-panel ${className ? `dashboard-panel--${className}` : ''} dashboard-panel--${size}`}>

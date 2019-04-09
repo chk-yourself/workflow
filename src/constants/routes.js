@@ -1,6 +1,6 @@
 export const LANDING = '/';
 export const SIGN_UP = '/signup';
-export const SIGN_IN = '/signin';
+export const LOG_IN = '/login';
 export const PASSWORD_FORGET = '/pw-forget';
 export const BASE = '/0/';
 export const GLOBAL_SEARCH = '/0/search';

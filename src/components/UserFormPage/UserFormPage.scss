@@ -13,6 +13,8 @@
 
 .user-form__input {
   margin-bottom: 24px;
+  height: 42px;
+  border: 1px solid $grey-600;
 }
 
 .user-form__title {
@@ -28,5 +30,24 @@
   }
   @include xl {
     font-size: 2.2rem;
+  }
+}
+
+.user-form__label {
+  font-size: 12px;
+  color: $grey-700;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.user-form__btn {
+  min-width: 80px;
+}
+
+.user-form__link {
+  color: $grey-700;
+  font-size: 13px;
+  &:hover {
+    color: $primary;
   }
 }

@@ -104,3 +104,26 @@
     font-size: 16px;
   }
 }
+
+.header--login {
+  background-color: transparent;
+  box-shadow: none;
+  .logo {
+    color: $white;
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.4rem;
+    @include md {
+      font-size: 1.6rem;
+    }
+  }
+  .navbar__links,
+  .feather {
+    color: $white;
+  }
+  .navbar__btn--toggle {
+    margin-left: auto;
+  }
+}

@@ -47,6 +47,7 @@ class PasswordForgetForm extends Component {
           onChange={this.onChange}
           type="email"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Button
           disabled={isInvalid}

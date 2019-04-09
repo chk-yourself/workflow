@@ -45,6 +45,9 @@
     width: 272px;
     margin: 0 6px;
     background-color: $haze;
+    .list__header {
+      background-color: transparent;
+    }
   }
 }
 

@@ -34,7 +34,7 @@ const withAuthentication = WrappedComponent => {
           this.setState({ authUser });
           history.push(`/0/home/${authUser.uid}`);
         } else {
-          history.push(ROUTES.SIGN_IN);
+          history.push(ROUTES.LOG_IN);
           if (this.unsubscribe) {
             this.unsubscribe();
           }

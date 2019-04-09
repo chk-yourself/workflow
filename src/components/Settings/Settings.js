@@ -46,7 +46,7 @@ const Settings = ({
         className={`settings__setting ${classes.setting || ''}`}
         key={setting.name}
       >
-        {setting.name}
+        <div className={`settings__name ${classes.name || ''}`}>{setting.name}</div>
         {
           {
             radio: (
@@ -106,7 +106,7 @@ const Settings = ({
       size="sm"
       onClick={onSave}
     >
-      Save
+      Save Settings
     </Button>
   </PopoverWrapper>
 );
@@ -114,6 +114,7 @@ const Settings = ({
 Settings.defaultProps = {
   icon: 'settings',
   classes: {
+    name: '',
     wrapper: '',
     settings: '',
     setting: '',

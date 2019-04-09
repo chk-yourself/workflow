@@ -48,6 +48,7 @@ class PasswordChangeForm extends Component {
           onChange={this.onChange}
           type="password"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Input
           name="passwordTwo"
@@ -56,6 +57,7 @@ class PasswordChangeForm extends Component {
           onChange={this.onChange}
           type="password"
           className="user-form__input"
+          labelClass="user-form__label"
         />
         <Button
           disabled={isInvalid}
