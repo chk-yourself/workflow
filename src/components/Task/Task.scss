@@ -19,6 +19,7 @@
     &:before {
       z-index: 0;
       box-shadow: none;
+      pointer-events: none;
     }
   }
   // Prevent task textarea focus on mobile for smoother transition to task editor

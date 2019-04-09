@@ -81,7 +81,9 @@ class Subtask extends Component {
   };
 
   onMouseUp = e => {
-    const { pointX, pointY } = this.state;
+    const { pointX, pointY, isFocused } = this.state;
+    console.log(isFocused);
+    if (isFocused) return;
     if (e.pageX === pointX && e.pageY === pointY) {
       this.textarea.focus();
     }

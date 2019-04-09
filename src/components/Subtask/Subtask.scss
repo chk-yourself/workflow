@@ -31,6 +31,7 @@
     &:before {
       z-index: 0;
       box-shadow: none;
+      pointer-events: none;
     }
   }
   &:before {
