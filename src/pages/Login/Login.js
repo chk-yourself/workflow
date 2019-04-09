@@ -1,7 +1,6 @@
 import React from 'react';
 import LoginForm from './LoginForm';
 import { SignUpLink } from '../SignUp';
-import { PasswordForgetLink } from '../PasswordForget';
 import './Login.scss';
 
 const LoginPage = () => (

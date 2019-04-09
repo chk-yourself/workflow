@@ -12,7 +12,7 @@ export const NavLinksNonAuth = ({ onClick }) => (
     </li>
     <li>
       <NavLink className="navbar__link" onClick={onClick} to={ROUTES.SIGN_UP}>
-        Get Started
+        Sign Up
       </NavLink>
     </li>
   </>

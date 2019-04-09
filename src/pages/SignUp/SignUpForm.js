@@ -81,20 +81,20 @@ class SignUpForm extends Component {
           labelClass="user-form__label"
         />
         <Input
-          name="username"
-          label="Username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          className="user-form__input"
-          labelClass="user-form__label"
-        />
-        <Input
           name="email"
           label="Email"
           value={email}
           onChange={this.onChange}
           type="email"
+          className="user-form__input"
+          labelClass="user-form__label"
+        />
+        <Input
+          name="username"
+          label="Username"
+          value={username}
+          onChange={this.onChange}
+          type="text"
           className="user-form__input"
           labelClass="user-form__label"
         />
@@ -119,10 +119,11 @@ class SignUpForm extends Component {
         <Button
           disabled={isInvalid}
           type="submit"
-          size="lg"
+          size="md"
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
+          className="sign-up__btn"
         >
           Create Account
         </Button>

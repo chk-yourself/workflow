@@ -22,11 +22,12 @@ class Header extends Component {
       history: { location }
     } = this.props;
     const isLoginPage = location.pathname === '/login';
+    const isSignUpPage = location.pathname === '/signup';
     return (
       <header
         className={`header ${isLoginPage ? 'header--login' : ''} ${
-          isNavExpanded ? 'expand-nav' : ''
-        }`}
+          isSignUpPage ? 'header--sign-up' : ''
+        } ${isNavExpanded ? 'expand-nav' : ''}`}
       >
         <AuthUserContext.Consumer>
           {currentUser =>

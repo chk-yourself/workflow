@@ -42,6 +42,12 @@
 
 .user-form__btn {
   min-width: 80px;
+  padding: 10px 12px;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
 }
 
 .user-form__link {
