@@ -135,8 +135,9 @@ class Task extends Component {
   };
 
   onMouseUp = e => {
-    const { pointX, pointY } = this.state;
-    if (e.pageX === pointX && e.pageY === pointY && window.innerWidth >= 768) {
+    const { pointX, pointY, isFocused } = this.state;
+    if (isFocused) return;
+    if (e.pageX === pointX && e.pageY === pointY && window.innerWidth >= 768 ) {
       this.textarea.focus();
     }
     this.setState({

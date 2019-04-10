@@ -7,7 +7,10 @@ class ColorPicker extends Component {
   static defaultProps = {
     classes: {
       colorPicker: ''
-    }
+    },
+    isActive: false,
+    style: {},
+    selectColor: () => null
   };
 
   state = {
@@ -15,13 +18,11 @@ class ColorPicker extends Component {
   };
 
   handleColorChange = e => {
-    const { selectColor, onChange } = this.props;
+    const { selectColor } = this.props;
     this.setState({
       selectedColor: e.target.value
     });
-    if (onChange) {
-      onChange(e);
-    } else {
+    if (selectColor) {
       selectColor(e.target.value);
     }
   };
@@ -30,7 +31,11 @@ class ColorPicker extends Component {
     const { style, isActive, classes, innerRef } = this.props;
     const { selectedColor } = this.state;
     return (
-      <div ref={innerRef} className={`color-picker ${classes.colorPicker || ''}`} style={{display: isActive ? 'block' : 'none', ...style}}>
+      <div
+        ref={innerRef}
+        className={`color-picker ${classes.colorPicker || ''}`}
+        style={{ display: isActive ? 'block' : 'none', ...style }}
+      >
         <Radio
           classes={{
             radio: 'color-picker__radio',

@@ -22,7 +22,6 @@
       pointer-events: none;
     }
   }
-  // Prevent task textarea focus on mobile for smoother transition to task editor
   &::before {
     content: '';
     cursor: pointer;

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import { Modal } from '../Modal';
 import { Input } from '../Input';
 import { Button } from '../Button';
@@ -9,25 +8,60 @@ import { Icon } from '../Icon';
 import { ColorPicker } from '../ColorPicker';
 import { ProjectIcon } from '../ProjectIcon';
 import { MemberAssigner } from '../MemberAssigner';
-import { currentUserSelectors } from '../../ducks/currentUser';
+import ProjectComposerControlGroup from './ProjectComposerControlGroup';
 import './ProjectComposer.scss';
 
-class ProjectComposer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      notes: '',
-      layout: 'board',
-      color: 'default',
-      privacy: 'public',
-      memberIds: [props.userId],
-      isColorPickerActive: false
-    };
+const settings = {
+  privacy: {
+    options: [
+      {
+        value: 'public',
+        label: 'Public'
+      },
+      {
+        value: 'private',
+        label: 'Private'
+      }
+    ]
+  },
+  layout: {
+    options: [
+      {
+        value: 'board',
+        label: (
+          <>
+            <Icon name="trello" />
+            Board
+          </>
+        )
+      },
+      {
+        value: 'list',
+        label: (
+          <>
+            <Icon name="list" />
+            List
+          </>
+        )
+      }
+    ]
   }
+};
+
+class ProjectComposer extends Component {
+  state = {
+    name: '',
+    notes: '',
+    layout: 'board',
+    color: 'default',
+    privacy: 'public',
+    memberIds: [this.props.currentUser.userId],
+    isColorPickerActive: false
+  };
 
   reset = () => {
-    const { userId } = this.props;
+    const { currentUser } = this.props;
+    const { userId } = currentUser;
     this.setState({
       name: '',
       notes: '',
@@ -43,7 +77,8 @@ class ProjectComposer extends Component {
     e.preventDefault();
     const { name, notes, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
-    const { onClose, firebase, userId } = this.props;
+    const { onClose, firebase, currentUser } = this.props;
+    const { userId } = currentUser;
     firebase.addProject({
       userId,
       name,
@@ -63,41 +98,38 @@ class ProjectComposer extends Component {
     });
   };
 
+  setColor = color => {
+    this.setState({
+      color
+    });
+  };
+
   toggleColorPicker = () => {
     this.setState(prevState => ({
       isColorPickerActive: !prevState.isColorPickerActive
     }));
   };
 
-  hideColorPicker = () => {
+  hideColorPicker = e => {
     const { isColorPickerActive } = this.state;
-    if (!isColorPickerActive) return;
+    if (
+      !isColorPickerActive ||
+      (isColorPickerActive &&
+        e.target.matches('.project-composer__btn--toggle-color-picker'))
+    )
+      return;
     this.setState({
       isColorPickerActive: false
     });
   };
 
-  onColorPickerOutsideClick = e => {
-    const { isColorPickerActive } = this.state;
-    if (
-      isColorPickerActive &&
-      !e.target.matches('.project-composer__btn--toggle-color-picker')
-    ) {
-      this.hideColorPicker();
-    }
-  };
-
   handleMemberAssignment = (userId, e) => {
     const { memberIds } = this.state;
-    if (memberIds.includes(userId)) {
-      this.setState(prevState => ({
-        memberIds: prevState.memberIds.filter(memberId => memberId !== userId)
-      }));
-    } else {
-      this.setState(prevState => ({
-        memberIds: [...prevState.memberIds, userId]
-      }));
-    }
+    this.setState(prevState => ({
+      memberIds: memberIds.includes(userId)
+        ? prevState.memberIds.filter(memberId => memberId !== userId)
+        : [...prevState.memberIds, userId]
+    }));
     e.preventDefault();
   };
 
@@ -111,43 +143,6 @@ class ProjectComposer extends Component {
       memberIds,
       isColorPickerActive
     } = this.state;
-
-    const settings = {
-      privacy: {
-        options: [
-          {
-            value: 'public',
-            label: 'Public'
-          },
-          {
-            value: 'private',
-            label: 'Private'
-          }
-        ]
-      },
-      layout: {
-        options: [
-          {
-            value: 'board',
-            label: (
-              <>
-                <Icon name="trello" />
-                Board
-              </>
-            )
-          },
-          {
-            value: 'list',
-            label: (
-              <>
-                <Icon name="list" />
-                List
-              </>
-            )
-          }
-        ]
-      }
-    };
 
     return (
       <Modal
@@ -167,8 +162,10 @@ class ProjectComposer extends Component {
             className="project-composer__input--name"
           />
           <div className="project-composer__settings">
-            <div className="project-composer__control-group project-composer__control-group--color">
-              <h4 className="project-composer__subheading">Highlight Color</h4>
+            <ProjectComposerControlGroup
+              name="Highlight Color"
+              className="project-composer__control-group--color"
+            >
               <Button
                 onClick={this.toggleColorPicker}
                 className={`project-composer__btn--toggle-color-picker ${
@@ -182,15 +179,14 @@ class ProjectComposer extends Component {
                 <Icon name="chevron-down" />
               </Button>
               <ColorPicker
-                onOutsideClick={this.onColorPickerOutsideClick}
+                onOutsideClick={this.hideColorPicker}
                 isActive={isColorPickerActive}
-                onChange={this.onChange}
+                selectColor={this.setColor}
                 classes={{ colorPicker: 'project-composer__color-picker' }}
               />
-            </div>
+            </ProjectComposerControlGroup>
           </div>
-          <div className="project-composer__control-group">
-            <h4 className="project-composer__subheading">Privacy</h4>
+          <ProjectComposerControlGroup name="Privacy">
             {settings.privacy.options.map(option => (
               <Radio
                 key={option.value}
@@ -206,19 +202,17 @@ class ProjectComposer extends Component {
                 }}
               />
             ))}
-          </div>
+          </ProjectComposerControlGroup>
           {privacy === 'public' && (
-            <div className="project-composer__control-group">
-              <h4 className="project-composer__subheading">Members</h4>
+            <ProjectComposerControlGroup name="Members">
               <MemberAssigner
                 placeholder="Add or remove member"
                 memberIds={memberIds}
                 onSelectMember={this.handleMemberAssignment}
               />
-            </div>
+            </ProjectComposerControlGroup>
           )}
-          <div className="project-composer__control-group">
-            <h4 className="project-composer__subheading">Layout</h4>
+          <ProjectComposerControlGroup name="Layout">
             {settings.layout.options.map(option => (
               <Radio
                 key={option.value}
@@ -234,7 +228,7 @@ class ProjectComposer extends Component {
                 }}
               />
             ))}
-          </div>
+          </ProjectComposerControlGroup>
           <Button
             className="project-composer__btn--add"
             type="submit"
@@ -250,19 +244,6 @@ class ProjectComposer extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    userId: currentUserSelectors.getCurrentUserId(state)
-  };
-};
+const condition = currentUser => !!currentUser;
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ProjectComposer)
-);
+export default withAuthorization(condition)(ProjectComposer);

@@ -376,7 +376,7 @@ class Firebase {
     layout = 'board',
     isPrivate = false,
     memberIds = [],
-    notes = ''
+    notes = null
   }) => {
     this.db
       .collection('projects')
@@ -387,6 +387,7 @@ class Firebase {
         ownerId: userId,
         settings: {
           isPrivate,
+          layout,
           tasks: {
             view: 'all',
             sortBy: 'none'
@@ -395,7 +396,6 @@ class Firebase {
         memberIds,
         notes,
         color,
-        layout,
         name
       })
       .then(ref => {
