@@ -14,18 +14,16 @@ const INITIAL_STATE = {
 };
 
 class LoginForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  state = { ...INITIAL_STATE };
 
   onSubmit = e => {
     const { email, password } = this.state;
-    this.props.firebase
+    const { firebase, history } = this.props;
+    firebase
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.HOME);
+        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });
@@ -50,7 +48,6 @@ class LoginForm extends Component {
     const isInvalid = password === '' || email === '';
     return (
       <form className="user-form">
-        {/*
         <Button
           type="click"
           size="lg"
@@ -69,7 +66,6 @@ class LoginForm extends Component {
         >
           Continue with Github
         </Button>
-      */}
         <Input
           name="email"
           label="Email"
