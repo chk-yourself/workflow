@@ -7,7 +7,7 @@ const ProjectTile = ({ projectId, name, layout, onClick, color }) => {
     <li className={`project-grid__tile project-grid__tile--${color}`}>
       <Link
         className="project-grid__link"
-        to={`/0/projects/${projectId}`}
+        to={`/0/projects/${projectId}/tasks`}
         onClick={onClick}
       >
         <span className="project-grid__title">{name}</span>

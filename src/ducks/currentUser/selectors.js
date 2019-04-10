@@ -74,7 +74,9 @@ export const getSortedFilteredTaskGroups = state => {
       if (!assignedTasks || !tasksById) return [];
       const { projectIds } = currentUser;
       const projectTasks = projectIds.reduce((tasksByProject, projectId) => {
-        const { name, taskIds } = folders[projectId];
+        const folder = folders[projectId];
+        if (!folder) return tasksByProject;
+        const { name, taskIds } = folder;
         return tasksByProject.concat(
           taskIds.length > 0
             ? {

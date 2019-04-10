@@ -51,7 +51,6 @@ const settings = {
 class ProjectComposer extends Component {
   state = {
     name: '',
-    notes: '',
     layout: 'board',
     color: 'default',
     privacy: 'public',
@@ -64,7 +63,6 @@ class ProjectComposer extends Component {
     const { userId } = currentUser;
     this.setState({
       name: '',
-      notes: '',
       layout: 'board',
       color: 'default',
       privacy: 'public',
@@ -75,7 +73,7 @@ class ProjectComposer extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { name, notes, color, layout, privacy, memberIds } = this.state;
+    const { name, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, currentUser } = this.props;
     const { userId } = currentUser;
@@ -85,8 +83,7 @@ class ProjectComposer extends Component {
       color,
       layout,
       isPrivate,
-      memberIds,
-      notes
+      memberIds
     });
     onClose();
     this.reset();
@@ -136,7 +133,6 @@ class ProjectComposer extends Component {
   render() {
     const {
       name,
-      notes,
       layout,
       privacy,
       color,

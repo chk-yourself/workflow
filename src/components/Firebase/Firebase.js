@@ -26,13 +26,11 @@ class Firebase {
 
   signInWithGoogle = () => {
     const provider = new app.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     this.auth
       .signInWithPopup(provider)
       .then(result => {
         if (result.credential) {
           const token = result.credential.accessToken;
-          console.log(token);
           const { user } = result;
         }
       })
@@ -54,7 +52,29 @@ class Firebase {
 
   signInWithGithub = () => {
     const provider = new app.auth.GithubAuthProvider();
-    this.auth.signInWithRedirect(provider);
+    this.auth
+    .signInWithPopup(provider)
+    .then(result => {
+      if (result.credential) {
+        const token = result.credential.accessToken;
+        console.log(token);
+        const { user } = result;
+      }
+    })
+    .catch(error => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.email;
+      const credential = error.credential;
+
+      if (errorCode === 'auth/account-exists-with-different-credential') {
+        alert(
+          'You have already signed up with a different auth provider for that email.'
+        );
+      } else {
+        console.error(error);
+      }
+    });
   };
 
   createUserWithEmailAndPassword = (email, password) =>
@@ -662,42 +682,51 @@ class Firebase {
   };
 
   removeAssignee = (
-    { taskId, projectId, userId, folderId, dueDate = null },
+    { projectId, userId, folderId, taskId = null, dueDate = null },
     batch = this.createBatch(),
     shouldCommit = true
   ) => {
-    const folderRef = this.getDocRef('users', userId, 'folders', folderId);
-    this.updateBatch(batch, folderRef, {
-      taskIds: this.removeFromArray(taskId)
-    });
 
-    if (!dueDate) {
-      this.updateBatch(batch, ['users', userId, 'folders', '5'], {
-        taskIds: this.removeFromArray(taskId)
+    if (!taskId) {
+      this.updateBatch(batch, ['users', userId], {
+        projectIds: this.removeFromArray(projectId)
+      });
+      this.updateBatch(batch, ['projects', projectId], {
+        memberIds: this.removeFromArray(userId)
       });
     } else {
-      this.updateBatch(batch, ['users', userId, 'folders', `${+dueDate}`], {
+      this.updateBatch(batch, ['users', userId, 'folders', folderId], {
         taskIds: this.removeFromArray(taskId)
       });
-    }
-
-    if (taskId && projectId) {
-      this.updateBatch(batch, ['users', userId, 'folders', projectId], {
-        taskIds: this.removeFromArray(taskId)
-      });
+  
+      if (!dueDate) {
+        this.updateBatch(batch, ['users', userId, 'folders', '5'], {
+          taskIds: this.removeFromArray(taskId)
+        });
+      } else {
+        this.updateBatch(batch, ['users', userId, 'folders', `${+dueDate}`], {
+          taskIds: this.removeFromArray(taskId)
+        });
+      }
+      if (projectId) {
+        this.updateBatch(batch, ['users', userId, 'folders', projectId], {
+          taskIds: this.removeFromArray(taskId)
+        });
+      }
     }
 
     if (shouldCommit) {
-      const taskRef = this.getDocRef('tasks', taskId);
-      this.updateBatch(batch, taskRef, {
-        assignedTo: this.removeFromArray(userId),
-        [`folders.${userId}`]: this.deleteField()
-      });
+      if (taskId) {
+        this.updateBatch(batch, ['tasks', taskId], {
+          assignedTo: this.removeFromArray(userId),
+          [`folders.${userId}`]: this.deleteField()
+        });
+      }
 
       return batch
         .commit()
         .then(() => {
-          console.log('Removed member from task');
+          console.log('Removed assignee');
         })
         .catch(error => {
           console.error(error);
@@ -706,10 +735,10 @@ class Firebase {
   };
 
   addAssignee = ({
-    taskId,
     projectId,
     projectName,
     userId,
+    taskId = null,
     dueDate = null
   }) => {
     const batch = this.db.batch();
@@ -718,16 +747,20 @@ class Firebase {
       memberIds: this.addToArray(userId)
     });
 
-    batch.set(
-      this.getDocRef('users', userId, 'folders', projectId),
-      {
-        name: projectName,
-        taskIds: this.addToArray(taskId)
-      },
-      { merge: true }
-    );
+    this.updateBatch(batch, ['users', userId], {
+      projectIds: this.addToArray(projectId)
+    });
 
     if (taskId) {
+      batch.set(
+        this.getDocRef('users', userId, 'folders', projectId),
+        {
+          name: projectName,
+          taskIds: this.addToArray(taskId)
+        },
+        { merge: true }
+      );
+      
       this.updateBatch(batch, ['users', userId, 'folders', '0'], {
         taskIds: this.addToArray(taskId)
       });
@@ -754,7 +787,7 @@ class Firebase {
     return batch
       .commit()
       .then(() => {
-        console.log('Assigned task to member');
+        console.log('Added assignee');
       })
       .catch(error => {
         console.error(error);

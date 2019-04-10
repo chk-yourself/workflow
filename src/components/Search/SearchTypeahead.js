@@ -129,7 +129,7 @@ class SearchTypeahead extends Component {
 
   openProject = projectId => {
     const { history } = this.props;
-    history.push(`/0/projects/${projectId}`);
+    history.push(`/0/projects/${projectId}/tasks`);
     this.reset();
   };
 

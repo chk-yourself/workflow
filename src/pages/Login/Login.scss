@@ -78,3 +78,22 @@
     border: 1px solid $grey-300;
   }
 }
+
+.login__btn--alt {
+  margin: 16px auto;
+  min-width: 180px;
+  display: block;
+  border: 1px solid $grey-500;
+  color: $grey-600;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
+  &:first-child {
+    margin-top: 40px;
+  }
+  &:nth-of-type(2) {
+    margin-bottom: 32px;
+  }
+}

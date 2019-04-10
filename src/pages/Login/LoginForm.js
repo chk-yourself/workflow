@@ -43,26 +43,32 @@ class LoginForm extends Component {
     e.preventDefault();
   };
 
+  enableGithubLogin = e => {
+    const { signInWithGoogle } = this.props.firebase;
+    signInWithGoogle();
+    e.preventDefault();
+  };
+
   render() {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
       <form className="user-form">
         <Button
-          type="click"
-          size="lg"
-          variant="contained"
-          color="primary"
+          size="md"
+          variant="outlined"
+          color="neutral"
           onClick={this.enableGoogleLogin}
+          className="login__btn--alt"
         >
           Continue with Google
         </Button>
         <Button
-          type="click"
-          size="lg"
-          variant="contained"
-          color="primary"
+          size="md"
+          variant="outlined"
+          color="neutral"
           onClick={this.enableGithubLogin}
+          className="login__btn--alt"
         >
           Continue with Github
         </Button>
@@ -90,7 +96,7 @@ class LoginForm extends Component {
           type="submit"
           size="md"
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={this.onSubmit}
           className="login__btn"
         >

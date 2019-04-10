@@ -7,7 +7,7 @@ import { ProjectIcon } from '../ProjectIcon';
 
 const ProjectBadge = ({ projectId, size, variant, name, color, classes }) => (
   <Link
-    to={`/0/projects/${projectId}`}
+    to={`/0/projects/${projectId}/tasks`}
     className={`project-badge project-badge--${size} ${
       variant === 'contained'
         ? `project-badge--contained project-badge--${color}`
