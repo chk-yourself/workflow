@@ -37,7 +37,7 @@ export const updateComment = ({ commentId, commentData }) => {
 export const fetchCommentsById = () => {
   return async dispatch => {
     try {
-      const commentsById = await firebase.db
+      const commentsById = await firebase.fs
         .collection('comments')
         .get()
         .then(snapshot => {
@@ -60,7 +60,7 @@ export const fetchCommentsById = () => {
 export const fetchTaskComments = taskId => {
   return async dispatch => {
     try {
-      const commentsById = await firebase.db
+      const commentsById = await firebase.fs
         .collection('comments')
         .where('taskId', '==', taskId)
         .get()
@@ -84,7 +84,7 @@ export const fetchTaskComments = taskId => {
 export const fetchUserComments = userId => {
   return async dispatch => {
     try {
-      const commentsById = await firebase.db
+      const commentsById = await firebase.fs
         .collection('comments')
         .where('to', 'array-contains', userId)
         .get()
@@ -108,7 +108,7 @@ export const fetchUserComments = userId => {
 export const syncTaskComments = taskId => {
   return async (dispatch, getState) => {
     try {
-      const subscription = await firebase.db
+      const subscription = await firebase.fs
         .collection('comments')
         .where('taskId', '==', taskId)
         .onSnapshot(async snapshot => {

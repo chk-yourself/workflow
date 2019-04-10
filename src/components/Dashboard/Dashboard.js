@@ -10,6 +10,7 @@ import { ProjectGrid } from '../ProjectGrid';
 import TasksDueSoon from './TasksDueSoon';
 import Notifications from './Notifications';
 import DashboardPanel from './DashboardPanel';
+import OverdueTasks from './OverdueTasks';
 import { TaskEditor } from '../TaskEditor';
 import { Main } from '../Main';
 import './Dashboard.scss';
@@ -39,7 +40,7 @@ class Dashboard extends Component {
         title="Home"
         classes={{ main: 'dashboard', title: 'dashboard__header' }}
       >
-        <TasksDueSoon onTaskClick={this.handleTaskClick} />
+        <TasksDueSoon />
         <Notifications onTaskClick={this.handleTaskClick} />
         <DashboardPanel className="projects" name="Projects" icon="grid">
           <ProjectGrid

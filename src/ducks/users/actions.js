@@ -43,7 +43,7 @@ export const updateUser = ({ userId, userData }) => {
 export const fetchUsersById = () => {
   return async dispatch => {
     try {
-      const usersById = await firebase.db
+      const usersById = await firebase.fs
         .collection('users')
         .get()
         .then(snapshot => {
@@ -66,7 +66,7 @@ export const fetchUsersById = () => {
 export const syncUsersById = () => {
   return async (dispatch, getState) => {
     try {
-      const subscription = await firebase.db
+      const subscription = await firebase.fs
         .collection('users')
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();

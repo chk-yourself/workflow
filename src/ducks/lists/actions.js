@@ -95,7 +95,7 @@ export const deleteList = ({ listId, projectId }) => {
 export const fetchListsById = projectId => {
   return async dispatch => {
     try {
-      const listsById = await firebase.db
+      const listsById = await firebase.fs
         .collection('lists')
         .where('projectId', '==', projectId)
         .get()
@@ -119,7 +119,7 @@ export const fetchListsById = projectId => {
 export const fetchUserLists = userId => {
   return async dispatch => {
     try {
-      const listsById = await firebase.db
+      const listsById = await firebase.fs
         .collection('lists')
         .where('userId', '==', userId)
         .get()

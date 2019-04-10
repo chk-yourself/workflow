@@ -53,6 +53,7 @@
     outline: none;
     color: $white;
     font-weight: 400;
+    mark,
     .feather {
       color: $white;
     }
@@ -66,4 +67,9 @@
     margin-right: 12px;
     pointer-events: none;
   }
+}
+
+.mark {
+  color: $grey-900;
+  background-color: transparent;
 }

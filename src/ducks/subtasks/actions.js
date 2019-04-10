@@ -40,7 +40,7 @@ export const updateSubtask = ({ subtaskId, subtaskData }) => {
 export const syncTaskSubtasks = taskId => {
   return async (dispatch, getState) => {
     try {
-      const subscription = await firebase.db
+      const subscription = await firebase.fs
         .collection('subtasks')
         .where('taskId', '==', taskId)
         .onSnapshot(snapshot => {
@@ -99,7 +99,7 @@ export const syncTaskSubtasks = taskId => {
 export const fetchUserSubtasks = userId => {
   return async dispatch => {
     try {
-      const subtasksById = await firebase.db
+      const subtasksById = await firebase.fs
         .collection('subtasks')
         .where('assignedTo', 'array-contains', userId)
         .get()

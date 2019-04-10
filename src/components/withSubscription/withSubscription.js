@@ -40,35 +40,35 @@ const withSubscription = ({
       const ref = this.query
         ? firebase.queryCollection(this.path, this.query)
         : doc || subdoc
-        ? firebase.db.doc(this.path)
-        : firebase.db.collection(this.path);
+        ? firebase.fs.doc(this.path)
+        : firebase.fs.collection(this.path);
 
       this.listener = ref.onSnapshot(async snapshot => {
         if (doc || subdoc) {
           this.onLoad(snapshot);
         } else {
           const changes = snapshot.docChanges();
-        if (snapshot.size === changes.length) {
-          await this.onLoad(changes);
-          this.setState({
-            isLoading: false
-          });
-        } else {
-          changes.forEach(async change => {
-            const [id, data, changeType] = await Promise.all([
-              change.doc.id,
-              change.doc.data(),
-              change.type
-            ]);
-            if (changeType === 'added') {
-              this.onAdd(id, data);
-            } else if (changeType === 'removed') {
-              this.onRemove(id, data);
-            } else {
-              this.onModify(id, data);
-            }
-          });
-        }
+          if (snapshot.size === changes.length) {
+            await this.onLoad(changes);
+            this.setState({
+              isLoading: false
+            });
+          } else {
+            changes.forEach(async change => {
+              const [id, data, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              if (changeType === 'added') {
+                this.onAdd(id, data);
+              } else if (changeType === 'removed') {
+                this.onRemove(id, data);
+              } else {
+                this.onModify(id, data);
+              }
+            });
+          }
         }
       });
     }

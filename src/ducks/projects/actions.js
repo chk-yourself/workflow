@@ -163,7 +163,7 @@ export const syncUserProjects = userId => {
 export const fetchProjectLists = projectId => {
   return async dispatch => {
     try {
-      const projectLists = await firebase.db
+      const projectLists = await firebase.fs
         .collection('lists')
         .where('projectId', '==', projectId)
         .get()

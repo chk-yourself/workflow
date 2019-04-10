@@ -11,7 +11,7 @@ import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
 import { generateKey } from '../../utils/react';
 import { withOutsideClick } from '../withOutsideClick';
-import Highlight from './Highlight';
+import Mark from './Mark';
 import './SearchTypeahead.scss';
 
 class SearchTypeahead extends Component {
@@ -203,7 +203,7 @@ class SearchTypeahead extends Component {
       .split(regExp)
       .map(text =>
         regExp.test(text) ? (
-          <Highlight key={generateKey()}>{text}</Highlight>
+          <Mark key={generateKey()}>{text}</Mark>
         ) : (
           text
         )
@@ -255,7 +255,7 @@ class SearchTypeahead extends Component {
               }`}
             >
               <Icon name="search" />
-              Items with <Highlight>{query}</Highlight>
+              Items with <Mark>{query}</Mark>
             </li>
             <SearchSuggestions
               onClick={this.onClickProject}

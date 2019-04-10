@@ -93,7 +93,7 @@
   font-weight: 500;
 }
 
-.tasks-due-soon__task {
+.dashboard__task {
   border-radius: 4px;
   margin-bottom: 4px;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -109,4 +109,20 @@
 
 .dashboard__project-grid {
   margin: 0 0 -16px 0;
+}
+
+.dashboard__tasks {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dashboard__info--empty {
+  font-size: 13px;
+  color: $grey-700;
+  padding: 8px;
+  font-style: italic;
+  strong {
+    font-style: normal;
+  }
 }

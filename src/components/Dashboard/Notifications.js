@@ -34,17 +34,23 @@ class Notifications extends Component {
     if (isLoading) return null;
     return (
       <DashboardPanel className="notifications" name="Notifications" size="sm">
-        <ul className="notifications__list">
-          {notifications.map(notification => (
-            <Notification
-              key={notification.notificationId}
-              onTaskClick={
-                notification.source.type === 'comment' ? onTaskClick : null
-              }
-              {...notification}
-            />
-          ))}
-        </ul>
+        {notifications.length > 0 ? (
+          <ul className="notifications__list">
+            {notifications.map(notification => (
+              <Notification
+                key={notification.notificationId}
+                onTaskClick={
+                  notification.source.type === 'comment' ? onTaskClick : null
+                }
+                {...notification}
+              />
+            ))}
+          </ul>
+        ) : (
+          <div className="dashboard__info--empty">
+            You have no notifications.
+          </div>
+        )}
       </DashboardPanel>
     );
   }

@@ -5,22 +5,29 @@ import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
 import { currentUserSelectors } from '../../ducks/currentUser';
 
-const TasksDueSoon = ({ tasksDueSoon, onTaskClick, currentUser }) => (
+const TasksDueSoon = ({ tasksDueSoon, currentUser }) => (
   <DashboardPanel
     className="tasks-due-soon"
     size="md"
     name="Tasks Due Soon"
     link={{ path: `/0/${currentUser.userId}/tasks`, text: 'View all tasks' }}
   >
-    {tasksDueSoon.map((task, i) => (
-      <Task
-        className="tasks-due-soon__task"
-        index={i}
-        key={task.taskId}
-        onTaskClick={onTaskClick}
-        {...task}
-      />
-    ))}
+    {tasksDueSoon.length > 0 ? (
+      <ul className="dashboard__tasks">
+        {tasksDueSoon.map((task, i) => (
+          <Task
+            className="dashboard__task"
+            index={i}
+            key={task.taskId}
+            taskId={task.taskId}
+          />
+        ))}
+      </ul>
+    ) : (
+      <div className="dashboard__info--empty">
+        No tasks due in the next <strong>7 days</strong>.
+      </div>
+    )}
   </DashboardPanel>
 );
 

@@ -471,7 +471,7 @@ class TaskEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state),
-    taskTags: taskSelectors.getTaskTags(state, ownProps),
+    taskTags: taskSelectors.getTaskTags(state, ownProps.taskId),
     mergedTags: currentUserSelectors.getMergedProjectTags(
       state,
       ownProps.projectId

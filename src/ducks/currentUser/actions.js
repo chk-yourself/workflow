@@ -204,7 +204,7 @@ export const syncTasksDueWithinDays = (userId, days) => {
 
   return async dispatch => {
     try {
-      const subscription = await firebase.db
+      const subscription = await firebase.fs
         .collection('tasks')
         .where('assignedTo', 'array-contains', userId)
         .where('dueDate', '<=', timeEnd)

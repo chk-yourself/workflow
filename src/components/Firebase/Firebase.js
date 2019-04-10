@@ -1,4 +1,5 @@
 import app from 'firebase/app';
+import 'firebase/database';
 import 'firebase/auth';
 import 'firebase/firestore';
 
@@ -15,7 +16,8 @@ class Firebase {
   constructor() {
     app.initializeApp(config);
     this.auth = app.auth();
-    this.db = app.firestore();
+    this.fs = app.firestore();
+    this.db = app.database();
   }
 
   // Auth API
@@ -53,28 +55,28 @@ class Firebase {
   signInWithGithub = () => {
     const provider = new app.auth.GithubAuthProvider();
     this.auth
-    .signInWithPopup(provider)
-    .then(result => {
-      if (result.credential) {
-        const token = result.credential.accessToken;
-        console.log(token);
-        const { user } = result;
-      }
-    })
-    .catch(error => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.email;
-      const credential = error.credential;
+      .signInWithPopup(provider)
+      .then(result => {
+        if (result.credential) {
+          const token = result.credential.accessToken;
+          console.log(token);
+          const { user } = result;
+        }
+      })
+      .catch(error => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = error.credential;
 
-      if (errorCode === 'auth/account-exists-with-different-credential') {
-        alert(
-          'You have already signed up with a different auth provider for that email.'
-        );
-      } else {
-        console.error(error);
-      }
-    });
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          alert(
+            'You have already signed up with a different auth provider for that email.'
+          );
+        } else {
+          console.error(error);
+        }
+      });
   };
 
   createUserWithEmailAndPassword = (email, password) =>
@@ -101,16 +103,16 @@ class Firebase {
   deleteField = () => app.firestore.FieldValue.delete();
 
   getDocRef = (collection, doc, subcollection = null, subdoc = null) => {
-    const docRef = this.db.doc(`${collection}/${doc}`);
+    const docRef = this.fs.doc(`${collection}/${doc}`);
     return subcollection && subdoc
       ? docRef.collection(subcollection).doc(subdoc)
       : docRef;
   };
 
-  createBatch = () => this.db.batch();
+  createBatch = () => this.fs.batch();
 
   queryCollection = (path, [field, comparisonOperator, value]) => {
-    return this.db.collection(path).where(field, comparisonOperator, value);
+    return this.fs.collection(path).where(field, comparisonOperator, value);
   };
 
   updateDoc = ([collection, doc, subcollection, subdoc], newValue = {}) =>
@@ -127,9 +129,50 @@ class Firebase {
     });
   };
 
+  // User Presence
+
+  initPresenceDetection = uid => {
+    const userStatusDBRef = this.db.ref(`/status/${uid}`);
+    const isOfflineDB = {
+      state: 'offline',
+      lastUpdatedAt: app.database.ServerValue.TIMESTAMP
+    };
+
+    const isOnlineDB = {
+      state: 'online',
+      lastUpdatedAt: app.database.ServerValue.TIMESTAMP
+    };
+
+    const userStatusFSRef = this.fs.doc(`/status/${uid}`);
+    const isOfflineFS = {
+      state: 'offline',
+      lastUpdatedAt: this.getTimestamp()
+    };
+
+    const isOnlineFS = {
+      state: 'online',
+      lastUpdatedAt: this.getTimestamp()
+    };
+
+    this.db.ref('.info/connected').on('value', snapshot => {
+      if (snapshot.val() === false) {
+        userStatusFSRef.set(isOfflineFS);
+        return;
+      }
+
+      userStatusDBRef
+        .onDisconnect()
+        .set(isOfflineDB)
+        .then(() => {
+          userStatusDBRef.set(isOnlineDB);
+          userStatusFSRef.set(isOnlineFS);
+        });
+    });
+  };
+
   // User API
 
-  getUserDoc = userId => this.db.collection('users').doc(userId);
+  getUserDoc = userId => this.fs.collection('users').doc(userId);
 
   addUser = ({
     userId,
@@ -139,7 +182,7 @@ class Firebase {
     projectIds = [],
     photoURL = null
   }) => {
-    const batch = this.db.batch();
+    const batch = this.fs.batch();
     const userRef = this.getDocRef('users', userId);
     const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
     const todayFolderRef = this.getDocRef('users', userId, 'folders', '1');
@@ -210,7 +253,7 @@ class Firebase {
   };
 
   updateUser = (userId, newValue = {}) =>
-    this.db
+    this.fs
       .collection('users')
       .doc(userId)
       .update(newValue);
@@ -226,7 +269,7 @@ class Firebase {
     projectCount,
     userCount
   }) => {
-    const batch = this.db.batch();
+    const batch = this.fs.batch();
     const userTagRef = this.getDocRef('users', userId, 'tags', name);
 
     this.updateBatch(batch, ['tasks', taskId], {
@@ -272,7 +315,8 @@ class Firebase {
       });
   };
 
-  removeTag = ({ taskId = null, name, userId, userCount, projectId, projectCount },
+  removeTag = (
+    { taskId = null, name, userId, userCount, projectId, projectCount },
     batch = this.createBatch(),
     shouldCommit = true
   ) => {
@@ -318,7 +362,7 @@ class Firebase {
   };
 
   setTagColor = ({ userId, projectId, tag, color }) => {
-    const batch = this.db.batch();
+    const batch = this.fs.batch();
     const userTagRef = this.getDocRef('users', userId, 'tags', tag);
     if (projectId) {
       const projectRef = this.getDocRef('projects', projectId);
@@ -352,7 +396,7 @@ class Firebase {
 
   // Project API
 
-  getProjectDoc = projectId => this.db.collection('projects').doc(projectId);
+  getProjectDoc = projectId => this.fs.collection('projects').doc(projectId);
 
   updateProject = (projectId, newValue = {}) =>
     this.getProjectDoc(projectId).update({
@@ -368,7 +412,7 @@ class Firebase {
     });
 
     // Update tasks assigned to list
-    this.db
+    this.fs
       .collection('tasks')
       .where('projectId', '==', projectId)
       .get()
@@ -398,7 +442,7 @@ class Firebase {
     memberIds = [],
     notes = null
   }) => {
-    this.db
+    this.fs
       .collection('projects')
       .add({
         createdAt: this.getTimestamp(),
@@ -452,7 +496,7 @@ class Firebase {
     });
 
     // Update tasks assigned to list
-    this.db
+    this.fs
       .collection('tasks')
       .where('listId', '==', listId)
       .get()
@@ -474,7 +518,7 @@ class Firebase {
   };
 
   addList = ({ name, projectId = null, userId = null }) => {
-    this.db
+    this.fs
       .collection('lists')
       .add({
         ownerId: userId,
@@ -511,7 +555,7 @@ class Firebase {
     });
 
     // Delete tasks assigned to list
-    this.db
+    this.fs
       .collection('tasks')
       .where('listId', '==', listId)
       .get()
@@ -532,7 +576,7 @@ class Firebase {
 
   // Task API
 
-  getTaskDoc = taskId => this.db.collection('tasks').doc(taskId);
+  getTaskDoc = taskId => this.fs.collection('tasks').doc(taskId);
 
   addTask = ({
     name,
@@ -547,7 +591,7 @@ class Firebase {
   }) => {
     const isFolderItem = !!folderId;
 
-    this.db
+    this.fs
       .collection('tasks')
       .add({
         ownerId: userId,
@@ -686,7 +730,6 @@ class Firebase {
     batch = this.createBatch(),
     shouldCommit = true
   ) => {
-
     if (!taskId) {
       this.updateBatch(batch, ['users', userId], {
         projectIds: this.removeFromArray(projectId)
@@ -698,7 +741,7 @@ class Firebase {
       this.updateBatch(batch, ['users', userId, 'folders', folderId], {
         taskIds: this.removeFromArray(taskId)
       });
-  
+
       if (!dueDate) {
         this.updateBatch(batch, ['users', userId, 'folders', '5'], {
           taskIds: this.removeFromArray(taskId)
@@ -741,7 +784,7 @@ class Firebase {
     taskId = null,
     dueDate = null
   }) => {
-    const batch = this.db.batch();
+    const batch = this.fs.batch();
 
     this.updateBatch(batch, ['projects', projectId], {
       memberIds: this.addToArray(userId)
@@ -760,7 +803,7 @@ class Firebase {
         },
         { merge: true }
       );
-      
+
       this.updateBatch(batch, ['users', userId, 'folders', '0'], {
         taskIds: this.addToArray(taskId)
       });
@@ -956,7 +999,7 @@ class Firebase {
 
   // Subtask API
 
-  getSubtaskDoc = subtaskId => this.db.collection('subtasks').doc(subtaskId);
+  getSubtaskDoc = subtaskId => this.fs.collection('subtasks').doc(subtaskId);
 
   addSubtask = ({
     userId,
@@ -966,7 +1009,7 @@ class Firebase {
     taskId = null,
     dueDate = null
   }) => {
-    this.db
+    this.fs
       .collection('subtasks')
       .add({
         createdAt: this.getTimestamp(),
@@ -1023,8 +1066,15 @@ class Firebase {
 
   // Comment API
 
-  addComment = ({ from, to = [], projectId, taskId, content, createdAt = this.getTimestamp() }) => {
-    this.db
+  addComment = ({
+    from,
+    to = [],
+    projectId,
+    taskId,
+    content,
+    createdAt = this.getTimestamp()
+  }) => {
+    this.fs
       .collection('comments')
       .add({
         createdAt,
@@ -1074,14 +1124,14 @@ class Firebase {
 
   createNotification = ({ userId, source, location, event }) => {
     this.getDocRef('users', userId)
-    .collection('notifications')
-    .add({
-      source,
-      location,
-      event,
-      createdAt: this.getTimestamp(),
-      isActive: true
-    });
+      .collection('notifications')
+      .add({
+        source,
+        location,
+        event,
+        createdAt: this.getTimestamp(),
+        isActive: true
+      });
   };
 }
 

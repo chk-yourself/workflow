@@ -32,6 +32,7 @@ const withAuthentication = WrappedComponent => {
         if (authUser) {
           this.unsubscribe = await syncCurrentUserData(authUser.uid);
           this.setState({ authUser });
+          firebase.initPresenceDetection(authUser.uid);
           history.push(`/0/home/${authUser.uid}`);
         } else {
           history.push(ROUTES.LOG_IN);

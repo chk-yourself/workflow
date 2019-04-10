@@ -286,23 +286,46 @@ export const getFolder = (state, folderId) => {
   return currentUser.folders[folderId];
 };
 
-// Returns array of tasks due within given number of days
+// Returns array of tasks due within next given number of days
 export const getTasksDueWithinDays = (state, days = 7) => {
   const { currentUser, tasksById } = state;
   if (!currentUser) return [];
   const { assignedTasks } = currentUser;
   if (!assignedTasks) return [];
-  const startingDate = new Date();
-  startingDate.setHours(0, 0, 0, 0);
-  const endingDate = new Date(startingDate);
+  const timeStart = new Date().setHours(0, 0, 0, 0);
+  const endingDate = new Date(timeStart);
   const timeEnd = +new Date(endingDate.setDate(endingDate.getDate() + days));
   return assignedTasks
     .reduce((tasksDueSoon, taskId) => {
       const task = tasksById[taskId];
-      if (task && task.dueDate && task.dueDate.toMillis() <= timeEnd) {
-        return tasksDueSoon.concat(task);
+      if (task) {
+        const { isCompleted, dueDate } = task;
+        const dueDateMS = dueDate ? dueDate.toMillis() : null;
+        if (!isCompleted && dueDateMS <= timeEnd) {
+          return tasksDueSoon.concat(task);
+        }
       }
       return tasksDueSoon;
+    }, [])
+    .sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
+};
+
+export const getOverdueTasks = state => {
+  const { currentUser, tasksById } = state;
+  if (!currentUser) return [];
+  const { assignedTasks } = currentUser;
+  if (!assignedTasks) return [];
+  const timeEnd = new Date().setHours(0, 0, 0, 0);
+  return assignedTasks
+    .reduce((overdueTasks, taskId) => {
+      const task = tasksById[taskId];
+      if (task) {
+        const { isCompleted, dueDate } = task;
+        if (!isCompleted && dueDate && dueDate.toMillis() < timeEnd) {
+          return overdueTasks.concat(task);
+        }
+      }
+      return overdueTasks;
     }, [])
     .sort((a, b) => a.dueDate.toMillis() - b.dueDate.toMillis());
 };
