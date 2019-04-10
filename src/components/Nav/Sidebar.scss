@@ -30,24 +30,18 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
-  height: calc(100vh - 120px);
-  @include md {
-    height: calc(100vh - 140px);
-  }
-  @include lg {
-    height: calc(100vh - 160px);
-  }
 }
 
 .sidebar__item {
   padding: 0;
-  font-size: 1.3rem;
   font-family: $heading-font;
   font-weight: 500;
   border-bottom: 1px solid $grey-300;
 }
 
+.sidebar__btn,
 .sidebar__link {
+  text-align: left;
   text-decoration: none;
   color: $grey-700;
   padding: 12px 0 12px 12px;
@@ -132,4 +126,20 @@
 
 .sidebar__section-name {
   display: none;
+}
+
+.sidebar__btn {
+  position: relative;
+  border-bottom: 1px solid $grey-300;
+  .feather-chevron-left {
+    transition: all 0.2s ease-in-out;
+    position: absolute;
+    right: 8px;
+    top: calc(50% - 10px);
+  }
+  &.is-active {
+    .feather-chevron-left {
+      transform: rotate(-90deg);
+    }
+  }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 const ExpansionPanelHeader = ({ children, className, onClick }) => {
   return (
-    <header
+    <div
       className={`expansion-panel__header ${className}`}
       role="button"
       onClick={onClick}
@@ -11,7 +11,7 @@ const ExpansionPanelHeader = ({ children, className, onClick }) => {
       onDragOver={onClick}
     >
       {children}
-    </header>
+    </div>
   );
 };
 

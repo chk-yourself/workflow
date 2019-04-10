@@ -31,6 +31,7 @@ class HomePage extends Component {
   async componentDidMount() {
     const {
       syncUsersById,
+      syncUserPresence,
       currentUser,
       syncUserProjects,
       syncUserProjectTasks,
@@ -42,6 +43,7 @@ class HomePage extends Component {
 
     await Promise.all([
       syncUsersById(),
+      syncUserPresence(),
       syncUserProjects(userId),
       syncUserMiscTasks(userId),
       syncUserTags(userId),
@@ -160,6 +162,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     syncUsersById: () => dispatch(userActions.syncUsersById()),
+    syncUserPresence: () => dispatch(userActions.syncUserPresence()),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId)),
     syncUserProjects: userId =>
       dispatch(projectActions.syncUserProjects(userId)),

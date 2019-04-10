@@ -3,6 +3,7 @@ import { Logo } from '../Logo';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
+import { Members } from '../Members';
 import './Sidebar.scss';
 
 export const SidebarIcon = ({ name }) => {
@@ -10,6 +11,10 @@ export const SidebarIcon = ({ name }) => {
 };
 
 class Sidebar extends Component {
+  state = {
+    isMembersListVisible: false
+  };
+
   onOutsideClick = e => {
     const { isExpanded } = this.props;
     if (!isExpanded || e.target.matches('.sidebar__btn--toggle')) return;
@@ -17,7 +22,14 @@ class Sidebar extends Component {
     onToggle();
   };
 
+  toggleMembersList = () => {
+    this.setState(prevState => ({
+      isMembersListVisible: !prevState.isMembersListVisible
+    }));
+  };
+
   render() {
+    const { isMembersListVisible } = this.state;
     const { onToggle, children, innerRef } = this.props;
     return (
       <div ref={innerRef} className="sidebar__canvas">
@@ -35,7 +47,21 @@ class Sidebar extends Component {
             <div className="sidebar__logo">
               <Logo size="sm" />
             </div>
-            <ul className="sidebar__list">{children}</ul>
+            <ul className="sidebar__list">
+              {children}
+              <li className="sidebar__item sidebar__item--team">
+                <Button
+                  isActive={isMembersListVisible}
+                  className="sidebar__btn"
+                  onClick={this.toggleMembersList}
+                >
+                  <Icon className="sidebar__icon" name="users" />
+                  <span className="sidebar__section-name">Team</span>
+                  <Icon className="sidebar__icon" name="chevron-left" />
+                </Button>
+                <Members isExpanded={isMembersListVisible} />
+              </li>
+            </ul>
           </nav>
         </div>
       </div>

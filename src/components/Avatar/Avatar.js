@@ -34,7 +34,7 @@ export default class Avatar extends Component {
       size
     } = this.props;
     return (
-      <div
+      <span
         className={`avatar avatar--${size} avatar--${variant} ${
           classes.avatar
         }`}
@@ -47,14 +47,14 @@ export default class Avatar extends Component {
             {...imgProps}
           />
         ) : (
-          <div
+          <span
             className={`avatar__placeholder ${classes.placeholder}`}
             style={{ backgroundColor: color }}
           >
             {this.getUserInitials(name)}
-          </div>
+          </span>
         )}
-      </div>
+      </span>
     );
   }
 }

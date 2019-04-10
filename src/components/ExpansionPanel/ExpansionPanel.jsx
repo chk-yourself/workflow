@@ -50,7 +50,7 @@ export default class ExpansionPanel extends Component {
       propsIsExpanded !== null ? propsIsExpanded : this.state.isExpanded;
 
     return (
-      <section
+      <div
         className={`expansion-panel ${classes.panel || ''}`}
         aria-expanded={isExpanded}
         ref={innerRef}
@@ -68,7 +68,7 @@ export default class ExpansionPanel extends Component {
             {children}
           </ExpansionPanelContent>
         )}
-      </section>
+      </div>
     );
   }
 }

@@ -2,24 +2,24 @@
 @import '../../styles/mixins';
 
 .avatar {
-  overflow: hidden;
   text-align: center;
   font-family: $heading-font;
   box-sizing: border-box;
   flex: none;
+  display: inline-block;
 }
 
 .avatar--md {
   width: 40px;
   height: 40px;
-  line-height: 40px;
+  line-height: 38px;
   font-size: 14px;
 }
 
 .avatar--sm {
   width: 24px;
   height: 24px;
-  line-height: 24px;
+  line-height: 22px;
   font-size: 11px;
 }
 
@@ -62,4 +62,5 @@
   height: 100%;
   vertical-align: middle;
   box-sizing: border-box;
+  display: inline-block;
 }

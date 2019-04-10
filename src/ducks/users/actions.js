@@ -38,7 +38,7 @@ export const updateUser = ({ userId, userData }) => {
   };
 };
 
-export const updateUserStatus = ({ userId, status }) => {
+export const updateUserStatus = (userId, status) => {
   return {
     type: types.UPDATE_USER_STATUS,
     userId,

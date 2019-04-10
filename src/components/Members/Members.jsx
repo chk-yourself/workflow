@@ -4,37 +4,26 @@ import { withAuthorization } from '../Session';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
 import { userActions, userSelectors } from '../../ducks/users';
+import './Members.scss';
 
-class MembersList extends Component {
-  state = {
-    isLoading: true
-  };
-
-  async componentDidMount() {
-    const { syncUserPresence } = this.props;
-    this.unsubscribe = await syncUserPresence();
-    this.setState({
-      isLoading: false
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
+class Members extends Component {
 
   render() {
-    const { isLoading } = this.state;
-    if (isLoading) return null;
-    const { users } = this.props;
+    const { users, isExpanded } = this.props;
     return (
-      <ul className="members">
+      <ul
+        style={{ display: isExpanded ? 'block' : 'none' }}
+        className="sidebar__list members__list"
+      >
         {users.map(user => {
-          const { name, photoURL, userId } = user;
+          const { name, photoURL, userId, isOnline } = user;
           return (
-            <li className="members__member" key={userId}>
+            <li className="sidebar__item members__item" key={userId}>
               <Avatar
                 classes={{
-                  avatar: `members__avatar--sm`,
+                  avatar: `members__avatar members__avatar--sm ${
+                    isOnline ? 'is-online' : ''
+                  }`,
                   placeholder: `members__avatar-placeholder--sm`
                 }}
                 name={name}
@@ -54,12 +43,4 @@ class MembersList extends Component {
 const mapStateToProps = state => ({
   users: userSelectors.getUsersArray(state)
 });
-
-const mapDispatchToProps = dispatch => ({
-  syncUserPresence: () => dispatch(userActions.syncUserPresence())
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MembersList);
+export default connect(mapStateToProps)(Members);
