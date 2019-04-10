@@ -38,6 +38,14 @@ export const updateUser = ({ userId, userData }) => {
   };
 };
 
+export const updateUserStatus = ({ userId, status }) => {
+  return {
+    type: types.UPDATE_USER_STATUS,
+    userId,
+    status
+  };
+};
+
 // Thunks
 
 export const fetchUsersById = () => {
@@ -128,6 +136,34 @@ export const fetchUserData = userId => {
       dispatch(loadUserData(user));
     } catch (error) {
       console.log(error);
+    }
+  };
+};
+
+export const syncUserPresence = () => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase.fs
+        .collection('status')
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          changes.forEach(change => {
+            const userId = change.doc.id;
+            const { state } = change.doc.data();
+            if (change.type === 'added') {
+              console.log(`User ${userId} is online`);
+              // ...
+            }
+            if (change.type === 'removed') {
+              console.log(`User ${userId} is offline.`);
+              // ...
+            }
+            dispatch(updateUserStatus(userId, state));
+          });
+        });
+      return subscription;
+    } catch (error) {
+      console.error(error);
     }
   };
 };

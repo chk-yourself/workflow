@@ -41,6 +41,16 @@ const usersById = (state = {}, action) => {
         }
       };
     }
+    case types.UPDATE_USER_STATUS: {
+      const { userId, status } = action;
+      return {
+        ...state,
+        [userId]: {
+          ...state[userId],
+          isOnline: status === 'online'
+        }
+      };
+    }
     case types.REORDER_FOLDERS: {
       const { userId, folderIds } = action;
       return {

@@ -35,7 +35,6 @@ export default class Textarea extends Component {
   autoHeightResize = () => {
     const { isAutoHeightResizeEnabled, minHeight } = this.props;
     if (!isAutoHeightResizeEnabled) return;
-
     this.el.style.height = `${minHeight}px`; // resets scroll height
     this.el.style.height = `${this.el.scrollHeight}px`;
   };
@@ -62,7 +61,6 @@ export default class Textarea extends Component {
     return (
       <textarea
         className={`textarea ${className}`}
-        id={name}
         name={name}
         value={value}
         onChange={onChange}
