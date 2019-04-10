@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
-import { taskSelectors } from '../../ducks/tasks';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { TaskComposer } from '../TaskComposer';
 import { Button } from '../Button';
@@ -53,8 +52,7 @@ class Folder extends Component {
 
   render() {
     const {
-      tasks,
-      onTaskClick,
+      taskIds,
       projectId,
       projectName,
       folderId,
@@ -130,12 +128,11 @@ class Folder extends Component {
             >
               <div className="folder__tasks">
                 <Tasks
-                  tasks={tasks}
+                  taskIds={taskIds}
                   listId={null}
                   folderId={folderId}
                   projectId={projectId}
                   dueDate={dueDate}
-                  onTaskClick={onTaskClick}
                   isDragDisabled={!userPermissions.enableDragNDrop}
                   dropType={!userPermissions.enableTaskAdd ? (projectId || folderId || dueDate) : droppableTypes.TASK }
                   layout="list"
@@ -161,7 +158,6 @@ class Folder extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasks: taskSelectors.getFolderTasks(state, ownProps.taskIds),
     tempTaskSettings: currentUserSelectors.getTempTaskSettings(state)
   };
 };

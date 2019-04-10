@@ -120,14 +120,9 @@ class ProjectContainer extends Component {
     selectTask(null);
   };
 
-  handleTaskClick = taskId => {
-    const { selectTask } = this.props;
-    selectTask(taskId);
-  };
 
   render() {
     const {
-      lists,
       selectedTask,
       projectId,
       userId,
@@ -136,6 +131,7 @@ class ProjectContainer extends Component {
       project,
       tempProjectSettings
     } = this.props;
+    const { name, listIds } = project;
     const { layout } = tempProjectSettings;
     const isTaskEditorOpen = !!selectedTaskId;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
@@ -151,8 +147,7 @@ class ProjectContainer extends Component {
             onDragStart={this.onDragStart}
           >
             <Project {...project}>
-              {lists.map((list, i) => {
-                const { listId, name: listName, taskIds } = list;
+              {listIds.map((listId, i) => {
                 return (
                   <List
                     viewFilter={tempProjectSettings.tasks.view}
@@ -160,10 +155,8 @@ class ProjectContainer extends Component {
                     listId={listId}
                     key={listId}
                     index={i}
-                    name={listName}
-                    taskIds={taskIds}
-                    onTaskClick={this.handleTaskClick}
                     projectId={projectId}
+                    projectName={name}
                     layout={layout}
                     isRestricted={false}
                   />
@@ -192,7 +185,6 @@ const mapStateToProps = (state, ownProps) => {
     selectedTaskId: getSelectedTaskId(state),
     selectedTask: getSelectedTask(state),
     listsById: listSelectors.getListsById(state),
-    lists: listSelectors.getSelectedProjectLists(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
     tempProjectSettings: projectSelectors.getTempProjectSettings(
@@ -206,8 +198,6 @@ const mapDispatchToProps = dispatch => {
   return {
     selectProject: projectId => dispatch(selectProjectAction(projectId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    updateProjectTags: (projectId, tags) =>
-      dispatch(projectActions.updateProjectTags(projectId, tags)),
     syncProjectLists: projectId =>
       dispatch(listActions.syncProjectLists(projectId)),
     syncProjectTasks: projectId =>

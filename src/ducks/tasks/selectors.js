@@ -44,9 +44,11 @@ export const getFolderTasks = (state, taskIds) => {
   return tasks;
 };
 
-export const getTaskTags = (state, ownProps) => {
-  const { projectId, tags: taskTags } = ownProps;
-  const { projectsById, currentUser } = state;
+export const getTaskTags = (state, taskId) => {
+  const { projectsById, tasksById, currentUser } = state;
+  const task = tasksById[taskId];
+  if (!task) return [];
+  const { projectId, tags: taskTags } = task;
   if (!taskTags || taskTags.length === 0) return [];
   if (projectId && projectId in projectsById) {
     const { tags: projectTags } = projectsById[projectId];
@@ -75,8 +77,10 @@ export const getTaggedTasks = (state, tag) => {
     });
 };
 
-export const getTasksByViewFilter = (state, taskIds) => {
-  const { tasksById } = state;
+export const getTasksByViewFilter = (state, listId) => {
+  const { listsById, tasksById } = state;
+  const list = listsById[listId];
+  const { taskIds } = list;
   return taskIds.reduce(
     (tasksByView, taskId) => {
       const task = tasksById[taskId];
@@ -159,4 +163,26 @@ export const getSortedTaskIds = (state, taskIds, sortBy) => {
       return taskIds;
     }
   }
+};
+
+export const getAssignees = (state, taskId) => {
+  const { tasksById, usersById } = state;
+  const task = tasksById[taskId];
+  if (!task) return [];
+  const { assignedTo } = task;
+  return assignedTo.map(userId => usersById[userId]);
+};
+
+export const getCompletedSubtasks = (state, taskId) => {
+  const { tasksById, subtasksById } = state;
+  const task = tasksById[taskId];
+  if (!task) return [];
+  const { subtaskIds } = task;
+  if (!subtaskIds) return [];
+  return subtaskIds.filter(subtaskId => {
+    const subtask = subtasksById[subtaskId];
+    if (subtask) {
+      return subtask.isCompleted;
+    }
+  });
 };

@@ -226,9 +226,11 @@
   border: 1px solid transparent;
   font-weight: 600;
   text-align: center;
+  @include xs {
+    max-width: 360px;
+  }
   @include md {
     margin: 8px 0;
-    max-width: 400px;
   }
   @include xl {
     font-size: 1.4rem;

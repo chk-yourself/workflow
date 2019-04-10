@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { taskSelectors } from '../../ducks/tasks';
-import { listActions } from '../../ducks/lists';
-import { projectSelectors } from '../../ducks/projects';
+import { listActions, listSelectors } from '../../ducks/lists';
 import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
@@ -12,6 +11,7 @@ import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
+import { Button } from '../Button';
 import './List.scss';
 
 class List extends Component {
@@ -19,12 +19,20 @@ class List extends Component {
     isRestricted: false
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: props.name,
-      isMoreActionsMenuVisible: false
-    };
+  state = {
+    name: this.props.list ? this.props.list.name : '',
+    prevName: this.props.list ? this.props.list.name : '',
+    isMoreActionsMenuVisible: false
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.list.name !== state.prevName) {
+      return {
+        name: props.list.name,
+        prevName: props.list.name
+      };
+    }
+    return null;
   }
 
   handleListDelete = e => {
@@ -40,7 +48,8 @@ class List extends Component {
   };
 
   onBlur = e => {
-    const { name, listId, firebase } = this.props;
+    const { list, listId, firebase } = this.props;
+    const { name } = list;
     const { name: newName } = this.state;
 
     // When field loses focus, update list title if change is detected
@@ -62,13 +71,15 @@ class List extends Component {
     });
   };
 
-  applySortRule = tasks => {
-    const { sortBy } = this.props;
+  applySortRule = taskIds => {
+    const { sortBy, tasksById } = this.props;
     switch (sortBy) {
       case 'dueDate': {
-        return [...tasks].sort((a, b) => {
-          const dueDateA = a.dueDate ? a.dueDate.toMillis() : null;
-          const dueDateB = b.dueDate ? b.dueDate.toMillis() : null;
+        return [...taskIds].sort((a, b) => {
+          const taskA = tasksById[a];
+          const taskB = tasksById[b];
+          const dueDateA = taskA && taskA.dueDate ? taskA.dueDate.toMillis() : null;
+          const dueDateB = taskB && taskB.dueDate ? taskB.dueDate.toMillis() : null;
           if (!dueDateA && dueDateB) {
             return 1;
           }
@@ -82,31 +93,28 @@ class List extends Component {
         });
       }
       default: {
-        return tasks;
+        return taskIds;
       }
     }
   };
 
   render() {
     const {
-      tasksByViewFilter,
-      name: listName,
-      onTaskClick,
+      taskIdsByViewFilter,
       listId,
       index,
-      isFetchingTasks,
       isRestricted,
       projectId,
       projectName,
       layout,
       viewFilter,
-      sortBy
+      list
     } = this.props;
-    if (isFetchingTasks) return null;
-
+    if (!list) return null;
+    const { name: listName } = list;
     const isBoardView = layout === 'board';
     const { name, isMoreActionsMenuVisible } = this.state;
-    const tasks = this.applySortRule(tasksByViewFilter[viewFilter]);
+    const taskIds = this.applySortRule(taskIdsByViewFilter[viewFilter]);
 
     return (
       <Draggable draggableId={listId} index={index}>
@@ -139,33 +147,30 @@ class List extends Component {
                   }}
                   align={{ inner: 'right' }}
                   buttonProps={{
-                    size: 'medium',
+                    size: 'md',
                     iconOnly: true,
-                    className: `list__btn--more-actions ${
-                      isMoreActionsMenuVisible ? 'is-active' : ''
-                    }`,
+                    isActive: isMoreActionsMenuVisible,
+                    className: 'list__btn--more-actions',
                     children: <Icon name="more-vertical" />,
                     onClick: this.toggleMoreActionsMenu
                   }}
                 >
                   <Menu>
-                    <MenuItem>
+                    <MenuItem className="list__more-actions-item">
                       {!isRestricted && (
-                        <a href="" onClick={this.handleListDelete}>
+                        <Button
+                          className="list__btn"
+                          onClick={this.handleListDelete}
+                        >
                           Delete
-                        </a>
+                        </Button>
                       )}
                     </MenuItem>
                   </Menu>
                 </PopoverWrapper>
               </header>
               <div className="list__content">
-                <Tasks
-                  tasks={tasks}
-                  listId={listId}
-                  onTaskClick={onTaskClick}
-                  layout={layout}
-                />
+                <Tasks taskIds={taskIds} listId={listId} layout={layout} />
               </div>
               {provided.placeholder}
               {createElement(
@@ -191,8 +196,11 @@ const condition = authUser => !!authUser;
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasksByViewFilter: taskSelectors.getTasksByViewFilter(state, ownProps.taskIds),
-    projectName: projectSelectors.getProjectName(state, ownProps.projectId)
+    taskIdsByViewFilter: taskSelectors.getTaskIdsByViewFilter(state, {
+      listId: ownProps.listId
+    }),
+    tasksById: taskSelectors.getTasksById(state),
+    list: listSelectors.getList(state, ownProps.listId)
   };
 };
 

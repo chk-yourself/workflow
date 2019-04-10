@@ -1,32 +1,34 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
+import { connect } from 'react-redux';
+import { taskSelectors } from '../../ducks/tasks';
 import Task from './Task';
 
-const DraggableTask = ({
-  taskId,
-  index,
-  onTaskClick,
-  listId,
-  folderId,
-  task,
-  isDragDisabled
-}) => (
-  <Draggable draggableId={taskId} index={index} isDragDisabled={isDragDisabled}>
-    {(provided, snapshot) => (
-      <Task
-        innerRef={provided.innerRef}
-        provided={provided}
-        onTaskClick={onTaskClick}
-        listId={listId}
-        folderId={folderId}
-        {...task}
-      />
-    )}
-  </Draggable>
-);
+const DraggableTask = ({ taskId, index, isDragDisabled, tasksById }) => {
+  if (!(taskId in tasksById)) return null;
+  return (
+    <Draggable
+      draggableId={taskId}
+      index={index}
+      isDragDisabled={isDragDisabled}
+    >
+      {(provided, snapshot) => (
+        <Task
+          taskId={taskId}
+          innerRef={provided.innerRef}
+          provided={provided}
+        />
+      )}
+    </Draggable>
+  );
+};
 
 DraggableTask.defaultProps = {
   isDragDisabled: false
 };
 
-export default DraggableTask;
+const mapStateToProps = state => ({
+  tasksById: taskSelectors.getTasksById(state)
+});
+
+export default connect(mapStateToProps)(DraggableTask);

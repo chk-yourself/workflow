@@ -277,7 +277,6 @@ class UserTasks extends Component {
                       index={i}
                       name={taskGroup.name}
                       taskIds={taskGroup.taskIds}
-                      onTaskClick={this.handleTaskClick}
                       userPermissions={taskGroup.userPermissions}
                     />
                   ))}

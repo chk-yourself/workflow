@@ -2,43 +2,40 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { taskSelectors } from '../../ducks/tasks';
-import { userSelectors } from '../../ducks/users';
-import { subtaskSelectors } from '../../ducks/subtasks';
 import './Card.scss';
 import { Tag } from '../Tag';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { toDateString, isPriorDate } from '../../utils/date';
+import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { Badge } from '../Badge';
 
 class Card extends Component {
   shouldComponentUpdate(nextProps) {
-    if (nextProps.taskTags.indexOf(undefined) !== -1) {
+    if (nextProps.tags.indexOf(undefined) !== -1) {
       return false;
     }
     return true;
   }
 
-  handleCardClick = e => {
+  onClick = e => {
     if (e.target.matches('button') || e.target.matches('a')) return;
-    const { taskId, onCardClick } = this.props;
-    onCardClick(taskId);
+    const { taskId, selectTask } = this.props;
+    selectTask(taskId);
   };
 
   render() {
     const {
-      name,
       taskId,
       index,
-      taskTags,
-      commentIds,
-      dueDate,
-      subtaskIds,
+      tags,
       completedSubtasks,
-      taskMembers,
-      isCompleted
+      members,
+      task
     } = this.props;
+    if (!task) return null;
 
+    const { name, commentIds, dueDate, subtaskIds, isCompleted } = task;
     const dueDateStr = dueDate
       ? toDateString(dueDate.toDate(), {
           useRelative: true,
@@ -53,7 +50,7 @@ class Card extends Component {
         {provided => (
           <div
             className="card"
-            onClick={this.handleCardClick}
+            onClick={this.onClick}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
@@ -64,11 +61,11 @@ class Card extends Component {
           >
             <div className="card__header" ref={el => (this.headerEl = el)}>
               <div className="card__tags">
-                {taskTags.map(taskTag => (
+                {tags.map(tag => (
                   <Tag
-                    key={taskTag.name}
+                    key={tag.name}
                     size="sm"
-                    color={taskTag.color}
+                    color={tag.color}
                     variant="pill"
                     className="card__tag"
                   />
@@ -113,18 +110,18 @@ class Card extends Component {
               )}
             </div>
             <div className="card__footer">
-              {taskMembers && taskMembers.length > 0 && (
+              {members && members.length > 0 && (
                 <div className="card__members-wrapper">
                   <div className="card__members">
-                    {taskMembers.map(member => {
-                      const { name, photoURL, userId } = member;
+                    {members.map(member => {
+                      const { name: memberName, photoURL, userId } = member;
                       return (
                         <Avatar
                           classes={{
                             avatar: 'card__avatar',
                             placeholder: 'card__avatar-placeholder'
                           }}
-                          name={name}
+                          name={memberName}
                           size="sm"
                           variant="circle"
                           imgSrc={photoURL}
@@ -145,13 +142,23 @@ class Card extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    taskTags: taskSelectors.getTaskTags(state, ownProps),
-    completedSubtasks: subtaskSelectors.getCompletedSubtasks(
+    tags: taskSelectors.getTaskTags(state, ownProps.taskId),
+    completedSubtasks: taskSelectors.getCompletedSubtasks(
       state,
-      ownProps.subtaskIds
+      ownProps.taskId
     ),
-    taskMembers: userSelectors.getMembersArray(state, ownProps.assignedTo)
+    members: taskSelectors.getAssignees(state, ownProps.taskId),
+    task: taskSelectors.getTask(state, ownProps.taskId)
   };
 };
 
-export default connect(mapStateToProps)(Card);
+const mapDispatchToProps = dispatch => {
+  return {
+    selectTask: taskId => dispatch(selectTaskAction(taskId))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Card);

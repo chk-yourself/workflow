@@ -20,7 +20,7 @@ export default class Tasks extends Component {
   }
 */
   componentDidUpdate(prevProps) {
-    if (this.props.tasks.length > prevProps.tasks.length) {
+    if (this.props.taskIds.length > prevProps.taskIds.length) {
       this.scrollToBottom();
     }
   }
@@ -35,8 +35,7 @@ export default class Tasks extends Component {
       listId,
       projectId,
       dueDate,
-      tasks,
-      onTaskClick,
+      taskIds,
       folderId,
       layout,
       dropType,
@@ -44,19 +43,15 @@ export default class Tasks extends Component {
     } = this.props;
     const isBoardLayout = layout === 'board';
 
-    const inner = tasks.map((task, i) => {
+    const inner = taskIds.map((taskId, i) => {
       return isBoardLayout ? (
-        <Card key={task.taskId} index={i} onCardClick={onTaskClick} {...task} />
+        <Card key={taskId} index={i} taskId={taskId} />
       ) : (
         <DraggableTask
-          key={task.taskId}
+          key={taskId}
           isDragDisabled={isDragDisabled}
           index={i}
-          onTaskClick={onTaskClick}
-          listId={listId}
-          folderId={folderId}
-          taskId={task.taskId}
-          task={task}
+          taskId={taskId}
         />
       );
     });

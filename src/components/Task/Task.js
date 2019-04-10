@@ -9,9 +9,8 @@ import { Tag } from '../Tag';
 import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
-import { taskSelectors } from '../../ducks/tasks';
-import { userSelectors } from '../../ducks/users';
-import { currentUserSelectors } from '../../ducks/currentUser';
+import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { getSelectedProjectId } from '../../ducks/selectedProject';
 import { Badge } from '../Badge';
 import { ProjectBadge } from '../ProjectBadge';
@@ -26,17 +25,17 @@ class Task extends Component {
   
   state = {
     isFocused: false,
-    name: this.props.name,
-    prevPropsName: this.props.name,
+    name: this.props.task ? this.props.task.name : '',
+    prevName: this.props.task ? this.props.task.name : '',
     pointX: null,
     pointY: null
   };
 
   static getDerivedStateFromProps(props, state) {
-    if (props.name !== state.prevPropsName) {
+    if (props.task && props.task.name !== state.prevName) {
       return {
-        name: props.name,
-        prevPropsName: props.name
+        name: props.task.name,
+        prevName: props.task.name
       };
     }
     return null;
@@ -55,7 +54,8 @@ class Task extends Component {
   };
 
   onBlur = () => {
-    const { name, firebase, taskId } = this.props;
+    const { firebase, taskId, task } = this.props;
+    const { name } = task;
     const { name: newName } = this.state;
     if (name !== newName) {
       firebase.updateDoc(['tasks', taskId], {
@@ -69,31 +69,14 @@ class Task extends Component {
 
   deleteTask = e => {
     if (e.target.value !== '' || e.key !== keys.BACKSPACE) return;
-    const {
-      firebase,
-      taskId,
-      listId,
-      assignedTo,
-      folders,
-      subtaskIds,
-      commentIds,
-      dueDate,
-      projectId
-    } = this.props;
-    firebase.deleteTask({
-      taskId,
-      listId,
-      assignedTo,
-      folders,
-      subtaskIds,
-      commentIds,
-      dueDate,
-      projectId
-    });
+    const { taskId, task, deleteTask } = this.props;
+    const { listId } = task;
+    deleteTask({ taskId, listId });
   };
 
   toggleCompleted = () => {
-    const { taskId, isCompleted, firebase } = this.props;
+    const { taskId, task, firebase } = this.props;
+    const { isCompleted } = task;
     firebase.updateDoc(['tasks', taskId], {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
@@ -108,17 +91,17 @@ class Task extends Component {
       e.target.matches('input[type="checkbox"]')
     )
       return;
-    const { taskId, onTaskClick } = this.props;
-    onTaskClick(taskId);
+    const { taskId, selectTask } = this.props;
+    selectTask(taskId);
   };
 
   onKeyDown = e => {
-    const { provided, taskId, onTaskClick } = this.props;
+    const { provided, taskId, selectTask } = this.props;
     if (provided && provided.dragHandleProps) {
       provided.dragHandleProps.onKeyDown(e);
     }
     if (e.key === keys.ENTER) {
-      onTaskClick(taskId);
+      selectTask(taskId);
     }
   };
 
@@ -153,16 +136,17 @@ class Task extends Component {
   render() {
     const {
       taskId,
-      taskTags,
-      isCompleted,
+      tags,
       innerRef,
       provided,
-      dueDate,
-      projectId,
       selectedProjectId,
-      taskMembers,
-      className
+      members,
+      className,
+      task
     } = this.props;
+    if (!task) return null;
+
+    const { isCompleted, dueDate, projectId } = task;
     const { isFocused, name } = this.state;
     const draggableProps = provided ? provided.draggableProps : {};
     const dragHandleProps = provided ? provided.dragHandleProps : {};
@@ -200,12 +184,12 @@ class Task extends Component {
         <div className="task__wrapper">
           <div className="task__badges task__badges--top">
             <div className="task__tags">
-              {taskTags.map(taskTag => (
+              {tags.map(tag => (
                 <Tag
-                  name={taskTag.name}
-                  key={taskTag.name}
+                  name={tag.name}
+                  key={tag.name}
                   size="sm"
-                  color={taskTag.color}
+                  color={tag.color}
                   className="task__tag"
                 />
               ))}
@@ -227,10 +211,10 @@ class Task extends Component {
                 {dueDateStr}
               </Badge>
             )}
-            {taskMembers && taskMembers.length > 0 && (
+            {members && members.length > 0 && (
               <div className="task__detail task__members-wrapper">
                 <div className="task__members">
-                  {taskMembers.map(member => {
+                  {members.map(member => {
                     const { name: memberName, photoURL, userId } = member;
                     return (
                       <Avatar
@@ -274,15 +258,18 @@ class Task extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentUserSelectors.getCurrentUserId(state),
-    taskTags: taskSelectors.getTaskTags(state, ownProps),
+    tags: taskSelectors.getTaskTags(state, ownProps.taskId),
     selectedProjectId: getSelectedProjectId(state),
-    taskMembers: userSelectors.getMembersArray(state, ownProps.assignedTo)
+    members: taskSelectors.getAssignees(state, ownProps.taskId),
+    task: taskSelectors.getTask(state, ownProps.taskId)
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    selectTask: taskId => dispatch(selectTaskAction(taskId)),
+    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId }))
+  };
 };
 
 export default withFirebase(
