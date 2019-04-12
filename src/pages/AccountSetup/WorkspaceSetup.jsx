@@ -8,7 +8,7 @@ import { Textarea } from '../../components/Textarea';
 
 export default class WorkspaceSetup extends Component {
   render() {
-    const { name, teammates, onChange } = this.props;
+    const { name, invites, onChange } = this.props;
 
     return (
       <section className="account-setup__section">
@@ -26,10 +26,10 @@ export default class WorkspaceSetup extends Component {
         <h3 className="account-setup__section-subheading">
           Your team (optional)
         </h3>
-        {teammates.map((email, i) => (
+        {invites.map((email, i) => (
           <Input
             key={i}
-            name="teammates"
+            name="invites"
             value={email}
             onChange={onChange}
             type="email"

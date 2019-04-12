@@ -28,16 +28,7 @@ const withAuthentication = WrappedComponent => {
       this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
-          console.log(emailVerified);
-          /*
-          if (emailVerified) {
-            this.unsubscribe = await syncCurrentUserData(uid);
-            firebase.initPresenceDetection(uid);
-            history.push(`/0/home/${uid}`);
-          } else {
-            history.push(ROUTES.VERIFICATION_REQUIRED);
-          }
-          */
+          console.log(authUser, emailVerified);
           if (emailVerified) {
             this.unsubscribe = await syncCurrentUserData(uid);
             firebase.initPresenceDetection(uid);
@@ -55,15 +46,7 @@ const withAuthentication = WrappedComponent => {
             .signInWithEmailLink(email, window.location.href)
             .then(async result => {
               window.localStorage.removeItem('emailForSignIn');
-              if (result.additionalUserInfo.isNewUser) {
-                this.setState({ authUser });
-                history.push(ROUTES.SET_UP);
-              } else {
-                const { uid } = result.User;
-                this.unsubscribe = await syncCurrentUserData(uid);
-                firebase.initPresenceDetection(uid);
-                history.push(`/0/home/${uid}`);
-              }
+              history.push(ROUTES.SET_UP);
             })
             .catch(error => {
               console.log(error);

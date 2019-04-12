@@ -1,0 +1,11 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.verification-required__paragraph {
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.verification-required {
+  padding: 16px;
+}

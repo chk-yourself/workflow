@@ -14,7 +14,7 @@ const INITIAL_STATE = {
   },
   workspace: {
     name: '',
-    teammates: ['', '', '']
+    invites: ['', '', '']
   },
   error: null,
   currentSection: 'profile'
@@ -31,7 +31,7 @@ class AccountSetup extends Component {
       .createAccount({ userId, profile, workspace })
       .then(authUser => {
         this.setState({ ...INITIAL_STATE });
-        history.push(ROUTES.HOME);
+        history.push(`/0/home/${userId}`);
       })
       .catch(error => {
         this.setState({ error });
@@ -43,14 +43,14 @@ class AccountSetup extends Component {
     const { name, value, dataset } = e.target;
     const { section, index } = dataset;
     this.setState(prevState => {
-      const teammates = [...prevState.workspace.teammates];
-      if (name === 'teammates') {
-        teammates[index] = value;
+      const invites = [...prevState.workspace.invites];
+      if (name === 'invites') {
+        invites[index] = value;
       }
       return {
         [section]: {
           ...prevState[section],
-          [name]: name === 'teammates' ? teammates : value
+          [name]: name === 'invites' ? invites : value
         }
       };
     });
@@ -84,25 +84,31 @@ class AccountSetup extends Component {
           {currentSection === 'workspace' && (
             <WorkspaceSetup
               name={workspace.name}
-              teammates={workspace.teammates}
+              invites={workspace.invites}
               onChange={this.onChange}
             />
           )}
-          <footer className={`account-setup__footer account-setup__footer--${currentSection}`}>
-          <Button
-            disabled={
-              currentSection === 'profile'
-                ? isProfileInvalid
-                : isWorkspaceInvalid
-            }
-            size="md"
-            variant="contained"
-            color="primary"
-            onClick={currentSection === 'profile' ? this.completeProfileSetup : this.onSubmit}
-            className="account-setup__btn"
+          <footer
+            className={`account-setup__footer account-setup__footer--${currentSection}`}
           >
-            {currentSection === 'profile' ? 'Continue' : 'Create Workspace'}
-          </Button>
+            <Button
+              disabled={
+                currentSection === 'profile'
+                  ? isProfileInvalid
+                  : isWorkspaceInvalid
+              }
+              size="md"
+              variant="contained"
+              color="primary"
+              onClick={
+                currentSection === 'profile'
+                  ? this.completeProfileSetup
+                  : this.onSubmit
+              }
+              className="account-setup__btn"
+            >
+              {currentSection === 'profile' ? 'Continue' : 'Create Workspace'}
+            </Button>
           </footer>
         </form>
         {error && <p>{error.message}</p>}

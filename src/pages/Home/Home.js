@@ -20,15 +20,29 @@ import { getParams } from '../../utils/string';
 import './Home.scss';
 
 class HomePage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isProjectComposerOpen: false,
-      isLoading: true
-    };
+  state = {
+    isProjectComposerOpen: false,
+    isLoading: true
+  };
+
+  componentDidMount() {
+    const { currentUser, history } = this.props;
+    console.log(currentUser);
+    const { isRegistrationComplete } = currentUser;
+    if (!isRegistrationComplete) {
+      history.push(ROUTES.SET_UP);
+    } else {
+      this.setListeners();
+    }
+    console.log('mounted home');
   }
 
-  async componentDidMount() {
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe.forEach(func => func());
+    console.log('home unmounted');
+  }
+
+  setListeners = async () => {
     const {
       syncUsersById,
       syncUserPresence,
@@ -39,7 +53,6 @@ class HomePage extends Component {
       syncUserTags
     } = this.props;
     const { userId, projectIds } = currentUser;
-    console.log('mounted home');
 
     await Promise.all([
       syncUsersById(),
@@ -56,12 +69,7 @@ class HomePage extends Component {
         isLoading: false
       });
     });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe.forEach(func => func());
-    console.log('home unmounted');
-  }
+  };
 
   toggleProjectComposer = () => {
     this.setState(prevState => ({

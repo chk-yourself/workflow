@@ -223,15 +223,15 @@ class Firebase {
       .add({
         createdAt: this.getTimestamp(),
         name: workspace.name,
-        members: [
-          {
+        members: {
+          [userId]: {
             userId,
             name: profile.name,
             email: profile.email,
             username: profile.username,
             role: 'owner'
           }
-        ],
+        },
         invites,
         ownerId: userId
       })
@@ -242,8 +242,7 @@ class Firebase {
           username: profile.username,
           name: profile.name
         };
-        this.addUser({
-          userId,
+        this.updateDoc(['users', userId], {
           email: profile.email,
           name: profile.name,
           username: profile.username,
@@ -286,14 +285,15 @@ class Firebase {
 
   addUser = ({
     userId,
+    email,
     name,
     username,
-    email,
-    about,
-    workspaceIds,
+    about = '',
+    workspaceIds = [],
     projectIds = [],
     photoURL = null
   }) => {
+    console.log('user added');
     const batch = this.createBatch();
     const userRef = this.getDocRef('users', userId);
     const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
