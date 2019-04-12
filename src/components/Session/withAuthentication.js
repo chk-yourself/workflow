@@ -13,12 +13,9 @@ import { getDisplayName } from '../../utils/react';
 
 const withAuthentication = WrappedComponent => {
   class WithAuthentication extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        authUser: null
-      };
-    }
+    state = {
+      authUser: null
+    };
 
     async componentDidMount() {
       const {
@@ -30,17 +27,49 @@ const withAuthentication = WrappedComponent => {
 
       this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
-          this.unsubscribe = await syncCurrentUserData(authUser.uid);
-          this.setState({ authUser });
-          firebase.initPresenceDetection(authUser.uid);
-          history.push(`/0/home/${authUser.uid}`);
+          const { uid, emailVerified } = authUser;
+          this.unsubscribe = await syncCurrentUserData(uid);
+          firebase.initPresenceDetection(uid);
+          history.push(`/0/home/${uid}`);
+
+          /*
+          if (emailVerified) {
+            if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
+              let email = window.localStorage.getItem('emailForSignIn');
+              if (!email) {
+                email = window.prompt('Please provide your email for confirmation');
+              }
+              firebase.auth.signInWithEmailLink(email, window.location.href)
+              .then(async result => {
+                window.localStorage.removeItem('emailForSignIn');
+                if (result.additionalUserInfo.isNewUser) {
+                  this.setState({ authUser });
+                  history.push(ROUTES.SET_UP);
+                } else {
+                  this.unsubscribe = await syncCurrentUserData(uid);
+                  firebase.initPresenceDetection(uid);
+                  history.push(`/0/home/${uid}`);
+                }
+              })
+              .catch(error => {
+                console.log(error);
+              });
+            } else {
+              this.unsubscribe = await syncCurrentUserData(uid);
+            firebase.initPresenceDetection(uid);
+            history.push(`/0/home/${uid}`);
+            }
+          } else {
+            this.setState({ authUser });
+            history.push(ROUTES.SET_UP);
+          }
+          */
         } else {
           history.push(ROUTES.LOG_IN);
           if (this.unsubscribe) {
             this.unsubscribe();
           }
           setCurrentUser(null);
-          this.setState({ authUser: null });
         }
       });
     }
@@ -54,8 +83,9 @@ const withAuthentication = WrappedComponent => {
 
     render() {
       const { currentUser } = this.props;
+      const { authUser } = this.state;
       return (
-        <AuthUserContext.Provider value={currentUser}>
+        <AuthUserContext.Provider value={currentUser || authUser}>
           <WrappedComponent {...this.props} />
         </AuthUserContext.Provider>
       );

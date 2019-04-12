@@ -1,0 +1,95 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.account-setup {
+  max-width: 400px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 4px 24px;
+  @include md {
+    padding: 8px;
+  }
+}
+
+.account-setup__input,
+.account-setup__textarea {
+  margin-bottom: 24px;
+  height: 42px;
+  width: 100%;
+  border: 1px solid $grey-600;
+  &::placeholder {
+    font-size: 14px;
+  }
+  &--teammate-email {
+    margin-bottom: 16px;
+  }
+  &:read-only {
+    border: 1px solid $grey-600;
+  }
+}
+
+.account-setup__textarea {
+  min-height: 120px;
+}
+
+.account-setup__heading {
+  font-size: 1.6rem;
+  margin: 1rem 0 1.5rem;
+  color: $grey-900;
+  font-weight: 600;
+  @include md {
+    font-size: 1.8rem;
+  }
+  @include lg {
+    font-size: 2rem;
+  }
+  @include xl {
+    font-size: 2.2rem;
+  }
+}
+
+.account-setup__section-heading {
+  font-weight: 500;
+  font-size: 1.1rem;
+  @include md {
+    font-size: 1.2rem;
+  }
+  @include lg {
+    font-size: 1.3rem;
+  }
+  @include xl {
+    font-size: 1.4rem;
+  }
+}
+
+.account-setup__section-subheading {
+  font-weight: 600;
+  font-size: 12px;
+  color: $grey-700;
+}
+
+.account-setup__label {
+  font-size: 12px;
+  color: $grey-700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.account-setup__btn {
+  min-width: 80px;
+  padding: 10px 12px;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
+}
+
+.account-setup__link {
+  color: $grey-700;
+  font-size: 13px;
+  &:hover {
+    color: $primary;
+  }
+}

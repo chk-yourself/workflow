@@ -25,7 +25,7 @@ const TasksDueSoon = ({ tasksDueSoon, currentUser }) => (
       </ul>
     ) : (
       <div className="dashboard__info--empty">
-        No tasks due in the next <strong>7 days</strong>.
+        No tasks due in the next 7 days.
       </div>
     )}
   </DashboardPanel>

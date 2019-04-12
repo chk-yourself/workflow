@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ExpansionPanelHeader from './ExpansionPanelHeader';
 import ExpansionPanelContent from './ExpansionPanelContent';
 import * as keys from '../../constants/keys';
+import './ExpansionPanel.scss';
 
 export default class ExpansionPanel extends Component {
   static defaultProps = {

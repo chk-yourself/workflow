@@ -92,6 +92,22 @@ class Firebase {
   passwordUpdate = newPassword =>
     this.auth.currentUser.updatePassword(newPassword);
 
+  sendSignInLinkToEmail = email => {
+    const actionCodeSettings = {
+      url: `${process.env.PUBLIC_URL}/setup`,
+      // This must be true.
+      handleCodeInApp: true
+    };
+    this.auth
+      .sendSignInLinkToEmail(email, actionCodeSettings)
+      .then(() => {
+        window.localStorage.setItem('emailForSignIn', email);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   // Utility API
 
   getTimestamp = () => app.firestore.FieldValue.serverTimestamp();
@@ -109,8 +125,6 @@ class Firebase {
       : docRef;
   };
 
-  createBatch = () => this.fs.batch();
-
   queryCollection = (path, [field, comparisonOperator, value]) => {
     return this.fs.collection(path).where(field, comparisonOperator, value);
   };
@@ -120,6 +134,8 @@ class Firebase {
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
+
+  createBatch = () => this.fs.batch();
 
   updateBatch = (batch, ref, newValue = {}) => {
     const doc = Array.isArray(ref) ? this.getDocRef(...ref) : ref;
@@ -170,19 +186,94 @@ class Firebase {
     });
   };
 
+  // Workspace API
+
+  createWorkspace = ({ name, members }) => {};
+
   // User API
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
+
+  createAccount = ({ userId, profile, workspace }) => {
+    const { invites } = workspace;
+
+    this.fs
+      .collection('workspaces')
+      .add({
+        createdAt: this.getTimestamp(),
+        name: workspace.name,
+        members: [
+          {
+            userId,
+            name: profile.name,
+            email: profile.email,
+            username: profile.username,
+            role: 'owner'
+          }
+        ],
+        invites,
+        ownerId: userId
+      })
+      .then(ref => {
+        const { id: workspaceId } = ref;
+        const from = {
+          userId,
+          username: profile.username,
+          name: profile.name
+        };
+        this.addUser({
+          userId,
+          email: profile.email,
+          name: profile.name,
+          username: profile.username,
+          about: profile.about,
+          workspaceIds: [workspaceId]
+        });
+        invites.forEach(email => {
+          this.fs
+            .collection('users')
+            .where('email', '==', email)
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+                this.createNotification({
+                  userId: doc.id,
+                  source: {
+                    user: { ...from },
+                    type: 'workspace',
+                    id: workspaceId,
+                    parent: null
+                  },
+                  event: {
+                    type: 'invite',
+                    publishedAt: this.getTimestamp()
+                  }
+                });
+              } else {
+                this.fs.collection('invites').add({
+                  to: email,
+                  publishedAt: this.getTimestamp(),
+                  type: 'workspace',
+                  workspaceId,
+                  from: { ...from }
+                });
+              }
+            });
+        });
+      });
+  };
 
   addUser = ({
     userId,
     name,
     username,
     email,
+    about,
+    workspaceIds,
     projectIds = [],
     photoURL = null
   }) => {
-    const batch = this.fs.batch();
+    const batch = this.createBatch();
     const userRef = this.getDocRef('users', userId);
     const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
     const todayFolderRef = this.getDocRef('users', userId, 'folders', '1');
@@ -201,6 +292,8 @@ class Firebase {
       name,
       username,
       email,
+      about,
+      workspaceIds,
       projectIds,
       photoURL,
       settings: {
@@ -1069,8 +1162,8 @@ class Firebase {
   addComment = ({
     from,
     to = [],
-    projectId,
-    taskId,
+    projectId = null,
+    taskId = null,
     content,
     createdAt = this.getTimestamp()
   }) => {
@@ -1099,12 +1192,11 @@ class Firebase {
               source: {
                 user: from,
                 type: 'comment',
-                id: ref.id
-              },
-              location: {
-                type: 'task',
-                taskId,
-                projectId
+                id: ref.id,
+                parent: {
+                  type: taskId ? 'task' : 'project',
+                  id: taskId || projectId
+                }
               },
               event: {
                 type: 'mention',
@@ -1122,12 +1214,11 @@ class Firebase {
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ userId, source, location, event }) => {
+  createNotification = ({ userId, source, event }) => {
     this.getDocRef('users', userId)
       .collection('notifications')
       .add({
         source,
-        location,
         event,
         createdAt: this.getTimestamp(),
         isActive: true

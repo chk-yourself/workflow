@@ -4,6 +4,10 @@ import { debounce } from '../../utils/function';
 
 export default class Textarea extends Component {
   static defaultProps = {
+    className: '',
+    label: '',
+    labelClass: '',
+    id: '',
     isAutoHeightResizeEnabled: true,
     minHeight: 0,
     tabIndex: 0,
@@ -55,29 +59,41 @@ export default class Textarea extends Component {
       onMouseDown,
       onMouseUp,
       onMouseMove,
-      tabIndex
+      tabIndex,
+      label,
+      id,
+      labelClass,
+      isAutoHeightResizeEnabled,
+      innerRef,
+      minHeight,
+      ...rest
     } = this.props;
 
     return (
-      <textarea
-        className={`textarea ${className}`}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={isRequired}
-        onBlur={onBlur}
-        onInput={this.autoHeightResize}
-        ref={this.ref}
-        onFocus={onFocus}
-        onKeyDown={onKeyDown}
-        onDragStart={onDragStart}
-        readOnly={isReadOnly}
-        onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
-        onMouseMove={onMouseMove}
-        tabIndex={tabIndex}
-      />
+      <>
+        {label !== '' && <label className={labelClass} htmlFor={id}>{label}</label>}
+        <textarea
+          id={id}
+          className={`textarea ${className}`}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={isRequired}
+          onBlur={onBlur}
+          onInput={this.autoHeightResize}
+          ref={this.ref}
+          onFocus={onFocus}
+          onKeyDown={onKeyDown}
+          onDragStart={onDragStart}
+          readOnly={isReadOnly}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          tabIndex={tabIndex}
+          {...rest}
+        />
+      </>
     );
   }
 }

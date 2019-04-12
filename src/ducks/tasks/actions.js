@@ -281,13 +281,15 @@ export const syncUserMiscTasks = userId => {
           if (isInitialLoad && changes.length > 1) {
             const tasksById = {};
             changes.forEach(change => {
-              tasksById[change.doc.id] = {
-                taskId: change.doc.id,
+              const taskId = change.doc.id;
+              const taskData = change.doc.data();
+              tasksById[taskId] = {
+                taskId,
                 isLoaded: {
                   subtasks: false,
                   comments: false
                 },
-                ...change.doc.data()
+                ...taskData
               };
             });
             dispatch(loadTasksById(tasksById));

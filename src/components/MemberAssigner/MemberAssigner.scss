@@ -13,7 +13,6 @@
 .member-assigner__search-container {
   display: flex;
   align-items: center;
-  position: relative;
   flex-wrap: wrap;
   border: 1px solid $primary;
   border-radius: 4px;
@@ -31,7 +30,7 @@
   border-radius: 4px;
   @include box-shadow(2);
   padding: 8px;
-  min-height: 120px;
+  min-height: 160px;
   top: calc(100% + 8px);
   @include xs {
     min-width: 300px;
@@ -106,7 +105,7 @@
 
 .member-assigner__list {
   width: 100%;
-  top: calc(100% + 8px);
+  top: 48px;
   left: 0;
   box-shadow: none;
   border: none;

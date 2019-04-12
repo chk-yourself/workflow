@@ -7,10 +7,11 @@ import './Notification.scss';
 
 class Notification extends Component {
   onClick = () => {
-    const { onTaskClick, location } = this.props;
-    switch (location.type) {
+    const { onTaskClick, source } = this.props;
+    const { parent } = source;
+    switch (parent.type) {
       case 'task': {
-        return onTaskClick(location.taskId);
+        return onTaskClick(parent.id);
       }
       default: {
         return () => null;

@@ -10,8 +10,8 @@ const INITIAL_STATE = {
   username: '',
   name: '',
   email: '',
-  passwordOne: '',
-  passwordTwo: '',
+  password: '',
+  passwordConfirm: '',
   error: null
 };
 
@@ -22,10 +22,19 @@ class SignUpForm extends Component {
   }
 
   onSubmit = e => {
-    const { username, email, name, passwordOne } = this.state;
+    const { username, email, name, password } = this.state;
     const { firebase, history } = this.props;
     firebase
-      .createUserWithEmailAndPassword(email, passwordOne)
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        return firebase.sendSignInLinkToEmail(email);
+      })
+      /*
+      .then(() => {
+        this.setState({ ...INITIAL_STATE });
+        history.push(ROUTES.VERIFICATION_REQUIRED)
+      })
+      */
       .then(authUser => {
         const userId = authUser.user.uid;
         const photoURL = authUser.user.photoURL || null;
@@ -58,16 +67,16 @@ class SignUpForm extends Component {
       username,
       name,
       email,
-      passwordOne,
-      passwordTwo,
+      password,
+      passwordConfirm,
       error
     } = this.state;
     const isInvalid =
-      passwordOne === '' ||
-      passwordTwo === '' ||
+      password === '' ||
+      passwordConfirm === '' ||
       email === '' ||
       username === '' ||
-      passwordOne !== passwordTwo;
+      password !== passwordConfirm;
 
     return (
       <form onSubmit={this.onSubmit} className="user-form">
@@ -99,18 +108,18 @@ class SignUpForm extends Component {
           labelClass="user-form__label"
         />
         <Input
-          name="passwordOne"
+          name="password"
           label="Password"
-          value={passwordOne}
+          value={password}
           onChange={this.onChange}
           type="password"
           className="user-form__input"
           labelClass="user-form__label"
         />
         <Input
-          name="passwordTwo"
+          name="passwordConfirm"
           label="Confirm Password"
-          value={passwordTwo}
+          value={passwordConfirm}
           onChange={this.onChange}
           type="password"
           className="user-form__input"
