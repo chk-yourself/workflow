@@ -28,6 +28,7 @@ const withAuthentication = WrappedComponent => {
       this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
+          console.log(emailVerified);
           /*
           if (emailVerified) {
             this.unsubscribe = await syncCurrentUserData(uid);

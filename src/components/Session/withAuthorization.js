@@ -8,6 +8,7 @@ import { getDisplayName } from '../../utils/react';
 
 const withAuthorization = condition => WrappedComponent => {
   class WithAuthorization extends Component {
+    /*
     componentDidMount() {
       const { firebase, history } = this.props;
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
@@ -16,9 +17,10 @@ const withAuthorization = condition => WrappedComponent => {
         }
       });
     }
+    */
 
     componentWillUnmount() {
-      this.listener();
+      //  this.listener();
     }
 
     render() {
