@@ -93,8 +93,9 @@ class Firebase {
     this.auth.currentUser.updatePassword(newPassword);
 
   sendSignInLinkToEmail = email => {
+    console.log(process.env.REACT_APP_PUBLIC_URL);
     const actionCodeSettings = {
-      url: `${process.env.PUBLIC_URL}/setup`,
+      url: `${process.env.REACT_APP_BASE_URL}/setup`,
       // This must be true.
       handleCodeInApp: true
     };
@@ -102,6 +103,22 @@ class Firebase {
       .sendSignInLinkToEmail(email, actionCodeSettings)
       .then(() => {
         window.localStorage.setItem('emailForSignIn', email);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  sendEmailVerification = () => {
+    const actionCodeSettings = {
+      url: `${process.env.REACT_APP_BASE_URL}/setup`,
+      // This must be true.
+      handleCodeInApp: true
+    };
+    this.currentUser
+      .sendEmailVerification(actionCodeSettings)
+      .then(() => {
+        console.log('verification email sent');
       })
       .catch(error => {
         console.log(error);
@@ -117,6 +134,10 @@ class Firebase {
   removeFromArray = value => app.firestore.FieldValue.arrayRemove(value);
 
   deleteField = () => app.firestore.FieldValue.delete();
+
+  plus = value => app.firestore.FieldValue.increment(value);
+
+  minus = value => app.firestore.FieldValue.increment(-value);
 
   getDocRef = (collection, doc, subcollection = null, subdoc = null) => {
     const docRef = this.fs.doc(`${collection}/${doc}`);
@@ -753,11 +774,10 @@ class Firebase {
             .catch(error => {
               console.error(error);
             });
-        } else {
-          this.updateDoc(['lists', listId], {
-            taskIds: this.addToArray(ref.id)
-          });
         }
+        this.updateDoc(['lists', listId], {
+          taskIds: this.addToArray(ref.id)
+        });
       });
   };
 

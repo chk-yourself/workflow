@@ -28,42 +28,45 @@ const withAuthentication = WrappedComponent => {
       this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
-          this.unsubscribe = await syncCurrentUserData(uid);
-          firebase.initPresenceDetection(uid);
-          history.push(`/0/home/${uid}`);
-
           /*
           if (emailVerified) {
-            if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
-              let email = window.localStorage.getItem('emailForSignIn');
-              if (!email) {
-                email = window.prompt('Please provide your email for confirmation');
-              }
-              firebase.auth.signInWithEmailLink(email, window.location.href)
-              .then(async result => {
-                window.localStorage.removeItem('emailForSignIn');
-                if (result.additionalUserInfo.isNewUser) {
-                  this.setState({ authUser });
-                  history.push(ROUTES.SET_UP);
-                } else {
-                  this.unsubscribe = await syncCurrentUserData(uid);
-                  firebase.initPresenceDetection(uid);
-                  history.push(`/0/home/${uid}`);
-                }
-              })
-              .catch(error => {
-                console.log(error);
-              });
-            } else {
-              this.unsubscribe = await syncCurrentUserData(uid);
+            this.unsubscribe = await syncCurrentUserData(uid);
             firebase.initPresenceDetection(uid);
             history.push(`/0/home/${uid}`);
-            }
           } else {
-            this.setState({ authUser });
-            history.push(ROUTES.SET_UP);
+            history.push(ROUTES.VERIFICATION_REQUIRED);
           }
           */
+          if (emailVerified) {
+            this.unsubscribe = await syncCurrentUserData(uid);
+            firebase.initPresenceDetection(uid);
+            history.push(`/0/home/${uid}`);
+          } else {
+            this.setState({ authUser });
+            history.push(ROUTES.VERIFICATION_REQUIRED);
+          }
+        } else if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
+          let email = window.localStorage.getItem('emailForSignIn');
+          if (!email) {
+            email = window.prompt('Please provide your email for confirmation');
+          }
+          firebase.auth
+            .signInWithEmailLink(email, window.location.href)
+            .then(async result => {
+              window.localStorage.removeItem('emailForSignIn');
+              if (result.additionalUserInfo.isNewUser) {
+                this.setState({ authUser });
+                history.push(ROUTES.SET_UP);
+              } else {
+                const { uid } = result.User;
+                this.unsubscribe = await syncCurrentUserData(uid);
+                firebase.initPresenceDetection(uid);
+                history.push(`/0/home/${uid}`);
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
         } else {
           history.push(ROUTES.LOG_IN);
           if (this.unsubscribe) {

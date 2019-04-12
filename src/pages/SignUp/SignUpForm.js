@@ -24,20 +24,24 @@ class SignUpForm extends Component {
   onSubmit = e => {
     const { username, email, name, password } = this.state;
     const { firebase, history } = this.props;
+
+    // firebase.sendSignInLinkToEmail(email);
     firebase
       .createUserWithEmailAndPassword(email, password)
+      /*
       .then(() => {
         return firebase.sendSignInLinkToEmail(email);
       })
-      /*
       .then(() => {
         this.setState({ ...INITIAL_STATE });
         history.push(ROUTES.VERIFICATION_REQUIRED)
       })
       */
       .then(authUser => {
+        return firebase.sendSignInLinkToEmail(email);
         const userId = authUser.user.uid;
         const photoURL = authUser.user.photoURL || null;
+        /*
         return firebase.addUser({
           userId,
           name,
@@ -45,10 +49,12 @@ class SignUpForm extends Component {
           email,
           photoURL
         });
+        */
       })
-      .then(authUser => {
+      .then(() => {
         this.setState({ ...INITIAL_STATE });
-        history.push(ROUTES.HOME);
+        history.push(ROUTES.VERIFICATION_REQUIRED);
+        // history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });
