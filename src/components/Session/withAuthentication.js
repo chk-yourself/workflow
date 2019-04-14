@@ -29,8 +29,7 @@ const withAuthentication = WrappedComponent => {
           if (emailVerified) {
             this.unsubscribe = await syncCurrentUserData(uid);
             initPresenceDetection(uid);
-           // history.push(`/0/home/${uid}`);
-            history.push('/setup');
+            history.push(`/0/home/${uid}`);
           } else {
             history.push(ROUTES.VERIFICATION_REQUIRED);
           }
