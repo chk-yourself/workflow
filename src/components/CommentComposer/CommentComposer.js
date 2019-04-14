@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import { Avatar } from '../Avatar';
 import * as keys from '../../constants/keys';
 import { currentUserSelectors } from '../../ducks/currentUser';
@@ -117,7 +117,9 @@ const mapDispatchToProps = dispatch => {
   return {};
 };
 
-export default withFirebase(
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps

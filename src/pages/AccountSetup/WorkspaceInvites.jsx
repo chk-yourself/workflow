@@ -9,7 +9,7 @@ export default class WorkspaceInvites extends Component {
     return (
       <section className="account-setup__section">
         <h2 className="account-setup__section-heading">You were invited to join the following workspaces:</h2>
-        <p className="account-setup__paragraph">Please check the workspaces you wish to join. If you choose not to join any, you must create your own.</p>
+        <p className="account-setup__paragraph">Please select the workspaces you wish to join.</p>
         <ul className="account-setup__list">
         {invites.map((invite, i) => (
           <li key={invite.id} className="account-setup__item">
@@ -22,8 +22,8 @@ export default class WorkspaceInvites extends Component {
             labelClass="account-setup__checkbox-label"
             isChecked={invite.isAccepted}
             data-index={i}
+            label={invite.name}
           />
-          {invite.name}
           </li>
         ))}
         </ul>

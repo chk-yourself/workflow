@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import { Button } from '../Button';
 import { Textarea } from '../Textarea';
 import { Icon } from '../Icon';
@@ -116,4 +116,6 @@ const mapStateToProps = state => {
   };
 };
 
-export default withFirebase(connect(mapStateToProps)(SubtaskComposer));
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(connect(mapStateToProps)(SubtaskComposer));

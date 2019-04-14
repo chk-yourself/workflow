@@ -20,7 +20,7 @@
   &::placeholder {
     font-size: 14px;
   }
-  &--teammate-email {
+  &--teammate-email:not(:last-child) {
     margin-bottom: 16px;
   }
   &:read-only {
@@ -51,6 +51,7 @@
 .account-setup__section-heading {
   font-weight: 500;
   font-size: 1.1rem;
+  line-height: 1.4;
   @include md {
     font-size: 1.2rem;
   }
@@ -92,4 +93,32 @@
   &:hover {
     color: $primary;
   }
+}
+
+.account-setup__list {
+  list-style-type: none;
+  padding: 0;
+  margin: 16px 8px 32px;
+}
+
+.account-setup__paragraph {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.account-setup__checkbox {
+  border-radius: 4px;
+  border-color: $grey-700;
+}
+
+.account-setup__section {
+  &:last-child {
+    margin-bottom: 24px;
+  }
+}
+
+.account-setup__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

@@ -77,6 +77,9 @@
     color: $white;
     z-index: 2;
   }
+  &:before {
+    display: none;
+  }
 }
 
 .subtask__textarea {

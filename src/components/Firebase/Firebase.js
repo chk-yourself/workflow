@@ -148,11 +148,16 @@ class Firebase {
 
   minus = value => app.firestore.FieldValue.increment(-value);
 
-  getDocRef = (collection, doc, subcollection = null, subdoc = null) => {
-    const docRef = this.fs.doc(`${collection}/${doc}`);
-    return subcollection && subdoc
-      ? docRef.collection(subcollection).doc(subdoc)
-      : docRef;
+  getDocRef = (...args) => {
+    try {
+      if (args.length % 2 !== 0) {
+        throw new Error('Invalid Argument: Must follow pattern `collection/subcollection...`');
+      }
+    let path = args.join('/');
+    return this.fs.doc(path);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   queryCollection = (path, [field, comparisonOperator, value]) => {
@@ -173,6 +178,11 @@ class Firebase {
       lastUpdatedAt: this.getTimestamp(),
       ...newValue
     });
+  };
+
+  setBatch = (batch, ref, newValue = {}, merge = false) => {
+    const doc = Array.isArray(ref) ? this.getDocRef(...ref) : ref;
+    return merge ? batch.set(doc, newValue, { merge: true }) : batch.set(doc, newValue);
   };
 
   // User Presence
@@ -224,12 +234,12 @@ class Firebase {
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
-  createAccount = ({ userId, email, profile, workspace, workspaceIds }) => {
+  createAccount = ({ userId, email, profile, workspace, workspaces }) => {
 
-    if (workspaceIds.length > 0) {
-      workspaceIds.forEach(workspaceId => {
-        const batch = this.createBatch();
-        this.updateBatch(batch, ['workspaces', workspaceId], {
+    if (workspaces.length > 0) {
+      const batch = this.createBatch();
+      workspaces.forEach(workspace => {
+        this.updateBatch(batch, ['workspaces', workspace.id], {
           [`members.${userId}`]: {
             email,
             userId,
@@ -239,6 +249,14 @@ class Firebase {
           },
           invites: this.removeFromArray(email)
         });
+      });
+      batch
+      .commit()
+      .then(() => {
+        console.log('added member to workspaces');
+      })
+      .catch(error => {
+        console.error(error);
       });
     }
 
@@ -274,7 +292,7 @@ class Firebase {
           name: profile.name,
           username: profile.username,
           about: profile.about,
-          workspaceIds: [...workspaceIds, workspaceId]
+          workspaces: [...workspaces, { id: workspaceId, name: workspace.name}]
         });
         invites.forEach(emailInvite => {
           this.fs
@@ -318,7 +336,7 @@ class Firebase {
       this.createUser({
         userId,
         email,
-        workspaceIds,
+        workspaces,
         name: profile.name,
         username: profile.username,
         about: profile.about
@@ -332,69 +350,68 @@ class Firebase {
     username,
     email,
     about,
-    workspaceIds,
+    workspaces,
     photoURL = null
   }) => {
     const batch = this.createBatch();
-    const userRef = this.getDocRef('users', userId);
-    const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
-    const todayFolderRef = this.getDocRef('users', userId, 'folders', '1');
-    const upcomingFolderRef = this.getDocRef('users', userId, 'folders', '2');
-    const laterFolderRef = this.getDocRef('users', userId, 'folders', '3');
-    const miscFolderRef = this.getDocRef('users', userId, 'folders', '4');
-    const unscheduledFolderRef = this.getDocRef(
-      'users',
-      userId,
-      'folders',
-      '5'
-    );
-
-    batch.set(userRef, {
+    this.setBatch(batch, ['users', userId], {
       userId,
       name,
       username,
       email,
       about,
       photoURL,
-      workspaceIds,
+      workspaces: workspaces.map(workspace => ({
+        ...workspace,
+        folderIds: [0, 1, 2, 3]
+      })),
       projectIds: [],
       settings: {
+        activeWorkspace: workspaces[workspaces.length - 1],
         tasks: {
           view: 'all',
           sortBy: 'folder'
         }
-      },
-      folderIds: [0, 1, 2, 3]
+      }
     });
 
-    batch.set(newFolderRef, {
+    workspaces.forEach(workspace => {
+
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '0'], {
       name: 'New Tasks',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
     });
 
-    batch.set(todayFolderRef, {
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '1'], {
       name: 'Today',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
     });
 
-    batch.set(upcomingFolderRef, {
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '2'], {
       name: 'Upcoming',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
     });
 
-    batch.set(laterFolderRef, {
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '3'], {
       name: 'Later',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
     });
 
-    batch.set(miscFolderRef, {
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '4'], {
       name: 'No Project',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
     });
 
-    batch.set(unscheduledFolderRef, {
+    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '5'], {
       name: 'No Due Date',
-      taskIds: []
+      taskIds: [],
+      workspaceId: workspace.id
+    });
     });
 
     return batch

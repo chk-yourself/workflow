@@ -85,6 +85,9 @@
     top: calc(50% - 6px);
     stroke-width: 4px;
   }
+  &:before {
+    display: none;
+  }
 }
 
 .task__textarea {

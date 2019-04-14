@@ -7,18 +7,28 @@ input[type='checkbox'] {
 }
 
 .checkbox__label {
-  width: 20px;
-  height: 20px;
   display: inline-block;
   position: relative;
   background-color: transparent;
+  padding-left: 30px;
+  height: 20px;
+  line-height: 20px;
+  cursor: pointer;
+  &:before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
   .feather {
     pointer-events: none;
     width: 16px;
     height: 16px;
     position: absolute;
-    left: calc(50% - 8px);
-    top: calc(50% - 8px);
+    left: 2px;
+    top: 2px;
     visibility: hidden;
     color: $primary;
   }

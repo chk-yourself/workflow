@@ -11,6 +11,7 @@ const Checkbox = ({
   onChange,
   className,
   labelClass,
+  label,
   ...props
 }) => {
   return (
@@ -30,13 +31,15 @@ const Checkbox = ({
         onChange={onChange}
         {...props}
       />
+      {label && label}
     </label>
   );
 };
 
 Checkbox.defaultProps = {
   className: '',
-  labelClass: ''
+  labelClass: '',
+  label: ''
 };
 
 export default Checkbox;

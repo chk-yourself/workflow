@@ -60,12 +60,15 @@ class AccountSetup extends Component {
     e.preventDefault();
     const { profile, workspace, invites } = this.state;
     const { firebase, history } = this.props;
-    const workspaceIds = invites.filter(invite => invite.isAccepted).map(acceptedInvite => acceptedInvite.id);
+    const workspaces = invites.filter(invite => invite.isAccepted).map(acceptedInvite => ({
+      id: acceptedInvite.id,
+      name: acceptedInvite.name
+    }));
     workspace.invites = workspace.invites.filter(invite => invite !== '');
     const { uid: userId, email } = firebase.currentUser;
-    await firebase.createAccount({ userId, email, profile, workspaceIds, workspace: workspace.name ? workspace : null });
-    history.push(`/0/home/${userId}`);
     this.setState({ ...INITIAL_STATE });
+    await firebase.createAccount({ userId, email, profile, workspaces, workspace: workspace.name ? workspace : null });
+    history.push(`/0/home/${userId}`);
   };
 
   onChange = e => {
@@ -88,7 +91,14 @@ class AccountSetup extends Component {
   goToNextSection = () => {
     this.setState(prevState => ({
       currentSection: prevState.nextSection,
-      nextSection: prevState.currentSection === 'invites' ? 'workspace' : null
+      nextSection: prevState.nextSection === 'invites' ? 'workspace' : null
+    }));
+  };
+
+  goToPrevSection = () => {
+    this.setState(prevState => ({
+      currentSection: prevState.currentSection === 'workspace' ? 'invites' : 'profile',
+      nextSection: prevState.currentSection,
     }));
   };
 
@@ -96,8 +106,10 @@ class AccountSetup extends Component {
     const { value: workspaceId, dataset: { index }} = e.target;
     this.setState(prevState => {
       const invites = [...prevState.invites];
-      let invite = {...invites[index]};
-      invite.isAccepted = !invite.isAccepted;
+      invites[index] = {
+        ...prevState.invites[index],
+        isAccepted: !prevState.invites[index].isAccepted
+      };
       return {
         invites
       }
@@ -108,10 +120,9 @@ class AccountSetup extends Component {
     const { profile, workspace, error, currentSection, invites } = this.state;
     const { firebase } = this.props;
     const { currentUser } = firebase;
-    if (!currentUser) return null;
+    const { email } = currentUser;
     const isProfileInvalid = profile.name === '' || profile.username === '';
     const isWorkspaceInvalid = workspace.name === '' && invites.every(invite => !invite.isAccepted);
-    const { email } = currentUser;
     return (
       <main className="account-setup">
         <form className="account-setup__form">
@@ -140,14 +151,25 @@ class AccountSetup extends Component {
           <footer
             className={`account-setup__footer account-setup__footer--${currentSection}`}
           >
+          {currentSection !== 'profile' && (
+            <Button
+              size="md"
+              variant="outlined"
+              color="primary"
+              onClick={this.goToPrevSection}
+              className="account-setup__btn"
+            >
+              Back
+            </Button>
+          )}
           {currentSection === 'workspace' &&
           <Button
-              disabled={isWorkspaceInvalid}
-              size="md"
-              variant="contained"
-              color="primary"
-              onClick={this.onSubmit}
-              className="account-setup__btn"
+            disabled={isProfileInvalid || isWorkspaceInvalid}
+            size="md"
+            variant="contained"
+            color="primary"
+            onClick={this.onSubmit}
+            className="account-setup__btn"
             >
               Done
             </Button>
@@ -161,7 +183,7 @@ class AccountSetup extends Component {
               onClick={this.goToNextSection}
               className="account-setup__btn"
             >
-              Continue
+              Next
             </Button>
           )}
           </footer>
