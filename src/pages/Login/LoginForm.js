@@ -16,6 +16,13 @@ const INITIAL_STATE = {
 class LoginForm extends Component {
   state = { ...INITIAL_STATE };
 
+  componentDidMount() {
+    const { localStorage } = window;
+    this.setState({
+      email: localStorage.getItem('loginEmail') || ''
+    });
+  }
+
   onSubmit = e => {
     const { email, password } = this.state;
     const { firebase, history } = this.props;

@@ -9,3 +9,10 @@
 .verification-required {
   padding: 16px;
 }
+
+.verification-required__btn {
+  &:hover,
+  &:active {
+    background-color: $primary-dk;
+  }
+}

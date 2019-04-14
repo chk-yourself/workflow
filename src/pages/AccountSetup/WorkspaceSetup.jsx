@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
-import { withFirebase } from '../../components/Firebase';
-import * as ROUTES from '../../constants/routes';
 import { Input } from '../../components/Input';
-import { Textarea } from '../../components/Textarea';
 
 export default class WorkspaceSetup extends Component {
   render() {
-    const { name, invites, onChange } = this.props;
+    const { name, invites, isOptional, onChange } = this.props;
 
     return (
       <section className="account-setup__section">
-        <h2 className="account-setup__section-heading">Your workspace</h2>
+        <h2 className="account-setup__section-heading">{`Your workspace ${isOptional ? '(Optional)' : ''}`}</h2>
         <Input
           name="name"
           label="Workspace name"

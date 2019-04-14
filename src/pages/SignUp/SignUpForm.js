@@ -23,12 +23,14 @@ class SignUpForm extends Component {
     e.preventDefault();
     const { email, password } = this.state;
     const { firebase } = this.props;
+    const { localStorage } = window;
 
     // firebase.sendSignInLinkToEmail(email);
     await firebase
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
         firebase.sendEmailVerification();
+        localStorage.setItem('loginEmail', email);
       })
       .catch(error => {
         this.setState({ error });

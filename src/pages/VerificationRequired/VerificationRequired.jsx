@@ -14,10 +14,10 @@ const VerificationRequired = ({ firebase }) => (
       continue setting up your account.
     </p>
     <Button
-      type="submit"
       size="md"
       variant="contained"
       color="primary"
+      className="verification-required__btn"
       onClick={() => firebase.sendEmailVerification()}
     >
       Resend Verification Link

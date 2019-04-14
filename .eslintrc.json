@@ -19,5 +19,8 @@
     "no-nested-ternary": 0,
     "react/destructuring-assignment": ["always", { "ignoreClassFields": true }]
   },
-  "parser": "babel-eslint"
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true
+  }
 }

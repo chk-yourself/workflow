@@ -104,15 +104,15 @@ class Project extends Component {
       color,
       children,
       tempSettings,
-      match: { url },
-      location: { pathname }
+      match: {
+        params: { section }
+      }
     } = this.props;
     const { layout } = tempSettings;
-    const route = pathname.slice(url.length + 1);
 
     const { name, isListComposerActive, isProjectSettingsActive } = this.state;
     return (
-      <div className={`project project--${layout} project--${route}`}>
+      <div className={`project project--${layout} project--${section}`}>
         <div className="project__header">
           <div className="project__header-content">
             <div className="project__name-wrapper">
@@ -140,7 +140,7 @@ class Project extends Component {
                 { href: `/0/projects/${projectId}/tasks`, text: 'Tasks' },
                 { href: `/0/projects/${projectId}/overview`, text: 'Overview' }
               ]}
-              activeLink={route}
+              activeLink={section}
               align={{
                 outer: 'left',
                 inner: 'right'

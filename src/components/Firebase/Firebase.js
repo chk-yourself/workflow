@@ -103,16 +103,15 @@ class Firebase {
     this.auth.currentUser.updatePassword(newPassword);
 
   sendSignInLinkToEmail = email => {
-    console.log(process.env.REACT_APP_PUBLIC_URL);
     const actionCodeSettings = {
-      url: `${process.env.REACT_APP_BASE_URL}/setup`,
+      url: `${process.env.REACT_APP_BASE_URL}/login`,
       // This must be true.
       handleCodeInApp: true
     };
     this.auth
       .sendSignInLinkToEmail(email, actionCodeSettings)
       .then(() => {
-        window.localStorage.setItem('emailForSignIn', email);
+        window.localStorage.setItem('loginEmail', email);
       })
       .catch(error => {
         console.log(error);
@@ -121,7 +120,7 @@ class Firebase {
 
   sendEmailVerification = () => {
     const actionCodeSettings = {
-      url: `${process.env.REACT_APP_BASE_URL}/setup`,
+      url: `${process.env.REACT_APP_BASE_URL}/login`,
       // This must be true.
       handleCodeInApp: true
     };
@@ -225,10 +224,27 @@ class Firebase {
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
-  createAccount = ({ userId, email, profile, workspace }) => {
-    const { invites } = workspace;
+  createAccount = ({ userId, email, profile, workspace, workspaceIds }) => {
 
-    this.fs
+    if (workspaceIds.length > 0) {
+      workspaceIds.forEach(workspaceId => {
+        const batch = this.createBatch();
+        this.updateBatch(batch, ['workspaces', workspaceId], {
+          [`members.${userId}`]: {
+            email,
+            userId,
+            name: profile.name,
+            role: 'member',
+            username: profile.username
+          },
+          invites: this.removeFromArray(email)
+        });
+      });
+    }
+
+    if (workspace) {
+      const { invites } = workspace;
+      this.fs
       .collection('workspaces')
       .add({
         createdAt: this.getTimestamp(),
@@ -258,7 +274,7 @@ class Firebase {
           name: profile.name,
           username: profile.username,
           about: profile.about,
-          workspaceIds: [workspaceId]
+          workspaceIds: [...workspaceIds, workspaceId]
         });
         invites.forEach(emailInvite => {
           this.fs
@@ -273,6 +289,9 @@ class Firebase {
                     user: { ...from },
                     type: 'workspace',
                     id: workspaceId,
+                    data: {
+                      name: workspace.name
+                    },
                     parent: null
                   },
                   event: {
@@ -285,13 +304,26 @@ class Firebase {
                   to: emailInvite,
                   publishedAt: this.getTimestamp(),
                   type: 'workspace',
-                  workspaceId,
+                  data: {
+                    id: workspaceId,
+                    name: workspace.name
+                  },
                   from: { ...from }
                 });
               }
             });
         });
       });
+    } else {
+      this.createUser({
+        userId,
+        email,
+        workspaceIds,
+        name: profile.name,
+        username: profile.username,
+        about: profile.about
+      });
+    }
   };
 
   createUser = ({

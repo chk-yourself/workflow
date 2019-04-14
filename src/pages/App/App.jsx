@@ -12,13 +12,15 @@ import { Header } from '../../components/Header';
 import { AccountSetup } from '../AccountSetup';
 import { VerificationRequired } from '../VerificationRequired';
 
-const App = () => (
+const App = ({ firebase }) => (
   <>
     <Header />
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-      <Route path={ROUTES.SET_UP} component={AccountSetup} />
+      <Route path={ROUTES.SET_UP} render={props => (
+        firebase.currentUser ? <AccountSetup /> : null
+      )} />
       <Route path={ROUTES.LOG_IN} component={LoginPage} />
       <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
       <Route
