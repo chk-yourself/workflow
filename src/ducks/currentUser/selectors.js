@@ -129,7 +129,8 @@ export const getSortedFilteredTaskGroups = state => {
     }
     case 'folder': {
       if (!folders) return [];
-      const { folderIds } = currentUser;
+      const { workspaces, settings: { activeWorkspace: { id } } } = currentUser;
+      const { folderIds } = workspaces[id];
       const { tasksById } = state;
       return folderIds.map(folderId => {
         const { taskIds } = folders[folderId];

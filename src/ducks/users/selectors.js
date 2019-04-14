@@ -1,5 +1,6 @@
 export const getUsersById = state => {
-  return state.usersById;
+  const { usersById } = state;
+  return Object.keys(usersById).length === 0 ? null : usersById;
 };
 
 export const getUserData = (state, userId) => {

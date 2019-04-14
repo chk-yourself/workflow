@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { subtaskSelectors } from '../../ducks/subtasks';
@@ -147,22 +147,26 @@ class TaskEditor extends Component {
       assignedTo,
       firebase,
       folders,
-      dueDate
+      dueDate,
+      activeWorkspace
     } = this.props;
+
+    const { id: workspaceId } = activeWorkspace;
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
       const folderId = folders[userId];
-      firebase.removeAssignee({ taskId, projectId, userId, folderId, dueDate });
+      firebase.removeAssignee({ taskId, projectId, userId, folderId, dueDate, workspaceId });
     } else {
-      firebase.addAssignee({ taskId, projectId, projectName, userId, dueDate });
+      firebase.addAssignee({ taskId, projectId, projectName, userId, dueDate, workspaceId });
     }
   };
 
   setDueDate = newDueDate => {
-    const { firebase, taskId, assignedTo, dueDate } = this.props;
+    const { firebase, taskId, assignedTo, dueDate, activeWorkspace } = this.props;
+    const { id: workspaceId } = activeWorkspace;
     const prevDueDate = dueDate ? new Date(dueDate.toDate()) : null;
-    firebase.setTaskDueDate({ taskId, prevDueDate, newDueDate, assignedTo });
+    firebase.setTaskDueDate({ taskId, prevDueDate, newDueDate, assignedTo, workspaceId });
   };
 
   toggleDatePicker = () => {
@@ -470,7 +474,6 @@ class TaskEditor extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    currentUser: currentUserSelectors.getCurrentUser(state),
     taskTags: taskSelectors.getTaskTags(state, ownProps.taskId),
     mergedTags: currentUserSelectors.getMergedProjectTags(
       state,
@@ -491,7 +494,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withFirebase(
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps

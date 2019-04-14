@@ -26,8 +26,9 @@ class ListComposer extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { name } = this.state;
-    const { projectId, firebase } = this.props;
-    firebase.addList({ projectId, name });
+    const { projectId, firebase, currentUser } = this.props;
+    const { userId, settings: { activeWorkspace: { id: workspaceId }} } = currentUser;
+    firebase.addList({ projectId, name, workspaceId, userId });
     this.clear();
   };
 

@@ -69,7 +69,8 @@ export const deleteList = ({ listId, projectId }) => {
                 commentIds,
                 tags,
                 projectId,
-                dueDate
+                dueDate,
+                workspaceId
               } = tasksById[taskId];
               await firebase.deleteTask({
                 taskId,
@@ -78,7 +79,8 @@ export const deleteList = ({ listId, projectId }) => {
                 subtaskIds,
                 commentIds,
                 projectId,
-                dueDate
+                dueDate,
+                workspaceId
               });
             });
           }

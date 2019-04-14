@@ -126,6 +126,63 @@ export const syncUsersById = () => {
   };
 };
 
+export const syncMembersById = workspaceId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .getDocRef('workspaces', workspaceId)
+        .collection('members')
+        .onSnapshot(snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad && changes.length > 1) {
+            const users = {};
+            changes.forEach(change => {
+              const userId = change.doc.id;
+              const userData = change.doc.data();
+              users[userId] = {
+                userId,
+                ...userData
+              };
+            });
+            dispatch(loadUsersById(users));
+          } else {
+            const { usersById } = getState();
+            changes.forEach(async change => {
+              const [userId, userData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              switch (changeType) {
+                case 'added': {
+                  console.log(userId);
+                  if (userId in usersById) return;
+                  dispatch(addUser({ userId, userData }));
+                  break;
+                }
+                case 'removed': {
+                  if (!(userId in usersById)) return;
+                  dispatch(removeUser(userId));
+                  break;
+                }
+                default: {
+                  dispatch(updateUser({ userId, userData }));
+                }
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const fetchUserData = userId => {
   return async dispatch => {
     try {

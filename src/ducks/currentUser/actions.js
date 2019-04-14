@@ -253,11 +253,13 @@ export const syncTasksDueWithinDays = (userId, days) => {
   };
 };
 
-export const syncFolders = userId => {
+export const syncFolders = () => {
   return async (dispatch, getState) => {
     try {
+      const { currentUser } = getState();
+      const { userId, settings: { activeWorkspace } } = currentUser;
       const subscription = await firebase
-        .getDocRef('users', userId)
+        .getDocRef('users', userId, 'workspaces', activeWorkspace.id)
         .collection('folders')
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();

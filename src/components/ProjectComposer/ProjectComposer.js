@@ -76,14 +76,15 @@ class ProjectComposer extends Component {
     const { name, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, currentUser } = this.props;
-    const { userId } = currentUser;
+    const { userId, settings: { activeWorkspace: { id: workspaceId }} } = currentUser;
     firebase.addProject({
       userId,
       name,
       color,
       layout,
       isPrivate,
-      memberIds
+      memberIds,
+      workspaceId
     });
     onClose();
     this.reset();

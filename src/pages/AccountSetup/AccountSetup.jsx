@@ -41,8 +41,10 @@ class AccountSetup extends Component {
       snapshot.forEach(doc => {
         const content = doc.data();
         const workspaceInvite = {
-          id: content.data.id,
-          name: content.data.name,
+          id: doc.id,
+          data: {
+            ...content.data
+          },
           from: {...content.from},
           isAccepted: false
         };
@@ -60,14 +62,16 @@ class AccountSetup extends Component {
     e.preventDefault();
     const { profile, workspace, invites } = this.state;
     const { firebase, history } = this.props;
-    const workspaces = invites.filter(invite => invite.isAccepted).map(acceptedInvite => ({
-      id: acceptedInvite.id,
-      name: acceptedInvite.name
-    }));
     workspace.invites = workspace.invites.filter(invite => invite !== '');
     const { uid: userId, email } = firebase.currentUser;
     this.setState({ ...INITIAL_STATE });
-    await firebase.createAccount({ userId, email, profile, workspaces, workspace: workspace.name ? workspace : null });
+    await firebase.createAccount({ 
+      userId,
+      email,
+      profile,
+      invites,
+      workspace: workspace.name ? workspace : null 
+    });
     history.push(`/0/home/${userId}`);
   };
 
@@ -103,7 +107,7 @@ class AccountSetup extends Component {
   };
 
   acceptWorkspaceInvite = e => {
-    const { value: workspaceId, dataset: { index }} = e.target;
+    const { dataset: { index } } = e.target;
     this.setState(prevState => {
       const invites = [...prevState.invites];
       invites[index] = {

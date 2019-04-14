@@ -27,9 +27,8 @@ class UserTasks extends Component {
   };
 
   async componentDidMount() {
-    const { currentUser, syncFolders } = this.props;
-    const { userId } = currentUser;
-    this.unsubscribe = await syncFolders(userId);
+    const { syncFolders } = this.props;
+    this.unsubscribe = await syncFolders();
     this.setState({
       isLoading: false
     });
@@ -61,7 +60,8 @@ class UserTasks extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, currentUser, state } = this.props;
+    const { firebase, currentUser, state, activeWorkspace } = this.props;
+    const { id: workspaceId } = activeWorkspace;
     const { userId, folderIds, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
     switch (type) {
@@ -88,6 +88,7 @@ class UserTasks extends Component {
         } else {
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.moveTaskToFolder({
+            workspaceId,
             userId,
             taskId: draggableId,
             origFolderId,
@@ -311,7 +312,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncFolders: userId => dispatch(currentUserActions.syncFolders(userId)),
+    syncFolders: () => dispatch(currentUserActions.syncFolders()),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
     syncUserTasks: userId => dispatch(currentUserActions.syncUserTasks(userId)),
     reorderFolders: (userId, folderIds) =>

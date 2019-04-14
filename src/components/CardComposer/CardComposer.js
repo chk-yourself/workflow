@@ -33,15 +33,17 @@ class CardComposer extends Component {
       projectName,
       listId,
       listName,
-      userId
+      currentUser
     } = this.props;
+    const { userId, settings: { activeWorkspace: {id: workspaceId }}} = currentUser;
     firebase.addTask({
       projectId,
       listId,
       name,
       projectName,
       listName,
-      userId
+      userId,
+      workspaceId
     });
     this.resetForm();
     e.preventDefault();
@@ -118,24 +120,6 @@ class CardComposer extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    userId: currentUserSelectors.getCurrentUserId(state)
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    updateProjectsById: project =>
-      dispatch(projectActions.updateProjectsById(project))
-  };
-};
-
 const condition = currentUser => !!currentUser;
 
-export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(CardComposer)
-);
+export default withAuthorization(condition)(CardComposer);

@@ -26,7 +26,7 @@ const withAuthorization = condition => WrappedComponent => {
         <AuthUserContext.Consumer>
           {currentUser =>
             condition(currentUser) ? (
-              <WrappedComponent currentUser={currentUser} {...this.props} />
+              <WrappedComponent currentUser={currentUser} activeWorkspace={currentUser.settings.activeWorkspace} {...this.props} />
             ) : null
           }
         </AuthUserContext.Consumer>

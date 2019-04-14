@@ -100,7 +100,8 @@ export const deleteTask = ({ taskId, listId = null }) => {
         assignedTo,
         tags,
         projectId,
-        dueDate
+        dueDate,
+        workspaceId
       } = getStore().tasksById[taskId];
       const { userId } = getStore().currentUser;
       await firebase.deleteTask({
@@ -111,7 +112,8 @@ export const deleteTask = ({ taskId, listId = null }) => {
         subtaskIds,
         commentIds,
         dueDate,
-        projectId
+        projectId,
+        workspaceId
       });
       if (tags && tags.length > 0) {
         tags.forEach(name => {
@@ -184,11 +186,12 @@ export const syncProjectTasks = projectId => {
   };
 };
 
-export const syncUserProjectTasks = ({ userId, projectId }) => {
+export const syncUserWorkspaceTasks = ({ userId, workspaceId }) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
-        .queryCollection('tasks', ['projectId', '==', projectId])
+        .queryCollection('tasks', ['workspaceId', '==', workspaceId])
+        .where('isPrivate', '==', false)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad =
@@ -255,9 +258,6 @@ export const syncUserProjectTasks = ({ userId, projectId }) => {
               }
             });
           }
-          if (isInitialLoad) {
-            dispatch(setProjectLoadedState(projectId, 'tasks'));
-          }
         });
       return subscription;
     } catch (error) {
@@ -266,12 +266,13 @@ export const syncUserProjectTasks = ({ userId, projectId }) => {
   };
 };
 
-export const syncUserMiscTasks = userId => {
+export const syncUserPrivateTasks = ({userId, workspaceId}) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
         .queryCollection('tasks', ['ownerId', '==', userId])
-        .where('projectId', '==', null)
+        .where('workspaceId', '==', workspaceId)
+        .where('isPrivate', '==', true)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad =

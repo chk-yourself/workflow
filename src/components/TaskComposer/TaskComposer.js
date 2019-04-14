@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
 import { currentUserSelectors } from '../../ducks/currentUser';
@@ -27,7 +26,7 @@ class TaskComposer extends Component {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
     const {
-      userId,
+      currentUser,
       folderId,
       firebase,
       projectId,
@@ -36,15 +35,18 @@ class TaskComposer extends Component {
       listName,
       dueDate
     } = this.props;
+    const { userId, settings: { activeWorkspace: { id: workspaceId }} } = currentUser;
     firebase.addTask({
       dueDate: dueDate ? new Date(dueDate) : null,
       name,
       userId,
+      workspaceId,
       folderId,
       projectId,
       projectName,
       listId,
-      listName
+      listName,
+      isPrivate: !projectId
     });
     this.resetForm();
     e.preventDefault();
@@ -103,21 +105,6 @@ class TaskComposer extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    userId: currentUserSelectors.getCurrentUserId(state)
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
 const condition = currentUser => !!currentUser;
 
-export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(TaskComposer)
-);
+export default withAuthorization(condition)(TaskComposer);

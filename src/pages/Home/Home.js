@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { withAuthorization } from '../../components/Session';
 import * as ROUTES from '../../constants/routes';
-import { userActions } from '../../ducks/users';
+import { userActions, userSelectors } from '../../ducks/users';
 import { ProjectGrid } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { ProjectContainer } from '../../components/Project';
@@ -34,37 +34,45 @@ class HomePage extends Component {
     if (this.unsubscribe) {
       this.unsubscribe.forEach(func => func());
     }
+    if (this.trackPresence) {
+      this.trackPresence();
+    }
     console.log('home unmounted');
   }
 
   setListeners = async () => {
     const {
-      syncUsersById,
-      syncUserPresence,
+      syncMembersById,
       currentUser,
-      syncUserProjects,
-      syncUserProjectTasks,
-      syncUserMiscTasks,
+      activeWorkspace,
+      syncUserWorkspaceProjects,
+      syncUserWorkspaceTasks,
+      syncUserPrivateTasks,
       syncUserTags
     } = this.props;
     const { userId, projectIds } = currentUser;
+    const { id: workspaceId } = activeWorkspace;
 
     await Promise.all([
-      syncUsersById(),
-      syncUserPresence(),
-      syncUserProjects(userId),
-      syncUserMiscTasks(userId),
-      syncUserTags(userId),
-      ...projectIds.map(projectId =>
-        syncUserProjectTasks({ userId, projectId })
-      )
-    ]).then(listeners => {
+      syncMembersById(workspaceId),
+      syncUserWorkspaceProjects({ userId, workspaceId }),
+      syncUserWorkspaceTasks({ userId, workspaceId }),
+      syncUserPrivateTasks({userId, workspaceId}),
+      syncUserTags(userId)
+    ]).then(async listeners => {
       this.unsubscribe = listeners;
       this.setState({
         isLoading: false
       });
     });
   };
+
+  async componentDidUpdate(prevProps) {
+    const { membersById, syncUserPresence } = this.props;
+    if (prevProps.membersById === null && membersById) {
+      this.trackPresence = await syncUserPresence();
+    }
+  }
 
   toggleProjectComposer = () => {
     this.setState(prevState => ({
@@ -158,20 +166,21 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    projectsById: projectSelectors.getProjectsById(state)
+    projectsById: projectSelectors.getProjectsById(state),
+    membersById: userSelectors.getUsersById(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncUsersById: () => dispatch(userActions.syncUsersById()),
+    syncMembersById: workspaceId => dispatch(userActions.syncMembersById(workspaceId)),
     syncUserPresence: () => dispatch(userActions.syncUserPresence()),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId)),
-    syncUserProjects: userId =>
-      dispatch(projectActions.syncUserProjects(userId)),
-    syncUserProjectTasks: ({ userId, projectId }) =>
-      dispatch(taskActions.syncUserProjectTasks({ userId, projectId })),
-    syncUserMiscTasks: userId => dispatch(taskActions.syncUserMiscTasks(userId))
+    syncUserWorkspaceProjects: ({ userId, workspaceId }) =>
+      dispatch(projectActions.syncUserWorkspaceProjects({userId, workspaceId })),
+    syncUserWorkspaceTasks: ({ userId, workspaceId }) =>
+      dispatch(taskActions.syncUserWorkspaceTasks({ userId, workspaceId })),
+    syncUserPrivateTasks: ({userId, workspaceId}) => dispatch(taskActions.syncUserPrivateTasks({userId, workspaceId}))
   };
 };
 

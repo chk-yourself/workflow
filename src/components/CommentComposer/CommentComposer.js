@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { Avatar } from '../Avatar';
 import * as keys from '../../constants/keys';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import { userSelectors } from '../../ducks/users';
 import { RichTextEditor, getMentionedUsers } from '../RichTextEditor';
 import './CommentComposer.scss';
@@ -21,6 +20,7 @@ class CommentComposer extends Component {
   addComment = (value, e) => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { currentUser, firebase, taskId, projectId } = this.props;
+    const { settings: { activeWorkspace: {id: workspaceId }}} = currentUser;
     const users = getMentionedUsers(value);
     firebase.addComment({
       content: value.toJSON(),
@@ -31,7 +31,8 @@ class CommentComposer extends Component {
         username: currentUser.username
       },
       taskId,
-      projectId
+      projectId,
+      workspaceId
     });
     e.preventDefault();
   };
@@ -107,7 +108,6 @@ class CommentComposer extends Component {
 
 const mapStateToProps = state => {
   return {
-    currentUser: currentUserSelectors.getCurrentUser(state),
     users: userSelectors.getUsersArray(state),
     usersById: userSelectors.getUsersById(state)
   };

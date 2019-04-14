@@ -14,15 +14,15 @@ export default class WorkspaceInvites extends Component {
         {invites.map((invite, i) => (
           <li key={invite.id} className="account-setup__item">
           <Checkbox
-            name={invite.id}
-            value={invite.id}
-            id={invite.id}
+            name={invite.data.id}
+            value={invite.data.id}
+            id={invite.data.id}
             onChange={onChange}
             className="account-setup__checkbox"
             labelClass="account-setup__checkbox-label"
             isChecked={invite.isAccepted}
             data-index={i}
-            label={invite.name}
+            label={invite.data.name}
           />
           </li>
         ))}
