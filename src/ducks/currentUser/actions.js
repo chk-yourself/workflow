@@ -257,7 +257,10 @@ export const syncFolders = () => {
   return async (dispatch, getState) => {
     try {
       const { currentUser } = getState();
-      const { userId, settings: { activeWorkspace } } = currentUser;
+      const {
+        userId,
+        settings: { activeWorkspace }
+      } = currentUser;
       const subscription = await firebase
         .getDocRef('users', userId, 'workspaces', activeWorkspace.id)
         .collection('folders')
@@ -459,7 +462,8 @@ export const syncCurrentUserData = userId => {
         .getDocRef('users', userId)
         .onSnapshot(snapshot => {
           const userData = snapshot.data() || null;
-          if (userData) {
+          console.log(userData);
+          if (userData && userData.settings) {
             userData.tempSettings = {
               tasks: { ...userData.settings.tasks }
             };

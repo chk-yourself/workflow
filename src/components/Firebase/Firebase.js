@@ -151,10 +151,12 @@ class Firebase {
   getDocRef = (...args) => {
     try {
       if (args.length % 2 !== 0) {
-        throw new Error('Invalid Argument: Must follow pattern `collection/subcollection...`');
+        throw new Error(
+          'Invalid Argument: Must follow pattern `collection/subcollection...`'
+        );
       }
-    let path = args.join('/');
-    return this.fs.doc(path);
+      const path = args.join('/');
+      return this.fs.doc(path);
     } catch (error) {
       console.error(error);
     }
@@ -182,7 +184,9 @@ class Firebase {
 
   setBatch = (batch, ref, newValue = {}, merge = false) => {
     const doc = Array.isArray(ref) ? this.getDocRef(...ref) : ref;
-    return merge ? batch.set(doc, newValue, { merge: true }) : batch.set(doc, newValue);
+    return merge
+      ? batch.set(doc, newValue, { merge: true })
+      : batch.set(doc, newValue);
   };
 
   // User Presence
@@ -199,20 +203,22 @@ class Firebase {
       lastUpdatedAt: app.database.ServerValue.TIMESTAMP
     };
 
-    const userStatusFSRef = this.fs.doc(`/status/${uid}`);
-    const isOfflineFS = {
+    const userRefFS = this.getDocRef('users', uid);
+    const offlineStatusFS = {
       state: 'offline',
       lastUpdatedAt: this.getTimestamp()
     };
 
-    const isOnlineFS = {
+    const onlineStatusFS = {
       state: 'online',
       lastUpdatedAt: this.getTimestamp()
     };
 
     this.db.ref('.info/connected').on('value', snapshot => {
       if (snapshot.val() === false) {
-        userStatusFSRef.set(isOfflineFS);
+        userRefFS.update({
+          status: offlineStatusFS
+        });
         return;
       }
 
@@ -221,7 +227,9 @@ class Firebase {
         .set(isOfflineDB)
         .then(() => {
           userStatusDBRef.set(isOnlineDB);
-          userStatusFSRef.set(isOnlineFS);
+          userRefFS.update({
+            status: onlineStatusFS
+          });
         });
     });
   };
@@ -235,7 +243,8 @@ class Firebase {
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
   createAccount = ({ userId, email, profile, workspace, invites }) => {
-    let workspaces = {};
+    const workspaces = {};
+    let workspaceIds = [];
     const from = {
       userId,
       username: profile.username,
@@ -244,7 +253,11 @@ class Firebase {
     if (invites.length > 0) {
       const batch = this.createBatch();
       invites.forEach(invite => {
-        const { isAccepted, from: { userId: inviterId }, data: { id: workspaceId, name: workspaceName } } = invite;
+        const {
+          isAccepted,
+          from: { userId: inviterId },
+          data: { id: workspaceId, name: workspaceName }
+        } = invite;
         const inviteRef = this.getDocRef('invites', invite.id);
         batch.delete(inviteRef);
         this.createNotification({
@@ -272,106 +285,98 @@ class Firebase {
             name: workspaceName,
             folderIds: [0, 1, 2, 3]
           };
+          workspaceIds = workspaceIds.concat(workspaceId);
           this.updateBatch(batch, ['workspaces', workspaceId], {
             memberIds: this.addToArray(userId),
-            invites: this.removeFromArray(email)
-          });
-          this.setBatch(batch, ['workspaces', workspaceId, 'members', userId], {
-            email,
-            userId,
-            name: profile.name,
-            role: 'member',
-            username: profile.username
+            invites: this.removeFromArray(email),
+            [`roles.${userId}`]: 'owner'
           });
         } else {
           this.updateBatch(batch, ['workspaces', workspaceId], {
             invites: this.removeFromArray(email)
-          })
+          });
         }
       });
       batch
-      .commit()
-      .then(() => {
-        console.log('added member to workspaces');
-      })
-      .catch(error => {
-        console.error(error);
-      });
+        .commit()
+        .then(() => {
+          console.log('added member to workspaces');
+        })
+        .catch(error => {
+          console.error(error);
+        });
     }
 
     if (workspace) {
       this.fs
-      .collection('workspaces')
-      .add({
-        createdAt: this.getTimestamp(),
-        name: workspace.name,
-        memberIds: [userId],
-        invites: [...workspace.invites],
-        ownerId: userId,
-        projectIds: []
-      })
-      .then(ref => {
-        const { id: workspaceId } = ref;
-        this.getDocRef('workspaces', workspaceId, 'members', userId).set({
-          userId,
-          email,
-          name: profile.name,
-          username: profile.username,
-          role: 'owner'
-        });
-        this.createUser({
-          userId,
-          email,
-          name: profile.name,
-          username: profile.username,
-          about: profile.about,
-          workspaces: {
-            ...workspaces,
-            [workspaceId]: {
-              id: workspaceId,
-              name: workspace.name,
-              folderIds: [0, 1, 2, 3]
+        .collection('workspaces')
+        .add({
+          createdAt: this.getTimestamp(),
+          name: workspace.name,
+          memberIds: [userId],
+          roles: {
+            [userId]: 'owner'
+          },
+          invites: [...workspace.invites],
+          ownerId: userId,
+          projectIds: []
+        })
+        .then(ref => {
+          const { id: workspaceId } = ref;
+          this.createUser({
+            userId,
+            email,
+            name: profile.name,
+            username: profile.username,
+            about: profile.about,
+            workspaceIds: [workspaceId],
+            workspaces: {
+              ...workspaces,
+              [workspaceId]: {
+                id: workspaceId,
+                name: workspace.name,
+                folderIds: [0, 1, 2, 3]
+              }
             }
-          }
-        });
-        workspace.invites.forEach(emailInvite => {
-          this.fs
-            .collection('users')
-            .where('email', '==', emailInvite)
-            .get()
-            .then(doc => {
-              if (doc.exists) {
-                this.createNotification({
-                  userId: doc.id,
-                  source: {
-                    user: { ...from },
+          });
+          workspace.invites.forEach(emailInvite => {
+            this.fs
+              .collection('users')
+              .where('email', '==', emailInvite)
+              .get()
+              .then(doc => {
+                if (doc.exists) {
+                  this.createNotification({
+                    userId: doc.id,
+                    source: {
+                      user: { ...from },
+                      type: 'workspace',
+                      id: workspaceId,
+                      data: {
+                        name: workspace.name
+                      },
+                      parent: null
+                    },
+                    event: {
+                      type: 'invite',
+                      publishedAt: this.getTimestamp()
+                    }
+                  });
+                } else {
+                  this.fs.collection('invites').add({
+                    to: emailInvite,
+                    publishedAt: this.getTimestamp(),
                     type: 'workspace',
-                    id: workspaceId,
                     data: {
+                      id: workspaceId,
                       name: workspace.name
                     },
-                    parent: null
-                  },
-                  event: {
-                    type: 'invite',
-                    publishedAt: this.getTimestamp()
-                  }
-                });
-              } else {
-                this.fs.collection('invites').add({
-                  to: emailInvite,
-                  publishedAt: this.getTimestamp(),
-                  type: 'workspace',
-                  data: {
-                    id: workspaceId,
-                    name: workspace.name
-                  },
-                  from: { ...from }
-                });
-              }
-            });
+                    from: { ...from }
+                  });
+                }
+              });
+          });
         });
-      });
     } else {
       this.createUser({
         userId,
@@ -413,42 +418,65 @@ class Firebase {
     });
 
     workspaces.forEach(workspace => {
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '0'],
+        {
+          name: 'New Tasks',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
 
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '0'], {
-      name: 'New Tasks',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '1'],
+        {
+          name: 'Today',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
 
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '1'], {
-      name: 'Today',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '2'],
+        {
+          name: 'Upcoming',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
 
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '2'], {
-      name: 'Upcoming',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '3'],
+        {
+          name: 'Later',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
 
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '3'], {
-      name: 'Later',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '4'],
+        {
+          name: 'No Project',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
 
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '4'], {
-      name: 'No Project',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
-
-    this.setBatch(batch, ['users', userId, 'workspaces', workspace.id, 'folders', '5'], {
-      name: 'No Due Date',
-      taskIds: [],
-      workspaceId: workspace.id
-    });
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspace.id, 'folders', '5'],
+        {
+          name: 'No Due Date',
+          taskIds: [],
+          workspaceId: workspace.id
+        }
+      );
     });
 
     return batch
@@ -683,10 +711,14 @@ class Firebase {
           this.updateBatch(batch, ['workspaces', workspaceId], {
             projectIds: this.addToArray(ref.id)
           });
-          this.setBatch(batch, ['users', memberId, 'workspaces', workspaceId, 'folders', ref.id], {
-            name,
-            taskIds: []
-          });
+          this.setBatch(
+            batch,
+            ['users', memberId, 'workspaces', workspaceId, 'folders', ref.id],
+            {
+              name,
+              taskIds: []
+            }
+          );
         });
 
         return batch
@@ -744,9 +776,9 @@ class Firebase {
         workspaceId
       })
       .then(ref => {
-          this.updateDoc(['projects', projectId], {
-            listIds: this.addToArray(ref.id)
-          });
+        this.updateDoc(['projects', projectId], {
+          listIds: this.addToArray(ref.id)
+        });
       });
   };
 
@@ -832,21 +864,36 @@ class Firebase {
           const batch = this.createBatch();
 
           if (!projectId && folderId !== '4') {
-            this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '4'], {
-              taskIds: this.addToArray(ref.id)
-            });
+            this.updateBatch(
+              batch,
+              ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
+              {
+                taskIds: this.addToArray(ref.id)
+              }
+            );
           }
 
           if (!dueDate && folderId !== '5') {
-            this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-              taskIds: this.addToArray(ref.id)
-            });
+            this.updateBatch(
+              batch,
+              ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+              {
+                taskIds: this.addToArray(ref.id)
+              }
+            );
           }
 
           if (dueDate) {
             console.log(`${+dueDate}`);
             batch.set(
-              this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', `${+dueDate}`),
+              this.getDocRef(
+                'users',
+                userId,
+                'workspaces',
+                workspaceId,
+                'folders',
+                `${+dueDate}`
+              ),
               {
                 taskIds: this.addToArray(ref.id)
               },
@@ -855,14 +902,22 @@ class Firebase {
           }
 
           if (folderId !== '0') {
-            this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '0'], {
-              taskIds: this.addToArray(ref.id)
-            });
+            this.updateBatch(
+              batch,
+              ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+              {
+                taskIds: this.addToArray(ref.id)
+              }
+            );
           }
 
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', folderId], {
-            taskIds: this.addToArray(ref.id)
-          });
+          this.updateBatch(
+            batch,
+            ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
+            {
+              taskIds: this.addToArray(ref.id)
+            }
+          );
 
           return batch
             .commit()
@@ -887,7 +942,13 @@ class Firebase {
     });
   };
 
-  setTaskDueDate = ({ taskId, prevDueDate, newDueDate, workspaceId, assignedTo = [] }) => {
+  setTaskDueDate = ({
+    taskId,
+    prevDueDate,
+    newDueDate,
+    workspaceId,
+    assignedTo = []
+  }) => {
     const batch = this.createBatch();
 
     this.updateBatch(batch, ['tasks', taskId], {
@@ -897,12 +958,23 @@ class Firebase {
     if (assignedTo.length > 0) {
       assignedTo.forEach(userId => {
         if (prevDueDate === null) {
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-            taskIds: this.removeFromArray(taskId)
-          });
+          this.updateBatch(
+            batch,
+            ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+            {
+              taskIds: this.removeFromArray(taskId)
+            }
+          );
         } else {
           batch.set(
-            this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', `${+prevDueDate}`),
+            this.getDocRef(
+              'users',
+              userId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              `${+prevDueDate}`
+            ),
             {
               taskIds: this.removeFromArray(taskId)
             },
@@ -911,12 +983,23 @@ class Firebase {
         }
 
         if (newDueDate === null) {
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-            taskIds: this.addToArray(taskId)
-          });
+          this.updateBatch(
+            batch,
+            ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+            {
+              taskIds: this.addToArray(taskId)
+            }
+          );
         } else {
           batch.set(
-            this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', `${+newDueDate}`),
+            this.getDocRef(
+              'users',
+              userId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              `${+newDueDate}`
+            ),
             {
               taskIds: this.addToArray(taskId)
             },
@@ -949,23 +1032,46 @@ class Firebase {
         memberIds: this.removeFromArray(userId)
       });
     } else {
-      this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', folderId], {
-        taskIds: this.removeFromArray(taskId)
-      });
+      this.updateBatch(
+        batch,
+        ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
+        {
+          taskIds: this.removeFromArray(taskId)
+        }
+      );
 
       if (!dueDate) {
-        this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-          taskIds: this.removeFromArray(taskId)
-        });
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+          {
+            taskIds: this.removeFromArray(taskId)
+          }
+        );
       } else {
-        this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', `${+dueDate}`], {
-          taskIds: this.removeFromArray(taskId)
-        });
+        this.updateBatch(
+          batch,
+          [
+            'users',
+            userId,
+            'workspaces',
+            workspaceId,
+            'folders',
+            `${+dueDate}`
+          ],
+          {
+            taskIds: this.removeFromArray(taskId)
+          }
+        );
       }
       if (projectId) {
-        this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', projectId], {
-          taskIds: this.removeFromArray(taskId)
-        });
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', projectId],
+          {
+            taskIds: this.removeFromArray(taskId)
+          }
+        );
       }
     }
 
@@ -1008,7 +1114,14 @@ class Firebase {
 
     if (taskId) {
       batch.set(
-        this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', projectId),
+        this.getDocRef(
+          'users',
+          userId,
+          'workspaces',
+          workspaceId,
+          'folders',
+          projectId
+        ),
         {
           name: projectName,
           taskIds: this.addToArray(taskId)
@@ -1016,21 +1129,36 @@ class Firebase {
         { merge: true }
       );
 
-      this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '0'], {
-        taskIds: this.addToArray(taskId)
-      });
+      this.updateBatch(
+        batch,
+        ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+        {
+          taskIds: this.addToArray(taskId)
+        }
+      );
       this.updateBatch(batch, ['tasks', taskId], {
         assignedTo: this.addToArray(userId),
         [`folders.${userId}`]: '0'
       });
 
       if (!dueDate) {
-        this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-          taskIds: this.addToArray(taskId)
-        });
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+          {
+            taskIds: this.addToArray(taskId)
+          }
+        );
       } else {
         batch.set(
-          this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', `${+dueDate}`),
+          this.getDocRef(
+            'users',
+            userId,
+            'workspaces',
+            workspaceId,
+            'folders',
+            `${+dueDate}`
+          ),
           {
             taskIds: this.addToArray(taskId)
           },
@@ -1086,29 +1214,55 @@ class Firebase {
     if (assignedTo.length > 0) {
       assignedTo.forEach(userId => {
         const folderId = folders[userId];
-        const folderRef = this.getDocRef('users', userId, 'workspaces', workspaceId, 'folders', folderId);
+        const folderRef = this.getDocRef(
+          'users',
+          userId,
+          'workspaces',
+          workspaceId,
+          'folders',
+          folderId
+        );
         this.updateBatch(batch, folderRef, {
           taskIds: this.removeFromArray(taskId)
         });
 
         if (!projectId) {
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '4'], {
-            taskIds: this.removeFromArray(taskId)
-          });
-        } else {
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', projectId], {
-            taskIds: this.removeFromArray(taskId)
-          });
-        }
-
-        if (!dueDate) {
-          this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', '5'], {
-            taskIds: this.removeFromArray(taskId)
-          });
+          this.updateBatch(
+            batch,
+            ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
+            {
+              taskIds: this.removeFromArray(taskId)
+            }
+          );
         } else {
           this.updateBatch(
             batch,
-            ['users', userId, 'workspaces', workspaceId, 'folders', `${dueDate.toMillis()}`],
+            ['users', userId, 'workspaces', workspaceId, 'folders', projectId],
+            {
+              taskIds: this.removeFromArray(taskId)
+            }
+          );
+        }
+
+        if (!dueDate) {
+          this.updateBatch(
+            batch,
+            ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+            {
+              taskIds: this.removeFromArray(taskId)
+            }
+          );
+        } else {
+          this.updateBatch(
+            batch,
+            [
+              'users',
+              userId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              `${dueDate.toMillis()}`
+            ],
             {
               taskIds: this.removeFromArray(taskId)
             }
@@ -1195,12 +1349,20 @@ class Firebase {
       }
     }
 
-    this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', origFolderId], {
-      taskIds: this.removeFromArray(taskId)
-    });
-    this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
-      taskIds: updatedTaskIds
-    });
+    this.updateBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', origFolderId],
+      {
+        taskIds: this.removeFromArray(taskId)
+      }
+    );
+    this.updateBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', newFolderId],
+      {
+        taskIds: updatedTaskIds
+      }
+    );
     return batch
       .commit()
       .then(() => {

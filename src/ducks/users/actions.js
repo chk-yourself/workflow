@@ -126,12 +126,12 @@ export const syncUsersById = () => {
   };
 };
 
-export const syncMembersById = workspaceId => {
+export const syncWorkspaceMembers = workspaceId => {
   return async (dispatch, getState) => {
     try {
-      const subscription = await firebase
-        .getDocRef('workspaces', workspaceId)
-        .collection('members')
+      const subscription = await firebase.fs
+        .collection('users')
+        .where(`workspaceIds`, 'array-contains', workspaceId)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad =

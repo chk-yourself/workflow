@@ -7,7 +7,6 @@ import { userActions, userSelectors } from '../../ducks/users';
 import './Members.scss';
 
 class Members extends Component {
-
   render() {
     const { users, isExpanded } = this.props;
     return (
@@ -16,7 +15,8 @@ class Members extends Component {
         className="sidebar__list members__list"
       >
         {users.map(user => {
-          const { name, photoURL, userId, isOnline } = user;
+          const { name, photoURL, userId, status } = user;
+          const isOnline = status.state === 'online';
           return (
             <li className="sidebar__item members__item" key={userId}>
               <Avatar

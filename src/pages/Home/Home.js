@@ -34,15 +34,12 @@ class HomePage extends Component {
     if (this.unsubscribe) {
       this.unsubscribe.forEach(func => func());
     }
-    if (this.trackPresence) {
-      this.trackPresence();
-    }
     console.log('home unmounted');
   }
 
   setListeners = async () => {
     const {
-      syncMembersById,
+      syncWorkspaceMembers,
       currentUser,
       activeWorkspace,
       syncUserWorkspaceProjects,
@@ -54,7 +51,7 @@ class HomePage extends Component {
     const { id: workspaceId } = activeWorkspace;
 
     await Promise.all([
-      syncMembersById(workspaceId),
+      syncWorkspaceMembers(workspaceId),
       syncUserWorkspaceProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
       syncUserPrivateTasks({userId, workspaceId}),
@@ -66,13 +63,6 @@ class HomePage extends Component {
       });
     });
   };
-
-  async componentDidUpdate(prevProps) {
-    const { membersById, syncUserPresence } = this.props;
-    if (prevProps.membersById === null && membersById) {
-      this.trackPresence = await syncUserPresence();
-    }
-  }
 
   toggleProjectComposer = () => {
     this.setState(prevState => ({
@@ -173,7 +163,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncMembersById: workspaceId => dispatch(userActions.syncMembersById(workspaceId)),
+    syncWorkspaceMembers: workspaceId => dispatch(userActions.syncWorkspaceMembers(workspaceId)),
     syncUserPresence: () => dispatch(userActions.syncUserPresence()),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId)),
     syncUserWorkspaceProjects: ({ userId, workspaceId }) =>
