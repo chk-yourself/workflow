@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
@@ -21,9 +21,19 @@ const App = () => (
       <Route path={ROUTES.SET_UP} component={AccountSetup} />
       <Route path={ROUTES.LOG_IN} component={LoginPage} />
       <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-      <Route path={ROUTES.BASE} component={HomePage} />
+      <Route
+        path={ROUTES.BASE}
+        render={props =>
+          <HomePage {...props} /> || (
+            <Redirect to={{ pathname: ROUTES.SET_UP }} />
+          )
+        }
+      />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
-      <Route path={ROUTES.VERIFICATION_REQUIRED} component={VerificationRequired} />
+      <Route
+        path={ROUTES.VERIFICATION_REQUIRED}
+        component={VerificationRequired}
+      />
     </Switch>
   </>
 );

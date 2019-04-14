@@ -13,10 +13,6 @@ import { getDisplayName } from '../../utils/react';
 
 const withAuthentication = WrappedComponent => {
   class WithAuthentication extends Component {
-    state = {
-      authUser: null
-    };
-
     async componentDidMount() {
       const {
         firebase,
@@ -25,16 +21,18 @@ const withAuthentication = WrappedComponent => {
         setCurrentUser
       } = this.props;
 
+      const { initPresenceDetection } = firebase;
+
       this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
-          console.log(authUser, emailVerified);
+          this.unsubscribe = await syncCurrentUserData(uid);
           if (emailVerified) {
-            this.unsubscribe = await syncCurrentUserData(uid);
-            firebase.initPresenceDetection(uid);
-            history.push(`/0/home/${uid}`);
+            initPresenceDetection(uid);
+            history.push({
+              pathname: `/0/home/${uid}`
+            });
           } else {
-            this.setState({ authUser });
             history.push(ROUTES.VERIFICATION_REQUIRED);
           }
         } else if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
@@ -46,7 +44,6 @@ const withAuthentication = WrappedComponent => {
             .signInWithEmailLink(email, window.location.href)
             .then(async result => {
               window.localStorage.removeItem('emailForSignIn');
-              history.push(ROUTES.SET_UP);
             })
             .catch(error => {
               console.log(error);
@@ -70,9 +67,8 @@ const withAuthentication = WrappedComponent => {
 
     render() {
       const { currentUser } = this.props;
-      const { authUser } = this.state;
       return (
-        <AuthUserContext.Provider value={currentUser || authUser}>
+        <AuthUserContext.Provider value={currentUser}>
           <WrappedComponent {...this.props} />
         </AuthUserContext.Provider>
       );

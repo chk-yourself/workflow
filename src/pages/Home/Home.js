@@ -26,19 +26,14 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
-    const { currentUser, history } = this.props;
-    console.log(currentUser);
-    const { isRegistrationComplete } = currentUser;
-    if (!isRegistrationComplete) {
-      history.push(ROUTES.SET_UP);
-    } else {
-      this.setListeners();
-    }
+    this.setListeners();
     console.log('mounted home');
   }
 
   componentWillUnmount() {
-    this.unsubscribe && this.unsubscribe.forEach(func => func());
+    if (this.unsubscribe) {
+      this.unsubscribe.forEach(func => func());
+    }
     console.log('home unmounted');
   }
 

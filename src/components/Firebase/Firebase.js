@@ -26,6 +26,16 @@ class Firebase {
     return this.auth.currentUser;
   }
 
+  // Refreshes current user, if signed in
+  reload = () => {
+    this.auth.reload();
+  };
+
+  isNewUser = user => {
+    const { creationTime, lastSignInTime } = user.metadata;
+    return creationTime === lastSignInTime;
+  };
+
   signInWithGoogle = () => {
     const provider = new app.auth.GoogleAuthProvider();
     this.auth
@@ -215,7 +225,7 @@ class Firebase {
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
-  createAccount = ({ userId, profile, workspace }) => {
+  createAccount = ({ userId, email, profile, workspace }) => {
     const { invites } = workspace;
 
     this.fs
@@ -226,8 +236,8 @@ class Firebase {
         members: {
           [userId]: {
             userId,
+            email,
             name: profile.name,
-            email: profile.email,
             username: profile.username,
             role: 'owner'
           }
@@ -242,17 +252,18 @@ class Firebase {
           username: profile.username,
           name: profile.name
         };
-        this.updateDoc(['users', userId], {
-          email: profile.email,
+        this.createUser({
+          userId,
+          email,
           name: profile.name,
           username: profile.username,
           about: profile.about,
           workspaceIds: [workspaceId]
         });
-        invites.forEach(email => {
+        invites.forEach(emailInvite => {
           this.fs
             .collection('users')
-            .where('email', '==', email)
+            .where('email', '==', emailInvite)
             .get()
             .then(doc => {
               if (doc.exists) {
@@ -271,7 +282,7 @@ class Firebase {
                 });
               } else {
                 this.fs.collection('invites').add({
-                  to: email,
+                  to: emailInvite,
                   publishedAt: this.getTimestamp(),
                   type: 'workspace',
                   workspaceId,
@@ -283,17 +294,15 @@ class Firebase {
       });
   };
 
-  addUser = ({
+  createUser = ({
     userId,
-    email,
     name,
     username,
-    about = '',
-    workspaceIds = [],
-    projectIds = [],
+    email,
+    about,
+    workspaceIds,
     photoURL = null
   }) => {
-    console.log('user added');
     const batch = this.createBatch();
     const userRef = this.getDocRef('users', userId);
     const newFolderRef = this.getDocRef('users', userId, 'folders', '0');
@@ -314,9 +323,9 @@ class Firebase {
       username,
       email,
       about,
-      workspaceIds,
-      projectIds,
       photoURL,
+      workspaceIds,
+      projectIds: [],
       settings: {
         tasks: {
           view: 'all',
@@ -362,7 +371,7 @@ class Firebase {
         console.log('User added');
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
       });
   };
 

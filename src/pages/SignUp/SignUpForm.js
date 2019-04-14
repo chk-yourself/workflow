@@ -7,8 +7,6 @@ import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 const INITIAL_STATE = {
-  username: '',
-  name: '',
   email: '',
   password: '',
   passwordConfirm: '',
@@ -21,32 +19,20 @@ class SignUpForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = e => {
-    const { username, email, name, password } = this.state;
-    const { firebase, history } = this.props;
+  onSubmit = async e => {
+    e.preventDefault();
+    const { email, password } = this.state;
+    const { firebase } = this.props;
 
     // firebase.sendSignInLinkToEmail(email);
-    firebase
+    await firebase
       .createUserWithEmailAndPassword(email, password)
-      .then(authUser => {
-        firebase.sendEmailVerification();
-        const userId = authUser.user.uid;
-        const photoURL = authUser.user.photoURL || null;
-        return firebase.addUser({
-          userId,
-          email,
-          photoURL,
-          isRegistrationComplete: false
-        });
-      })
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
-        history.push(ROUTES.VERIFICATION_REQUIRED);
+        firebase.sendEmailVerification();
       })
       .catch(error => {
         this.setState({ error });
       });
-    e.preventDefault();
   };
 
   onChange = e => {
@@ -56,47 +42,21 @@ class SignUpForm extends Component {
   };
 
   render() {
-    const {
-      username,
-      name,
-      email,
-      password,
-      passwordConfirm,
-      error
-    } = this.state;
+    const { email, password, passwordConfirm, error } = this.state;
     const isInvalid =
       password === '' ||
       passwordConfirm === '' ||
       email === '' ||
-      username === '' ||
       password !== passwordConfirm;
 
     return (
       <form onSubmit={this.onSubmit} className="user-form">
-        <Input
-          name="name"
-          label="Full Name"
-          value={name}
-          onChange={this.onChange}
-          type="text"
-          className="user-form__input"
-          labelClass="user-form__label"
-        />
         <Input
           name="email"
           label="Email"
           value={email}
           onChange={this.onChange}
           type="email"
-          className="user-form__input"
-          labelClass="user-form__label"
-        />
-        <Input
-          name="username"
-          label="Username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
           className="user-form__input"
           labelClass="user-form__label"
         />

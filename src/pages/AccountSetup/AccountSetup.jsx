@@ -1,5 +1,7 @@
-import React, { Component, createElement } from 'react';
-import { withAuthorization } from '../../components/Session';
+import React, { Component } from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { withFirebase } from '../../components/Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Button } from '../../components/Button';
 import ProfileSetup from './ProfileSetup';
@@ -24,19 +26,13 @@ class AccountSetup extends Component {
   state = { ...INITIAL_STATE };
 
   onSubmit = async e => {
-    const { profile, workspace } = this.state;
-    const { firebase, history, currentUser } = this.props;
-    const { userId } = currentUser;
-    firebase
-      .createAccount({ userId, profile, workspace })
-      .then(authUser => {
-        this.setState({ ...INITIAL_STATE });
-        history.push(`/0/home/${userId}`);
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
     e.preventDefault();
+    const { profile, workspace } = this.state;
+    const { firebase, history } = this.props;
+    const { uid: userId, email } = firebase.currentUser;
+    await firebase.createAccount({ userId, email, profile, workspace });
+    history.push(`/0/home/${userId}`);
+    this.setState({ ...INITIAL_STATE });
   };
 
   onChange = e => {
@@ -64,10 +60,12 @@ class AccountSetup extends Component {
 
   render() {
     const { profile, workspace, error, currentSection } = this.state;
-    const { currentUser } = this.props;
-
+    const { firebase } = this.props;
+    const { currentUser } = firebase;
+    if (!currentUser) return null;
     const isProfileInvalid = profile.name === '' || profile.username === '';
     const isWorkspaceInvalid = workspace.name === '';
+    const { email } = currentUser;
     return (
       <main className="account-setup">
         <form className="account-setup__form">
@@ -76,7 +74,7 @@ class AccountSetup extends Component {
             <ProfileSetup
               name={profile.name}
               username={profile.username}
-              email={currentUser.email}
+              email={email}
               about={profile.about}
               onChange={this.onChange}
             />
@@ -117,5 +115,7 @@ class AccountSetup extends Component {
   }
 }
 
-const condition = authUser => !!authUser;
-export default withAuthorization(condition)(AccountSetup);
+export default compose(
+  withFirebase,
+  withRouter
+)(AccountSetup);
