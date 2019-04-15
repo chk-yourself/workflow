@@ -236,7 +236,60 @@ class Firebase {
 
   // Workspace API
 
-  createWorkspace = ({ name, members }) => {};
+  createWorkspace = ({ user, name, invites }) => {
+    // Create workspace doc
+    const { userId } = user;
+    this.fs
+      .collection('workspaces')
+      .add({
+        createdAt: this.getTimestamp(),
+        name,
+        memberIds: [userId],
+        roles: {
+          [userId]: 'owner'
+        },
+        invites,
+        ownerId: userId,
+        projectIds: []
+      })
+      .then(ref => {
+        const workspaceId = ref.id;
+        const batch = this.createBatch();
+        // Create workspace folders
+        this.createWorkspaceFolders({ userId, workspaceId }, batch, false);
+
+        // Update user doc
+        this.updateBatch(batch, ['users', userId], {
+          workspaceIds: this.addToArray(workspaceId),
+          'settings.activeWorkspace': {
+            id: workspaceId,
+            name
+          },
+          [`workspaces.${workspaceId}`]: {
+            id: workspaceId,
+            name,
+            folderIds: [0, 1, 2, 3]
+          }
+        });
+        // Send/store invites
+        invites.forEach(email => {
+          this.createWorkspaceInvite({
+            email,
+            workspaceId,
+            workspaceName: name,
+            from: { ...user }
+          });
+        });
+        return batch
+          .commit()
+          .then(() => {
+            console.log('created workspace');
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+  };
 
   // User API
 
@@ -339,42 +392,13 @@ class Firebase {
               }
             }
           });
-          workspace.invites.forEach(emailInvite => {
-            this.fs
-              .collection('users')
-              .where('email', '==', emailInvite)
-              .get()
-              .then(doc => {
-                if (doc.exists) {
-                  this.createNotification({
-                    userId: doc.id,
-                    source: {
-                      user: { ...from },
-                      type: 'workspace',
-                      id: workspaceId,
-                      data: {
-                        name: workspace.name
-                      },
-                      parent: null
-                    },
-                    event: {
-                      type: 'invite',
-                      publishedAt: this.getTimestamp()
-                    }
-                  });
-                } else {
-                  this.fs.collection('invites').add({
-                    to: emailInvite,
-                    publishedAt: this.getTimestamp(),
-                    type: 'workspace',
-                    data: {
-                      id: workspaceId,
-                      name: workspace.name
-                    },
-                    from: { ...from }
-                  });
-                }
-              });
+          workspace.invites.forEach(emailTo => {
+            this.createWorkspaceInvite({
+              email: emailTo,
+              workspaceId,
+              workspaceName: workspace.name,
+              from
+            });
           });
         });
     } else {
@@ -382,10 +406,125 @@ class Firebase {
         userId,
         email,
         workspaces,
+        workspaceIds,
         name: profile.name,
         username: profile.username,
         about: profile.about
       });
+    }
+  };
+
+  createWorkspaceInvite = ({ email, workspaceId, workspaceName, from }) => {
+    this.fs
+      .collection('users')
+      .where('email', '==', email)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          this.createNotification({
+            userId: doc.id,
+            source: {
+              user: { ...from },
+              type: 'workspace',
+              id: workspaceId,
+              data: {
+                name: workspaceName
+              },
+              parent: null
+            },
+            event: {
+              type: 'invite',
+              publishedAt: this.getTimestamp()
+            }
+          });
+        } else {
+          this.fs.collection('invites').add({
+            to: email,
+            publishedAt: this.getTimestamp(),
+            type: 'workspace',
+            data: {
+              id: workspaceId,
+              name: workspaceName
+            },
+            from: { ...from }
+          });
+        }
+      });
+  };
+
+  createWorkspaceFolders = (
+    { userId, workspaceId },
+    batch = this.createBatch,
+    shouldCommit = true
+  ) => {
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+      {
+        name: 'New Tasks',
+        taskIds: [],
+        workspaceId
+      }
+    );
+
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '1'],
+      {
+        name: 'Today',
+        taskIds: [],
+        workspaceId
+      }
+    );
+
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '2'],
+      {
+        name: 'Upcoming',
+        taskIds: [],
+        workspaceId
+      }
+    );
+
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '3'],
+      {
+        name: 'Later',
+        taskIds: [],
+        workspaceId
+      }
+    );
+
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
+      {
+        name: 'No Project',
+        taskIds: [],
+        workspaceId
+      }
+    );
+
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+      {
+        name: 'No Due Date',
+        taskIds: [],
+        workspaceId
+      }
+    );
+    if (shouldCommit) {
+      return batch
+        .commit()
+        .then(() => {
+          console.log('Created user folders');
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   };
 
@@ -418,64 +557,10 @@ class Firebase {
     });
 
     workspaces.forEach(workspace => {
-      this.setBatch(
+      this.createWorkspaceFolders(
+        { userId, workspaceId: workspace.id },
         batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '0'],
-        {
-          name: 'New Tasks',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
-      );
-
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '1'],
-        {
-          name: 'Today',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
-      );
-
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '2'],
-        {
-          name: 'Upcoming',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
-      );
-
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '3'],
-        {
-          name: 'Later',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
-      );
-
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '4'],
-        {
-          name: 'No Project',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
-      );
-
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspace.id, 'folders', '5'],
-        {
-          name: 'No Due Date',
-          taskIds: [],
-          workspaceId: workspace.id
-        }
+        false
       );
     });
 

@@ -18,7 +18,8 @@ class MemberAssigner extends Component {
       popoverWrapper: ''
     },
     placeholder: '',
-    memberSearchIsDisabled: false
+    memberSearchIsDisabled: false,
+    isSelfAssignmentDisabled: false
   };
 
   state = {
@@ -43,11 +44,16 @@ class MemberAssigner extends Component {
       onSelectMember,
       classes,
       memberIds,
-      users,
       placeholder,
-      memberSearchIsDisabled
+      memberSearchIsDisabled,
+      isSelfAssignmentDisabled,
+      userId
     } = this.props;
     const { isMemberSearchActive } = this.state;
+
+    const users = isSelfAssignmentDisabled
+      ? this.props.users.filter(user => user.userId !== userId)
+      : this.props.users;
 
     return (
       <div className={`member-assigner ${classes.memberAssigner || ''}`}>

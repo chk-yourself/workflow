@@ -59,7 +59,15 @@ class Sidebar extends Component {
                   <span className="sidebar__section-name">Team</span>
                   <Icon className="sidebar__icon" name="chevron-left" />
                 </Button>
-                <Members isExpanded={isMembersListVisible} />
+                <Members
+                  style={{ display: isMembersListVisible ? 'block' : 'none' }}
+                  classes={{
+                    list: 'sidebar__list',
+                    item: 'sidebar__item sidebar__member'
+                  }}
+                  showOnlineStatus
+                  details={['name']}
+                />
               </li>
             </ul>
           </nav>

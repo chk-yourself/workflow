@@ -2,34 +2,40 @@
 @import '../../styles/mixins';
 
 .members__list {
-  .members__item {
-    display: flex;
-    padding: 12px 0 12px 12px;
-    display: inline-flex;
-    width: 100%;
-    font-size: 14px;
-    letter-spacing: 0.02em;
-    color: $grey-700;
-    align-items: center;
-  }
+  padding: 0;
+}
 
-  .members__name {
-    font-size: 13px;
-    margin-left: 6px;
+.members__avatar {
+  position: relative;
+  &.is-online:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $success;
+    border: 1px solid $white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
+}
 
-  .members__avatar {
-    position: relative;
-    &.is-online:before {
-      content: '';
-      position: absolute;
-      right: 0;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: $success;
-      border: 1px solid $white;
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
-  }
+.members__detail {
+  margin-left: 16px;
+}
+
+.members__name {
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+.members__item {
+  display: flex;
+  padding: 12px 0 12px 12px;
+  display: inline-flex;
+  width: 100%;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: $grey-700;
+  align-items: center;
 }

@@ -1,44 +1,59 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { withAuthorization } from '../Session';
 import { Avatar } from '../Avatar';
-import { Icon } from '../Icon';
-import { userActions, userSelectors } from '../../ducks/users';
+import { userSelectors } from '../../ducks/users';
 import './Members.scss';
 
-class Members extends Component {
-  render() {
-    const { users, isExpanded } = this.props;
-    return (
-      <ul
-        style={{ display: isExpanded ? 'block' : 'none' }}
-        className="sidebar__list members__list"
-      >
-        {users.map(user => {
-          const { name, photoURL, userId, status } = user;
-          const isOnline = status.state === 'online';
-          return (
-            <li className="sidebar__item members__item" key={userId}>
-              <Avatar
-                classes={{
-                  avatar: `members__avatar members__avatar--sm ${
-                    isOnline ? 'is-online' : ''
-                  }`,
-                  placeholder: `members__avatar-placeholder--sm`
-                }}
-                name={name}
-                size="sm"
-                variant="circle"
-                imgSrc={photoURL}
-              />
-              <span className="members__name">{name}</span>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
-}
+const Members = ({ users, style, classes, showOnlineStatus, details }) => (
+  <ul style={style} className={`members__list ${classes.list || ''}`}>
+    {users.map(user => {
+      const { photoURL, name, userId, status } = user;
+      const isOnline = status.state === 'online';
+      return (
+        <li className={`members__item ${classes.item || ''}`} key={userId}>
+          <Avatar
+            classes={{
+              avatar: `members__avatar members__avatar--sm ${
+                isOnline && showOnlineStatus ? 'is-online' : ''
+              } ${classes.avatar || ''}`,
+              placeholder: `members__avatar-placeholder--sm ${classes.placeholder ||
+                ''}`
+            }}
+            name={name}
+            size="sm"
+            variant="circle"
+            imgSrc={photoURL}
+          />
+          {details.map(detail => (
+            <span
+              key={detail}
+              className={`members__detail members__${detail} ${
+                classes.detail
+                  ? `${classes.detail} ${classes.detail}--${detail}`
+                  : ''
+              }`}
+            >
+              {user[detail]}
+            </span>
+          ))}
+        </li>
+      );
+    })}
+  </ul>
+);
+
+Members.defaultProps = {
+  classes: {
+    list: '',
+    item: '',
+    avatar: '',
+    placeholder: '',
+    detail: ''
+  },
+  style: {},
+  showOnlineStatus: false,
+  details: ['name', 'username', 'email']
+};
 
 const mapStateToProps = state => ({
   users: userSelectors.getUsersArray(state)

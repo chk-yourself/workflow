@@ -76,7 +76,12 @@ class ProjectComposer extends Component {
     const { name, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, currentUser } = this.props;
-    const { userId, settings: { activeWorkspace: { id: workspaceId }} } = currentUser;
+    const {
+      userId,
+      settings: {
+        activeWorkspace: { id: workspaceId }
+      }
+    } = currentUser;
     firebase.addProject({
       userId,
       name,
@@ -206,6 +211,7 @@ class ProjectComposer extends Component {
                 placeholder="Add or remove member"
                 memberIds={memberIds}
                 onSelectMember={this.handleMemberAssignment}
+                isSelfAssignmentDisabled
               />
             </ProjectComposerControlGroup>
           )}

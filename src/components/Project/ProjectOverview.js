@@ -91,6 +91,7 @@ class ProjectOverview extends Component {
             placeholder="Add or remove member"
             memberIds={memberIds}
             onSelectMember={this.handleMemberAssignment}
+            isSelfAssignmentDisabled
           />
         </ProjectOverviewSection>
         <ProjectOverviewSection name="Description">
