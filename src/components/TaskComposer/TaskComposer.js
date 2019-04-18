@@ -27,6 +27,7 @@ class TaskComposer extends Component {
     const { name } = this.state;
     const {
       currentUser,
+      activeWorkspace,
       folderId,
       firebase,
       projectId,
@@ -35,7 +36,8 @@ class TaskComposer extends Component {
       listName,
       dueDate
     } = this.props;
-    const { userId, settings: { activeWorkspace: { id: workspaceId }} } = currentUser;
+    const { userId } = currentUser;
+    const { workspaceId } = activeWorkspace;
     firebase.addTask({
       dueDate: dueDate ? new Date(dueDate) : null,
       name,
@@ -105,6 +107,6 @@ class TaskComposer extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(TaskComposer);

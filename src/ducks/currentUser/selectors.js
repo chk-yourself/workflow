@@ -129,8 +129,7 @@ export const getSortedFilteredTaskGroups = state => {
     }
     case 'folder': {
       if (!folders) return [];
-      const { workspaces, settings: { activeWorkspace: { id } } } = currentUser;
-      const { folderIds } = workspaces[id];
+      const { folderIds } = currentUser;
       const { tasksById } = state;
       return folderIds.map(folderId => {
         const { taskIds } = folders[folderId];
@@ -344,6 +343,7 @@ export const getAllMergedTags = state => {
   const { projectsById, currentUser } = state;
   if (!currentUser) return [];
   const { tags: userTags, projectIds } = currentUser;
+  if (!projectIds) return [];
   const projectTags = projectIds.reduce((tags, projectId) => {
     const project = projectsById[projectId];
     if (project && project.tags) {
@@ -362,5 +362,6 @@ export const getCurrentUserProjects = state => {
   const { currentUser, projectsById } = state;
   if (!currentUser) return [];
   const { projectIds } = currentUser;
+  if (!projectIds) return [];
   return projectIds.map(projectId => projectsById[projectId]);
 };

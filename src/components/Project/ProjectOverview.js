@@ -22,13 +22,14 @@ class ProjectOverview extends Component {
   };
 
   handleMemberAssignment = (userId, e) => {
-    const { firebase, projectId, project } = this.props;
+    const { firebase, projectId, project, activeWorkspace } = this.props;
+    const { workspaceId } = activeWorkspace;
     const { memberIds, name: projectName } = project;
 
     if (memberIds.includes(userId)) {
-      firebase.removeAssignee({ projectId, userId });
+      firebase.removeAssignee({ projectId, userId, workspaceId });
     } else {
-      firebase.addAssignee({ projectId, projectName, userId });
+      firebase.addAssignee({ projectId, projectName, userId, workspaceId });
     }
 
     e.preventDefault();
@@ -112,7 +113,7 @@ const mapStateToProps = (state, ownProps) => ({
   project: projectSelectors.getProject(state, ownProps.projectId)
 });
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(mapStateToProps)(ProjectOverview)

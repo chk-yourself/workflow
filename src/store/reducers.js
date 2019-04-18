@@ -8,9 +8,11 @@ import { commentsById } from '../ducks/comments';
 import { currentUser } from '../ducks/currentUser';
 import { selectedTask } from '../ducks/selectedTask';
 import { selectedProject } from '../ducks/selectedProject';
+import { activeWorkspace } from '../ducks/activeWorkspace';
 
 export default combineReducers({
   currentUser,
+  activeWorkspace,
   projectsById,
   listsById,
   tasksById,

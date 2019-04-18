@@ -262,7 +262,7 @@ export const syncFolders = () => {
         settings: { activeWorkspace }
       } = currentUser;
       const subscription = await firebase
-        .getDocRef('users', userId, 'workspaces', activeWorkspace.id)
+        .getDocRef('users', userId, 'workspaces', activeWorkspace)
         .collection('folders')
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
@@ -462,13 +462,12 @@ export const syncCurrentUserData = userId => {
         .getDocRef('users', userId)
         .onSnapshot(snapshot => {
           const userData = snapshot.data() || null;
-          console.log(userData);
-          if (userData && userData.settings) {
-            userData.tempSettings = {
-              tasks: { ...userData.settings.tasks }
-            };
-          }
           if (!getState().currentUser) {
+            if (userData && userData.settings) {
+              userData.tempSettings = {
+                tasks: { ...userData.settings.tasks }
+              };
+            }
             dispatch(setCurrentUser(userData));
           } else {
             dispatch(updateUser({ userId, userData }));
@@ -481,12 +480,28 @@ export const syncCurrentUserData = userId => {
   };
 };
 
+export const syncUserWorkspaceData = ({userId, workspaceId}) => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .getDocRef('users', userId, 'workspaces', workspaceId)
+        .onSnapshot(snapshot => {
+          const userData = snapshot.data() || null;
+          dispatch(updateUser({ userId, userData }));
+        });
+      return subscription;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
 export const syncNotifications = userId => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
-        .getDocRef('users', userId)
-        .collection('notifications')
+        .getCollection('notifications')
+        .where('recipientId', '==', userId)
         .where('isActive', '==', true)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();

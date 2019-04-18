@@ -150,23 +150,48 @@ class TaskEditor extends Component {
       dueDate,
       activeWorkspace
     } = this.props;
-
-    const { id: workspaceId } = activeWorkspace;
+    const { workspaceId } = activeWorkspace;
 
     if (assignedTo.includes(userId)) {
       if (!projectId) return;
       const folderId = folders[userId];
-      firebase.removeAssignee({ taskId, projectId, userId, folderId, dueDate, workspaceId });
+      firebase.removeAssignee({
+        taskId,
+        projectId,
+        userId,
+        folderId,
+        dueDate,
+        workspaceId
+      });
     } else {
-      firebase.addAssignee({ taskId, projectId, projectName, userId, dueDate, workspaceId });
+      firebase.addAssignee({
+        taskId,
+        projectId,
+        projectName,
+        userId,
+        dueDate,
+        workspaceId
+      });
     }
   };
 
   setDueDate = newDueDate => {
-    const { firebase, taskId, assignedTo, dueDate, activeWorkspace } = this.props;
-    const { id: workspaceId } = activeWorkspace;
+    const {
+      firebase,
+      taskId,
+      assignedTo,
+      dueDate,
+      activeWorkspace
+    } = this.props;
+    const { workspaceId } = activeWorkspace;
     const prevDueDate = dueDate ? new Date(dueDate.toDate()) : null;
-    firebase.setTaskDueDate({ taskId, prevDueDate, newDueDate, assignedTo, workspaceId });
+    firebase.setTaskDueDate({
+      taskId,
+      prevDueDate,
+      newDueDate,
+      assignedTo,
+      workspaceId
+    });
   };
 
   toggleDatePicker = () => {
@@ -213,7 +238,11 @@ class TaskEditor extends Component {
 
   onOutsideClick = e => {
     const { handleTaskEditorClose } = this.props;
-    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item')) return;
+    if (
+      e.target.matches('.member-search__item') ||
+      e.target.matches('.tags-input__item')
+    )
+      return;
     handleTaskEditorClose();
   };
 
@@ -494,7 +523,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

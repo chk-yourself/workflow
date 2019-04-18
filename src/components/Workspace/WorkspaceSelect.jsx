@@ -11,7 +11,6 @@ class WorkspaceSelect extends Component {
 
   render() {
     const { currentUser, activeWorkspace } = this.props;
-    const { id } = activeWorkspace;
     const { workspaces, workspaceIds } = currentUser;
     const options = workspaceIds.map(workspaceId => ({
       value: workspaceId,
@@ -22,7 +21,7 @@ class WorkspaceSelect extends Component {
         name="activeWorkspace"
         onChange={this.selectWorkspace}
         options={options}
-        value={id}
+        value={activeWorkspace.workspaceId}
         classes={{
           label: 'workspace-select__label',
           list: 'workspace-select__list'
@@ -32,6 +31,6 @@ class WorkspaceSelect extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(WorkspaceSelect);

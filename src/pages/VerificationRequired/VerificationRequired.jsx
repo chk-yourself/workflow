@@ -6,7 +6,7 @@ import './VerificationRequired.scss';
 
 const VerificationRequired = ({ firebase }) => (
   <Main
-    classes={{ main: 'verification-required' }}
+    classes={{ main: 'verification-required', title: 'verification-required__heading' }}
     title="Please verify your email"
   >
     <p className="verification-required__paragraph">

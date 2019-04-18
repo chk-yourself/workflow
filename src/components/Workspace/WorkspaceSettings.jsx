@@ -9,43 +9,58 @@ import './WorkspaceSettings.scss';
 
 class WorkspaceSettings extends Component {
   state = {
-    name: '',
-    invites: ['', '', ''],
-    currentSection: 'general'
+    name: this.props.activeWorkspace.name,
+    invite: ''
   };
 
   onChange = e => {
-    const { name, value, dataset } = e.target;
-    const { index } = dataset;
-    this.setState(prevState => {
-      const invites = [...prevState.invites];
-      if (name === 'invites') {
-        invites[+index] = value;
-      }
-      return {
-        [name]: name === 'invites' ? invites : value
-      };
-    });
-  };
-
-  updateName = async e => {
-    const { firebase, currentUser } = this.props;
-    e.preventDefault();
-  };
-
-  inviteMembers = () => {};
-
-  setSection = e => {
-    const section = e.target.name;
+    const { name, value } = e.target;
     this.setState({
-      currentSection: section
+      [name]: value
     });
+  };
+
+  resetInvite = () => {
+    this.setState({
+      invite: ''
+    });
+  };
+
+  updateWorkspaceName = e => {
+    e.preventDefault();
+    const { firebase, currentUser, activeWorkspace } = this.props;
+    const { name } = this.state;
+    const { workspaceId, name: prevName, memberIds, invites } = activeWorkspace;
+    if (prevName === name) return;
+    const { updateWorkspaceName } = firebase;
+    updateWorkspaceName({ workspaceId, name, memberIds, invites });
+  };
+
+  inviteMember = e => {
+    e.preventDefault();
+    const { invite } = this.state;
+    const { firebase, currentUser, activeWorkspace } = this.props;
+    const { workspaceId, name: workspaceName, invites: pendingInvites } = activeWorkspace;
+    const { createWorkspaceInvite, updateDoc, addToArray } = firebase;
+    const from = {
+      userId: currentUser.userId,
+      username: currentUser.username,
+      name: currentUser.name
+    };
+    this.resetInvite();
+    if (pendingInvites.includes(invite)) return;
+    updateDoc(['workspaces', workspaceId], {
+      invites: addToArray(invite)
+    });
+    createWorkspaceInvite({ email: invite, workspaceId, workspaceName, from });
   };
 
   render() {
-    const { name, invites, currentSection } = this.state;
-    const { onClose } = this.props;
-    const isInvalid = name === '';
+    const { name, invite } = this.state;
+    const { onClose, activeWorkspace } = this.props;
+    const { invites } = activeWorkspace;
+    const isNameInvalid = name === '';
+    const isInviteInvalid = invite === '';
     return (
       <Modal
         onModalClose={onClose}
@@ -77,12 +92,13 @@ class WorkspaceSettings extends Component {
                     form="workspaceName"
                   />
                   <Button
-                    disabled={isInvalid}
+                    disabled={isNameInvalid}
                     type="submit"
                     className="workspace-settings__btn"
                     variant="contained"
                     color="primary"
-                    onClick={this.updateName}
+                    onClick={this.updateWorkspaceName}
+                    form="workspaceName"
                   >
                     Update Workspace
                   </Button>
@@ -94,8 +110,7 @@ class WorkspaceSettings extends Component {
               panelId: 'panelMembers',
               label: 'Members',
               content: (
-                <form id="workspaceInvites">
-                  <h3 className="workspace-settings__subheading">Members</h3>
+                <>
                   <Members
                     classes={{
                       list: 'workspace-settings__members',
@@ -105,35 +120,48 @@ class WorkspaceSettings extends Component {
                       detail: 'workspace-settings__member-detail'
                     }}
                   />
+                  {invites.length > 0 && (
+                    <>
+                  <h4 className="workspace-settings__sub-subheading">
+                    Pending Invites
+                  </h4>
+                  <ul className="workspace-settings__pending-invites">
+                  {invites.map(invite => (
+                    <li key={invite} className="workspace-settings__pending-invite">
+                    {invite}
+                    </li>
+                  ))}
+                  </ul>
+                  </>
+                  )}
                   <h4 className="workspace-settings__sub-subheading">
                     Invite more members
                   </h4>
-                  {invites.map((email, i) => (
-                    <Input
-                      key={i}
-                      name="invites"
-                      value={email}
-                      onChange={this.onChange}
-                      type="email"
-                      className="workspace-settings__input workspace-settings__input--teammate-email"
-                      placeholder="Teammate's email"
-                      hideLabel
-                      data-index={i}
-                      data-section="workspace"
-                      form="workspaceInvites"
-                    />
-                  ))}
+                  <form id="workspaceInvite">
+                  <Input
+                    name="invite"
+                    value={invite}
+                    onChange={this.onChange}
+                    type="email"
+                    className="workspace-settings__input workspace-settings__input--teammate-email"
+                    placeholder="Teammate's email"
+                    label="Email"
+                    labelClass="workspace-settings__label"
+                    form="workspaceInvite"
+                  />
                   <Button
-                    disabled={isInvalid}
+                    disabled={isInviteInvalid}
                     type="submit"
                     className="workspace-settings__btn"
                     variant="contained"
                     color="primary"
-                    onClick={this.inviteMembers}
+                    onClick={this.inviteMember}
+                    form="workspaceInvite"
                   >
-                    Invite Members
+                    Invite
                   </Button>
                 </form>
+                </>
               )
             }
           ]}
@@ -143,5 +171,5 @@ class WorkspaceSettings extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 export default withAuthorization(condition)(WorkspaceSettings);

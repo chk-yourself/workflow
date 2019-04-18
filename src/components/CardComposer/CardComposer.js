@@ -33,9 +33,11 @@ class CardComposer extends Component {
       projectName,
       listId,
       listName,
-      currentUser
+      currentUser,
+      activeWorkspace
     } = this.props;
-    const { userId, settings: { activeWorkspace: {id: workspaceId }}} = currentUser;
+    const { userId } = currentUser;
+    const { workspaceId } = activeWorkspace;
     firebase.addTask({
       projectId,
       listId,
@@ -120,6 +122,6 @@ class CardComposer extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(CardComposer);

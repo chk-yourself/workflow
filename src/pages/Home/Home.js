@@ -39,19 +39,21 @@ class HomePage extends Component {
 
   setListeners = async () => {
     const {
-      syncWorkspaceMembers,
       currentUser,
       activeWorkspace,
+      syncWorkspaceMembers,
+      syncUserWorkspaceData,
       syncUserWorkspaceProjects,
       syncUserWorkspaceTasks,
       syncUserPrivateTasks,
       syncUserTags
     } = this.props;
     const { userId, projectIds } = currentUser;
-    const { id: workspaceId } = activeWorkspace;
+    const { workspaceId } = activeWorkspace;
 
     await Promise.all([
       syncWorkspaceMembers(workspaceId),
+      syncUserWorkspaceData({ userId, workspaceId }),
       syncUserWorkspaceProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
       syncUserPrivateTasks({userId, workspaceId}),
@@ -170,11 +172,12 @@ const mapDispatchToProps = dispatch => {
       dispatch(projectActions.syncUserWorkspaceProjects({userId, workspaceId })),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>
       dispatch(taskActions.syncUserWorkspaceTasks({ userId, workspaceId })),
-    syncUserPrivateTasks: ({userId, workspaceId}) => dispatch(taskActions.syncUserPrivateTasks({userId, workspaceId}))
+    syncUserPrivateTasks: ({userId, workspaceId}) => dispatch(taskActions.syncUserPrivateTasks({userId, workspaceId})),
+    syncUserWorkspaceData: ({userId, workspaceId}) => dispatch(currentUserActions.syncUserWorkspaceData({userId, workspaceId}))
   };
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

@@ -30,7 +30,6 @@ class LoginForm extends Component {
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
-        history.push(ROUTES.HOME);
       })
       .catch(error => {
         this.setState({ error });

@@ -217,7 +217,8 @@ export default (state = null, action) => {
       };
     }
     case UPDATE_USER: {
-      const { userData } = action;
+      const { userId, userData } = action;
+      if (userId !== state.userId) return state;
       return {
         ...state,
         ...userData

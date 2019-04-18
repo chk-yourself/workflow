@@ -162,6 +162,10 @@ class Firebase {
     }
   };
 
+  getCollection = name => {
+    return this.fs.collection(name);
+  };
+
   queryCollection = (path, [field, comparisonOperator, value]) => {
     return this.fs.collection(path).where(field, comparisonOperator, value);
   };
@@ -236,6 +240,24 @@ class Firebase {
 
   // Workspace API
 
+  createWorkspaceSettings = ({ userId, workspaceId }, batch = null) => {
+    if (batch) {
+      this.setBatch(
+        batch,
+        ['users', userId, 'workspaces', workspaceId],
+        {
+          folderIds: ['0', '1', '2', '3'],
+          projectIds: []
+        }
+      );
+    } else {
+      this.getDocRef('users', userId, 'workspaces', workspaceId).set({
+          folderIds: ['0', '1', '2', '3'],
+          projectIds: []
+      });
+    }
+  };
+
   createWorkspace = ({ user, name, invites }) => {
     // Create workspace doc
     const { userId } = user;
@@ -255,20 +277,19 @@ class Firebase {
       .then(ref => {
         const workspaceId = ref.id;
         const batch = this.createBatch();
+        // Create workspace settings
+        this.createWorkspaceSettings({ userId, workspaceId }, batch);
+        
         // Create workspace folders
         this.createWorkspaceFolders({ userId, workspaceId }, batch, false);
 
         // Update user doc
         this.updateBatch(batch, ['users', userId], {
           workspaceIds: this.addToArray(workspaceId),
-          'settings.activeWorkspace': {
-            id: workspaceId,
-            name
-          },
+          'settings.activeWorkspace': workspaceId,
           [`workspaces.${workspaceId}`]: {
             id: workspaceId,
-            name,
-            folderIds: [0, 1, 2, 3]
+            name
           }
         });
         // Send/store invites
@@ -291,8 +312,63 @@ class Firebase {
       });
   };
 
-  updateWorkspaceName = ({ workspaceId, name }) => {
+  updateWorkspaceName = async ({ workspaceId, name, memberIds, invites }) => {
+    const batch = this.createBatch();
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      name
+    });
+    memberIds.forEach(memberId => {
+      this.updateBatch(batch, ['users', memberId], {
+        [`workspaces.${workspaceId}.name`]: name
+      });
+    });
 
+    if (invites.length > 0) {
+      const [inviteRefs, notificationRefs] = await Promise.all([
+        this.fs.collection('invites')
+            .where('type', '==', 'workspace')
+            .where('data.id', '==', workspaceId)
+            .get()
+            .then(snapshot => {
+              let invites = [];
+              snapshot.forEach(doc => {
+                invites = invites.concat(doc.ref);
+              });
+              return invites;
+            }),
+        this.fs.collection('notifications')
+            .where('event.type', '==', 'invite')
+            .where('source.type', '==', 'workspace')
+            .where('source.id', '==', workspaceId)
+            .get()
+            .then(snapshot => {
+              let notifications = [];
+                  snapshot.forEach(doc => {
+                    notifications = [...notifications, doc.ref];
+                  });
+                  return notifications;
+                })
+              ]);
+          inviteRefs.forEach(ref => {
+            this.updateBatch(batch, ref, {
+              'data.name': name
+            });
+          });
+          notificationRefs.forEach(ref => {
+            this.updateBatch(batch, ref, {
+              'source.data.name': name
+            });
+      });
+    }
+
+      return batch
+        .commit()
+        .then(() => {
+          console.log('Updated workspace name');
+        })
+        .catch(error => {
+          console.log(error);
+        });
   };
 
   // User API
@@ -318,7 +394,7 @@ class Firebase {
         const inviteRef = this.getDocRef('invites', invite.id);
         batch.delete(inviteRef);
         this.createNotification({
-          userId: inviterId,
+          recipientId: inviterId,
           source: {
             user: { ...from },
             type: 'workspace',
@@ -339,14 +415,13 @@ class Firebase {
         if (isAccepted) {
           workspaces[workspaceId] = {
             id: workspaceId,
-            name: workspaceName,
-            folderIds: [0, 1, 2, 3]
+            name: workspaceName
           };
           workspaceIds = workspaceIds.concat(workspaceId);
           this.updateBatch(batch, ['workspaces', workspaceId], {
             memberIds: this.addToArray(userId),
             invites: this.removeFromArray(email),
-            [`roles.${userId}`]: 'owner'
+            [`roles.${userId}`]: 'member'
           });
         } else {
           this.updateBatch(batch, ['workspaces', workspaceId], {
@@ -386,13 +461,12 @@ class Firebase {
             name: profile.name,
             username: profile.username,
             about: profile.about,
-            workspaceIds: [workspaceId],
+            workspaceIds: [...workspaceIds, workspaceId],
             workspaces: {
               ...workspaces,
               [workspaceId]: {
                 id: workspaceId,
-                name: workspace.name,
-                folderIds: [0, 1, 2, 3]
+                name: workspace.name
               }
             }
           });
@@ -423,24 +497,26 @@ class Firebase {
       .collection('users')
       .where('email', '==', email)
       .get()
-      .then(doc => {
-        if (doc.exists) {
-          this.createNotification({
-            userId: doc.id,
-            source: {
-              user: { ...from },
-              type: 'workspace',
-              id: workspaceId,
-              data: {
-                name: workspaceName
+      .then(snapshot => {
+        if (snapshot.size > 0) {
+          snapshot.forEach(doc => {
+            this.createNotification({
+              recipientId: doc.id,
+              source: {
+                user: { ...from },
+                type: 'workspace',
+                id: workspaceId,
+                data: {
+                  name: workspaceName
+                },
+                parent: null
               },
-              parent: null
-            },
-            event: {
-              type: 'invite',
-              publishedAt: this.getTimestamp()
-            }
-          });
+              event: {
+                type: 'invite',
+                publishedAt: this.getTimestamp()
+              }
+            });
+          })
         } else {
           this.fs.collection('invites').add({
             to: email,
@@ -539,6 +615,7 @@ class Firebase {
     email,
     about,
     workspaces,
+    workspaceIds,
     photoURL = null
   }) => {
     const batch = this.createBatch();
@@ -550,9 +627,11 @@ class Firebase {
       about,
       photoURL,
       workspaces,
+      workspaceIds,
+      createdAt: this.getTimestamp(),
       projectIds: [],
       settings: {
-        activeWorkspace: workspaces[workspaces.length - 1],
+        activeWorkspace: workspaceIds[workspaceIds.length - 1],
         tasks: {
           view: 'all',
           sortBy: 'folder'
@@ -560,9 +639,13 @@ class Firebase {
       }
     });
 
-    workspaces.forEach(workspace => {
+    workspaceIds.forEach(workspaceId => {
+      this.createWorkspaceSettings(
+        { userId, workspaceId },
+        batch
+      );
       this.createWorkspaceFolders(
-        { userId, workspaceId: workspace.id },
+        { userId, workspaceId },
         batch,
         false
       );
@@ -595,7 +678,7 @@ class Firebase {
     projectCount,
     userCount
   }) => {
-    const batch = this.fs.batch();
+    const batch = this.createBatch();
     const userTagRef = this.getDocRef('users', userId, 'tags', name);
 
     this.updateBatch(batch, ['tasks', taskId], {
@@ -794,7 +877,7 @@ class Firebase {
         const batch = this.createBatch();
 
         memberIds.forEach(memberId => {
-          this.updateBatch(batch, ['users', memberId], {
+          this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
             projectIds: this.addToArray(ref.id)
           });
           this.updateBatch(batch, ['workspaces', workspaceId], {
@@ -1114,7 +1197,7 @@ class Firebase {
     shouldCommit = true
   ) => {
     if (!taskId) {
-      this.updateBatch(batch, ['users', userId], {
+      this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
         projectIds: this.removeFromArray(projectId)
       });
       this.updateBatch(batch, ['projects', projectId], {
@@ -1197,7 +1280,7 @@ class Firebase {
       memberIds: this.addToArray(userId)
     });
 
-    this.updateBatch(batch, ['users', userId], {
+    this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
       projectIds: this.addToArray(projectId)
     });
 
@@ -1564,7 +1647,7 @@ class Firebase {
         if (to.length > 0) {
           to.forEach(user => {
             this.createNotification({
-              userId: user.userId,
+              recipientId: user.userId,
               source: {
                 user: from,
                 type: 'comment',
@@ -1590,10 +1673,11 @@ class Firebase {
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ userId, source, event }) => {
-    this.getDocRef('users', userId)
+  createNotification = ({ recipientId, source, event }) => {
+    return this.fs
       .collection('notifications')
       .add({
+        recipientId,
         source,
         event,
         createdAt: this.getTimestamp(),

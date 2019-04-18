@@ -18,16 +18,17 @@ const App = ({ firebase }) => (
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-      <Route path={ROUTES.SET_UP} render={props => (
-        firebase.currentUser ? <AccountSetup /> : null
-      )} />
+      <Route path={ROUTES.SET_UP} render={props => {
+        console.log(firebase.currentUser);
+        return (firebase.currentUser ? <AccountSetup /> : null
+      )}} />
       <Route path={ROUTES.LOG_IN} component={LoginPage} />
       <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
       <Route
         path={ROUTES.BASE}
         render={props =>
           <HomePage {...props} /> || (
-            <Redirect to={{ pathname: ROUTES.SET_UP }} />
+            <Redirect to={ROUTES.SET_UP} />
           )
         }
       />

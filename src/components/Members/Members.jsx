@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { Avatar } from '../Avatar';
 import { userSelectors } from '../../ducks/users';
+import { withAuthorization } from '../Session';
 import './Members.scss';
 
-const Members = ({ users, style, classes, showOnlineStatus, details }) => (
+const Members = ({ users, style, classes, showOnlineStatus, details, activeWorkspace }) => (
   <ul style={style} className={`members__list ${classes.list || ''}`}>
     {users.map(user => {
-      const { photoURL, name, userId, status } = user;
-      const isOnline = status.state === 'online';
+      const { photoURL, name, userId, status, settings } = user;
+      const isOnline = status.state === 'online' && settings.activeWorkspace === activeWorkspace.workspaceId;
       return (
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar
@@ -58,4 +60,10 @@ Members.defaultProps = {
 const mapStateToProps = state => ({
   users: userSelectors.getUsersArray(state)
 });
-export default connect(mapStateToProps)(Members);
+
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+
+export default compose(
+  withAuthorization(condition),
+  connect(mapStateToProps),
+)(Members);

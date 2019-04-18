@@ -19,8 +19,8 @@ class CommentComposer extends Component {
 
   addComment = (value, e) => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { currentUser, firebase, taskId, projectId } = this.props;
-    const { settings: { activeWorkspace: {id: workspaceId }}} = currentUser;
+    const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
+    const { workspaceId } = activeWorkspace;
     const users = getMentionedUsers(value);
     firebase.addComment({
       content: value.toJSON(),
@@ -117,7 +117,7 @@ const mapDispatchToProps = dispatch => {
   return {};
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

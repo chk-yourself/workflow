@@ -9,8 +9,7 @@
   }
 }
 
-.workspace-composer,
-.workspace-settings {
+.workspace-composer {
   padding: 24px;
   @include md {
     padding: 24px 8px 40px;
@@ -20,14 +19,6 @@
   }
 }
 
-.workspace-settings {
-  @include md {
-    flex-direction: column;
-    justify-content: flex-start;
-  }
-}
-
-.workspace-settings__input,
 .workspace-composer__input {
   margin-bottom: 24px;
   height: 42px;
@@ -65,51 +56,6 @@
   }
 }
 
-.workspace-settings__tabs,
-.workspace-settings__panel {
-  max-width: 400px;
-  width: 100%;
-  margin: 0 auto;
-  @include sm {
-    max-width: 500px;
-  }
-  @include md {
-    max-width: 500px;
-  }
-}
-
-.workspace-settings__tabs {
-  border-bottom: 1px solid $grey-300;
-  margin-bottom: 24px;
-  width: 100%;
-}
-
-.workspace-setting__tab {
-  padding: 0 0 8px 0;
-  margin-right: 32px;
-  border: 0;
-  border-radius: 0;
-  min-height: 0;
-  font-size: 15px;
-  &.is-active {
-    color: $primary;
-    box-shadow: inset 0 -2px $primary;
-  }
-}
-
-.workspace-settings__heading {
-  max-width: 400px;
-  width: 100%;
-  margin: 0 auto 18px;
-  font-weight: 600;
-  @include sm {
-    max-width: 500px;
-  }
-  @include md {
-    max-width: 500px;
-  }
-}
-
 .workspace-composer__heading {
   max-width: 340px;
   width: 100%;
@@ -126,28 +72,6 @@
   color: $grey-700;
 }
 
-.workspace-settings__label {
-  margin-bottom: 8px;
-}
-
-.workspace-settings__label,
-.workspace-settings__subheading {
-  font-weight: 600;
-  font-size: 14px;
-  color: $grey-700;
-}
-
-.workspace-settings__subheading {
-  margin: 8px 0 0;
-}
-
-.workspace-settings__sub-subheading {
-  font-weight: 600;
-  font-size: 12px;
-  color: $grey-700;
-}
-
-.workspace-settings__btn,
 .workspace-composer__btn {
   min-width: 80px;
   padding: 10px 12px;
@@ -159,44 +83,3 @@
   }
 }
 
-.workspace-settings__member {
-  flex-wrap: wrap;
-  position: relative;
-}
-
-.workspace-settings__member-detail {
-  font-size: 12px;
-  width: calc(100% - 52px);
-  margin-left: 52px;
-  line-height: 1.2;
-  &--name {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  @include sm {
-    width: auto;
-    margin-left: 16px;
-    margin-bottom: 0;
-  }
-}
-
-.workspace-settings__avatar {
-  width: 40px;
-  height: 40px;
-  font-size: 16px;
-  line-height: 38px;
-  position: absolute;
-  @include sm {
-    width: 30px;
-    height: 30px;
-    line-height: 28px;
-    font-size: 12px;
-    position: relative;
-  }
-}
-
-.workspace-settings__avatar-placeholder {
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}

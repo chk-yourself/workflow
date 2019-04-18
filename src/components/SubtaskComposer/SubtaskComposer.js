@@ -50,8 +50,9 @@ class SubtaskComposer extends Component {
 
   addSubtask = e => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const { currentUser, firebase, taskId, projectId } = this.props;
-    const { userId, settings:{activeWorkspace:{ id: workspaceId }} } = currentUser;
+    const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
+    const { workspaceId } = activeWorkspace;
+    const { userId } = currentUser;
     const { name } = this.state;
     firebase.addSubtask({ userId, name, taskId, projectId, workspaceId });
     this.resetForm();
@@ -111,6 +112,6 @@ class SubtaskComposer extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(SubtaskComposer);

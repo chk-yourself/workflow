@@ -75,13 +75,9 @@ class ProjectComposer extends Component {
     e.preventDefault();
     const { name, color, layout, privacy, memberIds } = this.state;
     const isPrivate = privacy === 'private';
-    const { onClose, firebase, currentUser } = this.props;
-    const {
-      userId,
-      settings: {
-        activeWorkspace: { id: workspaceId }
-      }
-    } = currentUser;
+    const { onClose, firebase, currentUser, activeWorkspace } = this.props;
+    const { userId } = currentUser;
+    const { workspaceId } = activeWorkspace;
     firebase.addProject({
       userId,
       name,
@@ -247,6 +243,6 @@ class ProjectComposer extends Component {
   }
 }
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(ProjectComposer);

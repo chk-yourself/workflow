@@ -61,7 +61,7 @@ class UserTasks extends Component {
     )
       return;
     const { firebase, currentUser, state, activeWorkspace } = this.props;
-    const { id: workspaceId } = activeWorkspace;
+    const { workspaceId } = activeWorkspace;
     const { userId, folderIds, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
     switch (type) {
@@ -314,7 +314,6 @@ const mapDispatchToProps = dispatch => {
   return {
     syncFolders: () => dispatch(currentUserActions.syncFolders()),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    syncUserTasks: userId => dispatch(currentUserActions.syncUserTasks(userId)),
     reorderFolders: (userId, folderIds) =>
       dispatch(currentUserActions.reorderFolders(userId, folderIds)),
     setTempTaskSettings: ({ view = null, sortBy = null }) =>
@@ -322,7 +321,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(
