@@ -32,26 +32,27 @@ class AccountSetup extends Component {
     const { firebase } = this.props;
     const { currentUser } = firebase;
     const { email } = currentUser;
-    const invites = await firebase.fs.collection('invites')
-    .where('to', '==', email)
-    .where('type', '==', 'workspace')
-    .get()
-    .then(snapshot => {
-      let workspaceInvites = [];
-      snapshot.forEach(doc => {
-        const content = doc.data();
-        const workspaceInvite = {
-          id: doc.id,
-          data: {
-            ...content.data
-          },
-          from: {...content.from},
-          isAccepted: false
-        };
-        workspaceInvites = workspaceInvites.concat(workspaceInvite);
-      })
-      return workspaceInvites;
-    });
+    const invites = await firebase.fs
+      .collection('invites')
+      .where('to', '==', email)
+      .where('type', '==', 'workspace')
+      .get()
+      .then(snapshot => {
+        let workspaceInvites = [];
+        snapshot.forEach(doc => {
+          const content = doc.data();
+          const workspaceInvite = {
+            id: doc.id,
+            data: {
+              ...content.data
+            },
+            from: { ...content.from },
+            isAccepted: false
+          };
+          workspaceInvites = workspaceInvites.concat(workspaceInvite);
+        });
+        return workspaceInvites;
+      });
     this.setState({
       invites,
       nextSection: invites.length > 0 ? 'invites' : 'workspace'
@@ -65,12 +66,12 @@ class AccountSetup extends Component {
     workspace.invites = workspace.invites.filter(invite => invite !== '');
     const { uid: userId, email } = firebase.currentUser;
     this.setState({ ...INITIAL_STATE });
-    await firebase.createAccount({ 
+    await firebase.createAccount({
       userId,
       email,
       profile,
       invites,
-      workspace: workspace.name ? workspace : null 
+      workspace: workspace.name ? workspace : null
     });
     history.push(`/0/home/${userId}`);
   };
@@ -81,7 +82,7 @@ class AccountSetup extends Component {
     this.setState(prevState => {
       const invites = [...prevState.workspace.invites];
       if (name === 'invites') {
-        invites[index] = value;
+        invites[+index] = value;
       }
       return {
         [section]: {
@@ -101,22 +102,25 @@ class AccountSetup extends Component {
 
   goToPrevSection = () => {
     this.setState(prevState => ({
-      currentSection: prevState.currentSection === 'workspace' ? 'invites' : 'profile',
-      nextSection: prevState.currentSection,
+      currentSection:
+        prevState.currentSection === 'workspace' ? 'invites' : 'profile',
+      nextSection: prevState.currentSection
     }));
   };
 
   acceptWorkspaceInvite = e => {
-    const { dataset: { index } } = e.target;
+    const {
+      dataset: { index }
+    } = e.target;
     this.setState(prevState => {
       const invites = [...prevState.invites];
-      invites[index] = {
-        ...prevState.invites[index],
-        isAccepted: !prevState.invites[index].isAccepted
+      invites[+index] = {
+        ...prevState.invites[+index],
+        isAccepted: !prevState.invites[+index].isAccepted
       };
       return {
         invites
-      }
+      };
     });
   };
 
@@ -126,7 +130,8 @@ class AccountSetup extends Component {
     const { currentUser } = firebase;
     const { email } = currentUser;
     const isProfileInvalid = profile.name === '' || profile.username === '';
-    const isWorkspaceInvalid = workspace.name === '' && invites.every(invite => !invite.isAccepted);
+    const isWorkspaceInvalid =
+      workspace.name === '' && invites.every(invite => !invite.isAccepted);
     return (
       <main className="account-setup">
         <form className="account-setup__form">
@@ -141,12 +146,16 @@ class AccountSetup extends Component {
             />
           )}
           {currentSection === 'invites' && (
-            <WorkspaceInvites invites={invites} onChange={this.acceptWorkspaceInvite} />
-          )
-          }
+            <WorkspaceInvites
+              invites={invites}
+              onChange={this.acceptWorkspaceInvite}
+            />
+          )}
           {currentSection === 'workspace' && (
             <WorkspaceSetup
-              isOptional={invites.length > 0 && invites.some(invite => invite.isAccepted)}
+              isOptional={
+                invites.length > 0 && invites.some(invite => invite.isAccepted)
+              }
               name={workspace.name}
               invites={workspace.invites}
               onChange={this.onChange}
@@ -155,41 +164,41 @@ class AccountSetup extends Component {
           <footer
             className={`account-setup__footer account-setup__footer--${currentSection}`}
           >
-          {currentSection !== 'profile' && (
-            <Button
-              size="md"
-              variant="outlined"
-              color="primary"
-              onClick={this.goToPrevSection}
-              className="account-setup__btn"
-            >
-              Back
-            </Button>
-          )}
-          {currentSection === 'workspace' &&
-          <Button
-            disabled={isProfileInvalid || isWorkspaceInvalid}
-            size="md"
-            variant="contained"
-            color="primary"
-            onClick={this.onSubmit}
-            className="account-setup__btn"
-            >
-              Done
-            </Button>
-          }
-          {currentSection !== 'workspace' && (
-            <Button
-              disabled={currentSection === 'profile' && isProfileInvalid}
-              size="md"
-              variant="contained"
-              color="primary"
-              onClick={this.goToNextSection}
-              className="account-setup__btn"
-            >
-              Next
-            </Button>
-          )}
+            {currentSection !== 'profile' && (
+              <Button
+                size="md"
+                variant="outlined"
+                color="primary"
+                onClick={this.goToPrevSection}
+                className="account-setup__btn"
+              >
+                Back
+              </Button>
+            )}
+            {currentSection === 'workspace' && (
+              <Button
+                disabled={isProfileInvalid || isWorkspaceInvalid}
+                size="md"
+                variant="contained"
+                color="primary"
+                onClick={this.onSubmit}
+                className="account-setup__btn"
+              >
+                Done
+              </Button>
+            )}
+            {currentSection !== 'workspace' && (
+              <Button
+                disabled={currentSection === 'profile' && isProfileInvalid}
+                size="md"
+                variant="contained"
+                color="primary"
+                onClick={this.goToNextSection}
+                className="account-setup__btn"
+              >
+                Next
+              </Button>
+            )}
           </footer>
         </form>
         {error && <p>{error.message}</p>}

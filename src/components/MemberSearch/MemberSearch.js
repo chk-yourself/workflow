@@ -87,7 +87,9 @@ class MemberSearch extends Component {
     const { users } = this.props;
     const { selectedMember } = this.state;
     const filteredList = users.filter(user => this.matchUser(user, query));
-    const newIndex = filteredList.findIndex(item => item.userId === selectedMember);
+    const newIndex = filteredList.findIndex(
+      item => item.userId === selectedMember
+    );
     const persistSelectedMember = newIndex !== -1;
 
     this.setState({
@@ -113,10 +115,8 @@ class MemberSearch extends Component {
 
     const { filteredList, selectedIndex, selectedMember, query } = this.state;
     const lastIndex = filteredList.length - 1;
-    const nextIndex =
-      selectedIndex === lastIndex ? 0 : selectedIndex + 1;
-    const prevIndex =
-      selectedIndex === 0 ? lastIndex : selectedIndex - 1;
+    const nextIndex = selectedIndex === lastIndex ? 0 : selectedIndex + 1;
+    const prevIndex = selectedIndex === 0 ? lastIndex : selectedIndex - 1;
 
     // eslint-disable-next-line default-case
     switch (e.key) {
@@ -124,14 +124,18 @@ class MemberSearch extends Component {
       // eslint-disable-next-line no-fallthrough
       case keys.TAB: {
         this.setState({
-          selectedMember: !query ? filteredList[0].userId : filteredList[nextIndex].userId,
+          selectedMember: !query
+            ? filteredList[0].userId
+            : filteredList[nextIndex].userId,
           selectedIndex: !query ? 0 : nextIndex
         });
         break;
       }
       case keys.ARROW_UP: {
         this.setState({
-          selectedMember: !query ? filteredList[lastIndex].userId : filteredList[prevIndex].userId,
+          selectedMember: !query
+            ? filteredList[lastIndex].userId
+            : filteredList[prevIndex].userId,
           selectedIndex: !query ? lastIndex : prevIndex
         });
         break;
@@ -168,7 +172,7 @@ class MemberSearch extends Component {
     const query = type === 'hidden' ? this.props.query : this.state.query;
     const isActive =
       type === 'hidden' ? this.props.isActive : this.state.isActive;
-      const selectedMember =
+    const selectedMember =
       type === 'hidden' ? this.props.selectedMember : this.state.selectedMember;
     const position = {};
     if (anchor) {

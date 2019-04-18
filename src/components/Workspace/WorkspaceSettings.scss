@@ -1,34 +1,19 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.workspace-select__label {
-  padding: 12px 16px 12px 38px;
-  font-weight: 500;
-  .feather {
-    left: 16px;
-  }
-}
-
-.workspace-composer,
 .workspace-settings {
   padding: 24px;
   @include md {
     padding: 24px 8px 40px;
+    flex-direction: column;
+    justify-content: flex-start;
   }
   @include lg {
     max-width: 600px;
   }
 }
 
-.workspace-settings {
-  @include md {
-    flex-direction: column;
-    justify-content: flex-start;
-  }
-}
-
-.workspace-settings__input,
-.workspace-composer__input {
+.workspace-settings__input {
   margin-bottom: 24px;
   height: 42px;
   width: 100%;
@@ -41,27 +26,6 @@
   }
   &:read-only {
     border: 1px solid $grey-600;
-  }
-}
-
-.workspace-composer__input {
-  max-width: 320px;
-}
-
-.workspace-composer__label {
-  font-size: 12px;
-  color: $grey-700;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.workspace-composer__form {
-  max-width: 340px;
-  width: 100%;
-  margin: 0 auto;
-  @include md {
-    max-width: 85%;
   }
 }
 
@@ -78,25 +42,6 @@
   }
 }
 
-.workspace-settings__tabs {
-  border-bottom: 1px solid $grey-300;
-  margin-bottom: 24px;
-  width: 100%;
-}
-
-.workspace-setting__tab {
-  padding: 0 0 8px 0;
-  margin-right: 32px;
-  border: 0;
-  border-radius: 0;
-  min-height: 0;
-  font-size: 15px;
-  &.is-active {
-    color: $primary;
-    box-shadow: inset 0 -2px $primary;
-  }
-}
-
 .workspace-settings__heading {
   max-width: 400px;
   width: 100%;
@@ -108,22 +53,6 @@
   @include md {
     max-width: 500px;
   }
-}
-
-.workspace-composer__heading {
-  max-width: 340px;
-  width: 100%;
-  margin: 0 auto 24px;
-  font-weight: 600;
-  @include md {
-    max-width: 85%;
-  }
-}
-
-.workspace-composer__subheading {
-  font-weight: 600;
-  font-size: 12px;
-  color: $grey-700;
 }
 
 .workspace-settings__label {
@@ -147,8 +76,7 @@
   color: $grey-700;
 }
 
-.workspace-settings__btn,
-.workspace-composer__btn {
+.workspace-settings__btn {
   min-width: 80px;
   padding: 10px 12px;
   margin-top: 16px;

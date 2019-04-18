@@ -291,6 +291,10 @@ class Firebase {
       });
   };
 
+  updateWorkspaceName = ({ workspaceId, name }) => {
+
+  };
+
   // User API
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
