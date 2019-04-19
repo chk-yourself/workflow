@@ -95,10 +95,7 @@ export default (state = null, action) => {
     }
     case types.REMOVE_NOTIFICATION: {
       const { notificationId } = action;
-      const {
-        [notificationId]: removedNotification,
-        ...restOfNotifications
-      } = state.notifications;
+      const {[notificationId]: removedNotification, ...restOfNotifications} = state.notifications;
       return {
         ...state,
         notifications: restOfNotifications

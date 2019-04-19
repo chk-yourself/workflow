@@ -312,6 +312,120 @@ class Firebase {
       });
   };
 
+  acceptWorkspaceInvite = ({ user, workspaceId, workspaceName, from, notificationId }) => {
+    const batch = this.createBatch();
+    const { userId, email } = user;
+
+    // Update workspace
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      memberIds: this.addToArray(userId),
+      invites: this.removeFromArray(email),
+      [`roles.${userId}`]: 'member'
+    });
+
+    // Update user
+    this.updateBatch(batch, ['users', userId], {
+      workspaceIds: this.addToArray(workspaceId),
+      [`workspaces.${workspaceId}`]: {
+        id: workspaceId,
+        name: workspaceName
+      }
+    });
+
+    // Send rsvp notification to inviter
+    this.createNotification({
+      recipientId: from,
+      source: {
+        user: { ...user },
+        type: 'workspace',
+        id: workspaceId,
+        data: {
+          name: workspaceName
+        },
+        parent: null
+      },
+      event: {
+        type: 'rsvp',
+        data: {
+          state: 'accepted'
+        },
+        publishedAt: this.getTimestamp()
+      }
+    });
+
+    // Create workspace subdoc
+    this.createWorkspaceSettings(
+      { userId, workspaceId },
+      batch
+    );
+
+    // Create workspace folders
+    this.createWorkspaceFolders(
+      { userId, workspaceId },
+      batch,
+      false
+    );
+
+    // Update notification
+    this.updateBatch(batch, ['notifications', notificationId], {
+      isActionPending: false
+    });
+    
+    return batch
+        .commit()
+        .then(() => {
+          console.log('Accepted workspace invite');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+  };
+
+
+  declineWorkspaceInvite = ({ user, workspaceId, workspaceName, from, notificationId }) => {
+    const batch = this.createBatch();
+    const { userId, email } = user;
+// Update workspace
+this.updateBatch(batch, ['workspaces', workspaceId], {
+  invites: this.removeFromArray(email)
+});
+
+// Send rsvp notification to inviter
+this.createNotification({
+  recipientId: from,
+  source: {
+    user: { ...user },
+    type: 'workspace',
+    id: workspaceId,
+    data: {
+      name: workspaceName
+    },
+    parent: null
+  },
+  event: {
+    type: 'rsvp',
+    data: {
+      state: 'declined'
+    },
+    publishedAt: this.getTimestamp()
+  }
+});
+  
+// Update notification
+  this.updateBatch(batch, ['notifications', notificationId], {
+    isActionPending: false
+  });
+
+  return batch
+  .commit()
+  .then(() => {
+    console.log('Declined workspace invite');
+  })
+  .catch(error => {
+    console.log(error);
+  });
+  };
+
   updateWorkspaceName = async ({ workspaceId, name, memberIds, invites }) => {
     const batch = this.createBatch();
     this.updateBatch(batch, ['workspaces', workspaceId], {
@@ -400,7 +514,7 @@ class Firebase {
             type: 'workspace',
             id: workspaceId,
             data: {
-              name: workspace.name
+              name: workspaceName
             },
             parent: null
           },
@@ -502,6 +616,7 @@ class Firebase {
           snapshot.forEach(doc => {
             this.createNotification({
               recipientId: doc.id,
+              isActionPending: true,
               source: {
                 user: { ...from },
                 type: 'workspace',
@@ -629,7 +744,6 @@ class Firebase {
       workspaces,
       workspaceIds,
       createdAt: this.getTimestamp(),
-      projectIds: [],
       settings: {
         activeWorkspace: workspaceIds[workspaceIds.length - 1],
         tasks: {
@@ -1673,13 +1787,14 @@ class Firebase {
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ recipientId, source, event }) => {
+  createNotification = ({ recipientId, source, event, isActionPending = false }) => {
     return this.fs
       .collection('notifications')
       .add({
         recipientId,
         source,
         event,
+        isActionPending,
         createdAt: this.getTimestamp(),
         isActive: true
       });

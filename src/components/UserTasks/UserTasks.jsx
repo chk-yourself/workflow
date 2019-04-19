@@ -206,7 +206,6 @@ class UserTasks extends Component {
       isSortRuleDropdownVisible,
       isTaskSettingsMenuVisible
     } = this.state;
-
     const isTaskEditorOpen = !!selectedTaskId;
     if (isLoading) return null;
     return (

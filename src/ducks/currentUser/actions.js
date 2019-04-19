@@ -113,6 +113,7 @@ export const updateNotification = ({ notificationId, notificationData }) => {
 };
 
 export const removeNotification = notificationId => {
+  console.log('remove notification');
   return {
     type: types.REMOVE_NOTIFICATION,
     notificationId
@@ -542,18 +543,20 @@ export const syncNotifications = userId => {
                 }
                 case 'removed': {
                   if (
-                    !change.doc.exists &&
                     notifications &&
                     notificationId in notifications
                   ) {
                     dispatch(removeNotification(notificationId));
+                    console.log('notification removed');
                   }
                   break;
                 }
                 default: {
+                  if (!notificationData.isActive) return;
                   dispatch(
                     updateNotification({ notificationId, notificationData })
                   );
+                  console.log('notification updated');
                   break;
                 }
               }

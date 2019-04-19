@@ -10,7 +10,7 @@ const Members = ({ users, style, classes, showOnlineStatus, details, activeWorks
   <ul style={style} className={`members__list ${classes.list || ''}`}>
     {users.map(user => {
       const { photoURL, name, userId, status, settings } = user;
-      const isOnline = status.state === 'online' && settings.activeWorkspace === activeWorkspace.workspaceId;
+      const isOnline = status && status.state === 'online' && settings.activeWorkspace === activeWorkspace.workspaceId;
       return (
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar

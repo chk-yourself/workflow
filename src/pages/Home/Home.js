@@ -26,7 +26,11 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
+    const { firebase, currentUser } = this.props;
+    const { initPresenceDetection } = firebase;
+    const { userId } = currentUser;
     this.setListeners();
+    initPresenceDetection(userId);
     console.log('mounted home');
   }
 

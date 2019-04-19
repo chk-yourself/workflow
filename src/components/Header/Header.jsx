@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { AuthUserContext } from '../Session';
+import { withFirebase } from '../Firebase';
 import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
+import { SignOutButton } from '../SignOutButton';
 import { Topbar } from '../Topbar';
 import './Header.scss';
 
@@ -19,6 +22,7 @@ class Header extends Component {
   render() {
     const { isNavExpanded } = this.state;
     const {
+      firebase,
       history: { location }
     } = this.props;
     const isLoginPage = location.pathname === '/login';
@@ -43,7 +47,9 @@ class Header extends Component {
               </>
             ) : (
               <Navbar>
-                <NavLinksNonAuth />
+                {!firebase.currentUser ? (
+                  <NavLinksNonAuth />
+                ) : <SignOutButton className="navbar__btn" />}
               </Navbar>
             )
           }
@@ -53,4 +59,7 @@ class Header extends Component {
   }
 }
 
-export default withRouter(Header);
+export default compose(
+  withRouter,
+  withFirebase)
+  (Header);

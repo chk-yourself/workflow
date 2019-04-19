@@ -8,14 +8,18 @@ import * as ROUTES from '../../constants/routes';
 import { getDisplayName } from '../../utils/react';
 import { activeWorkspaceSelectors } from '../../ducks/activeWorkspace';
 
-const withAuthorization = condition => WrappedComponent => {
+const withAuthorization = (condition) => WrappedComponent => {
   class WithAuthorization extends Component {
+    static contextType = AuthUserContext;
     componentDidMount() {
       /*
+      console.log(`${getDisplayName(WrappedComponent)} mounted`);
       const { firebase, history } = this.props;
       this.listener = firebase.auth.onAuthStateChanged(authUser => {
-        if (!condition(authUser)) {
-          history.push(ROUTES.LOG_IN);
+        if (authUser && !this.context) {
+          console.log(authUser, this.context);
+          const { firebase, history } = this.props;
+          history.push(ROUTES.SET_UP);
         }
       });
       */
@@ -27,10 +31,9 @@ const withAuthorization = condition => WrappedComponent => {
 
     render() {
       const { activeWorkspace, ...rest } = this.props;
-      console.log(activeWorkspace);
       return (
         <AuthUserContext.Consumer>
-          {currentUser =>
+          {currentUser => 
             condition(currentUser, activeWorkspace) ? (
               <WrappedComponent currentUser={currentUser} activeWorkspace={activeWorkspace} {...rest} />
             ) : null

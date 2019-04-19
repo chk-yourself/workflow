@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
@@ -12,21 +13,20 @@ import { Header } from '../../components/Header';
 import { AccountSetup } from '../AccountSetup';
 import { VerificationRequired } from '../VerificationRequired';
 
-const App = ({ firebase }) => (
+const App = ({ firebase, currentUser }) => (
   <>
     <Header />
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
       <Route path={ROUTES.SET_UP} render={props => {
-        console.log(firebase.currentUser);
         return (firebase.currentUser ? <AccountSetup /> : null
       )}} />
       <Route path={ROUTES.LOG_IN} component={LoginPage} />
       <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
       <Route
         path={ROUTES.BASE}
-        render={props =>
+        render={props => 
           <HomePage {...props} /> || (
             <Redirect to={ROUTES.SET_UP} />
           )

@@ -108,7 +108,22 @@
 
 .account-setup__checkbox {
   border-radius: 4px;
-  border-color: $grey-700;
+  border-color: $grey-600;
+  width: 18px;
+  height: 18px;
+}
+
+.account-setup__checkbox-label {
+  line-height: 18px;
+  &:before {
+    width: 18px;
+    height: 18px;
+  }
+  .feather {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3px;
+  }
 }
 
 .account-setup__section {

@@ -9,30 +9,30 @@ import {
   currentUserActions,
   currentUserSelectors
 } from '../../ducks/currentUser';
+import {
+  userActions
+} from '../../ducks/users';
 import { activeWorkspaceActions } from '../../ducks/activeWorkspace';
 import { getDisplayName } from '../../utils/react';
 
 const withAuthentication = WrappedComponent => {
   class WithAuthentication extends Component {
-    async componentDidMount() {
+
+    componentDidMount() {
       const {
         firebase,
         history,
-        syncCurrentUserData,
         setCurrentUser,
         setActiveWorkspace
       } = this.props;
 
       const { initPresenceDetection } = firebase;
 
-      this.listener = await firebase.auth.onAuthStateChanged(async authUser => {
+      this.listener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
           if (emailVerified) {
-            this.unsubscribeFromUser = await syncCurrentUserData(uid);
-           // initPresenceDetection(uid);
-           console.log('is email verified');
-            history.push(`/0/home/${uid}`);
+            this.syncCurrentUser(uid);
           } else {
             history.push(ROUTES.VERIFICATION_REQUIRED);
           }
@@ -63,10 +63,36 @@ const withAuthentication = WrappedComponent => {
       });
     }
 
+    syncCurrentUser = async userId => {
+      const { firebase, history, setCurrentUser, updateUser } = this.props;
+      this.unsubscribeFromUser = await firebase
+        .getDocRef('users', userId)
+        .onSnapshot(snapshot => {
+          const userData = snapshot.data() || null;
+          const { currentUser } = this.props;
+          if (!currentUser) {
+            if (userData && userData.settings) {
+              userData.tempSettings = {
+                tasks: { ...userData.settings.tasks }
+              };
+            }
+            setCurrentUser(userData);
+            if (userData === null) {
+              history.push(ROUTES.SET_UP);
+            } else {
+              history.push(`/0/home/${userId}`);
+            }
+          } else {
+            updateUser({ userId, userData });
+          }
+    });
+  }
+
     async componentDidUpdate(prevProps) {
-      const { currentUser, syncActiveWorkspace } = this.props;
+      const { currentUser, syncActiveWorkspace, history, firebase } = this.props;
       if (!prevProps.currentUser && currentUser) {
         console.log('current user detected');
+        const { userId } = currentUser;
         const { activeWorkspace } = currentUser.settings;
         this.unsubscribeFromWorkspace = await syncActiveWorkspace(activeWorkspace);
       }
@@ -107,6 +133,8 @@ const withAuthentication = WrappedComponent => {
       dispatch(currentUserActions.syncCurrentUserData(userId)),
     setCurrentUser: currentUser =>
       dispatch(currentUserActions.setCurrentUser(currentUser)),
+    updateUser: ({ userId, userData }) =>
+      dispatch(userActions.updateUser({userId, userData})),
     syncActiveWorkspace: workspaceId => dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
     setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace))
   });

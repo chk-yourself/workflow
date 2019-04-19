@@ -30,10 +30,11 @@ export const getNotificationsArray = state => {
   const getMillis = obj =>
     obj.createdAt ? obj.createdAt.toMillis() : Date.now();
   return Object.keys(notifications)
-    .map(notificationId => notifications[notificationId])
     .sort((a, b) => {
-      return getMillis(b) - getMillis(a);
-    });
+      const notificationA = notifications[a];
+      const notificationB = notifications[b];
+      return getMillis(notificationB) - getMillis(notificationA);
+    }).map(notificationId => notifications[notificationId]);
 };
 
 export const getTaskSettings = state => {
@@ -130,6 +131,7 @@ export const getSortedFilteredTaskGroups = state => {
     case 'folder': {
       if (!folders) return [];
       const { folderIds } = currentUser;
+      if (!folderIds) return [];
       const { tasksById } = state;
       return folderIds.map(folderId => {
         const { taskIds } = folders[folderId];
