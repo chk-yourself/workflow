@@ -1,22 +1,15 @@
 import * as types from './types';
+import { RESET_ACTIVE_WORKSPACE } from '../activeWorkspace/types';
 
-const projectsById = (state = {}, action) => {
+const INITIAL_STATE = null;
+
+const projectsById = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.LOAD_PROJECTS_BY_ID: {
       const { projectsById } = action;
       return {
-        ...state,
+        ...(state && state),
         ...projectsById
-      };
-    }
-    case types.LOAD_PROJECT: {
-      const { projectId, projectData } = action;
-      return {
-        ...state,
-        [projectId]: {
-          projectId,
-          ...projectData
-        }
       };
     }
     case types.ADD_PROJECT: {
@@ -24,7 +17,7 @@ const projectsById = (state = {}, action) => {
       const { listIds, settings } = projectData;
       const listCount = listIds.length;
       return {
-        ...state,
+        ...(state && state),
         [projectId]: {
           projectId,
           isLoaded: {
@@ -106,6 +99,9 @@ const projectsById = (state = {}, action) => {
           }
         }
       };
+    }
+    case RESET_ACTIVE_WORKSPACE: {
+      return INITIAL_STATE;
     }
     default:
       return state;

@@ -1,11 +1,14 @@
 import * as types from './types';
+import { RESET_ACTIVE_WORKSPACE } from '../activeWorkspace/types';
 
-const listsById = (state = {}, action) => {
+const INITIAL_STATE = null;
+
+const listsById = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.LOAD_LISTS_BY_ID: {
       const { listsById } = action;
       return {
-        ...state,
+        ...(state && state),
         ...listsById
       };
     }
@@ -22,7 +25,7 @@ const listsById = (state = {}, action) => {
     case types.ADD_LIST: {
       const { listId, listData } = action;
       return {
-        ...state,
+        ...(state && state),
         [listId]: {
           listId,
           isLoaded: true,
@@ -34,6 +37,9 @@ const listsById = (state = {}, action) => {
       const { listId } = action;
       const { [listId]: deletedList, ...restOfLists } = state;
       return restOfLists;
+    }
+    case RESET_ACTIVE_WORKSPACE: {
+      return INITIAL_STATE;
     }
     default:
       return state;

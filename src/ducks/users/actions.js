@@ -150,17 +150,16 @@ export const syncWorkspaceMembers = workspaceId => {
             });
             dispatch(loadUsersById(users));
           } else {
-            const { usersById } = getState();
             changes.forEach(async change => {
               const [userId, userData, changeType] = await Promise.all([
                 change.doc.id,
                 change.doc.data(),
                 change.type
               ]);
+              const { usersById } = getState();
               switch (changeType) {
                 case 'added': {
-                  console.log(userId);
-                  if (userId in usersById) return;
+                  if (usersById && userId in usersById) return;
                   dispatch(addUser({ userId, userData }));
                   break;
                 }

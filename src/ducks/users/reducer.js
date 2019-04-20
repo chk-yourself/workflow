@@ -1,25 +1,28 @@
 import * as types from './types';
+import { RESET_ACTIVE_WORKSPACE } from '../activeWorkspace/types';
 
-const usersById = (state = {}, action) => {
+const INITIAL_STATE = null;
+
+const usersById = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.LOAD_USERS_BY_ID: {
       const { usersById } = action;
       return {
-        ...state,
+        ...(state && state),
         ...usersById
       };
     }
     case types.LOAD_USER_DATA: {
       const { user } = action;
       return {
-        ...state,
+        ...(state && state),
         ...user
       };
     }
     case types.ADD_USER: {
       const { userId, userData } = action;
       return {
-        ...state,
+        ...(state && state),
         [userId]: {
           userId,
           ...userData
@@ -60,6 +63,9 @@ const usersById = (state = {}, action) => {
           folderIds
         }
       };
+    }
+    case RESET_ACTIVE_WORKSPACE: {
+      return INITIAL_STATE;
     }
     default:
       return state;

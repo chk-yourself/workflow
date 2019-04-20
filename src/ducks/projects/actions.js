@@ -27,14 +27,6 @@ export const setProjectLoadedState = (projectId, key) => {
   };
 };
 
-export const loadProject = (projectId, projectData) => {
-  return {
-    type: types.LOAD_PROJECT,
-    projectId,
-    projectData
-  };
-};
-
 export const updateProject = ({ projectId, projectData }) => {
   return {
     type: types.UPDATE_PROJECT,
@@ -106,11 +98,12 @@ export const syncUserWorkspaceProjects = ({userId, workspaceId}) => {
         .where('workspaceId', '==', workspaceId)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
+          const { projectsById } = getState();
           const isInitialLoad =
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
 
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const projects = {};
             changes.forEach(change => {
               const projectId = change.doc.id;
@@ -131,13 +124,13 @@ export const syncUserWorkspaceProjects = ({userId, workspaceId}) => {
             });
             dispatch(loadProjectsById(projects));
           } else {
-            const { projectsById } = getState();
             changes.forEach(async change => {
               const [projectId, projectData, changeType] = await Promise.all([
                 change.doc.id,
                 change.doc.data(),
                 change.type
               ]);
+              const { projectsById } = getState();
               if (changeType === 'added') {
                 if (projectId in projectsById) return;
                 dispatch(addProject({ projectId, projectData }));

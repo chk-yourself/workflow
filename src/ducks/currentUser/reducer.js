@@ -1,7 +1,9 @@
 import * as types from './types';
 import { UPDATE_USER } from '../users/types';
 
-export default (state = null, action) => {
+const INITIAL_STATE = null;
+
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.SET_CURRENT_USER: {
       const { currentUser } = action;

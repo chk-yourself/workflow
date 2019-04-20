@@ -343,7 +343,7 @@ export const getMergedProjectTags = (state, projectId) => {
 
 export const getAllMergedTags = state => {
   const { projectsById, currentUser } = state;
-  if (!currentUser) return [];
+  if (!currentUser || !projectsById) return [];
   const { tags: userTags, projectIds } = currentUser;
   if (!projectIds) return [];
   const projectTags = projectIds.reduce((tags, projectId) => {
@@ -362,7 +362,7 @@ export const getAllMergedTags = state => {
 
 export const getCurrentUserProjects = state => {
   const { currentUser, projectsById } = state;
-  if (!currentUser) return [];
+  if (!currentUser || !projectsById) return [];
   const { projectIds } = currentUser;
   if (!projectIds) return [];
   return projectIds.map(projectId => projectsById[projectId]);

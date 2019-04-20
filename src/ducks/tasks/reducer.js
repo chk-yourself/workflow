@@ -1,18 +1,21 @@
 import * as types from './types';
+import { RESET_ACTIVE_WORKSPACE } from '../activeWorkspace/types';
 
-const tasksById = (state = {}, action) => {
+const INITIAL_STATE = null;
+
+const tasksById = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.LOAD_TASKS_BY_ID: {
       const { tasksById } = action;
       return {
-        ...state,
+        ...(state && state),
         ...tasksById
       };
     }
     case types.ADD_TASK: {
       const { taskId, taskData } = action;
       return {
-        ...state,
+        ...(state && state),
         [taskId]: {
           taskId,
           isLoaded: {
@@ -71,6 +74,9 @@ const tasksById = (state = {}, action) => {
           }
         }
       };
+    }
+    case RESET_ACTIVE_WORKSPACE: {
+      return INITIAL_STATE;
     }
     default:
       return state;

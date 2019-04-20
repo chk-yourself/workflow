@@ -4,7 +4,7 @@ export const getTasksById = state => {
 
 export const getTasksArray = state => {
   const { tasksById } = state;
-  return Object.keys(tasksById).map(taskId => tasksById[taskId]);
+  return tasksById ? Object.keys(tasksById).map(taskId => tasksById[taskId]) : [];
 };
 
 export const getTasksMatchingQuery = (state, query) => {

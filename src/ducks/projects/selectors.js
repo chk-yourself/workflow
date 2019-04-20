@@ -4,7 +4,7 @@ export const getProjectsById = state => {
 
 export const getProjectsArray = state => {
   const { projectsById } = state;
-  return Object.keys(projectsById).map(projectId => projectsById[projectId]);
+  return projectsById ? Object.keys(projectsById).map(projectId => projectsById[projectId]) : [];
 };
 
 export const getProject = (state, projectId) => {

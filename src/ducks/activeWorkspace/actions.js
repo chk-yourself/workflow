@@ -15,6 +15,12 @@ export const updateActiveWorkspace = workspaceData => {
   };
 };
 
+export const resetActiveWorkspace = () => {
+  return {
+    type: types.RESET_ACTIVE_WORKSPACE
+  };
+};
+
 // Thunks
 
 export const syncActiveWorkspace = workspaceId => {

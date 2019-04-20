@@ -35,8 +35,11 @@ class HomePage extends Component {
   }
 
   componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe.forEach(func => func());
+    if (this.unsubscribeFromWorkspace) {
+      this.unsubscribeFromWorkspace.forEach(unsubscribe => unsubscribe());
+    }
+    if (this.unsubscribeFromTags) {
+      this.unsubscribeFromTags();
     }
     console.log('home unmounted');
   }
@@ -63,10 +66,13 @@ class HomePage extends Component {
       syncUserPrivateTasks({userId, workspaceId}),
       syncUserTags(userId)
     ]).then(async listeners => {
-      this.unsubscribe = listeners;
+      this.unsubscribeFromWorkspace = listeners;
+      this.unsubscribeFromTags = listeners.pop();
       this.setState({
         isLoading: false
       });
+    }).catch(error => {
+      console.error(error);
     });
   };
 

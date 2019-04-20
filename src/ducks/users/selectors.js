@@ -1,6 +1,5 @@
 export const getUsersById = state => {
-  const { usersById } = state;
-  return Object.keys(usersById).length === 0 ? null : usersById;
+  return state.usersById;
 };
 
 export const getUserData = (state, userId) => {
@@ -16,12 +15,12 @@ export const getUserTaskIds = (state, userId) => {
 // returns array of all users
 export const getUsersArray = state => {
   const { usersById } = state;
-  return Object.keys(usersById).map(userId => {
+  return usersById ? Object.keys(usersById).map(userId => {
     return {
       userId,
       ...usersById[userId]
     };
-  });
+  }) : [];
 };
 
 // returns subset of users

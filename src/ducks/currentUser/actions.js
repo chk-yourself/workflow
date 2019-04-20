@@ -113,7 +113,6 @@ export const updateNotification = ({ notificationId, notificationData }) => {
 };
 
 export const removeNotification = notificationId => {
-  console.log('remove notification');
   return {
     type: types.REMOVE_NOTIFICATION,
     notificationId

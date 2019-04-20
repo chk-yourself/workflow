@@ -23,7 +23,8 @@ const withAuthentication = WrappedComponent => {
         firebase,
         history,
         setCurrentUser,
-        setActiveWorkspace
+        setActiveWorkspace,
+        resetActiveWorkspace
       } = this.props;
 
       const { initPresenceDetection } = firebase;
@@ -59,6 +60,7 @@ const withAuthentication = WrappedComponent => {
             this.unsubscribeFromWorkspace();
             setActiveWorkspace(null);
           }
+          resetActiveWorkspace();
         }
       });
     }
@@ -136,7 +138,8 @@ const withAuthentication = WrappedComponent => {
     updateUser: ({ userId, userData }) =>
       dispatch(userActions.updateUser({userId, userData})),
     syncActiveWorkspace: workspaceId => dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
-    setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace))
+    setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
+    resetActiveWorkspace: () => dispatch(activeWorkspaceActions.resetActiveWorkspace())
   });
 
   return compose(
