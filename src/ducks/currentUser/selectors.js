@@ -302,8 +302,7 @@ export const getTasksDueWithinDays = (state, days = 7) => {
       const task = tasksById[taskId];
       if (task) {
         const { isCompleted, dueDate } = task;
-        const dueDateMS = dueDate ? dueDate.toMillis() : null;
-        if (!isCompleted && dueDateMS <= timeEnd) {
+        if (!isCompleted && dueDate && dueDate.toMillis() <= timeEnd) {
           return tasksDueSoon.concat(task);
         }
       }

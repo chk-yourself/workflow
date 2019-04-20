@@ -196,7 +196,6 @@ class Task extends Component {
             </div>
             {dueDate && (
               <Badge
-                icon="calendar"
                 className={`task__detail task__due-date ${
                   isDueToday
                     ? 'is-due-today'

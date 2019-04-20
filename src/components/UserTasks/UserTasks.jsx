@@ -16,14 +16,13 @@ import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../Folder';
 import { Main } from '../Main';
 import { TaskEditor } from '../TaskEditor';
-import { TaskSettings } from '../TaskSettings';
+import { Settings } from '../Settings';
 import './UserTasks.scss';
 
 class UserTasks extends Component {
   state = {
     isLoading: true,
-    isTaskSettingsMenuVisible: false,
-    isSortRuleDropdownVisible: false
+    isTaskSettingsMenuVisible: false
   };
 
   async componentDidMount() {
@@ -156,39 +155,18 @@ class UserTasks extends Component {
     setTempTaskSettings({
       [name]: value
     });
-    if (name === 'sortBy') {
-      this.hideSortRuleDropdown();
-    }
   };
 
   toggleTaskSettingsMenu = e => {
     e.stopPropagation();
     this.setState(prevState => ({
-      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible,
-      isSortRuleDropdownVisible:
-        prevState.isSortRuleDropdownVisible &&
-        prevState.isTaskSettingsMenuVisible
-          ? !prevState.isSortRuleDropdownVisible
-          : prevState.isSortRuleDropdownVisible
+      isTaskSettingsMenuVisible: !prevState.isTaskSettingsMenuVisible
     }));
   };
 
   closeTaskSettingsMenu = () => {
     this.setState({
-      isTaskSettingsMenuVisible: false,
-      isSortRuleDropdownVisible: false
-    });
-  };
-
-  toggleSortRuleDropdown = () => {
-    this.setState(prevState => ({
-      isSortRuleDropdownVisible: !prevState.isSortRuleDropdownVisible
-    }));
-  };
-
-  hideSortRuleDropdown = () => {
-    this.setState({
-      isSortRuleDropdownVisible: false
+      isTaskSettingsMenuVisible: false
     });
   };
 
@@ -203,7 +181,6 @@ class UserTasks extends Component {
     const { view, sortBy } = tempSettings.tasks;
     const {
       isLoading,
-      isSortRuleDropdownVisible,
       isTaskSettingsMenuVisible
     } = this.state;
     const isTaskEditorOpen = !!selectedTaskId;
@@ -230,40 +207,45 @@ class UserTasks extends Component {
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  <TaskSettings
-                    isVisible={isTaskSettingsMenuVisible}
+                  <Settings
+                    icon="sliders"
+                    isActive={isTaskSettingsMenuVisible}
                     onToggle={this.toggleTaskSettingsMenu}
                     onClose={this.closeTaskSettingsMenu}
                     onSave={this.saveTaskSettings}
                     classes={{
                       wrapper: 'user-tasks__settings-wrapper',
-                      popover: 'user-tasks__settings',
-                      item: 'user-tasks__settings-item'
+                      settings: 'user-tasks__settings'
                     }}
-                    filters={[
+                    settings={[
                       {
-                        filter: 'view',
-                        options: [
-                          { value: 'active', name: 'Active Tasks' },
-                          { value: 'completed', name: 'Completed Tasks' },
-                          { value: 'all', name: 'All Tasks' }
-                        ],
+                        name: 'View',
+                        key: 'view',
+                        type: 'radio',
+                        options: {
+                          active: { value: 'active', name: 'Active Tasks' },
+                          completed: {
+                            value: 'completed',
+                            name: 'Completed Tasks'
+                          },
+                          all: { value: 'all', name: 'All Tasks' }
+                        },
                         value: view,
+                        onChange: this.setTempTaskSettings
+                      },
+                      {
+                        name: 'Sort By',
+                        key: 'sortBy',
+                        type: 'select',
+                        options: {
+                          folder: { value: 'folder', name: 'Folder' },
+                          dueDate: { value: 'dueDate', name: 'Due Date' },
+                          project: { value: 'project', name: 'Project'}
+                        },
+                        value: sortBy,
                         onChange: this.setTempTaskSettings
                       }
                     ]}
-                    sortRule={{
-                      options: [
-                        { value: 'folder', name: 'Folder' },
-                        { value: 'project', name: 'Project' },
-                        { value: 'dueDate', name: 'Due Date' }
-                      ],
-                      value: sortBy,
-                      onChange: this.setTempTaskSettings,
-                      isDropdownVisible: isSortRuleDropdownVisible,
-                      toggleDropdown: this.toggleSortRuleDropdown,
-                      hideDropdown: this.hideSortRuleDropdown
-                    }}
                   />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
