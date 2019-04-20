@@ -13,8 +13,8 @@ import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
-import { UserProfile } from '../UserProfile';
 import { SearchResults, TagSearchResults } from '../../components/Search';
+import { Profile } from '../Profile';
 import { AccountPage } from '../Account';
 import { getParams } from '../../utils/string';
 import './Home.scss';
@@ -59,15 +59,17 @@ class HomePage extends Component {
       syncUserWorkspaceData({ userId, workspaceId }),
       syncUserWorkspaceProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
-      syncUserPrivateTasks({userId, workspaceId})
-    ]).then(async listeners => {
-      this.listeners = listeners;
-      this.setState({
-        isLoading: false
+      syncUserPrivateTasks({ userId, workspaceId })
+    ])
+      .then(async listeners => {
+        this.listeners = listeners;
+        this.setState({
+          isLoading: false
+        });
+      })
+      .catch(error => {
+        console.error(error);
       });
-    }).catch(error => {
-      console.error(error);
-    });
   };
 
   toggleProjectComposer = () => {
@@ -102,7 +104,6 @@ class HomePage extends Component {
               <ProjectContainer
                 userId={userId}
                 projectId={props.match.params.id}
-                projectName={projectsById[props.match.params.id].name}
                 {...props}
               />
             )}
@@ -132,7 +133,7 @@ class HomePage extends Component {
           <Route
             path={ROUTES.USER_PROFILE}
             render={props => (
-              <UserProfile userId={props.match.params.id} {...props} />
+              <Profile userId={props.match.params.id} {...props} />
             )}
           />
           <Route
@@ -169,18 +170,26 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncWorkspaceMembers: workspaceId => dispatch(userActions.syncWorkspaceMembers(workspaceId)),
+    syncWorkspaceMembers: workspaceId =>
+      dispatch(userActions.syncWorkspaceMembers(workspaceId)),
     syncUserPresence: () => dispatch(userActions.syncUserPresence()),
     syncUserWorkspaceProjects: ({ userId, workspaceId }) =>
-      dispatch(projectActions.syncUserWorkspaceProjects({userId, workspaceId })),
+      dispatch(
+        projectActions.syncUserWorkspaceProjects({ userId, workspaceId })
+      ),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>
       dispatch(taskActions.syncUserWorkspaceTasks({ userId, workspaceId })),
-    syncUserPrivateTasks: ({userId, workspaceId}) => dispatch(taskActions.syncUserPrivateTasks({userId, workspaceId})),
-    syncUserWorkspaceData: ({userId, workspaceId}) => dispatch(currentUserActions.syncUserWorkspaceData({userId, workspaceId}))
+    syncUserPrivateTasks: ({ userId, workspaceId }) =>
+      dispatch(taskActions.syncUserPrivateTasks({ userId, workspaceId })),
+    syncUserWorkspaceData: ({ userId, workspaceId }) =>
+      dispatch(
+        currentUserActions.syncUserWorkspaceData({ userId, workspaceId })
+      )
   };
 };
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

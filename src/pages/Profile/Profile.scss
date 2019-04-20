@@ -1,0 +1,132 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.header + main.profile {
+  position: fixed;
+  top: 40px;
+  height: auto;
+  min-height: 500px;
+  margin: 16px auto;
+  @include xx {
+    left: calc(50% + 48px);
+  }
+}
+
+.header.expand-nav + main.profile {
+  @include md {
+    left: calc(50% + 100px);
+  }
+}
+
+.profile {
+  background-color: $white;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  width: calc(100% - 16px);
+  max-width: 368px;
+  max-height: calc(100vh - 72px);
+  overflow-y: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 40px 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  @include lg {
+    max-width: 380px;
+  }
+  @include xl {
+    max-width: 400px;
+  }
+}
+
+.profile__name {
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 24px auto 8px;
+  text-align: center;
+  @include md {
+    font-size: 1.6rem;
+  }
+}
+
+.profile__status {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  &.is-online {
+    color: $success-dk;
+  }
+  &.is-offline {
+    color: $red;
+  }
+}
+
+.profile__username {
+  color: $grey-700;
+  text-align: center;
+}
+
+.profile__link {
+  text-decoration: none;
+  color: $grey-700;
+  &:hover {
+    color: $primary;
+  }
+}
+
+.profile__contact-info {
+  margin-bottom: 8px;
+  color: $grey-700;
+  font-size: 14px;
+  .feather {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    vertical-align: bottom;
+  }
+}
+
+.profile__contact {
+  margin-top: 24px;
+}
+
+.profile__avatar {
+  width: 96px;
+  height: 96px;
+  line-height: 96px;
+  font-size: 26px;
+}
+
+.profile__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile__workspace-info {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile__count {
+  font-size: 2.6rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.profile__counter {
+  padding: 24px;
+}
+
+.profile__counter-name {
+  font-size: 13px;
+  color: $grey-600;
+  text-align: center;
+}

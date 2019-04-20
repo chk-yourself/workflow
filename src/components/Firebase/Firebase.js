@@ -1,7 +1,8 @@
-import app from 'firebase/app';
-import 'firebase/database';
-import 'firebase/auth';
-import 'firebase/firestore';
+import * as firebase from 'firebase/app';
+require('firebase/database');
+require('firebase/auth');
+require('firebase/firestore');
+
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,10 +15,10 @@ const config = {
 
 class Firebase {
   constructor() {
-    app.initializeApp(config);
-    this.auth = app.auth();
-    this.fs = app.firestore();
-    this.db = app.database();
+    firebase.initializeApp(config);
+    this.auth = firebase.auth();
+    this.fs = firebase.firestore();
+    this.db = firebase.database();
   }
 
   // Auth API
@@ -37,7 +38,7 @@ class Firebase {
   };
 
   signInWithGoogle = () => {
-    const provider = new app.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider();
     this.auth
       .signInWithPopup(provider)
       .then(result => {
@@ -63,7 +64,7 @@ class Firebase {
   };
 
   signInWithGithub = () => {
-    const provider = new app.auth.GithubAuthProvider();
+    const provider = new firebase.auth.GithubAuthProvider();
     this.auth
       .signInWithPopup(provider)
       .then(result => {
@@ -136,17 +137,17 @@ class Firebase {
 
   // Utility API
 
-  getTimestamp = () => app.firestore.FieldValue.serverTimestamp();
+  getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
 
-  addToArray = value => app.firestore.FieldValue.arrayUnion(value);
+  addToArray = value => firebase.firestore.FieldValue.arrayUnion(value);
 
-  removeFromArray = value => app.firestore.FieldValue.arrayRemove(value);
+  removeFromArray = value => firebase.firestore.FieldValue.arrayRemove(value);
 
-  deleteField = () => app.firestore.FieldValue.delete();
+  deleteField = () => firebase.firestore.FieldValue.delete();
 
-  plus = value => app.firestore.FieldValue.increment(value);
+  plus = value => firebase.firestore.FieldValue.increment(value);
 
-  minus = value => app.firestore.FieldValue.increment(-value);
+  minus = value => firebase.firestore.FieldValue.increment(-value);
 
   getDocRef = (...args) => {
     try {
@@ -199,12 +200,12 @@ class Firebase {
     const userStatusDBRef = this.db.ref(`/status/${uid}`);
     const isOfflineDB = {
       state: 'offline',
-      lastUpdatedAt: app.database.ServerValue.TIMESTAMP
+      lastUpdatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
     const isOnlineDB = {
       state: 'online',
-      lastUpdatedAt: app.database.ServerValue.TIMESTAMP
+      lastUpdatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
     const userRefFS = this.getDocRef('users', uid);
@@ -267,8 +268,13 @@ class Firebase {
         createdAt: this.getTimestamp(),
         name,
         memberIds: [userId],
-        roles: {
-          [userId]: 'owner'
+        members: {
+          [userId]: {
+            userId,
+            role: 'owner',
+            activeTaskCount: 0,
+            projectIds: []
+          }
         },
         invites,
         ownerId: userId,
@@ -321,7 +327,12 @@ class Firebase {
     this.updateBatch(batch, ['workspaces', workspaceId], {
       memberIds: this.addToArray(userId),
       invites: this.removeFromArray(email),
-      [`roles.${userId}`]: 'member'
+      [`members.${userId}`]: {
+        userId,
+        role: 'member',
+        activeTaskCount: 0,
+        projectIds: []
+      }
     });
 
     // Update user
@@ -540,7 +551,12 @@ this.createNotification({
           this.updateBatch(batch, ['workspaces', workspaceId], {
             memberIds: this.addToArray(userId),
             invites: this.removeFromArray(email),
-            [`roles.${userId}`]: 'member'
+            [`members.${userId}`]: {
+              userId,
+              role: 'member',
+              activeTaskCount: 0,
+              projectIds: []
+            }
           });
         } else {
           this.updateBatch(batch, ['workspaces', workspaceId], {
@@ -565,8 +581,13 @@ this.createNotification({
           createdAt: this.getTimestamp(),
           name: workspace.name,
           memberIds: [userId],
-          roles: {
-            [userId]: 'owner'
+          members: {
+            [userId]: {
+              userId,
+              role: 'owner',
+              activeTaskCount: 0,
+              projectIds: []
+            }
           },
           invites: workspace.invites,
           ownerId: userId,
@@ -750,6 +771,8 @@ this.createNotification({
       photoURL,
       workspaces,
       workspaceIds,
+      linkedin: '',
+      github: '',
       createdAt: this.getTimestamp(),
       settings: {
         activeWorkspace: workspaceIds[workspaceIds.length - 1],
@@ -996,17 +1019,18 @@ this.createNotification({
       })
       .then(ref => {
         const batch = this.createBatch();
-
+        const { id: projectId } = ref;
         memberIds.forEach(memberId => {
           this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
-            projectIds: this.addToArray(ref.id)
+            projectIds: this.addToArray(projectId)
           });
           this.updateBatch(batch, ['workspaces', workspaceId], {
-            projectIds: this.addToArray(ref.id)
+            projectIds: this.addToArray(projectId),
+            [`members.${userId}.projectIds`]: this.addToArray(projectId)
           });
           this.setBatch(
             batch,
-            ['users', memberId, 'workspaces', workspaceId, 'folders', ref.id],
+            ['users', memberId, 'workspaces', workspaceId, 'folders', projectId],
             {
               name,
               taskIds: []
@@ -1153,15 +1177,33 @@ this.createNotification({
         isPrivate
       })
       .then(ref => {
+        const { id: taskId } = ref;
+        const batch = this.createBatch();
+
+        if (listId) {
+          this.updateBatch(batch, ['lists', listId], {
+            taskIds: this.addToArray(taskId)
+          });
+          if (assignedTo.length > 0) {
+            assignedTo.forEach(memberId => {
+              this.updateBatch(batch, ['workspaces', workspaceId], {
+                [`members.${memberId}.activeTaskCount`]: this.plus(1)
+              });
+            });
+          }
+        }
+
         if (isFolderItem) {
-          const batch = this.createBatch();
+          this.updateBatch(batch, ['workspaces', workspaceId], {
+            [`members.${userId}.activeTaskCount`]: this.plus(1)
+          });
 
           if (!projectId && folderId !== '4') {
             this.updateBatch(
               batch,
               ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
               {
-                taskIds: this.addToArray(ref.id)
+                taskIds: this.addToArray(taskId)
               }
             );
           }
@@ -1171,7 +1213,7 @@ this.createNotification({
               batch,
               ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
               {
-                taskIds: this.addToArray(ref.id)
+                taskIds: this.addToArray(taskId)
               }
             );
           }
@@ -1188,7 +1230,7 @@ this.createNotification({
                 `${+dueDate}`
               ),
               {
-                taskIds: this.addToArray(ref.id)
+                taskIds: this.addToArray(taskId)
               },
               { merge: true }
             );
@@ -1199,7 +1241,7 @@ this.createNotification({
               batch,
               ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
               {
-                taskIds: this.addToArray(ref.id)
+                taskIds: this.addToArray(taskId)
               }
             );
           }
@@ -1208,11 +1250,11 @@ this.createNotification({
             batch,
             ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
             {
-              taskIds: this.addToArray(ref.id)
+              taskIds: this.addToArray(taskId)
             }
           );
-
-          return batch
+        }
+        return batch
             .commit()
             .then(() => {
               console.log('Added task');
@@ -1220,10 +1262,6 @@ this.createNotification({
             .catch(error => {
               console.error(error);
             });
-        }
-        this.updateDoc(['lists', listId], {
-          taskIds: this.addToArray(ref.id)
-        });
       });
   };
 
@@ -1324,6 +1362,9 @@ this.createNotification({
       this.updateBatch(batch, ['projects', projectId], {
         memberIds: this.removeFromArray(userId)
       });
+      this.updateBatch(batch, ['workspaces', workspaceId], {
+        [`members.${userId}.projectIds`]: this.removeFromArray(projectId)
+      });
     } else {
       this.updateBatch(
         batch,
@@ -1332,6 +1373,10 @@ this.createNotification({
           taskIds: this.removeFromArray(taskId)
         }
       );
+
+      this.updateBatch(batch, ['workspaces', workspaceId], {
+        [`members.${userId}.activeTaskCount`]: this.minus(1)
+      });
 
       if (!dueDate) {
         this.updateBatch(
@@ -1399,6 +1444,11 @@ this.createNotification({
 
     this.updateBatch(batch, ['projects', projectId], {
       memberIds: this.addToArray(userId)
+    });
+
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      [`members.${userId}.projectIds`]: this.addToArray(projectId),
+      [`members.${userId}.activeTaskCount`]: this.plus(taskId ? 1 : 0)
     });
 
     this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
@@ -1515,6 +1565,10 @@ this.createNotification({
           'folders',
           folderId
         );
+        this.updateBatch(batch, ['workspaces', workspaceId], {
+          [`members.${userId}.activeTaskCount`]: this.minus(1)
+        });
+
         this.updateBatch(batch, folderRef, {
           taskIds: this.removeFromArray(taskId)
         });

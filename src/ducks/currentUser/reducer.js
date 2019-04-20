@@ -187,6 +187,7 @@ export default (state = INITIAL_STATE, action) => {
       };
     }
     case RESET_ACTIVE_WORKSPACE: {
+      if (!state) return state;
       const { assignedTasks, notifications, folders, projectIds, folderIds, ...rest } = state;
       return rest;
     }
