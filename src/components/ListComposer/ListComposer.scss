@@ -72,6 +72,15 @@
       padding: 8px 12px;
     }
   }
+  &.is-board-layout {
+    .list-composer__btn--add {
+      &:disabled {
+        background-color: $grey-400;
+        border-color: $grey-500;
+        color: $grey-600;
+      }
+    }
+  }
 }
 
 .list-composer__input {

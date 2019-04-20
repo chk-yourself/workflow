@@ -17,6 +17,11 @@ button {
   &:focus {
     outline: none;
   }
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-400;
+  }
   .feather {
     pointer-events: none;
     vertical-align: middle;

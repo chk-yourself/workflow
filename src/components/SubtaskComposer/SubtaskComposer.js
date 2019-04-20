@@ -49,11 +49,11 @@ class SubtaskComposer extends Component {
   };
 
   addSubtask = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    const { name } = this.state;
+    if ((e.type === 'keydown' && e.key !== keys.ENTER) || !name) return;
     const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const { userId } = currentUser;
-    const { name } = this.state;
     firebase.addSubtask({ userId, name, taskId, projectId, workspaceId });
     this.resetForm();
     e.preventDefault();
@@ -101,7 +101,7 @@ class SubtaskComposer extends Component {
               variant="contained"
               disabled={name === ''}
               onClick={this.addSubtask}
-              className={classes.button || ''}
+              className={`subtask-composer__btn--add ${classes.button || ''}`}
             >
               Add subtask
             </Button>

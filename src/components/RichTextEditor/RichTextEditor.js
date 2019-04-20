@@ -586,6 +586,7 @@ class RichTextEditor extends Component {
                 <Button
                   key={`${id}--${addOn.type}`}
                   type="button"
+                  disabled={addOn.type === 'submit' ? this.isEmpty() : false}
                   onMouseDown={this[addOn.onClick]}
                   {...addOn.props}
                 />

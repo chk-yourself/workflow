@@ -8,3 +8,10 @@
     }
   }
 }
+.subtask-composer__btn--add {
+  &:disabled {
+    background-color: $grey-300;
+    border-color: $grey-500;
+    color: $grey-500;
+  }
+}

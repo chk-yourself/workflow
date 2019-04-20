@@ -25,8 +25,8 @@ class CardComposer extends Component {
   };
 
   onSubmit = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { name } = this.state;
+    if (e.type === 'keydown' && e.key !== keys.ENTER || !name) return;
     const {
       firebase,
       projectId,

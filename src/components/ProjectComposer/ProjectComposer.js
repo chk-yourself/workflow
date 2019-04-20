@@ -74,6 +74,7 @@ class ProjectComposer extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { name, color, layout, privacy, memberIds } = this.state;
+    if (!name) return;
     const isPrivate = privacy === 'private';
     const { onClose, firebase, currentUser, activeWorkspace } = this.props;
     const { userId } = currentUser;
@@ -234,6 +235,7 @@ class ProjectComposer extends Component {
             onClick={this.onSubmit}
             color="primary"
             variant="contained"
+            disabled={!name}
           >
             Create Project
           </Button>

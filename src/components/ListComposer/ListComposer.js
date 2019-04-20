@@ -26,6 +26,7 @@ class ListComposer extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { name } = this.state;
+    if (!name) return;
     const { projectId, firebase, currentUser, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const { userId } = currentUser;
@@ -95,6 +96,7 @@ class ListComposer extends Component {
                 color="primary"
                 variant="contained"
                 size="sm"
+                disabled={!name}
               >
                 Add List
               </Button>
