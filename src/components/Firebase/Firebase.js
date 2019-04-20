@@ -1631,7 +1631,7 @@ this.createNotification({
     switch (type) {
       case 'dueDate': {
         this.updateBatch(batch, ['tasks', taskId], {
-          dueDate: new Date(+newFolderId)
+          dueDate: newFolderId === '5' ? null : new Date(+newFolderId)
         });
         break;
       }

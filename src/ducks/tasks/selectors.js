@@ -110,9 +110,13 @@ export const getTasksByViewFilter = (state, listId) => {
 
 export const getTaskIdsByViewFilter = (state, { listId, folderId }) => {
   const { tasksById, listsById, currentUser } = state;
-  const taskIds = listId
-    ? listsById[listId].taskIds
-    : currentUser.folders[folderId].taskIds;
+  const list = listId ? listsById[listId] : null;
+  const folder = folderId && currentUser.folders ? currentUser.folders[folderId] : null;
+  const taskIds = list
+    ? list.taskIds
+    : folder 
+    ? folder.taskIds
+    : [];
   return taskIds.reduce(
     (taskIdsByView, taskId) => {
       const task = tasksById[taskId];

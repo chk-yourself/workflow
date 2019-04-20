@@ -1,4 +1,5 @@
 import { toDateString, isPriorDate } from '../../utils/date';
+import { getTaskIdsByViewFilter } from '../tasks/selectors';
 
 export const getCurrentUser = state => {
   return state.currentUser;
@@ -77,12 +78,7 @@ export const getSortedFilteredTaskGroups = state => {
           return tasksByProject.concat(
             taskIds.length > 0
               ? {
-                  taskIds:
-                    view === 'active'
-                      ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-                      : view === 'completed'
-                      ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
-                      : taskIds,
+                  taskIds: getTaskIdsByViewFilter(state, { folderId: projectId })[view],
                   projectId,
                   name,
                   projectName: name,
@@ -105,16 +101,7 @@ export const getSortedFilteredTaskGroups = state => {
         projectId: null,
         projectName: null,
         dueDate: null,
-        taskIds:
-          view === 'active'
-            ? miscFolder.taskIds.filter(
-                taskId => !tasksById[taskId].isCompleted
-              )
-            : view === 'completed'
-            ? miscFolder.taskIds.filter(
-                taskId => tasksById[taskId].isCompleted
-              )
-            : miscFolder.taskIds,
+        taskIds: getTaskIdsByViewFilter(state, { folderId: '4'})[view],
         userPermissions: {
           enableNameChange: false,
           enableTaskAdd: true,
@@ -127,15 +114,9 @@ export const getSortedFilteredTaskGroups = state => {
       return folderIds.reduce((folders, folderId) => {
         const folder = foldersById[folderId];
         if (folder) {
-          const { taskIds } = folder;
         return folders.concat({
           ...folder,
-          taskIds:
-            view === 'active'
-              ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-              : view === 'completed'
-              ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
-              : taskIds,
+          taskIds: getTaskIdsByViewFilter(state, { folderId })[view],
           projectId: null,
           projectName: null,
           dueDate: null,
@@ -152,7 +133,9 @@ export const getSortedFilteredTaskGroups = state => {
     case 'dueDate': {
       let dueDates = [];
       const dueTasks = assignedTasks.reduce((tasksByDueDate, taskId) => {
-        const { dueDate, isCompleted } = tasksById[taskId];
+        const task = tasksById[taskId];
+        if (!task) return tasksByDueDate;
+        const { dueDate, isCompleted } = task;
         if ((view === 'active' && isCompleted) || (view === 'completed' && !isCompleted)) return tasksByDueDate;
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
         if (dueDate && !isPastDue) {
@@ -206,16 +189,7 @@ export const getSortedFilteredTaskGroups = state => {
       const unscheduled = foldersById['5'];
       const noDueDate = {
         ...unscheduled,
-        taskIds:
-          view === 'active'
-            ? unscheduled.taskIds.filter(
-                taskId => !tasksById[taskId].isCompleted
-              )
-            : view === 'completed'
-            ? unscheduled.taskIds.filter(
-                taskId => tasksById[taskId].isCompleted
-              )
-            : unscheduled.taskIds,
+        taskIds: getTaskIdsByViewFilter(state, { folderId: '5'})[view],
         projectId: null,
         projectName: null,
         dueDate: null,
@@ -233,16 +207,7 @@ export const getSortedFilteredTaskGroups = state => {
           `${date}` in foldersById
             ? {
                 ...foldersById[`${date}`],
-                taskIds:
-                  view === 'active'
-                    ? foldersById[`${date}`].taskIds.filter(
-                        taskId => !tasksById[taskId].isCompleted
-                      )
-                    : view === 'completed'
-                    ? foldersById[`${date}`].taskIds.filter(
-                        taskId => tasksById[taskId].isCompleted
-                      )
-                    : foldersById[`${date}`].taskIds,
+                taskIds: getTaskIdsByViewFilter(state, { folderId: `${date}`})[view],
                 projectId: null,
                 name: toDateString(new Date(date), {
                   useRelative: true,

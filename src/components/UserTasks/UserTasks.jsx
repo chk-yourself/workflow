@@ -74,6 +74,7 @@ class UserTasks extends Component {
         const updatedTaskIds = [...taskIdsByView[view]];
 
         if (isMovedWithinFolder) {
+          console.log(newFolderId);
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
@@ -85,6 +86,7 @@ class UserTasks extends Component {
                 : [...updatedTaskIds, ...taskIdsByView.active]
           });
         } else {
+          console.log(origFolderId, newFolderId);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.moveTaskToFolder({
             workspaceId,
