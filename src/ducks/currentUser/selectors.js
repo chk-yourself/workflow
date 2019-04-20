@@ -63,80 +63,73 @@ export const getFolderIds = state => {
 };
 
 export const getSortedFilteredTaskGroups = state => {
-  const { currentUser } = state;
-  if (!currentUser) return [];
-  const { tempSettings, assignedTasks } = currentUser;
+  const { currentUser, tasksById } = state;
+  if (!currentUser || !tasksById) return [];
+  const { tempSettings, assignedTasks, folders: foldersById, projectIds, folderIds } = currentUser;
+  if (!foldersById || !assignedTasks || !projectIds || !folderIds) return [];
   const { sortBy, view } = tempSettings.tasks;
-  const { folders } = currentUser;
-  if (!folders) return [];
   switch (sortBy) {
     case 'project': {
-      const { tasksById } = state;
-      if (!assignedTasks || !tasksById) return [];
-      const { projectIds } = currentUser;
       const projectTasks = projectIds.reduce((tasksByProject, projectId) => {
-        const folder = folders[projectId];
-        if (!folder) return tasksByProject;
-        const { name, taskIds } = folder;
-        return tasksByProject.concat(
-          taskIds.length > 0
-            ? {
-                taskIds:
-                  view === 'active'
-                    ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
-                    : view === 'completed'
-                    ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
-                    : taskIds,
-                projectId,
-                name,
-                projectName: name,
-                dueDate: null,
-                folderId: projectId,
-                userPermissions: {
-                  enableNameChange: false,
-                  enableTaskAdd: false,
-                  enableDragNDrop: true
+        const folder = foldersById[projectId];
+        if (folder) {
+          const { name, taskIds } = folder;
+          return tasksByProject.concat(
+            taskIds.length > 0
+              ? {
+                  taskIds:
+                    view === 'active'
+                      ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
+                      : view === 'completed'
+                      ? taskIds.filter(taskId => tasksById[taskId].isCompleted)
+                      : taskIds,
+                  projectId,
+                  name,
+                  projectName: name,
+                  dueDate: null,
+                  folderId: projectId,
+                  userPermissions: {
+                    enableNameChange: false,
+                    enableTaskAdd: false,
+                    enableDragNDrop: true
+                  }
                 }
-              }
-            : []
-        );
+              : []
+          );
+        }
+        return tasksByProject;
       }, []);
-      const miscFolder = folders['4'];
-      const noProject =
-        miscFolder.taskIds.length > 0
-          ? {
-              ...miscFolder,
-              projectId: null,
-              projectName: null,
-              dueDate: null,
-              taskIds:
-                view === 'active'
-                  ? miscFolder.taskIds.filter(
-                      taskId => !tasksById[taskId].isCompleted
-                    )
-                  : view === 'completed'
-                  ? miscFolder.taskIds.filter(
-                      taskId => tasksById[taskId].isCompleted
-                    )
-                  : miscFolder.taskIds,
-              userPermissions: {
-                enableNameChange: false,
-                enableTaskAdd: true,
-                enableDragNDrop: true
-              }
-            }
-          : null;
-      return [...projectTasks, ...(noProject ? [noProject] : [])];
+      const miscFolder = foldersById['4'];
+      const noProject = {
+        ...miscFolder,
+        projectId: null,
+        projectName: null,
+        dueDate: null,
+        taskIds:
+          view === 'active'
+            ? miscFolder.taskIds.filter(
+                taskId => !tasksById[taskId].isCompleted
+              )
+            : view === 'completed'
+            ? miscFolder.taskIds.filter(
+                taskId => tasksById[taskId].isCompleted
+              )
+            : miscFolder.taskIds,
+        userPermissions: {
+          enableNameChange: false,
+          enableTaskAdd: true,
+          enableDragNDrop: true
+        }
+      };
+      return [...projectTasks, noProject];
     }
     case 'folder': {
-      if (!folders) return [];
-      const { folderIds } = currentUser;
-      if (!folderIds) return [];
-      const { tasksById } = state;
-      return folderIds.map(folderId => {
-        const { taskIds } = folders[folderId];
-        return {
-          ...folders[folderId],
+      return folderIds.reduce((folders, folderId) => {
+        const folder = foldersById[folderId];
+        if (folder) {
+          const { taskIds } = folder;
+        return folders.concat({
+          ...folder,
           taskIds:
             view === 'active'
               ? taskIds.filter(taskId => !tasksById[taskId].isCompleted)
@@ -147,29 +140,25 @@ export const getSortedFilteredTaskGroups = state => {
           projectName: null,
           dueDate: null,
           userPermissions: {
-            enableNameChange:
-              folderId !== '0' &&
-              folderId !== '1' &&
-              folderId !== '2' &&
-              folderId !== '3',
+            enableNameChange: !['0', '1', '2', '3'].includes(folderId),
             enableTaskAdd: true,
             enableDragNDrop: true
           }
-        };
-      });
+        });
+        }
+        return folders;
+      }, []);
     }
     case 'dueDate': {
-      const { tasksById } = state;
-      if (!assignedTasks || !tasksById) return [];
       let dueDates = [];
       const dueTasks = assignedTasks.reduce((tasksByDueDate, taskId) => {
         const { dueDate, isCompleted } = tasksById[taskId];
-        if (view === 'active' && isCompleted) return tasksByDueDate;
-        if (view === 'completed' && !isCompleted) return tasksByDueDate;
+        if ((view === 'active' && isCompleted) || (view === 'completed' && !isCompleted)) return tasksByDueDate;
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
         if (dueDate && !isPastDue) {
-          if (!(`${dueDate.toMillis()}` in tasksByDueDate)) {
-            tasksByDueDate[`${dueDate.toMillis()}`] = {
+          const dueDateMillis = dueDate.toMillis();
+          if (!(`${dueDateMillis}` in tasksByDueDate)) {
+            tasksByDueDate[`${dueDateMillis}`] = {
               taskIds: [],
               projectId: null,
               name: toDateString(dueDate.toDate(), {
@@ -177,18 +166,18 @@ export const getSortedFilteredTaskGroups = state => {
                 format: { weekday: 'short', month: 'short', day: 'numeric' }
               }),
               projectName: null,
-              folderId: `${dueDate.toMillis()}`,
-              dueDate: dueDate.toMillis(),
+              folderId: `${dueDateMillis}`,
+              dueDate: dueDateMillis,
               userPermissions: {
                 enableNameChange: false,
                 enableTaskAdd: true,
                 enableDragNDrop: true
               }
             };
-            dueDates = [...dueDates, dueDate.toMillis()];
+            dueDates = [...dueDates, dueDateMillis];
           }
-          tasksByDueDate[`${dueDate.toMillis()}`].taskIds = [
-            ...tasksByDueDate[`${dueDate.toMillis()}`].taskIds,
+          tasksByDueDate[`${dueDateMillis}`].taskIds = [
+            ...tasksByDueDate[`${dueDateMillis}`].taskIds,
             taskId
           ];
         } else if (dueDate && isPastDue) {
@@ -214,49 +203,46 @@ export const getSortedFilteredTaskGroups = state => {
         }
         return tasksByDueDate;
       }, {});
-      const unscheduled = folders['5'];
-      const noDueDate =
-        unscheduled.taskIds.length > 0
-          ? {
-              ...unscheduled,
-              taskIds:
-                view === 'active'
-                  ? unscheduled.taskIds.filter(
-                      taskId => !tasksById[taskId].isCompleted
-                    )
-                  : view === 'completed'
-                  ? unscheduled.taskIds.filter(
-                      taskId => tasksById[taskId].isCompleted
-                    )
-                  : unscheduled.taskIds,
-              projectId: null,
-              projectName: null,
-              dueDate: null,
-              userPermissions: {
-                enableNameChange: false,
-                enableTaskAdd: true,
-                enableDragNDrop: true
-              }
-            }
-          : null;
+      const unscheduled = foldersById['5'];
+      const noDueDate = {
+        ...unscheduled,
+        taskIds:
+          view === 'active'
+            ? unscheduled.taskIds.filter(
+                taskId => !tasksById[taskId].isCompleted
+              )
+            : view === 'completed'
+            ? unscheduled.taskIds.filter(
+                taskId => tasksById[taskId].isCompleted
+              )
+            : unscheduled.taskIds,
+        projectId: null,
+        projectName: null,
+        dueDate: null,
+        userPermissions: {
+          enableNameChange: false,
+          enableTaskAdd: true,
+          enableDragNDrop: true
+        }
+      };
       const { pastDue, ...restOfDueTasks } = dueTasks;
       const sortedDueDates = [...dueDates].sort((a, b) => a - b);
       return [
         ...(pastDue ? [pastDue] : []),
         ...sortedDueDates.map(date =>
-          `${date}` in folders
+          `${date}` in foldersById
             ? {
-                ...folders[`${date}`],
+                ...foldersById[`${date}`],
                 taskIds:
                   view === 'active'
-                    ? folders[`${date}`].taskIds.filter(
+                    ? foldersById[`${date}`].taskIds.filter(
                         taskId => !tasksById[taskId].isCompleted
                       )
                     : view === 'completed'
-                    ? folders[`${date}`].taskIds.filter(
+                    ? foldersById[`${date}`].taskIds.filter(
                         taskId => tasksById[taskId].isCompleted
                       )
-                    : folders[`${date}`].taskIds,
+                    : foldersById[`${date}`].taskIds,
                 projectId: null,
                 name: toDateString(new Date(date), {
                   useRelative: true,
@@ -273,7 +259,7 @@ export const getSortedFilteredTaskGroups = state => {
               }
             : restOfDueTasks[`${date}`]
         ),
-        ...(noDueDate ? [noDueDate] : [])
+        noDueDate
       ];
     }
     default: {
@@ -284,8 +270,13 @@ export const getSortedFilteredTaskGroups = state => {
 
 export const getFolder = (state, folderId) => {
   const { currentUser } = state;
-  if (!currentUser) return null;
-  return currentUser.folders[folderId];
+  if (currentUser) {
+    const { folders } = currentUser;
+    if (folders) {
+      return folders[folderId];
+    }
+  }
+  return null;
 };
 
 // Returns array of tasks due within next given number of days

@@ -38,8 +38,10 @@ class Notification extends Component {
           email: currentUser.email,
           name: currentUser.name
         },
-        workspaceId: source.id,
-        workspaceName: source.data.name,
+        workspace: {
+          id: source.id,
+          name: source.data.name
+        },
         from: source.user.userId,
         notificationId
        });
@@ -56,8 +58,10 @@ class Notification extends Component {
           email: currentUser.email,
           name: currentUser.name
         },
-        workspaceId: source.id,
-        workspaceName: source.data.name,
+        workspace: {
+          id: source.id,
+          name: source.data.name
+        },
         from: source.user.userId,
         notificationId
        });

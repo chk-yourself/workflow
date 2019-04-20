@@ -11,7 +11,6 @@ export const loadSubtasksById = subtasksById => {
 };
 
 export const addSubtask = ({ subtaskId, subtaskData }) => {
-  console.log('subtask added');
   return {
     type: types.ADD_SUBTASK,
     subtaskId,
@@ -45,19 +44,18 @@ export const syncTaskSubtasks = taskId => {
         .where('taskId', '==', taskId)
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
-          const { tasksById, subtasksById } = getState();
+          const { tasksById } = getState();
           const task = tasksById[taskId];
           const isInitialLoad =
             snapshot.size === changes.length &&
-            changes.every(change => change.type === 'added') &&
-            !task.isLoaded.subtasks;
-
+            changes.every(change => change.type === 'added');
           if (isInitialLoad) {
             const subtasks = {};
             if (changes.length > 0) {
               changes.forEach(change => {
+                const { subtasksById } = getState();
                 const subtaskId = change.doc.id;
-                if (subtaskId in getState().subtasksById) return;
+                if (subtasksById && subtaskId in subtasksById) return;
                 const subtaskData = change.doc.data();
                 subtasks[subtaskId] = {
                   subtaskId,
@@ -66,7 +64,9 @@ export const syncTaskSubtasks = taskId => {
               });
               dispatch(loadSubtasksById(subtasks));
             }
-            dispatch(setTaskLoadedState(taskId, 'subtasks'));
+            if (!task.isLoaded.subtasks) {
+              dispatch(setTaskLoadedState(taskId, 'subtasks'));
+            }
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -74,8 +74,9 @@ export const syncTaskSubtasks = taskId => {
                 change.doc.data(),
                 change.type
               ]);
+              const { subtasksById } = getState();
               if (changeType === 'added') {
-                if (subtaskId in subtasksById) return;
+                if (subtasksById && subtaskId in subtasksById) return;
                 dispatch(addSubtask({ subtaskId, subtaskData }));
                 console.log(`Subtask added: ${subtaskData.name}`);
               } else if (changeType === 'removed') {
@@ -127,10 +128,12 @@ export const syncProjectSubtasks = projectId => {
         .queryCollection('subtasks', ['projectId', '==', projectId])
         .onSnapshot(snapshot => {
           const changes = snapshot.docChanges();
+          const { projectsById } = getState();
+          const project = projectsById[projectId];
           const isInitialLoad =
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const subtasksById = {};
             changes.forEach(change => {
               const subtaskId = change.doc.id;
@@ -141,6 +144,9 @@ export const syncProjectSubtasks = projectId => {
               };
             });
             dispatch(loadSubtasksById(subtasksById));
+            if (!project.isLoaded.subtasks) {
+              dispatch(setProjectLoadedState(projectId, 'subtasks'));
+            }
           } else {
             changes.forEach(async change => {
               const [subtaskId, subtaskData, changeType] = await Promise.all([
@@ -150,7 +156,7 @@ export const syncProjectSubtasks = projectId => {
               ]);
               const { subtasksById } = getState();
               if (changeType === 'added') {
-                if (subtaskId in subtasksById) return;
+                if (subtasksById && subtaskId in subtasksById) return;
                 dispatch(addSubtask({ subtaskId, subtaskData }));
                 console.log(`Subtask added: ${subtaskData.name}`);
               } else if (changeType === 'removed') {
@@ -163,9 +169,6 @@ export const syncProjectSubtasks = projectId => {
                 console.log(`Subtask updated: ${subtaskData.name}`);
               }
             });
-          }
-          if (isInitialLoad) {
-            dispatch(setProjectLoadedState(projectId, 'subtasks'));
           }
         });
       return subscription;

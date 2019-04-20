@@ -76,7 +76,7 @@ class UserTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'folders', newFolderId], {
+          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
             taskIds:
               view === 'all'
                 ? updatedTaskIds
@@ -108,7 +108,7 @@ class UserTasks extends Component {
         const updatedFolderIds = [...folderIds];
         updatedFolderIds.splice(source.index, 1);
         updatedFolderIds.splice(destination.index, 0, draggableId);
-        firebase.updateDoc(`users/${userId}`, {
+        firebase.updateDoc(['users', userId, 'workspaces', workspaceId], {
           folderIds: updatedFolderIds
         });
         reorderFolders(userId, updatedFolderIds);
@@ -125,7 +125,7 @@ class UserTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'folders', newFolderId], {
+          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
             taskIds:
               view === 'all'
                 ? updatedTaskIds

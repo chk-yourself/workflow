@@ -113,15 +113,16 @@ export const syncTaskComments = taskId => {
         .where('taskId', '==', taskId)
         .onSnapshot(async snapshot => {
           const changes = await snapshot.docChanges();
+          const { tasksById } = getState();
+          const task = tasksById[taskId];
           const isInitialLoad =
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
 
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const comments = {};
             changes.forEach(change => {
               const commentId = change.doc.id;
-              if (commentId in getState().commentsById) return;
               const commentData = change.doc.data();
               comments[commentId] = {
                 commentId,
@@ -129,19 +130,21 @@ export const syncTaskComments = taskId => {
               };
             });
             dispatch(loadCommentsById(comments));
-            dispatch(setTaskLoadedState(taskId, 'comments'));
+            if (!task.isLoaded.comments) {
+              dispatch(setTaskLoadedState(taskId, 'comments'));
+            }
           } else {
             changes.forEach(change => {
               const commentId = change.doc.id;
               const commentData = change.doc.data();
+              const { commentsById } = getState();
               if (change.type === 'added') {
                 const { createdAt } = commentData;
-                if (commentId in getState().commentsById) return;
+                if (commentsById && commentId in commentsById) return;
                 dispatch(addComment({ commentId, commentData }));
               } else if (change.type === 'removed') {
+                if (!(commentId in commentsById)) return;
                 dispatch(removeComment(commentId));
-              } else if (!(commentId in getState().commentsById)) {
-                dispatch(addComment({ commentId, commentData }));
               } else {
                 dispatch(updateComment({ commentId, commentData }));
               }

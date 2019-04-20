@@ -198,7 +198,7 @@ export const syncUserWorkspaceTasks = ({ userId, workspaceId }) => {
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
 
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const tasksById = {};
             let assignedTasks = [];
             changes.forEach(change => {
@@ -220,17 +220,16 @@ export const syncUserWorkspaceTasks = ({ userId, workspaceId }) => {
             dispatch(loadTasksById(tasksById));
             dispatch(loadAssignedTasks(assignedTasks));
           } else {
-            const { tasksById, currentUser } = getState();
-            const { assignedTasks } = currentUser;
             changes.forEach(async change => {
               const [taskId, taskData, changeType] = await Promise.all([
                 change.doc.id,
                 change.doc.data(),
                 change.type
               ]);
-
+              const { tasksById, currentUser } = getState();
+              const { assignedTasks } = currentUser;
               const isAssignedToUser = taskData.assignedTo.includes(userId);
-              const isMarkedAsAssigned = assignedTasks.includes(taskId);
+              const isMarkedAsAssigned = assignedTasks && assignedTasks.includes(taskId);
               if (changeType === 'added') {
                 if (taskId in tasksById) return;
                 dispatch(addTask({ taskId, taskData }));
@@ -279,7 +278,7 @@ export const syncUserPrivateTasks = ({userId, workspaceId}) => {
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
 
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const tasksById = {};
             changes.forEach(change => {
               const taskId = change.doc.id;
@@ -304,12 +303,12 @@ export const syncUserPrivateTasks = ({userId, workspaceId}) => {
               ]);
               const { tasksById } = getState();
               if (changeType === 'added') {
-                if (taskId in tasksById) return;
+                if (tasksById && taskId in tasksById) return;
                 dispatch(addTask({ taskId, taskData }));
                 dispatch(addAssignedTask(taskId));
                 console.log(`Task added: ${taskData.name}`);
               } else if (changeType === 'removed') {
-                if (taskId in tasksById === false) return;
+                if (tasksById && !(taskId in tasksById)) return;
                 const { listId } = taskData;
                 dispatch(removeAssignedTask(taskId));
                 dispatch(removeTask({ taskId, listId }));

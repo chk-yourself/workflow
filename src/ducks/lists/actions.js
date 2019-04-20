@@ -153,27 +153,25 @@ export const syncProjectLists = projectId => {
           const project = projectsById[projectId];
           const isInitialLoad =
             snapshot.size === changes.length &&
-            !project.isLoaded.lists &&
             changes.every(change => change.type === 'added');
           if (isInitialLoad) {
             const listsById = {};
-
-            if (changes.length > 0) {
-              changes.forEach(change => {
-                const listId = change.doc.id;
-                const listData = change.doc.data();
-                const { taskIds } = listData;
-                listsById[listId] = {
-                  listId,
-                  ...listData
-                };
-                taskIds.forEach(taskId =>
-                  dispatch(setTaskLoadedState(taskId, 'subtasks'))
-                );
-              });
-              dispatch(loadListsById(listsById));
+            changes.forEach(change => {
+              const listId = change.doc.id;
+              const listData = change.doc.data();
+              const { taskIds } = listData;
+              listsById[listId] = {
+                listId,
+                ...listData
+              };
+              taskIds.forEach(taskId =>
+                dispatch(setTaskLoadedState(taskId, 'subtasks'))
+              );
+            });
+            dispatch(loadListsById(listsById));
+            if (!project.isLoaded.lists) {
+              dispatch(setProjectLoadedState(projectId, 'lists'));
             }
-            dispatch(setProjectLoadedState(projectId, 'lists'));
           } else {
             changes.forEach(async change => {
               const { listsById } = getState();
@@ -183,7 +181,7 @@ export const syncProjectLists = projectId => {
                 change.type
               ]);
               if (changeType === 'added') {
-                if (listId in listsById) return;
+                if (listsById && listId in listsById) return;
                 dispatch(addList({ listId, listData }));
                 console.log(`List added: ${listData.name}`);
               } else if (changeType === 'removed') {

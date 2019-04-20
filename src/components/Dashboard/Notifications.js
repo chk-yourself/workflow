@@ -15,10 +15,11 @@ class Notifications extends Component {
   };
 
   async componentDidMount() {
-    const { currentUser, syncNotifications } = this.props;
+    const { currentUser, syncNotifications, activeWorkspace } = this.props;
     const { userId } = currentUser;
+    const { workspaceId } = activeWorkspace;
 
-    this.unsubscribe = await syncNotifications(userId);
+    this.unsubscribe = await syncNotifications({ userId, workspaceId });
     this.setState({
       isLoading: false
     });
@@ -64,12 +65,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncNotifications: userId =>
-      dispatch(currentUserActions.syncNotifications(userId))
+    syncNotifications: ({ userId, workspaceId }) =>
+      dispatch(currentUserActions.syncNotifications({ userId, workspaceId }))
   };
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

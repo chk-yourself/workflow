@@ -164,47 +164,6 @@ export default (state = INITIAL_STATE, action) => {
         folderIds
       };
     }
-    case types.LOAD_TASKS_DUE_SOON: {
-      const { tasksDueSoon } = action;
-      return {
-        ...state,
-        tasksDueSoon
-      };
-    }
-    case types.ADD_TASK_DUE_SOON: {
-      const { taskId, taskData } = action;
-      return {
-        ...state,
-        tasksDueSoon: {
-          ...state.tasksDueSoon,
-          [taskId]: {
-            taskId,
-            ...taskData
-          }
-        }
-      };
-    }
-    case types.REMOVE_TASK_DUE_SOON: {
-      const { taskId } = action;
-      const { [taskId]: removedTask, ...restOfTasks } = state.tasksDueSoon;
-      return {
-        ...state,
-        tasksDueSoon: restOfTasks
-      };
-    }
-    case types.UPDATE_TASK_DUE_SOON: {
-      const { taskId, taskData } = action;
-      return {
-        ...state,
-        tasksDueSoon: {
-          ...state.tasksDueSoon,
-          [taskId]: {
-            ...state.tasksDueSoon[taskId],
-            ...taskData
-          }
-        }
-      };
-    }
     case types.SET_TEMP_TASK_SETTINGS: {
       const { view, sortBy } = action;
       return {

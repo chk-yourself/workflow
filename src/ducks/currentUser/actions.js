@@ -169,99 +169,7 @@ export const deleteFolder = ({ userId, folderId }) => {
   };
 };
 
-// Tasks due soon
-
-export const loadTasksDueSoon = tasksDueSoon => {
-  return {
-    type: types.LOAD_TASKS_DUE_SOON,
-    tasksDueSoon
-  };
-};
-
-export const addTaskDueSoon = ({ taskId, taskData }) => {
-  return {
-    type: types.ADD_TASK_DUE_SOON,
-    taskId,
-    taskData
-  };
-};
-
-export const removeTaskDueSoon = taskId => {
-  return {
-    type: types.REMOVE_TASK_DUE_SOON,
-    taskId
-  };
-};
-
-export const updateTaskDueSoon = ({ taskId, taskData }) => {
-  return {
-    type: types.UPDATE_TASK_DUE_SOON,
-    taskId,
-    taskData
-  };
-};
-
 // Thunks
-
-/*
-
-export const syncTasksDueWithinDays = (userId, days) => {
-  const startingDate = new Date();
-  startingDate.setHours(0, 0, 0, 0);
-  const endingDate = new Date(startingDate);
-  const timeEnd = new Date(endingDate.setDate(endingDate.getDate() + days));
-
-  return async dispatch => {
-    try {
-      const subscription = await firebase.fs
-        .collection('tasks')
-        .where('assignedTo', 'array-contains', userId)
-        .where('dueDate', '<=', timeEnd)
-        .orderBy('dueDate', 'asc')
-        .onSnapshot(async snapshot => {
-          const changes = snapshot.docChanges();
-          const isInitialLoad =
-            snapshot.size === changes.length &&
-            changes.every(change => change.type === 'added');
-
-          if (isInitialLoad) {
-            const tasks = {};
-            changes.forEach(change => {
-              const taskId = change.doc.id;
-              const taskData = change.doc.data();
-              const { subtaskIds, commentIds } = taskData;
-              tasks[taskId] = {
-                isLoaded: {
-                  subtasks: subtaskIds.length === 0,
-                  comments: commentIds.length === 0
-                },
-                taskId,
-                ...taskData
-              };
-            });
-            dispatch(loadTasksDueSoon(tasks));
-            dispatch(loadTasksById(tasks));
-          } else {
-            changes.forEach(change => {
-              const taskId = change.doc.id;
-              const taskData = change.doc.data();
-              if (change.type === 'added') {
-                dispatch(addTaskDueSoon({ taskId, taskData }));
-              } else if (change.type === 'removed') {
-                dispatch(removeTaskDueSoon(taskId));
-              } else {
-                dispatch(updateTaskDueSoon({ taskId, taskData }));
-              }
-            });
-          }
-        });
-      return subscription;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-*/
 
 export const syncFolders = () => {
   return async (dispatch, getState) => {
@@ -385,8 +293,7 @@ export const syncUserTags = userId => {
               ]);
               const { tags } = getState().currentUser;
               if (changeType === 'added') {
-                if (tagId in tags) return;
-                console.log(tagId, tagData);
+                if (tags && tagId in tags) return;
                 dispatch(createTag({ tagId, tagData }));
                 console.log('tag added');
               } else if (changeType === 'removed') {
@@ -512,12 +419,13 @@ export const syncUserWorkspaceData = ({userId, workspaceId}) => {
   };
 };
 
-export const syncNotifications = userId => {
+export const syncNotifications = ({ userId, workspaceId }) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
         .getCollection('notifications')
         .where('recipientId', '==', userId)
+        .where('workspaceId', '==', workspaceId)
         .where('isActive', '==', true)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();

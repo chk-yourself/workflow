@@ -312,9 +312,10 @@ class Firebase {
       });
   };
 
-  acceptWorkspaceInvite = ({ user, workspaceId, workspaceName, from, notificationId }) => {
+  acceptWorkspaceInvite = ({ user, workspace, from, notificationId }) => {
     const batch = this.createBatch();
     const { userId, email } = user;
+    const { id: workspaceId, name: workspaceName } = workspace;
 
     // Update workspace
     this.updateBatch(batch, ['workspaces', workspaceId], {
@@ -335,6 +336,7 @@ class Firebase {
     // Send rsvp notification to inviter
     this.createNotification({
       recipientId: from,
+      workspaceId,
       source: {
         user: { ...user },
         type: 'workspace',
@@ -382,9 +384,10 @@ class Firebase {
   };
 
 
-  declineWorkspaceInvite = ({ user, workspaceId, workspaceName, from, notificationId }) => {
+  declineWorkspaceInvite = ({ user, workspace, from, notificationId }) => {
     const batch = this.createBatch();
     const { userId, email } = user;
+    const { id: workspaceId, name: workspaceName } = workspace;
 // Update workspace
 this.updateBatch(batch, ['workspaces', workspaceId], {
   invites: this.removeFromArray(email)
@@ -393,6 +396,7 @@ this.updateBatch(batch, ['workspaces', workspaceId], {
 // Send rsvp notification to inviter
 this.createNotification({
   recipientId: from,
+  workspaceId,
   source: {
     user: { ...user },
     type: 'workspace',
@@ -508,6 +512,7 @@ this.createNotification({
         const inviteRef = this.getDocRef('invites', invite.id);
         batch.delete(inviteRef);
         this.createNotification({
+          workspaceId,
           recipientId: inviterId,
           source: {
             user: { ...from },
@@ -563,7 +568,7 @@ this.createNotification({
           roles: {
             [userId]: 'owner'
           },
-          invites: [...workspace.invites],
+          invites: workspace.invites,
           ownerId: userId,
           projectIds: []
         })
@@ -614,7 +619,9 @@ this.createNotification({
       .then(snapshot => {
         if (snapshot.size > 0) {
           snapshot.forEach(doc => {
+            const { activeWorkspace } = doc.data().settings;
             this.createNotification({
+              workspaceId: activeWorkspace,
               recipientId: doc.id,
               isActionPending: true,
               source: {
@@ -1732,35 +1739,38 @@ this.createNotification({
 
   addComment = ({
     from,
+    content,
+    workspaceId,
     to = [],
     projectId = null,
     taskId = null,
-    content,
-    workspaceId,
     createdAt = this.getTimestamp()
   }) => {
     this.fs
       .collection('comments')
       .add({
         createdAt,
-        lastUpdatedAt: null,
-        isPinned: false,
-        likes: {},
         from,
         to,
         projectId,
         taskId,
         content,
-        workspaceId
+        workspaceId,
+        lastUpdatedAt: null,
+        isPinned: false,
+        likes: {},
       })
       .then(ref => {
-        this.updateDoc(['tasks', taskId], {
-          commentIds: this.addToArray(ref.id)
-        });
+        if (taskId) {
+          this.updateDoc(['tasks', taskId], {
+            commentIds: this.addToArray(ref.id)
+          });
+        }
 
         if (to.length > 0) {
           to.forEach(user => {
             this.createNotification({
+              workspaceId,
               recipientId: user.userId,
               source: {
                 user: from,
@@ -1787,11 +1797,12 @@ this.createNotification({
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ recipientId, source, event, isActionPending = false }) => {
+  createNotification = ({ recipientId, workspaceId, source, event, isActionPending = false }) => {
     return this.fs
       .collection('notifications')
       .add({
         recipientId,
+        workspaceId,
         source,
         event,
         isActionPending,

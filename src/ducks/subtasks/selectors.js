@@ -5,7 +5,7 @@ export const getSubtasksById = state => {
 
 export const getSubtasksArray = (state, subtaskIds) => {
   const { subtasksById } = state;
-  if (!subtaskIds) return [];
+  if (!subtaskIds || !subtasksById) return [];
   let subtasks = [];
 
   for (let subtaskId of subtaskIds) {
@@ -16,20 +16,6 @@ export const getSubtasksArray = (state, subtaskIds) => {
   
   return subtasks;
 };
-
-export const getSimpleSubtasks = (state, subtaskIds) => {
-  const { subtasksById } = state;
-  if (!subtaskIds) return {};
-
-  return subtaskIds.reduce((subtasks, subtaskId) => {
-    const { name, isCompleted } = subtasksById[subtaskId];
-        subtasks[subtaskId] = {
-          name,
-          isCompleted
-        };
-        return subtasks;
-      }, {});
-  };
 
 export const getActiveSubtasks = (state, subtaskIds) => {
   const subtasks = getSubtasksArray(state, subtaskIds);

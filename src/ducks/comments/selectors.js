@@ -5,27 +5,31 @@ export const getCommentsById = state => {
 
 export const getComment = (state, commentId) => {
   const { commentsById } = state;
-  return commentsById[commentId];
+  return commentsById ? commentsById[commentId] : null;
 };
 
 export const getCommentsArray = (state, commentIds) => {
   const { commentsById } = state;
-  if (!commentIds) return [];
-  let comments = [];
-
-  for (let commentId of commentIds) {
-    const comment = commentsById[commentId];
-    if (!comment) break;
-    comments = comments.concat(comment);
+  if (commentIds && commentsById) {
+    return commentIds.reduce((comments, commentId) => {
+      const comment = commentsById[commentId];
+      if (comment) {
+        return comments.concat(comment);
+      }
+      return comments;
+    }, []);
   }
-  
-  return comments;
+  return [];
 };
 
 export const getTaskComments = (state, taskId) => {
   const { commentsById, tasksById } = state;
-  const task = tasksById[taskId];
-  if (!task) return [];
-  const { commentIds } = tasksById[taskId];
-  return commentIds.map(commentId => commentsById[commentId]);
+  if (commentsById && tasksById) {
+    const task = tasksById[taskId];
+    if (task) {
+      const { commentIds } = task;
+      return commentIds.map(commentId => commentsById[commentId]);
+    }
+  }
+  return [];
 };
