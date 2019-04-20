@@ -10,24 +10,6 @@ import { activeWorkspaceSelectors } from '../../ducks/activeWorkspace';
 
 const withAuthorization = (condition) => WrappedComponent => {
   class WithAuthorization extends Component {
-    static contextType = AuthUserContext;
-    componentDidMount() {
-      /*
-      console.log(`${getDisplayName(WrappedComponent)} mounted`);
-      const { firebase, history } = this.props;
-      this.listener = firebase.auth.onAuthStateChanged(authUser => {
-        if (authUser && !this.context) {
-          console.log(authUser, this.context);
-          const { firebase, history } = this.props;
-          history.push(ROUTES.SET_UP);
-        }
-      });
-      */
-    }
-
-    componentWillUnmount() {
-     // this.listener();
-    }
 
     render() {
       const { activeWorkspace, ...rest } = this.props;

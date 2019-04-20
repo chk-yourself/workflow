@@ -1,5 +1,6 @@
 import * as types from './types';
 import { UPDATE_USER } from '../users/types';
+import { RESET_ACTIVE_WORKSPACE } from '../activeWorkspace/types';
 
 const INITIAL_STATE = null;
 
@@ -8,6 +9,9 @@ export default (state = INITIAL_STATE, action) => {
     case types.SET_CURRENT_USER: {
       const { currentUser } = action;
       return currentUser;
+    }
+    case types.RESET_CURRENT_USER: {
+      return INITIAL_STATE;
     }
     case types.LOAD_FOLDERS: {
       const { folders } = action;
@@ -222,6 +226,10 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         ...userData
       };
+    }
+    case RESET_ACTIVE_WORKSPACE: {
+      const { assignedTasks, notifications, folders, projectIds, folderIds, ...rest } = state;
+      return rest;
     }
     default:
       return state;

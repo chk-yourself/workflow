@@ -7,11 +7,18 @@ import {
   updateTask
 } from '../tasks/actions';
 import { updateUser } from '../users/actions';
+import * as ROUTES from '../../constants/routes';
 
 export const setCurrentUser = currentUser => {
   return {
     type: types.SET_CURRENT_USER,
     currentUser
+  };
+};
+
+export const resetCurrentUser = () => {
+  return {
+    type: types.RESET_CURRENT_USER
   };
 };
 
@@ -196,6 +203,8 @@ export const updateTaskDueSoon = ({ taskId, taskData }) => {
 
 // Thunks
 
+/*
+
 export const syncTasksDueWithinDays = (userId, days) => {
   const startingDate = new Date();
   startingDate.setHours(0, 0, 0, 0);
@@ -252,6 +261,7 @@ export const syncTasksDueWithinDays = (userId, days) => {
     }
   };
 };
+*/
 
 export const syncFolders = () => {
   return async (dispatch, getState) => {
@@ -455,20 +465,26 @@ export const syncUserTasks = userId => {
   };
 };
 
-export const syncCurrentUserData = userId => {
+export const syncCurrentUser = (userId, history) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
         .getDocRef('users', userId)
         .onSnapshot(snapshot => {
           const userData = snapshot.data() || null;
-          if (!getState().currentUser) {
+          const { currentUser } = getState();
+          if (!currentUser) {
             if (userData && userData.settings) {
               userData.tempSettings = {
                 tasks: { ...userData.settings.tasks }
               };
             }
             dispatch(setCurrentUser(userData));
+            if (userData === null) {
+              history.push(ROUTES.SET_UP);
+            } else {
+              history.push(`/0/home/${userId}`);
+            }
           } else {
             dispatch(updateUser({ userId, userData }));
           }

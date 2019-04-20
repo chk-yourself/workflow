@@ -35,11 +35,8 @@ class HomePage extends Component {
   }
 
   componentWillUnmount() {
-    if (this.unsubscribeFromWorkspace) {
-      this.unsubscribeFromWorkspace.forEach(unsubscribe => unsubscribe());
-    }
-    if (this.unsubscribeFromTags) {
-      this.unsubscribeFromTags();
+    if (this.listeners) {
+      this.listeners.forEach(unsubscribe => unsubscribe());
     }
     console.log('home unmounted');
   }
@@ -52,8 +49,7 @@ class HomePage extends Component {
       syncUserWorkspaceData,
       syncUserWorkspaceProjects,
       syncUserWorkspaceTasks,
-      syncUserPrivateTasks,
-      syncUserTags
+      syncUserPrivateTasks
     } = this.props;
     const { userId, projectIds } = currentUser;
     const { workspaceId } = activeWorkspace;
@@ -63,11 +59,9 @@ class HomePage extends Component {
       syncUserWorkspaceData({ userId, workspaceId }),
       syncUserWorkspaceProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
-      syncUserPrivateTasks({userId, workspaceId}),
-      syncUserTags(userId)
+      syncUserPrivateTasks({userId, workspaceId})
     ]).then(async listeners => {
-      this.unsubscribeFromWorkspace = listeners;
-      this.unsubscribeFromTags = listeners.pop();
+      this.listeners = listeners;
       this.setState({
         isLoading: false
       });
@@ -177,7 +171,6 @@ const mapDispatchToProps = dispatch => {
   return {
     syncWorkspaceMembers: workspaceId => dispatch(userActions.syncWorkspaceMembers(workspaceId)),
     syncUserPresence: () => dispatch(userActions.syncUserPresence()),
-    syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId)),
     syncUserWorkspaceProjects: ({ userId, workspaceId }) =>
       dispatch(projectActions.syncUserWorkspaceProjects({userId, workspaceId })),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>

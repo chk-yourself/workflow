@@ -24,16 +24,17 @@ const withAuthentication = WrappedComponent => {
         history,
         setCurrentUser,
         setActiveWorkspace,
-        resetActiveWorkspace
+        resetActiveWorkspace,
+        syncCurrentUser
       } = this.props;
 
       const { initPresenceDetection } = firebase;
 
-      this.listener = firebase.auth.onAuthStateChanged(async authUser => {
+      this.authListener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified } = authUser;
           if (emailVerified) {
-            this.syncCurrentUser(uid);
+            this.userListener = await syncCurrentUser(uid, history);
           } else {
             history.push(ROUTES.VERIFICATION_REQUIRED);
           }
@@ -52,61 +53,60 @@ const withAuthentication = WrappedComponent => {
             });
         } else {
           history.push(ROUTES.LOG_IN);
-          if (this.unsubscribeFromUser) {
-            this.unsubscribeFromUser();
+          if (this.userListener) {
+            this.userListener();
             setCurrentUser(null);
           }
-          if (this.unsubscribeFromWorkspace) {
-            this.unsubscribeFromWorkspace();
-            setActiveWorkspace(null);
+          if (this.workspaceListener) {
+            this.workspaceListener();
+            resetActiveWorkspace();
           }
-          resetActiveWorkspace();
+          if (this.tagListener) {
+            this.tagListener();
+          }
         }
       });
     }
 
-    syncCurrentUser = async userId => {
-      const { firebase, history, setCurrentUser, updateUser } = this.props;
-      this.unsubscribeFromUser = await firebase
-        .getDocRef('users', userId)
-        .onSnapshot(snapshot => {
-          const userData = snapshot.data() || null;
-          const { currentUser } = this.props;
-          if (!currentUser) {
-            if (userData && userData.settings) {
-              userData.tempSettings = {
-                tasks: { ...userData.settings.tasks }
-              };
-            }
-            setCurrentUser(userData);
-            if (userData === null) {
-              history.push(ROUTES.SET_UP);
-            } else {
-              history.push(`/0/home/${userId}`);
-            }
-          } else {
-            updateUser({ userId, userData });
-          }
-    });
-  }
-
     async componentDidUpdate(prevProps) {
-      const { currentUser, syncActiveWorkspace, history, firebase } = this.props;
-      if (!prevProps.currentUser && currentUser) {
+      const { currentUser, syncActiveWorkspace, syncUserTags, history, firebase, resetActiveWorkspace } = this.props;
+      if (!currentUser) return;
+      const { userId, settings } = currentUser;
+      const { activeWorkspace } = settings;
+      if (!prevProps.currentUser) {
         console.log('current user detected');
         const { userId } = currentUser;
-        const { activeWorkspace } = currentUser.settings;
-        this.unsubscribeFromWorkspace = await syncActiveWorkspace(activeWorkspace);
+        await Promise.all([
+          syncActiveWorkspace(activeWorkspace),
+          syncUserTags(userId)
+        ]).then(listeners => {
+          this.workspaceListener = listeners[0];
+          this.tagListener = listeners[1];
+        }).catch(error => {
+          console.error(error);
+        });
+      }
+      if (prevProps.currentUser) {
+        const { activeWorkspace: prevWorkspace } = prevProps.currentUser.settings;
+        if (prevWorkspace !== activeWorkspace) {
+          resetActiveWorkspace();
+          this.workspaceListener();
+          this.workspaceListener = await syncActiveWorkspace(activeWorkspace);
+          console.log('changed active workspace');
+        }
       }
     }
 
     componentWillUnmount() {
-      this.listener();
-      if (this.unsubscribeFromUser) {
-        this.unsubscribeFromUser();
+      this.authListener();
+      if (this.userListener) {
+        this.userListener();
       }
-      if (this.unsubscribeFromWorkspace) {
-        this.unsubscribeFromWorkspace();
+      if (this.workspaceListener) {
+        this.workspaceListener();
+      }
+      if (this.tagListener) {
+        this.tagListener();
       }
     }
 
@@ -131,15 +131,16 @@ const withAuthentication = WrappedComponent => {
   };
 
   const mapDispatchToProps = dispatch => ({
-    syncCurrentUserData: userId =>
-      dispatch(currentUserActions.syncCurrentUserData(userId)),
+    syncCurrentUser: (userId, history) =>
+      dispatch(currentUserActions.syncCurrentUser(userId, history)),
     setCurrentUser: currentUser =>
       dispatch(currentUserActions.setCurrentUser(currentUser)),
     updateUser: ({ userId, userData }) =>
       dispatch(userActions.updateUser({userId, userData})),
     syncActiveWorkspace: workspaceId => dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
     setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
-    resetActiveWorkspace: () => dispatch(activeWorkspaceActions.resetActiveWorkspace())
+    resetActiveWorkspace: () => dispatch(activeWorkspaceActions.resetActiveWorkspace()),
+    syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
   });
 
   return compose(

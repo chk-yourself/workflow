@@ -36,6 +36,7 @@ const usersById = (state = INITIAL_STATE, action) => {
     }
     case types.UPDATE_USER: {
       const { userId, userData } = action;
+      if (!state) return state;
       return {
         ...state,
         [userId]: {

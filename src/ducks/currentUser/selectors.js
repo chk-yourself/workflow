@@ -291,7 +291,7 @@ export const getFolder = (state, folderId) => {
 // Returns array of tasks due within next given number of days
 export const getTasksDueWithinDays = (state, days = 7) => {
   const { currentUser, tasksById } = state;
-  if (!currentUser) return [];
+  if (!currentUser || !tasksById) return [];
   const { assignedTasks } = currentUser;
   if (!assignedTasks) return [];
   const timeStart = new Date().setHours(0, 0, 0, 0);
@@ -313,7 +313,7 @@ export const getTasksDueWithinDays = (state, days = 7) => {
 
 export const getOverdueTasks = state => {
   const { currentUser, tasksById } = state;
-  if (!currentUser) return [];
+  if (!currentUser || !tasksById) return [];
   const { assignedTasks } = currentUser;
   if (!assignedTasks) return [];
   const timeEnd = new Date().setHours(0, 0, 0, 0);
@@ -333,7 +333,7 @@ export const getOverdueTasks = state => {
 
 export const getMergedProjectTags = (state, projectId) => {
   const { projectsById, currentUser } = state;
-  if (!currentUser) return [];
+  if (!currentUser || !projectsById) return [];
   const { tags: userTags } = currentUser;
   const projectTags = projectId ? projectsById[projectId].tags : {};
   const mergedTags = { ...userTags, ...projectTags };

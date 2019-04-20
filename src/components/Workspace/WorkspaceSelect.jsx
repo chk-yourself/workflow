@@ -6,7 +6,12 @@ import './Workspace.scss';
 class WorkspaceSelect extends Component {
   selectWorkspace = e => {
     const { value: workspaceId } = e.target;
-    console.log(workspaceId);
+    const { firebase, currentUser } = this.props;
+    const { userId } = currentUser;
+    firebase.updateDoc(['users', userId], {
+      'settings.activeWorkspace': workspaceId
+    });
+    console.log(`selected workspace: ${workspaceId}`);
   };
 
   render() {
