@@ -19,6 +19,12 @@ class Header extends Component {
     }));
   };
 
+  collapseNav = e => {
+    this.setState({
+      isNavExpanded: false
+    });
+  };
+
   toggleWorkspaceComposer = () => {
     this.setState(prevState => ({
       isWorkspaceComposerActive: !prevState.isWorkspaceComposerActive
@@ -79,7 +85,7 @@ class Header extends Component {
               openWorkspaceSettings={this.openWorkspaceSettings}
             >
               <NavLinksAuth
-                onClick={this.toggleNav}
+                onClick={this.collapseNav}
                 userId={currentUser.userId}
               />
             </Sidebar>

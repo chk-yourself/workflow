@@ -26,15 +26,19 @@ class WorkspaceComposer extends Component {
   };
 
   onSubmit = async e => {
-    const { firebase, currentUser } = this.props;
+    e.preventDefault();
+    const { firebase, currentUser, onClose } = this.props;
     const { name, invites } = this.state;
     const user = {
       userId: currentUser.userId,
-      name: currentUser.name,
-      username: currentUser.username
+      name: currentUser.name
     };
-    await firebase.createWorkspace({ user, name, invites });
-    e.preventDefault();
+    await firebase.createWorkspace({
+      user,
+      name,
+      invites: invites.filter(invite => invite !== '')
+    });
+    onClose(e);
   };
 
   render() {

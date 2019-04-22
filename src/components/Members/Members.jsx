@@ -45,7 +45,7 @@ const Members = ({
                   : ''
               }`}
             >
-              {user[detail]}
+              {detail === 'displayName' ? `@${user[detail]}` : user[detail]}
             </span>
           ))}
         </li>

@@ -157,12 +157,39 @@
   }
 }
 
+.sidebar__members-list {
+  padding: 8px 0;
+}
+
 .sidebar__member {
-  padding: 12px 0 12px 12px;
-  .members__name {
-    margin-left: 12px;
+  padding: 8px 0 8px 12px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: none;
+}
+
+.sidebar__avatar {
+  position: absolute;
+}
+
+.sidebar__member-detail {
+  width: calc(100% - 36px);
+  margin-left: auto;
+  &--name {
+    color: $grey-700;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
-  &:last-child {
+  &--displayName {
+    color: $grey-500;
+    font-size: 10px;
+    margin-top: 3px;
+  }
+}
+
+.sidebar__btn--toggle-members {
+  &:not(.is-active) {
     border-bottom: none;
   }
 }

@@ -3,6 +3,7 @@ import * as firebase from 'firebase/app';
 require('firebase/database');
 require('firebase/auth');
 require('firebase/firestore');
+require('firebase/storage');
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -19,6 +20,7 @@ class Firebase {
     this.auth = firebase.auth();
     this.fs = firebase.firestore();
     this.db = firebase.database();
+    this.storage = firebase.storage();
   }
 
   // Auth API

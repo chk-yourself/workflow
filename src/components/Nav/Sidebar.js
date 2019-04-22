@@ -73,7 +73,7 @@ class Sidebar extends Component {
               <li className="sidebar__item sidebar__item--team">
                 <Button
                   isActive={isMembersListVisible}
-                  className="sidebar__btn"
+                  className="sidebar__btn sidebar__btn--toggle-members"
                   onClick={this.toggleMembersList}
                 >
                   <Icon className="sidebar__icon" name="users" />
@@ -83,11 +83,13 @@ class Sidebar extends Component {
                 <Members
                   style={{ display: isMembersListVisible ? 'block' : 'none' }}
                   classes={{
-                    list: 'sidebar__list',
-                    item: 'sidebar__item sidebar__member'
+                    list: 'sidebar__list sidebar__members-list',
+                    item: 'sidebar__item sidebar__member',
+                    detail: 'sidebar__member-detail',
+                    avatar: 'sidebar__avatar'
                   }}
                   showOnlineStatus
-                  details={['name']}
+                  details={['name', 'displayName']}
                 />
               </li>
             </ul>

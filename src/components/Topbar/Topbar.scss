@@ -8,6 +8,9 @@
   background-color: #fff;
   min-width: 200px;
   @include box-shadow(2);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .topbar {
