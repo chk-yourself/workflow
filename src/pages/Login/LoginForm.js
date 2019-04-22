@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { withFirebase } from '../../components/Firebase';
-import * as ROUTES from '../../constants/routes';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { PasswordForgetLink } from '../PasswordForget';
+import { ErrorMessage } from '../../components/Error';
 
 const INITIAL_STATE = {
   email: '',
@@ -25,7 +25,7 @@ class LoginForm extends Component {
 
   onSubmit = e => {
     const { email, password } = this.state;
-    const { firebase, history } = this.props;
+    const { firebase } = this.props;
     firebase
       .signInWithEmailAndPassword(email, password)
       .then(() => {
@@ -110,7 +110,7 @@ class LoginForm extends Component {
         >
           Log In
         </Button>
-        {error && <p>{error.message}</p>}
+        {error && <ErrorMessage error={error} />}
       </form>
     );
   }

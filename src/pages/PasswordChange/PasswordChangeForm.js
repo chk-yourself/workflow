@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { withFirebase } from '../../components/Firebase';
+import { withAuthorization } from '../../components/Session';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { ErrorMessage } from '../../components/Error';
 
 const INITIAL_STATE = {
-  passwordOne: '',
-  passwordTwo: '',
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
   error: null
 };
 
@@ -16,10 +18,14 @@ class PasswordChangeForm extends Component {
   }
 
   onSubmit = e => {
-    const { passwordOne } = this.state;
+    const { newPassword, currentPassword } = this.state;
+    const { firebase, currentUser } = this.props;
+    const { updatePassword } = firebase;
+    const { email } = currentUser;
 
-    this.props.firebase
-      .passwordUpdate(passwordOne)
+    firebase
+      .reauthenticateWithEmailAuthCredential(email, currentPassword)
+      .then(() => updatePassword(newPassword))
       .then(() => {
         this.setState({ ...INITIAL_STATE });
       })
@@ -36,26 +42,39 @@ class PasswordChangeForm extends Component {
   };
 
   render() {
-    const { passwordOne, passwordTwo, error } = this.state;
-    const isInvalid = passwordOne === '' || passwordOne !== passwordTwo;
+    const { currentPassword, newPassword, confirmPassword, error } = this.state;
+    const isInvalid =
+      currentPassword === '' ||
+      newPassword === '' ||
+      newPassword !== confirmPassword;
 
     return (
-      <form onSubmit={this.onSubmit} className="user-form">
+      <form className="user-form">
         <Input
-          name="passwordOne"
-          id="passwordOne"
-          label="New Password"
-          value={passwordOne}
+          name="currentPassword"
+          id="currentPassword"
+          label="Current Password"
+          value={currentPassword}
           onChange={this.onChange}
           type="password"
           className="user-form__input"
           labelClass="user-form__label"
         />
         <Input
-          name="passwordTwo"
-          id="passwordTwo"
+          name="newPassword"
+          id="newPassword"
+          label="New Password"
+          value={newPassword}
+          onChange={this.onChange}
+          type="password"
+          className="user-form__input"
+          labelClass="user-form__label"
+        />
+        <Input
+          name="confirmPassword"
+          id="confirmPassword"
           label="Confirm New Password"
-          value={passwordTwo}
+          value={confirmPassword}
           onChange={this.onChange}
           type="password"
           className="user-form__input"
@@ -71,10 +90,12 @@ class PasswordChangeForm extends Component {
         >
           Change Password
         </Button>
-        {error && <p>{error.message}</p>}
+        {error && <ErrorMessage error={error} />}
       </form>
     );
   }
 }
 
-export default withFirebase(PasswordChangeForm);
+const condition = currentUser => !!currentUser;
+
+export default withAuthorization(condition)(PasswordChangeForm);

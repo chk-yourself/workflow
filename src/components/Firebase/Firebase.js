@@ -98,10 +98,19 @@ class Firebase {
 
   signOut = () => this.auth.signOut();
 
-  passwordReset = email => this.auth.sendPasswordResetEmail(email);
+  sendPasswordResetEmail = email => this.auth.sendPasswordResetEmail(email);
 
-  passwordUpdate = newPassword =>
-    this.auth.currentUser.updatePassword(newPassword);
+  getEmailAuthCredential = (email, password) =>
+    firebase.auth.EmailAuthProvider.credential(email, password);
+
+  reauthenticateWithEmailAuthCredential = (email, password) => {
+    const credential = this.getEmailAuthCredential(email, password);
+    return this.currentUser.reauthenticateAndRetrieveDataWithCredential(
+      credential
+    );
+  };
+
+  updatePassword = newPassword => this.currentUser.updatePassword(newPassword);
 
   sendSignInLinkToEmail = email => {
     const actionCodeSettings = {
