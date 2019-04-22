@@ -26,7 +26,7 @@
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   width: calc(100% - 16px);
   max-width: 368px;
-  max-height: calc(100vh - 56px);
+  max-height: calc(100% - 56px);
   overflow: auto;
   left: 50%;
   transform: translateX(-50%);
@@ -114,6 +114,7 @@
   border: 1px solid $grey-500;
   width: 100%;
   color: $grey-800;
+  padding: 10px;
   &::placeholder {
     font-size: 14px;
   }

@@ -56,7 +56,7 @@ const Profile = ({ user, currentUser, activeWorkspace }) => {
         <p className={`profile__status is-${onlineStatus}`}>{onlineStatus}</p>
         {about && <p className="profile__about">{about}</p>}
       </header>
-      <section className="profile__workspace-info">
+      <section className="profile__section profile__workspace-info">
         <div className="profile__counter">
           <div className="profile__count">{projectIds.length}</div>
           <div className="profile__counter-name">
@@ -70,7 +70,7 @@ const Profile = ({ user, currentUser, activeWorkspace }) => {
           </div>
         </div>
       </section>
-      <section className="profile__contact">
+      <section className="profile__section profile__contact">
         <ContactInfo icon="mail">{email}</ContactInfo>
         {github && (
           <ContactInfo icon="github">
