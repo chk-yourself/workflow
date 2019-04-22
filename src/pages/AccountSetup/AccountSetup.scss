@@ -13,7 +13,6 @@
 
 .account-setup__input,
 .account-setup__textarea {
-  margin-bottom: 24px;
   height: 42px;
   width: 100%;
   border: 1px solid $grey-600;
@@ -75,6 +74,9 @@
   font-weight: 600;
   margin-bottom: 8px;
   display: block;
+  &:not(:nth-of-type(1)) {
+    margin-top: 24px;
+  }
 }
 
 .account-setup__btn {
@@ -136,4 +138,5 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 24px;
 }

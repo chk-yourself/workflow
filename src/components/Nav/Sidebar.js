@@ -6,6 +6,7 @@ import { Button } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
+import { JamIcon } from '../JamIcon';
 import './Sidebar.scss';
 
 export const SidebarIcon = ({ name }) => {

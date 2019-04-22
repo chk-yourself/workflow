@@ -43,7 +43,7 @@ const ProfileSetup = ({ name, displayName, email, about, onChange }) => (
     <Textarea
       name="about"
       id="about"
-      label="About Me (Optional)"
+      label="About Me (optional)"
       value={about}
       onChange={onChange}
       className="account-setup__textarea"
