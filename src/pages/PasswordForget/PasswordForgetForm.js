@@ -58,6 +58,7 @@ class PasswordForgetForm extends Component {
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
+          className="pw-forget__btn"
         >
           Reset Password
         </Button>

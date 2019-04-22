@@ -14,9 +14,12 @@ const PasswordForgetLink = () => (
 );
 
 const PasswordForgetPage = () => (
-  <UserFormPage title="Forgot your password?">
+  <main className="pw-forget">
+  <div className="pw-forget__content">
+    <h1 className="pw-forget__heading">Forgot your password?</h1>
     <PasswordForgetForm />
-  </UserFormPage>
+    </div>
+  </main>
 );
 
 export default PasswordForgetPage;

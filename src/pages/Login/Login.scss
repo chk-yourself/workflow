@@ -1,6 +1,13 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.header + main.login {
+  @include xx {
+    left: 0;
+    width: 100%;
+  }
+}
+
 .login {
   width: 100%;
   min-height: 100%;
@@ -19,6 +26,7 @@
   margin-top: 88px;
   padding: 24px;
   border-radius: 4px;
+  border: 1px solid $grey-700;
   background-color: $white;
   @include md {
     padding: 32px;

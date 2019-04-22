@@ -110,7 +110,7 @@
   }
 }
 
-.header--sign-up,
+.header--dk,
 .header--login {
   background-color: transparent;
   box-shadow: none;
@@ -147,7 +147,7 @@
   }
 }
 
-.header--sign-up {
+.header--dk {
   .navbar__link {
     color: $grey-800;
     @include md {

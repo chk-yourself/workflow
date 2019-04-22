@@ -1,6 +1,13 @@
 @import '../../styles/variables.scss';
 @import '../../styles/mixins.scss';
 
+.header + main.sign-up {
+  @include xx {
+    left: 0;
+    width: 100%;
+  }
+}
+
 .link--outlined {
   padding: 8px;
   border: 1px solid $white;
@@ -56,7 +63,7 @@
   text-align: center;
   font-size: 1.65rem;
   margin: 1rem 0 1.5rem;
-  color: $grey-900;
+  color: $primary;
   font-weight: 500;
   @include md {
     font-size: 1.8rem;
