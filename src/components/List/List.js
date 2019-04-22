@@ -78,8 +78,10 @@ class List extends Component {
         return [...taskIds].sort((a, b) => {
           const taskA = tasksById[a];
           const taskB = tasksById[b];
-          const dueDateA = taskA && taskA.dueDate ? taskA.dueDate.toMillis() : null;
-          const dueDateB = taskB && taskB.dueDate ? taskB.dueDate.toMillis() : null;
+          const dueDateA =
+            taskA && taskA.dueDate ? taskA.dueDate.toMillis() : null;
+          const dueDateB =
+            taskB && taskB.dueDate ? taskB.dueDate.toMillis() : null;
           if (!dueDateA && dueDateB) {
             return 1;
           }
@@ -134,7 +136,6 @@ class List extends Component {
                   value={name}
                   onChange={this.onChange}
                   required={!isRestricted}
-                  hideLabel
                   isReadOnly={isRestricted}
                   onBlur={this.onBlur}
                 />

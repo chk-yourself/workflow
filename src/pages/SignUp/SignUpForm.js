@@ -55,6 +55,7 @@ class SignUpForm extends Component {
       <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="email"
+          id="email"
           label="Email"
           value={email}
           onChange={this.onChange}
@@ -64,6 +65,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="password"
+          id="password"
           label="Password"
           value={password}
           onChange={this.onChange}
@@ -73,6 +75,7 @@ class SignUpForm extends Component {
         />
         <Input
           name="passwordConfirm"
+          id="passwordConfirm"
           label="Confirm Password"
           value={passwordConfirm}
           onChange={this.onChange}

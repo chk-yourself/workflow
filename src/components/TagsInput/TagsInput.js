@@ -294,7 +294,6 @@ class TagsInput extends Component {
             type="text"
             autoComplete="off"
             onKeyDown={this.onKeyDown}
-            hideLabel
           />
           {isActive && (
             <ul className="tags-input__list">
@@ -315,7 +314,9 @@ class TagsInput extends Component {
                   >
                     {!hasExactMatch && i === filteredList.length - 1 ? (
                       <>
-                        <span className="tags-input__item--heading">New Tag</span>
+                        <span className="tags-input__item--heading">
+                          New Tag
+                        </span>
                         <span className="tags-input__item--name">
                           {item.name}
                         </span>

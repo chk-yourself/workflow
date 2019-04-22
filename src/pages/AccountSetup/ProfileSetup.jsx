@@ -15,6 +15,7 @@ class ProfileSetup extends Component {
         <h2 className="account-setup__section-heading">Your profile</h2>
         <Input
           name="name"
+          id="name"
           label="Full name"
           value={name}
           onChange={onChange}
@@ -26,6 +27,7 @@ class ProfileSetup extends Component {
         />
         <Input
           name="username"
+          id="username"
           label="Username"
           value={username}
           onChange={onChange}
@@ -37,6 +39,7 @@ class ProfileSetup extends Component {
         />
         <Input
           name="email"
+          id="email"
           label="Email"
           value={email}
           type="email"
@@ -47,6 +50,7 @@ class ProfileSetup extends Component {
         />
         <Textarea
           name="about"
+          id="about"
           label="About Me (Optional)"
           value={about}
           onChange={onChange}

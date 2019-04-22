@@ -1,8 +1,8 @@
 import * as firebase from 'firebase/app';
+
 require('firebase/database');
 require('firebase/auth');
 require('firebase/firestore');
-
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -243,18 +243,14 @@ class Firebase {
 
   createWorkspaceSettings = ({ userId, workspaceId }, batch = null) => {
     if (batch) {
-      this.setBatch(
-        batch,
-        ['users', userId, 'workspaces', workspaceId],
-        {
-          folderIds: ['0', '1', '2', '3'],
-          projectIds: []
-        }
-      );
+      this.setBatch(batch, ['users', userId, 'workspaces', workspaceId], {
+        folderIds: ['0', '1', '2', '3'],
+        projectIds: []
+      });
     } else {
       this.getDocRef('users', userId, 'workspaces', workspaceId).set({
-          folderIds: ['0', '1', '2', '3'],
-          projectIds: []
+        folderIds: ['0', '1', '2', '3'],
+        projectIds: []
       });
     }
   };
@@ -276,7 +272,7 @@ class Firebase {
             projectIds: []
           }
         },
-        invites,
+        pendingInvites: invites,
         ownerId: userId,
         projectIds: []
       })
@@ -285,7 +281,7 @@ class Firebase {
         const batch = this.createBatch();
         // Create workspace settings
         this.createWorkspaceSettings({ userId, workspaceId }, batch);
-        
+
         // Create workspace folders
         this.createWorkspaceFolders({ userId, workspaceId }, batch, false);
 
@@ -326,7 +322,7 @@ class Firebase {
     // Update workspace
     this.updateBatch(batch, ['workspaces', workspaceId], {
       memberIds: this.addToArray(userId),
-      invites: this.removeFromArray(email),
+      pendingInvites: this.removeFromArray(email),
       [`members.${userId}`]: {
         userId,
         role: 'member',
@@ -367,81 +363,78 @@ class Firebase {
     });
 
     // Create workspace subdoc
-    this.createWorkspaceSettings(
-      { userId, workspaceId },
-      batch
-    );
+    this.createWorkspaceSettings({ userId, workspaceId }, batch);
 
     // Create workspace folders
-    this.createWorkspaceFolders(
-      { userId, workspaceId },
-      batch,
-      false
-    );
+    this.createWorkspaceFolders({ userId, workspaceId }, batch, false);
 
     // Update notification
     this.updateBatch(batch, ['notifications', notificationId], {
       isActionPending: false
     });
-    
-    return batch
-        .commit()
-        .then(() => {
-          console.log('Accepted workspace invite');
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  };
 
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Accepted workspace invite');
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   declineWorkspaceInvite = ({ user, workspace, from, notificationId }) => {
     const batch = this.createBatch();
-    const { userId, email } = user;
+    const { email } = user;
     const { id: workspaceId, name: workspaceName } = workspace;
-// Update workspace
-this.updateBatch(batch, ['workspaces', workspaceId], {
-  invites: this.removeFromArray(email)
-});
+    // Update workspace
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      pendingInvites: this.removeFromArray(email)
+    });
 
-// Send rsvp notification to inviter
-this.createNotification({
-  recipientId: from,
-  workspaceId,
-  source: {
-    user: { ...user },
-    type: 'workspace',
-    id: workspaceId,
-    data: {
-      name: workspaceName
-    },
-    parent: null
-  },
-  event: {
-    type: 'rsvp',
-    data: {
-      state: 'declined'
-    },
-    publishedAt: this.getTimestamp()
-  }
-});
-  
-// Update notification
-  this.updateBatch(batch, ['notifications', notificationId], {
-    isActionPending: false
-  });
+    // Send rsvp notification to inviter
+    this.createNotification({
+      recipientId: from,
+      workspaceId,
+      source: {
+        user: { ...user },
+        type: 'workspace',
+        id: workspaceId,
+        data: {
+          name: workspaceName
+        },
+        parent: null
+      },
+      event: {
+        type: 'rsvp',
+        data: {
+          state: 'declined'
+        },
+        publishedAt: this.getTimestamp()
+      }
+    });
 
-  return batch
-  .commit()
-  .then(() => {
-    console.log('Declined workspace invite');
-  })
-  .catch(error => {
-    console.log(error);
-  });
+    // Update notification
+    this.updateBatch(batch, ['notifications', notificationId], {
+      isActionPending: false
+    });
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Declined workspace invite');
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
-  updateWorkspaceName = async ({ workspaceId, name, memberIds, invites }) => {
+  updateWorkspaceName = async ({
+    workspaceId,
+    name,
+    memberIds,
+    pendingInvites
+  }) => {
     const batch = this.createBatch();
     this.updateBatch(batch, ['workspaces', workspaceId], {
       name
@@ -452,52 +445,54 @@ this.createNotification({
       });
     });
 
-    if (invites.length > 0) {
+    if (pendingInvites.length > 0) {
       const [inviteRefs, notificationRefs] = await Promise.all([
-        this.fs.collection('invites')
-            .where('type', '==', 'workspace')
-            .where('data.id', '==', workspaceId)
-            .get()
-            .then(snapshot => {
-              let invites = [];
-              snapshot.forEach(doc => {
-                invites = invites.concat(doc.ref);
-              });
-              return invites;
-            }),
-        this.fs.collection('notifications')
-            .where('event.type', '==', 'invite')
-            .where('source.type', '==', 'workspace')
-            .where('source.id', '==', workspaceId)
-            .get()
-            .then(snapshot => {
-              let notifications = [];
-                  snapshot.forEach(doc => {
-                    notifications = [...notifications, doc.ref];
-                  });
-                  return notifications;
-                })
-              ]);
-          inviteRefs.forEach(ref => {
-            this.updateBatch(batch, ref, {
-              'data.name': name
+        this.fs
+          .collection('invites')
+          .where('type', '==', 'workspace')
+          .where('data.id', '==', workspaceId)
+          .get()
+          .then(snapshot => {
+            let invites = [];
+            snapshot.forEach(doc => {
+              invites = invites.concat(doc.ref);
             });
-          });
-          notificationRefs.forEach(ref => {
-            this.updateBatch(batch, ref, {
-              'source.data.name': name
+            return invites;
+          }),
+        this.fs
+          .collection('notifications')
+          .where('event.type', '==', 'invite')
+          .where('source.type', '==', 'workspace')
+          .where('source.id', '==', workspaceId)
+          .get()
+          .then(snapshot => {
+            let notifications = [];
+            snapshot.forEach(doc => {
+              notifications = [...notifications, doc.ref];
             });
+            return notifications;
+          })
+      ]);
+      inviteRefs.forEach(ref => {
+        this.updateBatch(batch, ref, {
+          'data.name': name
+        });
+      });
+      notificationRefs.forEach(ref => {
+        this.updateBatch(batch, ref, {
+          'source.data.name': name
+        });
       });
     }
 
-      return batch
-        .commit()
-        .then(() => {
-          console.log('Updated workspace name');
-        })
-        .catch(error => {
-          console.log(error);
-        });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Updated workspace name');
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   // User API
@@ -550,7 +545,7 @@ this.createNotification({
           workspaceIds = workspaceIds.concat(workspaceId);
           this.updateBatch(batch, ['workspaces', workspaceId], {
             memberIds: this.addToArray(userId),
-            invites: this.removeFromArray(email),
+            pendingInvites: this.removeFromArray(email),
             [`members.${userId}`]: {
               userId,
               role: 'member',
@@ -560,7 +555,7 @@ this.createNotification({
           });
         } else {
           this.updateBatch(batch, ['workspaces', workspaceId], {
-            invites: this.removeFromArray(email)
+            pendingInvites: this.removeFromArray(email)
           });
         }
       });
@@ -589,7 +584,7 @@ this.createNotification({
               projectIds: []
             }
           },
-          invites: workspace.invites,
+          pendingInvites: workspace.invites,
           ownerId: userId,
           projectIds: []
         })
@@ -659,7 +654,7 @@ this.createNotification({
                 publishedAt: this.getTimestamp()
               }
             });
-          })
+          });
         } else {
           this.fs.collection('invites').add({
             to: email,
@@ -784,15 +779,8 @@ this.createNotification({
     });
 
     workspaceIds.forEach(workspaceId => {
-      this.createWorkspaceSettings(
-        { userId, workspaceId },
-        batch
-      );
-      this.createWorkspaceFolders(
-        { userId, workspaceId },
-        batch,
-        false
-      );
+      this.createWorkspaceSettings({ userId, workspaceId }, batch);
+      this.createWorkspaceFolders({ userId, workspaceId }, batch, false);
     });
 
     return batch
@@ -1021,16 +1009,27 @@ this.createNotification({
         const batch = this.createBatch();
         const { id: projectId } = ref;
         memberIds.forEach(memberId => {
-          this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
-            projectIds: this.addToArray(projectId)
-          });
+          this.updateBatch(
+            batch,
+            ['users', memberId, 'workspaces', workspaceId],
+            {
+              projectIds: this.addToArray(projectId)
+            }
+          );
           this.updateBatch(batch, ['workspaces', workspaceId], {
             projectIds: this.addToArray(projectId),
             [`members.${userId}.projectIds`]: this.addToArray(projectId)
           });
           this.setBatch(
             batch,
-            ['users', memberId, 'workspaces', workspaceId, 'folders', projectId],
+            [
+              'users',
+              memberId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              projectId
+            ],
             {
               name,
               taskIds: []
@@ -1255,13 +1254,13 @@ this.createNotification({
           );
         }
         return batch
-            .commit()
-            .then(() => {
-              console.log('Added task');
-            })
-            .catch(error => {
-              console.error(error);
-            });
+          .commit()
+          .then(() => {
+            console.log('Added task');
+          })
+          .catch(error => {
+            console.error(error);
+          });
       });
   };
 
@@ -1812,7 +1811,7 @@ this.createNotification({
         workspaceId,
         lastUpdatedAt: null,
         isPinned: false,
-        likes: {},
+        likes: {}
       })
       .then(ref => {
         if (taskId) {
@@ -1851,18 +1850,22 @@ this.createNotification({
    * @param {Object} event - info about event itself {type: mention, update, or reminder, publishedAt, data }
    */
 
-  createNotification = ({ recipientId, workspaceId, source, event, isActionPending = false }) => {
-    return this.fs
-      .collection('notifications')
-      .add({
-        recipientId,
-        workspaceId,
-        source,
-        event,
-        isActionPending,
-        createdAt: this.getTimestamp(),
-        isActive: true
-      });
+  createNotification = ({
+    recipientId,
+    workspaceId,
+    source,
+    event,
+    isActionPending = false
+  }) => {
+    return this.fs.collection('notifications').add({
+      recipientId,
+      workspaceId,
+      source,
+      event,
+      isActionPending,
+      createdAt: this.getTimestamp(),
+      isActive: true
+    });
   };
 }
 

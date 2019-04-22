@@ -153,6 +153,7 @@ class ProjectComposer extends Component {
         <form className="project-composer__form" onSubmit={this.onSubmit}>
           <Input
             name="name"
+            id="projectName"
             label="Project Name"
             labelClass="project-composer__label"
             value={name}
@@ -245,6 +246,7 @@ class ProjectComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(ProjectComposer);

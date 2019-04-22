@@ -51,6 +51,7 @@ class WorkspaceComposer extends Component {
         <form className="workspace-composer__form" onSubmit={this.onSubmit}>
           <Input
             name="name"
+            id="workspaceName"
             label="Workspace name"
             value={name}
             onChange={this.onChange}
@@ -72,7 +73,6 @@ class WorkspaceComposer extends Component {
               className="workspace-composer__input workspace-composer__input--teammate-email"
               form="workspace"
               placeholder="Teammate's email"
-              hideLabel
               data-index={i}
               data-section="workspace"
             />

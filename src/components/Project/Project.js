@@ -125,9 +125,8 @@ class Project extends Component {
               type="text"
               value={name}
               onChange={this.onNameChange}
-              required
-              hideLabel
               onBlur={this.onNameBlur}
+              isRequired
             />
             <DropdownMenu
               classes={{

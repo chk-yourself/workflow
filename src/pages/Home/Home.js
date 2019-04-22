@@ -15,6 +15,7 @@ import { Dashboard } from '../../components/Dashboard';
 import { UserTasks } from '../../components/UserTasks';
 import { SearchResults, TagSearchResults } from '../../components/Search';
 import { Profile } from '../Profile';
+import { EditProfile } from '../EditProfile';
 import { AccountPage } from '../Account';
 import { getParams } from '../../utils/string';
 import './Home.scss';
@@ -131,9 +132,15 @@ class HomePage extends Component {
             render={props => <UserTasks userId={userId} {...props} />}
           />
           <Route
-            path={ROUTES.USER_PROFILE}
+            path={ROUTES.PROFILE}
             render={props => (
               <Profile userId={props.match.params.id} {...props} />
+            )}
+          />
+          <Route
+            path={ROUTES.EDIT_PROFILE}
+            render={props => (
+              <EditProfile userId={props.match.params.id} {...props} />
             )}
           />
           <Route

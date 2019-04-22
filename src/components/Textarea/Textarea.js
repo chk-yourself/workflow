@@ -7,13 +7,19 @@ export default class Textarea extends Component {
     className: '',
     label: '',
     labelClass: '',
-    id: '',
+    id: null,
     isAutoHeightResizeEnabled: true,
     minHeight: 0,
     tabIndex: 0,
+    onFocus: () => null,
+    onBlur: () => null,
     onMouseDown: () => null,
     onMouseUp: () => null,
     onMouseMove: () => null
+  };
+
+  state = {
+    isFocused: false
   };
 
   componentDidMount() {
@@ -36,6 +42,22 @@ export default class Textarea extends Component {
     }
   };
 
+  onFocus = e => {
+    const { onFocus } = this.props;
+    this.setState({
+      isFocused: true
+    });
+    onFocus(e);
+  };
+
+  onBlur = e => {
+    const { onBlur } = this.props;
+    this.setState({
+      isFocused: false
+    });
+    onBlur(e);
+  };
+
   autoHeightResize = () => {
     const { isAutoHeightResizeEnabled, minHeight } = this.props;
     if (!isAutoHeightResizeEnabled) return;
@@ -51,9 +73,9 @@ export default class Textarea extends Component {
       onChange,
       placeholder,
       isRequired,
-      onBlur,
-      onFocus,
       onKeyDown,
+      onFocus,
+      onBlur,
       onDragStart,
       isReadOnly,
       onMouseDown,
@@ -69,9 +91,18 @@ export default class Textarea extends Component {
       ...rest
     } = this.props;
 
+    const { isFocused } = this.state;
+
     return (
       <>
-        {label !== '' && <label className={labelClass} htmlFor={id}>{label}</label>}
+        {label !== '' && (
+          <label
+            className={`${labelClass} ${isFocused ? 'is-focused' : ''}`}
+            htmlFor={id}
+          >
+            {label}
+          </label>
+        )}
         <textarea
           id={id}
           className={`textarea ${className}`}
@@ -80,10 +111,10 @@ export default class Textarea extends Component {
           onChange={onChange}
           placeholder={placeholder}
           required={isRequired}
-          onBlur={onBlur}
+          onBlur={this.onBlur}
           onInput={this.autoHeightResize}
           ref={this.ref}
-          onFocus={onFocus}
+          onFocus={this.onFocus}
           onKeyDown={onKeyDown}
           onDragStart={onDragStart}
           readOnly={isReadOnly}

@@ -1,0 +1,160 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.header + main.edit-profile {
+  position: fixed;
+  top: 40px;
+  height: auto;
+  min-height: 0;
+  margin: 8px auto;
+  @include sm {
+    margin: 16px auto;
+  }
+  @include xx {
+    left: calc(50% + 48px);
+  }
+}
+
+.header.expand-nav + main.edit-profile {
+  @include md {
+    left: calc(50% + 100px);
+  }
+}
+
+.edit-profile {
+  background-color: $white;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  width: calc(100% - 16px);
+  max-width: 368px;
+  max-height: calc(100vh - 56px);
+  overflow: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 40px 16px;
+  border-radius: 4px;
+  @include sm {
+    max-height: calc(100vh - 72px);
+  }
+  @include md {
+    padding: 40px 24px;
+  }
+  @include lg {
+    max-width: 380px;
+  }
+  @include xl {
+    max-width: 400px;
+  }
+}
+
+.edit-profile__heading {
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 24px auto 16px;
+  text-align: center;
+  @include md {
+    font-size: 1.6rem;
+  }
+}
+
+.edit-profile__username {
+  color: $grey-700;
+  text-align: center;
+}
+
+.edit-profile__link {
+  text-decoration: none;
+  color: $grey-700;
+  &:hover {
+    color: $primary;
+  }
+}
+
+.edit-profile__control-group {
+  color: $grey-700;
+  font-size: 14px;
+  position: relative;
+  &:not(first-child) {
+    margin-top: 24px;
+  }
+}
+
+.edit-profile__contact {
+  margin-top: 24px;
+}
+
+.edit-profile__avatar {
+  width: 96px;
+  height: 96px;
+  line-height: 96px;
+  font-size: 26px;
+}
+
+.edit-profile__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+}
+
+.edit-profile__btn--save {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border-width: 2px;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.edit-profile__input,
+.edit-profile__textarea {
+  height: 42px;
+  border: 1px solid $grey-500;
+  width: 100%;
+  &::placeholder {
+    font-size: 14px;
+  }
+  &--teammate-email:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.edit-profile__textarea {
+  min-height: 120px;
+}
+
+.edit-profile__label {
+  font-size: 14px;
+  color: $grey-700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  &.is-focused {
+    color: $primary;
+  }
+}
+
+.edit-profile__subheading {
+  font-size: 14px;
+  color: $grey-700;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+}
+
+.edit-profile__label--contact {
+  position: absolute;
+  left: 8px;
+  top: -6px;
+  background-color: $white;
+  padding: 0 4px;
+  font-size: 12px;
+  color: $grey-700;
+  &.is-focused {
+    color: $primary;
+  }
+}
+
+.edit-profile__section {
+  width: 100%;
+  margin: 24px 0;
+}

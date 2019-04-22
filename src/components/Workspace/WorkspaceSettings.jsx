@@ -10,7 +10,7 @@ import './WorkspaceSettings.scss';
 class WorkspaceSettings extends Component {
   state = {
     name: this.props.activeWorkspace.name,
-    invite: ''
+    newInvite: ''
   };
 
   onChange = e => {
@@ -22,25 +22,34 @@ class WorkspaceSettings extends Component {
 
   resetInvite = () => {
     this.setState({
-      invite: ''
+      newInvite: ''
     });
   };
 
   updateWorkspaceName = e => {
     e.preventDefault();
-    const { firebase, currentUser, activeWorkspace } = this.props;
+    const { firebase, activeWorkspace } = this.props;
     const { name } = this.state;
-    const { workspaceId, name: prevName, memberIds, invites } = activeWorkspace;
+    const {
+      workspaceId,
+      name: prevName,
+      memberIds,
+      pendingInvites
+    } = activeWorkspace;
     if (prevName === name) return;
     const { updateWorkspaceName } = firebase;
-    updateWorkspaceName({ workspaceId, name, memberIds, invites });
+    updateWorkspaceName({ workspaceId, name, memberIds, pendingInvites });
   };
 
   inviteMember = e => {
     e.preventDefault();
-    const { invite } = this.state;
+    const { newInvite } = this.state;
     const { firebase, currentUser, activeWorkspace } = this.props;
-    const { workspaceId, name: workspaceName, invites: pendingInvites } = activeWorkspace;
+    const {
+      workspaceId,
+      name: workspaceName,
+      pendingInvites
+    } = activeWorkspace;
     const { createWorkspaceInvite, updateDoc, addToArray } = firebase;
     const from = {
       userId: currentUser.userId,
@@ -48,19 +57,24 @@ class WorkspaceSettings extends Component {
       name: currentUser.name
     };
     this.resetInvite();
-    if (pendingInvites.includes(invite)) return;
+    if (pendingInvites.includes(newInvite)) return;
     updateDoc(['workspaces', workspaceId], {
-      invites: addToArray(invite)
+      pendingInvites: addToArray(newInvite)
     });
-    createWorkspaceInvite({ email: invite, workspaceId, workspaceName, from });
+    createWorkspaceInvite({
+      email: newInvite,
+      workspaceId,
+      workspaceName,
+      from
+    });
   };
 
   render() {
-    const { name, invite } = this.state;
+    const { name, newInvite } = this.state;
     const { onClose, activeWorkspace } = this.props;
-    const { invites } = activeWorkspace;
+    const { pendingInvites } = activeWorkspace;
     const isNameInvalid = name === '';
-    const isInviteInvalid = invite === '';
+    const isInviteInvalid = newInvite === '';
     return (
       <Modal
         onModalClose={onClose}
@@ -82,6 +96,7 @@ class WorkspaceSettings extends Component {
                 <form id="workspaceName" onSubmit={this.updateName}>
                   <Input
                     name="name"
+                    id="workspaceEditName"
                     label="Workspace name"
                     value={name}
                     onChange={this.onChange}
@@ -90,6 +105,7 @@ class WorkspaceSettings extends Component {
                     labelClass="workspace-settings__label"
                     data-section="workspace"
                     form="workspaceName"
+                    isRequired
                   />
                   <Button
                     disabled={isNameInvalid}
@@ -120,47 +136,51 @@ class WorkspaceSettings extends Component {
                       detail: 'workspace-settings__member-detail'
                     }}
                   />
-                  {invites.length > 0 && (
+                  {pendingInvites.length > 0 && (
                     <>
-                  <h4 className="workspace-settings__sub-subheading">
-                    Pending Invites
-                  </h4>
-                  <ul className="workspace-settings__pending-invites">
-                  {invites.map(invite => (
-                    <li key={invite} className="workspace-settings__pending-invite">
-                    {invite}
-                    </li>
-                  ))}
-                  </ul>
-                  </>
+                      <h4 className="workspace-settings__sub-subheading">
+                        Pending Invites
+                      </h4>
+                      <ul className="workspace-settings__pending-invites">
+                        {pendingInvites.map(email => (
+                          <li
+                            key={email}
+                            className="workspace-settings__pending-invite"
+                          >
+                            {email}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
                   )}
                   <h4 className="workspace-settings__sub-subheading">
                     Invite more members
                   </h4>
                   <form id="workspaceInvite">
-                  <Input
-                    name="invite"
-                    value={invite}
-                    onChange={this.onChange}
-                    type="email"
-                    className="workspace-settings__input workspace-settings__input--teammate-email"
-                    placeholder="Teammate's email"
-                    label="Email"
-                    labelClass="workspace-settings__label"
-                    form="workspaceInvite"
-                  />
-                  <Button
-                    disabled={isInviteInvalid}
-                    type="submit"
-                    className="workspace-settings__btn"
-                    variant="contained"
-                    color="primary"
-                    onClick={this.inviteMember}
-                    form="workspaceInvite"
-                  >
-                    Invite
-                  </Button>
-                </form>
+                    <Input
+                      name="newInvite"
+                      id="newWorkspaceInvite"
+                      value={newInvite}
+                      onChange={this.onChange}
+                      type="email"
+                      className="workspace-settings__input workspace-settings__input--teammate-email"
+                      placeholder="Teammate's email"
+                      label="Email"
+                      labelClass="workspace-settings__label"
+                      form="workspaceInvite"
+                    />
+                    <Button
+                      disabled={isInviteInvalid}
+                      type="submit"
+                      className="workspace-settings__btn"
+                      variant="contained"
+                      color="primary"
+                      onClick={this.inviteMember}
+                      form="workspaceInvite"
+                    >
+                      Invite
+                    </Button>
+                  </form>
                 </>
               )
             }
@@ -171,5 +191,6 @@ class WorkspaceSettings extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 export default withAuthorization(condition)(WorkspaceSettings);

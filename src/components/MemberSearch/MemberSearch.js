@@ -196,7 +196,6 @@ class MemberSearch extends Component {
           onBlur={this.onBlur}
           type={type}
           autoComplete="off"
-          hideLabel
           placeholder={placeholder}
           onKeyDown={this.onKeyDown}
           innerRef={el => (this.inputEl = el)}

@@ -21,7 +21,7 @@ class ListComposer extends Component {
     const { toggle } = this.props;
     this.input.blur();
     toggle();
-  }
+  };
 
   onSubmit = e => {
     e.preventDefault();
@@ -66,25 +66,30 @@ class ListComposer extends Component {
     const { layout, isActive } = this.props;
     return (
       <div
-        className={`list-composer${isActive ? ' is-active' : ''} is-${layout}-layout`}
+        className={`list-composer${
+          isActive ? ' is-active' : ''
+        } is-${layout}-layout`}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
       >
         <form className="list-composer__form" onSubmit={this.onSubmit}>
-        {!isActive && layout === "list" && (
-        <Button onClick={this.onFocus} color="primary" className="list-composer__btn--icon" iconOnly>
-          <Icon name="plus-circle" />
-        </Button>
-        )
-        }
+          {!isActive && layout === 'list' && (
+            <Button
+              onClick={this.onFocus}
+              color="primary"
+              className="list-composer__btn--icon"
+              iconOnly
+            >
+              <Icon name="plus-circle" />
+            </Button>
+          )}
           <Input
             innerRef={this.inputRef}
             onChange={this.onChange}
             value={name}
             placeholder={isActive ? 'Enter list name...' : 'Add a list'}
-            required
+            isRequired
             name="name"
-            hideLabel
             className="list-composer__input"
           />
           {isActive && (
@@ -100,16 +105,16 @@ class ListComposer extends Component {
               >
                 Add List
               </Button>
-              {layout === "board" &&
-              <Button
-                className="list-composer__btn list-composer__btn--close"
-                type="reset"
-                onClick={this.reset}
-                size="sm"
-              >
-                Cancel
-              </Button>
-              }
+              {layout === 'board' && (
+                <Button
+                  className="list-composer__btn list-composer__btn--close"
+                  type="reset"
+                  onClick={this.reset}
+                  size="sm"
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
           )}
         </form>
@@ -118,7 +123,8 @@ class ListComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 const mapStateToProps = state => {
   return {

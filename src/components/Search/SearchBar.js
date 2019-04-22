@@ -5,7 +5,6 @@ import { Icon } from '../Icon';
 import './SearchBar.scss';
 
 export default class SearchBar extends Component {
-
   componentDidUpdate(prevProps) {
     const { isExpanded } = this.props;
     if (isExpanded && !prevProps.isExpanded) {
@@ -33,9 +32,7 @@ export default class SearchBar extends Component {
       onFocus
     } = this.props;
     return (
-      <div
-        className={`search-bar${isExpanded ? ' is-expanded' : ''} clearfix`}
-      >
+      <div className={`search-bar${isExpanded ? ' is-expanded' : ''} clearfix`}>
         <form className="search-form" onClick={onClick} onSubmit={onSubmit}>
           <Input
             onFocus={onFocus}
@@ -45,16 +42,10 @@ export default class SearchBar extends Component {
             className="search-form__input"
             type="text"
             innerRef={this.inputRef}
-            hideLabel
             onChange={onChange}
             onKeyDown={onKeyDown}
           />
-          <Input
-            name="submit"
-            className="search-form__submit"
-            type="submit"
-            hideLabel
-          />
+          <Input name="submit" className="search-form__submit" type="submit" />
           <Button
             type="button"
             className="search-form__btn"

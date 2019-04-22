@@ -80,6 +80,7 @@ class LoginForm extends Component {
         </Button>
         <Input
           name="email"
+          id="email"
           label="Email"
           value={email}
           onChange={this.onChange}
@@ -89,6 +90,7 @@ class LoginForm extends Component {
         />
         <Input
           name="password"
+          id="password"
           label="Password"
           value={password}
           onChange={this.onChange}

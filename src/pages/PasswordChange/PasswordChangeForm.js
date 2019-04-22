@@ -43,6 +43,7 @@ class PasswordChangeForm extends Component {
       <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="passwordOne"
+          id="passwordOne"
           label="New Password"
           value={passwordOne}
           onChange={this.onChange}
@@ -52,6 +53,7 @@ class PasswordChangeForm extends Component {
         />
         <Input
           name="passwordTwo"
+          id="passwordTwo"
           label="Confirm New Password"
           value={passwordTwo}
           onChange={this.onChange}

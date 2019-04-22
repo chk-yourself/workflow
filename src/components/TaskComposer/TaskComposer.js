@@ -24,7 +24,7 @@ class TaskComposer extends Component {
 
   onSubmit = e => {
     const { name } = this.state;
-    if (e.type === 'keydown' && e.key !== keys.ENTER || !name) return;
+    if ((e.type === 'keydown' && e.key !== keys.ENTER) || !name) return;
     const {
       currentUser,
       activeWorkspace,
@@ -75,6 +75,7 @@ class TaskComposer extends Component {
 
   render() {
     const { name, isActive } = this.state;
+    const { listId, folderId } = this.props;
 
     return (
       <div
@@ -95,11 +96,10 @@ class TaskComposer extends Component {
             onChange={this.onChange}
             value={name}
             placeholder="Add a task"
-            isRequired
             name="name"
             className="task-composer__input"
             onKeyDown={this.onSubmit}
-            hideLabel
+            isRequired
           />
         </form>
       </div>
@@ -107,6 +107,7 @@ class TaskComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(TaskComposer);

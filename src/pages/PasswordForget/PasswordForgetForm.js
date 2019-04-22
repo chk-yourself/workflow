@@ -42,6 +42,7 @@ class PasswordForgetForm extends Component {
       <form onSubmit={this.onSubmit} className="user-form">
         <Input
           name="email"
+          id="email"
           label="Email"
           value={email}
           onChange={this.onChange}

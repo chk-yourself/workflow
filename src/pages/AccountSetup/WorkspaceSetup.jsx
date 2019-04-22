@@ -3,9 +3,12 @@ import { Input } from '../../components/Input';
 
 const WorkspaceSetup = ({ name, invites, isOptional, onChange }) => (
   <section className="account-setup__section">
-    <h2 className="account-setup__section-heading">{`Your workspace ${isOptional ? '(Optional)' : ''}`}</h2>
+    <h2 className="account-setup__section-heading">{`Your workspace ${
+      isOptional ? '(Optional)' : ''
+    }`}</h2>
     <Input
       name="name"
+      id="workspaceName"
       label="Workspace name"
       value={name}
       onChange={onChange}
@@ -14,9 +17,7 @@ const WorkspaceSetup = ({ name, invites, isOptional, onChange }) => (
       labelClass="account-setup__label"
       data-section="workspace"
     />
-    <h3 className="account-setup__section-subheading">
-      Your team (optional)
-    </h3>
+    <h3 className="account-setup__section-subheading">Your team (optional)</h3>
     {invites.map((email, i) => (
       <Input
         key={i}
@@ -27,7 +28,6 @@ const WorkspaceSetup = ({ name, invites, isOptional, onChange }) => (
         className="account-setup__input account-setup__input--teammate-email"
         form="workspace"
         placeholder="Teammate's email"
-        hideLabel
         data-index={i}
         data-section="workspace"
       />
