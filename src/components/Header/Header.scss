@@ -39,6 +39,11 @@
       display: inline-block;
       margin-left: 1rem;
     }
+    .sidebar__btn {
+      .feather-chevron-left {
+        display: inline;
+      }
+    }
     .sidebar__btn--toggle {
       top: 2px;
       right: 24px;

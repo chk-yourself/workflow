@@ -49,11 +49,22 @@
   width: 100%;
   font-size: 14px;
   letter-spacing: 0.02em;
+  &:hover:not(.active) {
+    color: $primary;
+  }
   &.active {
     color: $white;
     background-color: $primary;
     .sidebar__icon {
       color: $white;
+    }
+  }
+}
+
+.sidebar__btn--workspace-settings {
+  &.is-active {
+    .feather {
+      color: $primary;
     }
   }
 }
@@ -131,7 +142,9 @@
 .sidebar__btn {
   position: relative;
   border-bottom: 1px solid $grey-300;
+  border-radius: 0;
   .feather-chevron-left {
+    display: none;
     transition: all 0.2s ease-in-out;
     position: absolute;
     right: 8px;
@@ -146,4 +159,10 @@
 
 .sidebar__member {
   padding: 12px 0 12px 12px;
+  .members__name {
+    margin-left: 12px;
+  }
+  &:last-child {
+    border-bottom: none;
+  }
 }

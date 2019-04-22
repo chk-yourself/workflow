@@ -42,7 +42,7 @@ class Dashboard extends Component {
       >
         <TasksDueSoon />
         <Notifications onTaskClick={this.handleTaskClick} />
-        <DashboardPanel className="projects" name="Projects" icon="grid">
+        <DashboardPanel className="projects" name="My Projects" icon="grid">
           <ProjectGrid
             className="dashboard__project-grid"
             openProjectComposer={toggleProjectComposer}

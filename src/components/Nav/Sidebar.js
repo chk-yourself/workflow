@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
 import { Logo } from '../Logo';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
+import { withAuthorization } from '../Session';
 import { Members } from '../Members';
 import './Sidebar.scss';
 
@@ -30,7 +32,15 @@ class Sidebar extends Component {
 
   render() {
     const { isMembersListVisible } = this.state;
-    const { onToggle, children, innerRef } = this.props;
+    const {
+      onToggle,
+      children,
+      activeWorkspace,
+      openWorkspaceSettings,
+      isWorkspaceSettingsActive,
+      innerRef
+    } = this.props;
+    const { name: workspaceName } = activeWorkspace;
     return (
       <div ref={innerRef} className="sidebar__canvas">
         <Button
@@ -47,8 +57,18 @@ class Sidebar extends Component {
             <div className="sidebar__logo">
               <Logo size="sm" />
             </div>
-            <ul className="sidebar__list">
-              {children}
+            <ul className="sidebar__list">{children}</ul>
+            <Button
+              isActive={isWorkspaceSettingsActive}
+              className="sidebar__btn sidebar__btn--workspace-settings"
+              onClick={openWorkspaceSettings}
+            >
+              <Icon className="sidebar__icon" name="settings" />
+              <span className="sidebar__section-name sidebar__workspace-name">
+                {workspaceName}
+              </span>
+            </Button>
+            <ul className="sidebar__list sidebar__workspace-links">
               <li className="sidebar__item sidebar__item--team">
                 <Button
                   isActive={isMembersListVisible}
@@ -77,4 +97,10 @@ class Sidebar extends Component {
   }
 }
 
-export default withOutsideClick(Sidebar);
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
+
+export default compose(
+  withAuthorization(condition),
+  withOutsideClick
+)(Sidebar);

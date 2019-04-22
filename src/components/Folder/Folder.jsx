@@ -31,7 +31,11 @@ class Folder extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    if (state.prevProps.taskIds.length === 0 && props.taskIds.length > 0 && !state.isExpanded) {
+    if (
+      state.prevProps.taskIds.length === 0 &&
+      props.taskIds.length > 0 &&
+      !state.isExpanded
+    ) {
       return {
         isExpanded: true,
         prevProps: {
@@ -97,8 +101,7 @@ class Folder extends Component {
                       type="text"
                       value={name}
                       onChange={this.onChange}
-                      required={userPermissions.enableNameChange}
-                      hideLabel
+                      isRequired={userPermissions.enableNameChange}
                       isReadOnly={!userPermissions.enableNameChange}
                       onBlur={this.onBlur}
                       onClick={this.toggleFolder}
@@ -134,7 +137,11 @@ class Folder extends Component {
                   projectId={projectId}
                   dueDate={dueDate}
                   isDragDisabled={!userPermissions.enableDragNDrop}
-                  dropType={!userPermissions.enableTaskAdd ? (projectId || folderId || dueDate) : droppableTypes.TASK }
+                  dropType={
+                    !userPermissions.enableTaskAdd
+                      ? projectId || folderId || dueDate
+                      : droppableTypes.TASK
+                  }
                   layout="list"
                 />
               </div>

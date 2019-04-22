@@ -113,7 +113,7 @@ class HomePage extends Component {
             path={ROUTES.USER_PROJECTS}
             render={props => (
               <Main
-                title="Projects"
+                title="My Projects"
                 classes={{
                   main: 'project-grid__container',
                   title: 'project-grid__header'

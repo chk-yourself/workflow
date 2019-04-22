@@ -7,20 +7,14 @@ import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
 import { SignOutButton } from '../SignOutButton';
 import { SearchTypeahead } from '../Search';
-import {
-  WorkspaceSelect,
-  WorkspaceComposer,
-  WorkspaceSettings
-} from '../Workspace';
+import { WorkspaceSelect } from '../Workspace';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import './Topbar.scss';
 
 class Topbar extends Component {
   state = {
-    isUserActionsVisible: false,
-    isWorkspaceComposerActive: false,
-    isWorkspaceSettingsActive: false
+    isUserActionsVisible: false
   };
 
   toggleUserActions = () => {
@@ -35,37 +29,13 @@ class Topbar extends Component {
     });
   };
 
-  toggleWorkspaceComposer = () => {
-    this.setState(prevState => ({
-      isWorkspaceComposerActive: !prevState.isWorkspaceComposerActive
-    }));
-  };
-
-  closeWorkspaceComposer = () => {
-    this.setState({
-      isWorkspaceComposerActive: false
-    });
-  };
-
-  toggleWorkspaceSettings = () => {
-    this.setState(prevState => ({
-      isWorkspaceSettingsActive: !prevState.isWorkspaceSettingsActive
-    }));
-  };
-
-  closeWorkspaceSettings = () => {
-    this.setState({
-      isWorkspaceSettingsActive: false
-    });
-  };
-
   render() {
-    const { currentUser } = this.props;
     const {
-      isUserActionsVisible,
-      isWorkspaceComposerActive,
-      isWorkspaceSettingsActive
-    } = this.state;
+      currentUser,
+      openWorkspaceComposer,
+      openWorkspaceSettings
+    } = this.props;
+    const { isUserActionsVisible } = this.state;
     return (
       <>
         <div className="topbar">
@@ -103,7 +73,7 @@ class Topbar extends Component {
                 <MenuItem>
                   <Button
                     className="topbar__link"
-                    onClick={this.toggleWorkspaceComposer}
+                    onClick={openWorkspaceComposer}
                   >
                     <Icon name="plus" />
                     Create Workspace
@@ -112,7 +82,7 @@ class Topbar extends Component {
                 <MenuItem>
                   <Button
                     className="topbar__link"
-                    onClick={this.toggleWorkspaceSettings}
+                    onClick={openWorkspaceSettings}
                   >
                     Workspace Settings
                   </Button>
@@ -140,18 +110,12 @@ class Topbar extends Component {
             </PopoverWrapper>
           )}
         </div>
-        {isWorkspaceComposerActive && (
-          <WorkspaceComposer onClose={this.closeWorkspaceComposer} />
-        )}
-        {isWorkspaceSettingsActive && (
-          <WorkspaceSettings onClose={this.closeWorkspaceSettings} />
-        )}
       </>
     );
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
     currentUser: currentUserSelectors.getCurrentUser(state)
   };
