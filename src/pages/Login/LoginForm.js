@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withFirebase } from '../../components/Firebase';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
-import { PasswordForgetLink } from '../PasswordForget';
+import { ForgotPasswordLink } from '../ForgotPassword';
 import { ErrorMessage } from '../../components/Error';
 
 const INITIAL_STATE = {
@@ -98,7 +98,7 @@ class LoginForm extends Component {
           className="user-form__input"
           labelClass="user-form__label"
         />
-        <PasswordForgetLink />
+        <ForgotPasswordLink />
         <Button
           disabled={isInvalid}
           type="submit"

@@ -3,17 +3,16 @@ import { withFirebase } from '../../components/Firebase';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { ErrorMessage } from '../../components/Error';
+import { SuccessMessage } from '../../components/Success';
 
 const INITIAL_STATE = {
   email: '',
-  error: null
+  error: null,
+  success: null
 };
 
-class PasswordForgetForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+class ForgotPasswordForm extends Component {
+  state = { ...INITIAL_STATE };
 
   onSubmit = e => {
     const { email } = this.state;
@@ -22,7 +21,13 @@ class PasswordForgetForm extends Component {
     firebase
       .sendPasswordResetEmail(email)
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
+        this.setState({
+          ...INITIAL_STATE,
+          success: {
+            message:
+              'Recovery email sent! Follow the instructions in the email to reset your password.'
+          }
+        });
       })
       .catch(error => {
         this.setState({ error });
@@ -37,7 +42,7 @@ class PasswordForgetForm extends Component {
   };
 
   render() {
-    const { email, error } = this.state;
+    const { email, error, success } = this.state;
     const isInvalid = email === '';
 
     return (
@@ -59,14 +64,15 @@ class PasswordForgetForm extends Component {
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
-          className="pw-forget__btn"
+          className="forgot-password__btn"
         >
           Reset Password
         </Button>
         {error && <ErrorMessage text={error.message} />}
+        {success && <SuccessMessage text={success.message} />}
       </form>
     );
   }
 }
 
-export default withFirebase(PasswordForgetForm);
+export default withFirebase(ForgotPasswordForm);

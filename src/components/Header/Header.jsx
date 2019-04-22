@@ -63,11 +63,11 @@ class Header extends Component {
     } = this.props;
     const isLoginPage = location.pathname === '/login';
     const isSignUpPage = location.pathname === '/signup';
-    const isPwForgetPage = location.pathname === '/pw-forget';
+    const isForgotPasswordPage = location.pathname === '/forgot-password';
     return (
       <header
         className={`header ${isLoginPage ? 'header--login' : ''} ${
-          (isSignUpPage || isPwForgetPage) ? 'header--dk' : ''
+          isSignUpPage || isForgotPasswordPage ? 'header--dk' : ''
         } ${isNavExpanded ? 'expand-nav' : ''}`}
       >
         {currentUser && activeWorkspace ? (

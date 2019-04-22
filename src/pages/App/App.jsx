@@ -5,7 +5,7 @@ import * as ROUTES from '../../constants/routes';
 import { LandingPage } from '../Landing';
 import { SignUpPage } from '../SignUp';
 import { LoginPage } from '../Login';
-import { PasswordForgetPage } from '../PasswordForget';
+import { ForgotPasswordPage } from '../ForgotPassword';
 import { HomePage } from '../Home';
 import { AdminPage } from '../Admin';
 import { withAuthentication } from '../../components/Session';
@@ -19,17 +19,18 @@ const App = ({ firebase, currentUser }) => (
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-      <Route path={ROUTES.SET_UP} render={props => {
-        return (firebase.currentUser ? <AccountSetup /> : null
-      )}} />
+      <Route
+        path={ROUTES.SET_UP}
+        render={props => {
+          return firebase.currentUser ? <AccountSetup /> : null;
+        }}
+      />
       <Route path={ROUTES.LOG_IN} component={LoginPage} />
-      <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
+      <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
       <Route
         path={ROUTES.BASE}
-        render={props => 
-          <HomePage {...props} /> || (
-            <Redirect to={ROUTES.SET_UP} />
-          )
+        render={props =>
+          <HomePage {...props} /> || <Redirect to={ROUTES.SET_UP} />
         }
       />
       <Route path={ROUTES.ADMIN} component={AdminPage} />

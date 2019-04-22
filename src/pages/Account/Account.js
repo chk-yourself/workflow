@@ -1,5 +1,5 @@
 import React from 'react';
-import { PasswordForgetForm } from '../PasswordForget';
+import { ForgotPasswordForm } from '../ForgotPassword';
 import { PasswordChangeForm } from '../PasswordChange';
 import { withAuthorization } from '../../components/Session';
 import { UserFormPage } from '../../components/UserFormPage';
@@ -9,7 +9,7 @@ const AccountPage = () => (
   <UserFormPage title="My Account">
     <section className="account-section">
       <h2 className="account-section__header">Forgot your password?</h2>
-      <PasswordForgetForm />
+      <ForgotPasswordForm />
     </section>
     <section className="account-section">
       <h2 className="account-section__header">Change your password.</h2>
