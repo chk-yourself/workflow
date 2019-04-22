@@ -25,6 +25,7 @@ import { CommentComposer } from '../CommentComposer';
 import { Comments } from '../Comments';
 import { MemberAssigner } from '../MemberAssigner';
 import { NotesEditor } from '../NotesEditor';
+import { Badge } from '../Badge';
 import { debounce } from '../../utils/function';
 
 const TaskEditorWrapper = ({
@@ -136,7 +137,7 @@ class TaskEditor extends Component {
         this.deleteTask();
         break;
     }
-    e.preventDefault(); // prevents page reload
+    e.preventDefault();
   };
 
   assignMember = (userId, e) => {
@@ -278,6 +279,7 @@ class TaskEditor extends Component {
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
     const isPastDue = dueDate && isPriorDate(dueDate.toDate());
+    const isPrivate = !projectId;
     return (
       <TaskEditorWrapper
         handleTaskEditorClose={handleTaskEditorClose}
@@ -308,7 +310,7 @@ class TaskEditor extends Component {
               required
               onBlur={this.onBlur}
             />
-            {projectId && (
+            {!isPrivate ? (
               <TaskEditorSection size="sm">
                 <div className="task-editor__project-name">
                   <ProjectBadge
@@ -333,6 +335,10 @@ class TaskEditor extends Component {
                   />
                 </div>
               </TaskEditorSection>
+            ) : (
+              <div className="task-editor__private-indicator">
+                <Badge className="task-editor__badge--private">Private</Badge>
+              </div>
             )}
             <TaskEditorSection>
               <Button
@@ -392,7 +398,7 @@ class TaskEditor extends Component {
                   placeholder="Assign or remove member"
                   memberIds={assignedTo}
                   onSelectMember={this.assignMember}
-                  memberSearchIsDisabled={!projectId}
+                  memberSearchIsDisabled={isPrivate}
                 />
               </div>
             </TaskEditorSection>
@@ -459,42 +465,44 @@ class TaskEditor extends Component {
               />
             </div>
           </TaskEditorSection>
-          <TaskEditorSection className="comments">
-            <div className="task-editor__section-header">
-              <div className="task-editor__section-icon">
-                <Icon name="message-circle" />
+          {!isPrivate && (
+            <TaskEditorSection className="comments">
+              <div className="task-editor__section-header">
+                <div className="task-editor__section-icon">
+                  <Icon name="message-circle" />
+                </div>
+                <h3 className="task-editor__section-title">
+                  {hasComments && (
+                    <span className="task-editor__section-detail">
+                      {commentIds.length}
+                    </span>
+                  )}
+                  {hasComments && commentIds.length === 1
+                    ? 'Comment'
+                    : 'Comments'}
+                </h3>
+                <hr className="task-editor__hr" />
               </div>
-              <h3 className="task-editor__section-title">
-                {hasComments && (
-                  <span className="task-editor__section-detail">
-                    {commentIds.length}
-                  </span>
-                )}
-                {hasComments && commentIds.length === 1
-                  ? 'Comment'
-                  : 'Comments'}
-              </h3>
-              <hr className="task-editor__hr" />
-            </div>
 
-            {hasComments && (
-              <div className="task-editor__comments">
-                <Comments taskId={taskId} commentIds={commentIds} />
-              </div>
-            )}
-            <CommentComposer
-              key={`comment-composer--${taskId}`}
-              id={`comment-composer--${taskId}`}
-              taskId={taskId}
-              projectId={projectId}
-              classes={{
-                avatar: 'task-editor__avatar',
-                avatarPlaceholder: 'task-editor__avatar-placeholder',
-                composer: 'task-editor__comment-composer',
-                button: 'task-editor__btn--submit-comment'
-              }}
-            />
-          </TaskEditorSection>
+              {hasComments && (
+                <div className="task-editor__comments">
+                  <Comments taskId={taskId} commentIds={commentIds} />
+                </div>
+              )}
+              <CommentComposer
+                key={`comment-composer--${taskId}`}
+                id={`comment-composer--${taskId}`}
+                taskId={taskId}
+                projectId={projectId}
+                classes={{
+                  avatar: 'task-editor__avatar',
+                  avatarPlaceholder: 'task-editor__avatar-placeholder',
+                  composer: 'task-editor__comment-composer',
+                  button: 'task-editor__btn--submit-comment'
+                }}
+              />
+            </TaskEditorSection>
+          )}
         </div>
       </TaskEditorWrapper>
     );
@@ -523,7 +531,8 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

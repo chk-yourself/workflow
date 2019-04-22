@@ -472,9 +472,6 @@
   line-height: 24px;
 }
 
-.task-editor__list-name {
-}
-
 .task-editor__project-badge {
   color: $grey-800;
   font-weight: 500;
@@ -508,4 +505,33 @@
 }
 .task-editor__subtask-composer {
   padding: 0 4px 0 14px;
+}
+
+.task-editor__badge--private {
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  color: $grey-600;
+  text-decoration: none;
+  vertical-align: middle;
+  padding: 0;
+  border: 1px solid transparent;
+  font-size: 11px;
+  margin: 0 5px;
+  line-height: 14px;
+  &:before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+    background-color: $grey-600;
+  }
+}
+
+.task-editor__private-indicator {
+  line-height: 16px;
+  font-size: 0;
+  flex: none;
 }
