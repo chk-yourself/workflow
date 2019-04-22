@@ -2,10 +2,10 @@ import React from 'react';
 import './Error.scss';
 import { Icon } from '../Icon';
 
-const ErrorMessage = ({ className, error }) => (
+const ErrorMessage = ({ className, text }) => (
   <p className={`message--error ${className}`}>
     <Icon name="alert-circle" />
-    {error.message}
+    {text}
   </p>
 );
 

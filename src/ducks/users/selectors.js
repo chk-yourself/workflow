@@ -17,13 +17,14 @@ export const getUserTaskIds = (state, userId) => {
 export const getUsersArray = state => {
   const { usersById } = state;
   return usersById
-    ? Object.keys(usersById).map(userId => {
-        return {
-          userId,
-          ...usersById[userId]
-        };
-      })
+    ? Object.keys(usersById).map(userId => usersById[userId])
     : [];
+};
+
+// returns array of user emails
+export const getUserEmails = state => {
+  const { usersById } = state;
+  return usersById ? Object.keys(usersById).map(userId => usersById[userId].email) : [];
 };
 
 // returns subset of users

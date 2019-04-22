@@ -110,7 +110,7 @@ class LoginForm extends Component {
         >
           Log In
         </Button>
-        {error && <ErrorMessage error={error} />}
+        {error && <ErrorMessage text={error.message} />}
       </form>
     );
   }

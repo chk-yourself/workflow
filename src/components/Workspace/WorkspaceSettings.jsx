@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { Input } from '../Input';
 import { Modal } from '../Modal';
 import { Button } from '../Button';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
 import { TabsContainer } from '../Tabs';
+import { userSelectors } from '../../ducks/users';
 import './WorkspaceSettings.scss';
 
 class WorkspaceSettings extends Component {
@@ -44,7 +47,7 @@ class WorkspaceSettings extends Component {
   inviteMember = e => {
     e.preventDefault();
     const { newInvite } = this.state;
-    const { firebase, currentUser, activeWorkspace } = this.props;
+    const { firebase, currentUser, activeWorkspace, memberEmails } = this.props;
     const {
       workspaceId,
       name: workspaceName,
@@ -56,7 +59,8 @@ class WorkspaceSettings extends Component {
       name: currentUser.name
     };
     this.resetInvite();
-    if (pendingInvites.includes(newInvite)) return;
+    const emails = [...pendingInvites, ...memberEmails];
+    if (emails.includes(newInvite)) return;
     updateDoc(['workspaces', workspaceId], {
       pendingInvites: addToArray(newInvite)
     });
@@ -192,4 +196,12 @@ class WorkspaceSettings extends Component {
 
 const condition = (currentUser, activeWorkspace) =>
   !!currentUser && !!activeWorkspace;
-export default withAuthorization(condition)(WorkspaceSettings);
+
+const mapStateToProps = state => ({
+  memberEmails: userSelectors.getUserEmails(state)
+});
+
+export default compose(
+  connect(mapStateToProps),
+  withAuthorization(condition)
+)(WorkspaceSettings);

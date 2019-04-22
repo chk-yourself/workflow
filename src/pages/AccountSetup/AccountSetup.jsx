@@ -7,6 +7,7 @@ import { Button } from '../../components/Button';
 import ProfileSetup from './ProfileSetup';
 import WorkspaceSetup from './WorkspaceSetup';
 import WorkspaceInvites from './WorkspaceInvites';
+import { ErrorMessage } from '../../components/Error';
 import './AccountSetup.scss';
 
 const INITIAL_STATE = {
@@ -201,7 +202,7 @@ class AccountSetup extends Component {
             )}
           </footer>
         </form>
-        {error && <p>{error.message}</p>}
+        {error && <ErrorMessage text={error.message} />}
       </main>
     );
   }

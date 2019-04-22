@@ -3,12 +3,14 @@ import { withAuthorization } from '../../components/Session';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { ErrorMessage } from '../../components/Error';
+import { SuccessMessage } from '../../components/Success';
 
 const INITIAL_STATE = {
   currentPassword: '',
   newPassword: '',
   confirmPassword: '',
-  error: null
+  error: null,
+  success: null
 };
 
 class PasswordChangeForm extends Component {
@@ -27,7 +29,12 @@ class PasswordChangeForm extends Component {
       .reauthenticateWithEmailAuthCredential(email, currentPassword)
       .then(() => updatePassword(newPassword))
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
+        this.setState({
+          ...INITIAL_STATE,
+          success: {
+            message: 'Updated password!'
+          }
+        });
       })
       .catch(error => {
         this.setState({ error });
@@ -42,7 +49,7 @@ class PasswordChangeForm extends Component {
   };
 
   render() {
-    const { currentPassword, newPassword, confirmPassword, error } = this.state;
+    const { currentPassword, newPassword, confirmPassword, error, success } = this.state;
     const isInvalid =
       currentPassword === '' ||
       newPassword === '' ||
@@ -90,7 +97,8 @@ class PasswordChangeForm extends Component {
         >
           Change Password
         </Button>
-        {error && <ErrorMessage error={error} />}
+        {error && <ErrorMessage text={error.message} />}
+        {success && <SuccessMessage text={success.message} />}
       </form>
     );
   }

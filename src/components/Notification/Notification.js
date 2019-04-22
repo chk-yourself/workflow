@@ -117,7 +117,7 @@ class Notification extends Component {
               variant="text"
               color="primary"
               size="sm"
-              onClick={this.declineAccept}
+              onClick={this.declineInvite}
             >
               Decline
             </Button>

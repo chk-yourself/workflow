@@ -98,7 +98,13 @@ class Firebase {
 
   signOut = () => this.auth.signOut();
 
-  sendPasswordResetEmail = email => this.auth.sendPasswordResetEmail(email);
+  sendPasswordResetEmail = email => {
+    const actionCodeSettings = {
+      url: `${process.env.REACT_APP_BASE_URL}/login`,
+      handleCodeInApp: true
+    };
+    return this.auth.sendPasswordResetEmail(email, actionCodeSettings);
+  };
 
   getEmailAuthCredential = (email, password) =>
     firebase.auth.EmailAuthProvider.credential(email, password);
@@ -115,7 +121,6 @@ class Firebase {
   sendSignInLinkToEmail = email => {
     const actionCodeSettings = {
       url: `${process.env.REACT_APP_BASE_URL}/login`,
-      // This must be true.
       handleCodeInApp: true
     };
     this.auth

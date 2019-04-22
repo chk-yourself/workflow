@@ -5,6 +5,7 @@ import { withFirebase } from '../../components/Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { ErrorMessage } from '../../components/Error';
 
 const INITIAL_STATE = {
   email: '',
@@ -94,7 +95,7 @@ class SignUpForm extends Component {
         >
           Create Account
         </Button>
-        {error && <p>{error.message}</p>}
+        {error && <ErrorMessage text={error.message} />}
       </form>
     );
   }

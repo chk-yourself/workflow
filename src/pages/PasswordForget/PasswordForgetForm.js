@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withFirebase } from '../../components/Firebase';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { ErrorMessage } from '../../components/Error';
 
 const INITIAL_STATE = {
   email: '',
@@ -62,7 +63,7 @@ class PasswordForgetForm extends Component {
         >
           Reset Password
         </Button>
-        {error && <p>{error.message}</p>}
+        {error && <ErrorMessage text={error.message} />}
       </form>
     );
   }
