@@ -17,13 +17,14 @@ const ContactInfo = ({ icon, children }) => (
 );
 
 const Profile = ({ user, currentUser, activeWorkspace }) => {
+  if (!user) return null;
   const { members } = activeWorkspace;
   const {
     userId,
     name,
     photoURL,
     email,
-    username,
+    displayName,
     status,
     github,
     linkedin,
@@ -51,7 +52,7 @@ const Profile = ({ user, currentUser, activeWorkspace }) => {
           imgSrc={photoURL}
         />
         <h1 className="profile__name">{name}</h1>
-        <p className="profile__username">@{username}</p>
+        <p className="profile__display-name">@{displayName}</p>
         <p className={`profile__status is-${onlineStatus}`}>{onlineStatus}</p>
         {about && <p className="profile__about">{about}</p>}
       </header>

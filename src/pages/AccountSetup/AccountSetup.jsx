@@ -11,7 +11,7 @@ import './AccountSetup.scss';
 
 const INITIAL_STATE = {
   profile: {
-    username: '',
+    displayName: '',
     name: '',
     about: ''
   },
@@ -129,7 +129,7 @@ class AccountSetup extends Component {
     const { firebase } = this.props;
     const { currentUser } = firebase;
     const { email } = currentUser;
-    const isProfileInvalid = profile.name === '' || profile.username === '';
+    const isProfileInvalid = profile.name === '';
     const isWorkspaceInvalid =
       workspace.name === '' && invites.every(invite => !invite.isAccepted);
     return (
@@ -139,7 +139,7 @@ class AccountSetup extends Component {
           {currentSection === 'profile' && (
             <ProfileSetup
               name={profile.name}
-              username={profile.username}
+              displayName={profile.displayName}
               email={email}
               about={profile.about}
               onChange={this.onChange}

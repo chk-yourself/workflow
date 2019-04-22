@@ -3,7 +3,8 @@ export const getUsersById = state => {
 };
 
 export const getUserData = (state, userId) => {
-  return state.usersById[userId];
+  const { usersById } = state;
+  return usersById ? usersById[userId] : null;
 };
 
 export const getUserTaskIds = (state, userId) => {
@@ -15,17 +16,19 @@ export const getUserTaskIds = (state, userId) => {
 // returns array of all users
 export const getUsersArray = state => {
   const { usersById } = state;
-  return usersById ? Object.keys(usersById).map(userId => {
-    return {
-      userId,
-      ...usersById[userId]
-    };
-  }) : [];
+  return usersById
+    ? Object.keys(usersById).map(userId => {
+        return {
+          userId,
+          ...usersById[userId]
+        };
+      })
+    : [];
 };
 
 // returns subset of users
 export const getMembersArray = (state, memberIds) => {
   const { usersById } = state;
-  if (!memberIds) return [];
+  if (!memberIds || !usersById) return [];
   return memberIds.map(memberId => usersById[memberId]);
 };

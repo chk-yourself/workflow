@@ -43,6 +43,7 @@
     height: 0;
     background-color: transparent;
   }
+  -webkit-overflow-scrolling: touch;
 }
 
 .member-search__item {
@@ -84,7 +85,7 @@
 }
 
 .member-search__email,
-.member-search__username {
+.member-search__display-name {
   font-size: 11px;
 }
 

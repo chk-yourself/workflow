@@ -6,11 +6,21 @@ import { userSelectors } from '../../ducks/users';
 import { withAuthorization } from '../Session';
 import './Members.scss';
 
-const Members = ({ users, style, classes, showOnlineStatus, details, activeWorkspace }) => (
+const Members = ({
+  users,
+  style,
+  classes,
+  showOnlineStatus,
+  details,
+  activeWorkspace
+}) => (
   <ul style={style} className={`members__list ${classes.list || ''}`}>
     {users.map(user => {
       const { photoURL, name, userId, status, settings } = user;
-      const isOnline = status && status.state === 'online' && settings.activeWorkspace === activeWorkspace.workspaceId;
+      const isOnline =
+        status &&
+        status.state === 'online' &&
+        settings.activeWorkspace === activeWorkspace.workspaceId;
       return (
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar
@@ -54,16 +64,17 @@ Members.defaultProps = {
   },
   style: {},
   showOnlineStatus: false,
-  details: ['name', 'username', 'email']
+  details: ['name', 'displayName', 'email']
 };
 
 const mapStateToProps = state => ({
   users: userSelectors.getUsersArray(state)
 });
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default compose(
   withAuthorization(condition),
-  connect(mapStateToProps),
+  connect(mapStateToProps)
 )(Members);

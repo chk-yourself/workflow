@@ -8,7 +8,7 @@ import { Textarea } from '../../components/Textarea';
 
 class ProfileSetup extends Component {
   render() {
-    const { name, username, email, about, onChange } = this.props;
+    const { name, displayName, email, about, onChange } = this.props;
 
     return (
       <section className="account-setup__section">
@@ -26,16 +26,16 @@ class ProfileSetup extends Component {
           isRequired
         />
         <Input
-          name="username"
-          id="username"
-          label="Username"
-          value={username}
+          name="displayName"
+          id="displayName"
+          label="Display name (optional)"
+          value={displayName}
           onChange={onChange}
           type="text"
           className="account-setup__input"
           labelClass="account-setup__label"
           data-section="profile"
-          isRequired
+          helper="The name your teammates will use to @mention you in Workflow. If ommitted, your full name will be used."
         />
         <Input
           name="email"

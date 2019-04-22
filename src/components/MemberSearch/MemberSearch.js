@@ -57,9 +57,9 @@ class MemberSearch extends Component {
 
   matchUser = (user, query) => {
     if (query === '') return false;
-    const { name, email, username } = user;
+    const { name, email, displayName } = user;
     const regExp = new RegExp(query, 'i');
-    return regExp.test(name) || regExp.test(email) || regExp.test(username);
+    return regExp.test(name) || regExp.test(email) || regExp.test(displayName);
   };
 
   onFocus = e => {
@@ -204,7 +204,7 @@ class MemberSearch extends Component {
           <ul className={`member-search__list ${classes.list || ''}`}>
             {filteredList.length > 0 ? (
               filteredList.map((user, i) => {
-                const { name, photoURL, email, username, userId } = user;
+                const { name, photoURL, email, displayName, userId } = user;
                 const isAssigned =
                   assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
@@ -236,10 +236,10 @@ class MemberSearch extends Component {
                       {name}
                     </span>
                     <span
-                      className={`member-search__info member-search__username ${classes.info ||
+                      className={`member-search__info member-search__display-name ${classes.info ||
                         ''}`}
                     >
-                      {username}
+                      {displayName}
                     </span>
                     <span
                       className={`member-search__info member-search__email ${classes.info ||

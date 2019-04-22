@@ -31,3 +31,14 @@ ul {
   padding-left: 24px;
   margin: 0 0 8px 0;
 }
+
+.rich-text-editor__mentions-wrapper {
+  height: auto;
+  max-height: 140px;
+}
+
+.rich-text-editor__mentions-list {
+  top: 0;
+  height: 140px;
+  max-height: 140px;
+}

@@ -4,7 +4,7 @@ import { Input } from '../../components/Input';
 const WorkspaceSetup = ({ name, invites, isOptional, onChange }) => (
   <section className="account-setup__section">
     <h2 className="account-setup__section-heading">{`Your workspace ${
-      isOptional ? '(Optional)' : ''
+      isOptional ? '(optional)' : ''
     }`}</h2>
     <Input
       name="name"

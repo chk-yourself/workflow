@@ -11,6 +11,8 @@ class Input extends Component {
     isReadOnly: false,
     label: '',
     id: null,
+    helper: null,
+    helperClass: '',
     onFocus: () => null,
     onBlur: () => null
   };
@@ -51,6 +53,8 @@ class Input extends Component {
       innerRef,
       label,
       labelClass,
+      helper,
+      helperClass,
       onKeyDown,
       maxLength,
       minLength,
@@ -93,6 +97,15 @@ class Input extends Component {
           tabIndex={isReadOnly ? -1 : 0}
           {...rest}
         />
+        {helper && (
+          <p
+            className={`input__helper ${helperClass} ${
+              isFocused ? 'is-focused' : ''
+            }`}
+          >
+            {helper}
+          </p>
+        )}
       </>
     );
   }

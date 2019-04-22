@@ -345,7 +345,10 @@ class Firebase {
       recipientId: from,
       workspaceId,
       source: {
-        user: { ...user },
+        user: {
+          userId: user.userId,
+          name: user.name
+        },
         type: 'workspace',
         id: workspaceId,
         data: {
@@ -397,7 +400,10 @@ class Firebase {
       recipientId: from,
       workspaceId,
       source: {
-        user: { ...user },
+        user: {
+          userId: user.userId,
+          name: user.name
+        },
         type: 'workspace',
         id: workspaceId,
         data: {
@@ -504,7 +510,6 @@ class Firebase {
     let workspaceIds = [];
     const from = {
       userId,
-      username: profile.username,
       name: profile.name
     };
     if (invites.length > 0) {
@@ -594,7 +599,7 @@ class Firebase {
             userId,
             email,
             name: profile.name,
-            username: profile.username,
+            displayName: profile.displayName || profile.name,
             about: profile.about,
             workspaceIds: [...workspaceIds, workspaceId],
             workspaces: {
@@ -621,7 +626,7 @@ class Firebase {
         workspaces,
         workspaceIds,
         name: profile.name,
-        username: profile.username,
+        displayName: profile.displayName || profile.name,
         about: profile.about
       });
     }
@@ -641,7 +646,7 @@ class Firebase {
               recipientId: doc.id,
               isActionPending: true,
               source: {
-                user: { ...from },
+                user: from,
                 type: 'workspace',
                 id: workspaceId,
                 data: {
@@ -658,13 +663,13 @@ class Firebase {
         } else {
           this.fs.collection('invites').add({
             to: email,
-            publishedAt: this.getTimestamp(),
+            createdAt: this.getTimestamp(),
             type: 'workspace',
             data: {
               id: workspaceId,
               name: workspaceName
             },
-            from: { ...from }
+            from
           });
         }
       });
@@ -749,7 +754,7 @@ class Firebase {
   createUser = ({
     userId,
     name,
-    username,
+    displayName,
     email,
     about,
     workspaces,
@@ -760,7 +765,7 @@ class Firebase {
     this.setBatch(batch, ['users', userId], {
       userId,
       name,
-      username,
+      displayName,
       email,
       about,
       photoURL,
@@ -790,6 +795,57 @@ class Firebase {
       })
       .catch(error => {
         console.log(error);
+      });
+  };
+
+  updateUserName = async ({ userId, name }) => {
+    const batch = this.createBatch();
+    this.updateBatch(batch, ['users', userId], {
+      name
+    });
+    const [inviteRefs, notificationRefs] = await Promise.all([
+      this.queryCollection('invites', ['from.userId', '==', userId])
+        .get()
+        .then(snapshot => {
+          let invites = [];
+          snapshot.forEach(doc => {
+            invites = invites.concat(doc.ref);
+          });
+          return invites;
+        }),
+      this.queryCollection('notifications', [
+        'source.user.userId',
+        '==',
+        userId
+      ])
+        .get()
+        .then(snapshot => {
+          let notifications = [];
+          snapshot.forEach(doc => {
+            notifications = notifications.concat(doc.ref);
+          });
+          return notifications;
+        })
+    ]);
+
+    inviteRefs.forEach(ref => {
+      this.updateBatch(batch, ref, {
+        'from.name': name
+      });
+    });
+
+    notificationRefs.forEach(ref => {
+      this.updateBatch(batch, ref, {
+        'source.user.name': name
+      });
+    });
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Updated user name');
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 

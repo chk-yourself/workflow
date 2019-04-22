@@ -36,6 +36,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  -webkit-overflow-scrolling: touch;
   @include sm {
     max-height: calc(100vh - 72px);
   }
@@ -72,7 +73,7 @@
   }
 }
 
-.profile__username {
+.profile__display-name {
   color: $grey-700;
   text-align: center;
 }

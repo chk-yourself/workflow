@@ -53,7 +53,6 @@ class WorkspaceSettings extends Component {
     const { createWorkspaceInvite, updateDoc, addToArray } = firebase;
     const from = {
       userId: currentUser.userId,
-      username: currentUser.username,
       name: currentUser.name
     };
     this.resetInvite();

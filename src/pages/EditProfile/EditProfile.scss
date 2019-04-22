@@ -32,6 +32,7 @@
   transform: translateX(-50%);
   padding: 40px 16px;
   border-radius: 4px;
+  -webkit-overflow-scrolling: touch;
   @include sm {
     max-height: calc(100vh - 72px);
   }
@@ -55,11 +56,6 @@
   @include md {
     font-size: 1.6rem;
   }
-}
-
-.edit-profile__username {
-  color: $grey-700;
-  text-align: center;
 }
 
 .edit-profile__link {
@@ -104,6 +100,12 @@
   border-width: 2px;
   font-size: 14px;
   padding: 8px;
+  font-weight: 600;
+  &:disabled {
+    color: $grey-500;
+    border: 2px solid $grey-400;
+    background-color: transparent;
+  }
 }
 
 .edit-profile__input,
