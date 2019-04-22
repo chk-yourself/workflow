@@ -1,28 +1,63 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withFirebase } from '../../components/Firebase';
 import { Main } from '../../components/Main';
 import { Button } from '../../components/Button';
+import { ErrorMessage } from '../../components/Error';
+import { SuccessMessage } from '../../components/Success';
 import './VerificationRequired.scss';
 
-const VerificationRequired = ({ firebase }) => (
-  <Main
-    classes={{ main: 'verification-required', title: 'verification-required__heading' }}
-    title="Please verify your email"
-  >
-    <p className="verification-required__paragraph">
-      Thanks for signing up with Workflow! Please verify your email address to
-      continue setting up your account.
-    </p>
-    <Button
-      size="md"
-      variant="contained"
-      color="primary"
-      className="verification-required__btn"
-      onClick={() => firebase.sendEmailVerification()}
-    >
-      Resend Verification Link
-    </Button>
-  </Main>
-);
+class VerificationRequired extends Component {
+  state = {
+    success: null,
+    error: null
+  };
+
+  resendVerificationEmail = () => {
+    const { firebase } = this.props;
+    firebase
+      .sendEmailVerification()
+      .then(() => {
+        this.setState({
+          success: {
+            message: 'Verification email sent!'
+          }
+        });
+      })
+      .catch(error => {
+        this.setState({
+          error
+        });
+      });
+  };
+
+  render() {
+    const { error, success } = this.state;
+    return (
+      <Main
+        classes={{
+          main: 'verification-required',
+          title: 'verification-required__heading'
+        }}
+        title="Please verify your email"
+      >
+        <p className="verification-required__paragraph">
+          Thanks for signing up with Workflow! Please verify your email address
+          to continue setting up your account.
+        </p>
+        <Button
+          size="md"
+          variant="contained"
+          color="primary"
+          className="verification-required__btn"
+          onClick={this.resendVerificationEmail}
+        >
+          Resend Verification Link
+        </Button>
+        {error && <ErrorMessage text={error.message} />}
+        {success && <SuccessMessage text={success.message} />}
+      </Main>
+    );
+  }
+}
 
 export default withFirebase(VerificationRequired);

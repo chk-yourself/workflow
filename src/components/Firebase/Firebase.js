@@ -139,14 +139,7 @@ class Firebase {
       // This must be true.
       handleCodeInApp: true
     };
-    this.currentUser
-      .sendEmailVerification(actionCodeSettings)
-      .then(() => {
-        console.log('verification email sent');
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    return this.currentUser.sendEmailVerification(actionCodeSettings);
   };
 
   // Utility API
