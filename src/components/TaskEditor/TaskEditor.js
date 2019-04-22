@@ -423,6 +423,7 @@ class TaskEditor extends Component {
                 key={`notes--${taskId}`}
                 id={taskId}
                 value={notes}
+                isMentionsEnabled={!isPrivate}
                 classes={{
                   editor:
                     'task-editor__textarea task-editor__textarea--description'

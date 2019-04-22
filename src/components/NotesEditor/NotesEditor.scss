@@ -5,10 +5,11 @@
   position: relative;
   border: 1px solid transparent;
   &.is-focused {
-    min-height: 96px;
+    min-height: 140px;
     padding-top: 12px;
     padding-bottom: 42px;
     border: 1px solid $primary;
+    overflow: visible;
   }
 }
 

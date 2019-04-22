@@ -66,6 +66,9 @@
     pointer-events: none;
     color: $primary;
   }
+  span {
+    pointer-events: none;
+  }
   @include xs {
     min-width: 100%;
   }

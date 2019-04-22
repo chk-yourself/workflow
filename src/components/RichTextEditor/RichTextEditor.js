@@ -166,11 +166,11 @@ class RichTextEditor extends Component {
       editor.toggleMark(mark);
       e.preventDefault();
     } else if (
-      isMentionsListVisible && 
-        (e.key === keys.TAB ||
-      e.key === keys.ARROW_DOWN ||
-      e.key === keys.ARROW_UP ||
-      e.key === keys.ENTER)
+      isMentionsListVisible &&
+      (e.key === keys.TAB ||
+        e.key === keys.ARROW_DOWN ||
+        e.key === keys.ARROW_UP ||
+        e.key === keys.ENTER)
     ) {
       const {
         userSuggestions,
@@ -392,7 +392,6 @@ class RichTextEditor extends Component {
   };
 
   onFocus = e => {
-    console.log('focus');
     setTimeout(() => {
       this.setState({
         isFocused: true
@@ -401,7 +400,6 @@ class RichTextEditor extends Component {
   };
 
   onBlur = (e, editor, next) => {
-    console.log('on blur');
     const { value: prevValue, onBlur } = this.props;
     setTimeout(() => {
       this.setState({
@@ -482,7 +480,7 @@ class RichTextEditor extends Component {
   reset = () => {
     const { value } = this.props;
     this.setState({
-      value: !!value ? Value.fromJSON(value) : Value.fromJSON(initialValue),
+      value: value ? Value.fromJSON(value) : Value.fromJSON(initialValue),
       isMentionsListVisible: false,
       query: '',
       isFocused: false

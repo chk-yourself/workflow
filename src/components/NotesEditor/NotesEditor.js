@@ -4,6 +4,7 @@ import { withFirebase } from '../Firebase';
 import { userSelectors } from '../../ducks/users';
 import { RichTextEditor, getUserIdsFromMentions } from '../RichTextEditor';
 import './NotesEditor.scss';
+import { withAuthorization } from '../Session';
 
 class NotesEditor extends Component {
   static defaultProps = {
@@ -12,7 +13,8 @@ class NotesEditor extends Component {
       button: ''
     },
     placeholder: '',
-    isReadOnly: false
+    isReadOnly: false,
+    isMentionsEnabled: true
   };
 
   updateNotes = (value, e) => {
@@ -32,7 +34,8 @@ class NotesEditor extends Component {
       users,
       usersById,
       id,
-      isReadOnly
+      isReadOnly,
+      isMentionsEnabled
     } = this.props;
     return (
       <RichTextEditor
@@ -48,7 +51,7 @@ class NotesEditor extends Component {
           button: 'notes-editor__toolbar-btn',
           addOns: 'notes-editor__add-ons'
         }}
-        isMentionsEnabled
+        isMentionsEnabled={isMentionsEnabled}
         mentions={{
           users,
           usersById
@@ -68,10 +71,14 @@ class NotesEditor extends Component {
           }
         ]}
         inlines={[
-          {
-            type: 'mention',
-            icon: 'at-sign'
-          }
+          ...(isMentionsEnabled
+            ? [
+                {
+                  type: 'mention',
+                  icon: 'at-sign'
+                }
+              ]
+            : [])
         ]}
         blocks={[
           {
