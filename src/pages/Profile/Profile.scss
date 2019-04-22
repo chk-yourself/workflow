@@ -109,6 +109,14 @@
   font-size: 26px;
 }
 
+.profile__about {
+  font-size: 13px;
+  line-height: 1.4;
+  color: $grey-700;
+  max-width: 85%;
+  margin: 16px auto;
+}
+
 .profile__header {
   display: flex;
   flex-direction: column;

@@ -113,12 +113,13 @@
   height: 42px;
   border: 1px solid $grey-500;
   width: 100%;
+  color: $grey-800;
   &::placeholder {
     font-size: 14px;
   }
-  &--teammate-email:not(:last-child) {
-    margin-bottom: 16px;
-  }
+}
+.edit-profile__textarea {
+  line-height: 1.4;
 }
 
 .edit-profile__textarea {
