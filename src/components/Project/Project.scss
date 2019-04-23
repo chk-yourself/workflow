@@ -430,4 +430,11 @@
 .project--overview {
   background-color: transparent;
   box-shadow: none;
+  margin-top: 78px;
+  @include md {
+    margin-top: 86px;
+  }
+  @include xl {
+    margin-top: 92px;
+  }
 }
