@@ -13,7 +13,6 @@ import { Settings } from '../Settings';
 import { projectActions } from '../../ducks/projects';
 import { ProjectIcon } from '../ProjectIcon';
 import { DropdownMenu } from '../DropdownMenu';
-import { removeTaskDueSoon } from '../../ducks/currentUser/actions';
 import ProjectOverview from './ProjectOverview';
 import * as ROUTES from '../../constants/routes';
 

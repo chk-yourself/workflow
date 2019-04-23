@@ -10,12 +10,12 @@
 
 .project--board {
   min-width: 100%;
-  margin-top: 78px;
+  margin-top: 94px;
   @include md {
-    margin-top: 86px;
+    margin-top: 102px;
   }
   @include xl {
-    margin-top: 92px;
+    margin-top: 108px;
   }
   .project__lists {
     display: flex;
@@ -25,15 +25,15 @@
   .project__toolbar {
     width: 100%;
     left: 0;
-    top: 82px;
+    top: 98px;
     position: fixed;
     padding: 0 8px 8px 14px;
     background-color: $cloud;
     @include md {
-      top: 90px;
+      top: 106px;
     }
     @include xl {
-      top: 96px;
+      top: 112px;
     }
     @include xx {
       left: 48px;
@@ -43,26 +43,26 @@
 }
 
 .project--list {
-  margin-top: 42px;
+  margin-top: 58px;
   max-width: 960px;
   background-color: $white;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   @include md {
-    margin-top: 50px;
+    margin-top: 66px;
   }
   @include xl {
-    margin-top: 56px;
+    margin-top: 72px;
   }
   .project__overview {
     margin-top: 36px;
   }
   .project__submenu-wrapper {
-    top: 42px;
+    top: 34px;
     @include md {
-      top: 50px;
+      top: 42px;
     }
     @include xl {
-      top: 56px;
+      top: 48px;
     }
   }
   .project__header {
@@ -71,6 +71,7 @@
   }
   .project__toolbar {
     position: fixed;
+    top: 98px;
     padding: 8px;
     z-index: 5;
     width: calc(100% - 16px);
@@ -83,13 +84,13 @@
     -webkit-overflow-scrolling: touch;
     display: inline-flex;
     flex-direction: column;
-    max-height: calc(100vh - 134px);
+    max-height: calc(100vh - 150px);
     overflow-y: auto;
     @include md {
-      max-height: calc(100vh - 142px);
+      max-height: calc(100vh - 158px);
     }
     @include xl {
-      max-height: calc(100vh - 148px);
+      max-height: calc(100vh - 164px);
     }
   }
 }
@@ -243,7 +244,7 @@
     max-width: 360px;
   }
   @include md {
-    margin: 8px 0;
+    margin: 4px 0;
   }
   @include xl {
     font-size: 1.4rem;
