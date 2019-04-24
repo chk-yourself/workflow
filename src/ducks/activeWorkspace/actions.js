@@ -29,8 +29,10 @@ export const syncActiveWorkspace = workspaceId => {
       const subscription = await firebase
         .getDocRef('workspaces', workspaceId)
         .onSnapshot(snapshot => {
-          const workspaceData = snapshot.data();
-          workspaceData.workspaceId = workspaceId;
+          const workspaceData = snapshot.data() || null;
+          if (workspaceData) {
+            workspaceData.workspaceId = workspaceId;
+          }
           const { activeWorkspace } = getState();
           if (!activeWorkspace || activeWorkspace.workspaceId !== workspaceId) {
             dispatch(setActiveWorkspace(workspaceData));

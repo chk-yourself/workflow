@@ -14,6 +14,6 @@ export const PROJECT = '/0/projects/:id/:section';
 export const PROJECT_TASKS = '/0/projects/:id/tasks';
 export const PROJECT_OVERVIEW = '/0/projects/:id/overview';
 export const USER_PROJECTS = '/0/:id/projects';
-export const USER_TASKS = '/0/:id/tasks';
+export const MY_TASKS = '/0/:id/tasks';
 export const PROFILE = '/0/:id/profile';
 export const EDIT_PROFILE = '/0/:id/edit-profile';

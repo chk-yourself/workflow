@@ -12,7 +12,8 @@ const Tag = ({
   className,
   innerRef,
   isFocused,
-  variant
+  variant,
+  isLinkDisabled
 }) => (
   <span
     className={`tag tag--${size} bg--${color} ${
@@ -20,9 +21,11 @@ const Tag = ({
     } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
   >
-    <Link to={`/0/tasks?tag=${name}`} className="tag__link">
-      {name}
-    </Link>
+    {!isLinkDisabled && (
+      <Link to={`/0/tasks?tag=${name}`} className="tag__link">
+        {name}
+      </Link>
+    )}
     {size === 'md' && (
       <Button
         type="button"
@@ -43,7 +46,8 @@ Tag.defaultProps = {
   color: 'default',
   size: 'md',
   variant: 'default',
-  isFocused: false
+  isFocused: false,
+  isLinkDisabled: false
 };
 
 export default Tag;

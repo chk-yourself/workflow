@@ -12,7 +12,7 @@ import { taskActions } from '../../ducks/tasks';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
-import { UserTasks } from '../../components/UserTasks';
+import { MyTasks } from '../MyTasks';
 import { SearchResults, TagSearchResults } from '../../components/Search';
 import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
@@ -128,8 +128,8 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={ROUTES.USER_TASKS}
-            render={props => <UserTasks userId={userId} {...props} />}
+            path={ROUTES.MY_TASKS}
+            render={props => <MyTasks userId={userId} {...props} />}
           />
           <Route
             path={ROUTES.PROFILE}

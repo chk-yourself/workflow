@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { currentUserSelectors } from '../../ducks/currentUser';
+import { withAuthorization } from '../Session';
 import { PopoverWrapper } from '../Popover';
 import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
@@ -32,6 +31,7 @@ class Topbar extends Component {
   render() {
     const {
       currentUser,
+      activeWorkspace,
       openWorkspaceComposer,
       openWorkspaceSettings
     } = this.props;
@@ -115,17 +115,7 @@ class Topbar extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    currentUser: currentUserSelectors.getCurrentUser(state)
-  };
-};
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Topbar);
+export default withAuthorization(condition)(Topbar);

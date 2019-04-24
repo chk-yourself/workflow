@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { withAuthorization } from '../Session';
+import { withAuthorization } from '../../components/Session';
 import {
   currentUserActions,
   currentUserSelectors
@@ -13,13 +13,13 @@ import {
   getSelectedTask
 } from '../../ducks/selectedTask';
 import * as droppableTypes from '../../constants/droppableTypes';
-import { Folder } from '../Folder';
-import { Main } from '../Main';
-import { TaskEditor } from '../TaskEditor';
-import { Settings } from '../Settings';
-import './UserTasks.scss';
+import { Folder } from '../../components/Folder';
+import { Main } from '../../components/Main';
+import { TaskEditor } from '../../components/TaskEditor';
+import { Settings } from '../../components/Settings';
+import './MyTasks.scss';
 
-class UserTasks extends Component {
+class MyTasks extends Component {
   state = {
     isLoading: true,
     isTaskSettingsMenuVisible: false
@@ -77,14 +77,24 @@ class UserTasks extends Component {
           console.log(newFolderId);
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
-            taskIds:
-              view === 'all'
-                ? updatedTaskIds
-                : view === 'active'
-                ? [...taskIdsByView.completed, ...updatedTaskIds]
-                : [...updatedTaskIds, ...taskIdsByView.active]
-          });
+          firebase.updateDoc(
+            [
+              'users',
+              userId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              newFolderId
+            ],
+            {
+              taskIds:
+                view === 'all'
+                  ? updatedTaskIds
+                  : view === 'active'
+                  ? [...taskIdsByView.completed, ...updatedTaskIds]
+                  : [...updatedTaskIds, ...taskIdsByView.active]
+            }
+          );
         } else {
           console.log(origFolderId, newFolderId);
           updatedTaskIds.splice(newIndex, 0, draggableId);
@@ -127,14 +137,24 @@ class UserTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
-            taskIds:
-              view === 'all'
-                ? updatedTaskIds
-                : view === 'active'
-                ? [...taskIdsByView.completed, ...updatedTaskIds]
-                : [...updatedTaskIds, ...taskIdsByView.active]
-          });
+          firebase.updateDoc(
+            [
+              'users',
+              userId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              newFolderId
+            ],
+            {
+              taskIds:
+                view === 'all'
+                  ? updatedTaskIds
+                  : view === 'active'
+                  ? [...taskIdsByView.completed, ...updatedTaskIds]
+                  : [...updatedTaskIds, ...taskIdsByView.active]
+            }
+          );
         }
       }
     }
@@ -181,10 +201,7 @@ class UserTasks extends Component {
     } = this.props;
     const { userId, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
-    const {
-      isLoading,
-      isTaskSettingsMenuVisible
-    } = this.state;
+    const { isLoading, isTaskSettingsMenuVisible } = this.state;
     const isTaskEditorOpen = !!selectedTaskId;
     if (isLoading) return null;
     return (
@@ -242,7 +259,7 @@ class UserTasks extends Component {
                         options: {
                           folder: { value: 'folder', name: 'Folder' },
                           dueDate: { value: 'dueDate', name: 'Due Date' },
-                          project: { value: 'project', name: 'Project'}
+                          project: { value: 'project', name: 'Project' }
                         },
                         value: sortBy,
                         onChange: this.setTempTaskSettings
@@ -304,11 +321,12 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(UserTasks)
+  )(MyTasks)
 );

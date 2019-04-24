@@ -282,6 +282,7 @@ class TagsInput extends Component {
             onDelete={() => this.removeTag(tag.name)}
             isFocused={focusedTag === tag.name}
             innerRef={currentTag === tag.name ? this.setCurrentTagRef : null}
+            isLinkDisabled
           />
         ))}
         <div className="tags-input__wrapper">

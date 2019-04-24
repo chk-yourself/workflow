@@ -17,7 +17,7 @@ const ProjectGrid = ({
     {projects.map(project => (
       <ProjectTile
         key={project.projectId}
-        layout={project.layout}
+        layout={project.settings.layout}
         name={project.name}
         color={project.color}
         projectId={project.projectId}
