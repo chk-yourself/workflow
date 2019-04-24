@@ -9,15 +9,12 @@ import {
   currentUserActions,
   currentUserSelectors
 } from '../../ducks/currentUser';
-import {
-  userActions
-} from '../../ducks/users';
+import { userActions } from '../../ducks/users';
 import { activeWorkspaceActions } from '../../ducks/activeWorkspace';
 import { getDisplayName } from '../../utils/react';
 
 const withAuthentication = WrappedComponent => {
   class WithAuthentication extends Component {
-
     componentDidMount() {
       const {
         firebase,
@@ -28,7 +25,10 @@ const withAuthentication = WrappedComponent => {
         syncCurrentUser
       } = this.props;
 
-      const { initPresenceDetection } = firebase;
+      const {
+        location: { pathname }
+      } = history;
+      if (pathname === ROUTES.USER_GUIDE) return;
 
       this.authListener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
@@ -69,9 +69,14 @@ const withAuthentication = WrappedComponent => {
     }
 
     async componentDidUpdate(prevProps) {
-      const { currentUser, syncActiveWorkspace, syncUserTags, history, firebase, resetActiveWorkspace } = this.props;
+      const {
+        currentUser,
+        syncActiveWorkspace,
+        syncUserTags,
+        resetActiveWorkspace
+      } = this.props;
       if (!currentUser) return;
-      const { userId, settings } = currentUser;
+      const { settings } = currentUser;
       const { activeWorkspace } = settings;
       if (!prevProps.currentUser) {
         console.log('current user detected');
@@ -79,15 +84,19 @@ const withAuthentication = WrappedComponent => {
         await Promise.all([
           syncActiveWorkspace(activeWorkspace),
           syncUserTags(userId)
-        ]).then(listeners => {
-          this.workspaceListener = listeners[0];
-          this.tagListener = listeners[1];
-        }).catch(error => {
-          console.error(error);
-        });
+        ])
+          .then(listeners => {
+            this.workspaceListener = listeners[0];
+            this.tagListener = listeners[1];
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
       if (prevProps.currentUser) {
-        const { activeWorkspace: prevWorkspace } = prevProps.currentUser.settings;
+        const {
+          activeWorkspace: prevWorkspace
+        } = prevProps.currentUser.settings;
         if (prevWorkspace !== activeWorkspace) {
           resetActiveWorkspace();
           this.workspaceListener();
@@ -98,7 +107,9 @@ const withAuthentication = WrappedComponent => {
     }
 
     componentWillUnmount() {
-      this.authListener();
+      if (this.authListener) {
+        this.authListener();
+      }
       if (this.userListener) {
         this.userListener();
       }
@@ -136,10 +147,13 @@ const withAuthentication = WrappedComponent => {
     setCurrentUser: currentUser =>
       dispatch(currentUserActions.setCurrentUser(currentUser)),
     updateUser: ({ userId, userData }) =>
-      dispatch(userActions.updateUser({userId, userData})),
-    syncActiveWorkspace: workspaceId => dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
-    setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
-    resetActiveWorkspace: () => dispatch(activeWorkspaceActions.resetActiveWorkspace()),
+      dispatch(userActions.updateUser({ userId, userData })),
+    syncActiveWorkspace: workspaceId =>
+      dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
+    setActiveWorkspace: workspace =>
+      dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
+    resetActiveWorkspace: () =>
+      dispatch(activeWorkspaceActions.resetActiveWorkspace()),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
   });
 

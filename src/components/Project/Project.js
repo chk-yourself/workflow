@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, NavLink } from 'react-router-dom';
 import { Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import * as droppableTypes from '../../constants/droppableTypes';
@@ -66,11 +66,11 @@ class Project extends Component {
   };
 
   saveProjectSettings = () => {
-    const { firebase, projectId, tempProjectSettings } = this.props;
+    const { firebase, projectId, tempSettings } = this.props;
     firebase.updateDoc(['projects', projectId], {
-      [`settings.layout`]: tempProjectSettings.layout,
-      [`settings.tasks.view`]: tempProjectSettings.tasks.view,
-      [`settings.tasks.sortBy`]: tempProjectSettings.tasks.sortBy
+      'settings.layout': tempSettings.layout,
+      'settings.tasks.view': tempSettings.tasks.view,
+      'settings.tasks.sortBy': tempSettings.tasks.sortBy
     });
     this.closeSettingsMenu();
   };
@@ -102,12 +102,14 @@ class Project extends Component {
       projectId,
       color,
       children,
-      tempSettings,
+      tempSettings: {
+        layout,
+        tasks: { view, sortBy }
+      },
       match: {
         params: { section }
       }
     } = this.props;
-    const { layout } = tempSettings;
 
     const { name, isListComposerActive, isProjectSettingsActive } = this.state;
     return (
@@ -127,6 +129,21 @@ class Project extends Component {
               onBlur={this.onNameBlur}
               isRequired
             />
+            <div className="project__links">
+              <NavLink
+                className="project__link"
+                to={`/0/projects/${projectId}/tasks`}
+              >
+                Tasks
+              </NavLink>
+              <NavLink
+                className="project__link"
+                to={`/0/projects/${projectId}/overview`}
+              >
+                Overview
+              </NavLink>
+            </div>
+            {/*
             <DropdownMenu
               classes={{
                 wrapper: 'project__submenu-wrapper',
@@ -144,6 +161,7 @@ class Project extends Component {
                 inner: 'right'
               }}
             />
+            */}
           </div>
         </div>
         <Switch>
@@ -185,7 +203,7 @@ class Project extends Component {
                           },
                           all: { value: 'all', name: 'All Tasks' }
                         },
-                        value: tempSettings.tasks.view,
+                        value: view,
                         onChange: this.setTempProjectSettings
                       },
                       {
@@ -196,7 +214,7 @@ class Project extends Component {
                           none: { value: 'none', name: 'None' },
                           dueDate: { value: 'dueDate', name: 'Due Date' }
                         },
-                        value: tempSettings.tasks.sortBy,
+                        value: sortBy,
                         onChange: this.setTempProjectSettings
                       },
                       {
@@ -207,7 +225,7 @@ class Project extends Component {
                           board: { value: 'board', name: 'Board' },
                           list: { value: 'list', name: 'List' }
                         },
-                        value: tempSettings.layout,
+                        value: layout,
                         onChange: this.setTempProjectSettings
                       }
                     ]}

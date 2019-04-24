@@ -61,8 +61,8 @@ class ProjectContainer extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, listsById, tempProjectSettings, state } = this.props;
-    const { view, sortBy } = tempProjectSettings.tasks;
+    const { firebase, listsById, tempSettings, state } = this.props;
+    const { view, sortBy } = tempSettings.tasks;
     if (type === droppableTypes.TASK) {
       const { droppableId: newListId, index: newIndex } = destination;
       const { droppableId: origListId, index: prevIndex } = source;
@@ -120,7 +120,6 @@ class ProjectContainer extends Component {
     selectTask(null);
   };
 
-
   render() {
     const {
       selectedTask,
@@ -129,10 +128,10 @@ class ProjectContainer extends Component {
       selectedTaskId,
       isLoaded,
       project,
-      tempProjectSettings
+      tempSettings
     } = this.props;
     const { name, listIds } = project;
-    const { layout } = tempProjectSettings;
+    const { layout } = tempSettings;
     const isTaskEditorOpen = !!selectedTaskId;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
@@ -150,8 +149,8 @@ class ProjectContainer extends Component {
               {listIds.map((listId, i) => {
                 return (
                   <List
-                    viewFilter={tempProjectSettings.tasks.view}
-                    sortBy={tempProjectSettings.tasks.sortBy}
+                    viewFilter={tempSettings.tasks.view}
+                    sortBy={tempSettings.tasks.sortBy}
                     listId={listId}
                     key={listId}
                     index={i}
@@ -187,7 +186,7 @@ const mapStateToProps = (state, ownProps) => {
     listsById: listSelectors.getListsById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
-    tempProjectSettings: projectSelectors.getTempProjectSettings(
+    tempSettings: projectSelectors.getTempProjectSettings(
       state,
       ownProps.projectId
     )

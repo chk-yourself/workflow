@@ -13,6 +13,7 @@ import { Header } from '../../components/Header';
 import { AccountSetup } from '../AccountSetup';
 import { VerificationRequired } from '../VerificationRequired';
 import { Tooltip } from '../../components/Tooltip';
+import { UserGuide } from '../UserGuide';
 import './App.scss';
 
 class App extends Component {
@@ -41,19 +42,16 @@ class App extends Component {
   onMouseOut = e => {
     const { tooltipAnchor } = this.state;
     if (!tooltipAnchor) return;
-    /*
     console.log('mouse out');
     this.setState({
       tooltipAnchor: null,
       tooltipProps: {}
     });
-    */
   };
 
   render() {
     const { firebase, currentUser } = this.props;
     const { tooltipAnchor, tooltipProps } = this.state;
-    console.log(tooltipAnchor, tooltipProps);
     return (
       <div
         onMouseOver={this.onMouseOver}
@@ -83,6 +81,7 @@ class App extends Component {
             path={ROUTES.VERIFICATION_REQUIRED}
             component={VerificationRequired}
           />
+          <Route path={ROUTES.USER_GUIDE} component={UserGuide} />
         </Switch>
         <Tooltip anchorEl={tooltipAnchor} {...tooltipProps} />
       </div>

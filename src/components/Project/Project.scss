@@ -10,12 +10,12 @@
 
 .project--board {
   min-width: 100%;
-  margin-top: 94px;
+  margin-top: 108px;
   @include md {
-    margin-top: 102px;
+    margin-top: 110px;
   }
   @include xl {
-    margin-top: 108px;
+    margin-top: 118px;
   }
   .project__lists {
     display: flex;
@@ -25,15 +25,15 @@
   .project__toolbar {
     width: 100%;
     left: 0;
-    top: 98px;
+    top: 104px;
     position: fixed;
-    padding: 0 8px 8px 14px;
+    padding: 8px 8px 8px 14px;
     background-color: $cloud;
     @include md {
       top: 106px;
     }
     @include xl {
-      top: 112px;
+      top: 114px;
     }
     @include xx {
       left: 48px;
@@ -43,15 +43,15 @@
 }
 
 .project--list {
-  margin-top: 58px;
+  margin-top: 72px;
   max-width: 960px;
   background-color: $white;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   @include md {
-    margin-top: 66px;
+    margin-top: 74px;
   }
   @include xl {
-    margin-top: 72px;
+    margin-top: 82px;
   }
   .project__overview {
     margin-top: 36px;
@@ -68,29 +68,36 @@
   .project__header {
     width: 100%;
     flex: none;
+    padding-bottom: 8px;
   }
   .project__toolbar {
     position: fixed;
-    top: 98px;
+    top: 112px;
     padding: 8px;
     z-index: 5;
     width: calc(100% - 16px);
     max-width: 960px;
     background-color: $white;
     box-shadow: inset 0px -3px 1px -2px $grey-300;
+    @include md {
+      top: 114px;
+    }
+    @include xl {
+      top: 122px;
+    }
   }
   .project__lists {
     margin-top: 44px;
     -webkit-overflow-scrolling: touch;
     display: inline-flex;
     flex-direction: column;
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 156px);
     overflow-y: auto;
     @include md {
       max-height: calc(100vh - 158px);
     }
     @include xl {
-      max-height: calc(100vh - 164px);
+      max-height: calc(100vh - 166px);
     }
   }
 }
@@ -142,13 +149,6 @@
   top: 40px;
   z-index: 6;
   padding: 0 4px;
-  height: 42px;
-  @include md {
-    height: 50px;
-  }
-  @include xl {
-    height: 56px;
-  }
   @include xx {
     width: calc(100% - 48px);
     left: 48px;
@@ -232,11 +232,11 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 20px;
+  font-size: 17px;
   margin: 4px 0;
   line-height: 1.2;
   color: $grey-900;
-  padding: 4px 8px 4px 26px;
+  padding: 4px 8px 4px 22px;
   border: 1px solid transparent;
   font-weight: 600;
   text-align: center;
@@ -245,10 +245,11 @@
   }
   @include md {
     margin: 4px 0;
+    font-size: 19px;
   }
   @include xl {
     font-size: 1.4rem;
-    padding: 6px 10px 6px 28px;
+    padding: 6px 10px 6px 24px;
   }
 }
 
@@ -275,8 +276,10 @@
 
 .project__icon {
   position: absolute;
-  top: calc(50% - 6px);
+  top: calc(50% - 5px);
   left: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 .project__btn {
@@ -318,14 +321,37 @@
   }
 }
 
+.project__links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 248px;
+}
+
 .project__link {
-  color: $grey-700;
+  color: $grey-500;
   display: inline-block;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px;
+  border: 1px solid $grey-400;
+  border-radius: 4px;
+  text-decoration: none;
+  width: 44%;
+  text-align: center;
   .feather {
     width: 18px;
     height: 18px;
+  }
+  &.active {
+    color: $primary;
+    border-color: $primary;
+  }
+  &:hover {
+    color: $primary;
   }
 }
 
@@ -362,6 +388,7 @@
 .project__subheading {
   font-size: 14px;
   font-weight: 500;
+  color: $grey-800;
 }
 
 .project__overview-section {

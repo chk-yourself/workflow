@@ -4,6 +4,7 @@ export const LOG_IN = '/login';
 export const SET_UP = '/setup';
 export const FORGOT_PASSWORD = '/forgot-password';
 export const VERIFICATION_REQUIRED = '/verification-required';
+export const USER_GUIDE = '/guide';
 export const BASE = '/0/';
 export const GLOBAL_SEARCH = '/0/search';
 export const TASK_SEARCH = '/0/tasks';

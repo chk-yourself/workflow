@@ -63,3 +63,19 @@
     margin-right: 4px;
   }
 }
+
+.topbar__link--help {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  color: $grey-700;
+  margin-right: 8px;
+  line-height: 28px;
+  .feather {
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    vertical-align: middle;
+  }
+}

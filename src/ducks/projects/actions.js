@@ -90,7 +90,7 @@ export const syncProject = projectId => {
   };
 };
 
-export const syncUserWorkspaceProjects = ({userId, workspaceId}) => {
+export const syncUserWorkspaceProjects = ({ userId, workspaceId }) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
@@ -98,7 +98,6 @@ export const syncUserWorkspaceProjects = ({userId, workspaceId}) => {
         .where('workspaceId', '==', workspaceId)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
-          const { projectsById } = getState();
           const isInitialLoad =
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
@@ -152,7 +151,6 @@ export const syncUserWorkspaceProjects = ({userId, workspaceId}) => {
     }
   };
 };
-
 
 export const fetchProjectLists = projectId => {
   return async dispatch => {

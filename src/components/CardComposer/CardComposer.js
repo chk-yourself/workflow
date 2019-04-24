@@ -26,7 +26,7 @@ class CardComposer extends Component {
 
   onSubmit = e => {
     const { name } = this.state;
-    if (e.type === 'keydown' && e.key !== keys.ENTER || !name) return;
+    if ((e.type === 'keydown' && e.key !== keys.ENTER) || !name) return;
     const {
       firebase,
       projectId,
@@ -76,6 +76,7 @@ class CardComposer extends Component {
 
   render() {
     const { name, isActive } = this.state;
+    const isInvalid = name === '';
 
     return (
       <div
@@ -103,6 +104,7 @@ class CardComposer extends Component {
                 color="primary"
                 variant="contained"
                 size="sm"
+                disabled={isInvalid}
               >
                 Add Card
               </Button>
@@ -122,6 +124,7 @@ class CardComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(CardComposer);
