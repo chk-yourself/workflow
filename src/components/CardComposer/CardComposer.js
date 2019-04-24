@@ -88,7 +88,7 @@ class CardComposer extends Component {
           <Textarea
             onChange={this.onChange}
             value={name}
-            placeholder={isActive ? 'Enter card title...' : 'Add a card'}
+            placeholder={isActive ? 'Enter task name...' : 'Add a task'}
             isRequired
             name="name"
             className="card-composer__textarea"
@@ -106,7 +106,7 @@ class CardComposer extends Component {
                 size="sm"
                 disabled={isInvalid}
               >
-                Add Card
+                Add Task
               </Button>
               <Button
                 className="card-composer__btn"

@@ -142,7 +142,6 @@
   -ms-overflow-style: none;
   overflow-x: visible;
   overflow-y: auto;
-  min-height: 16px;
   max-height: calc(100vh - 330px);
   @include md {
     max-height: calc(100vh - 332px);
@@ -153,10 +152,7 @@
 }
 
 .list__tasks {
-  padding: 0 4px;
+  padding: 0;
   margin: 0;
   list-style-type: none;
-  @include md {
-    padding: 0 8px;
-  }
 }

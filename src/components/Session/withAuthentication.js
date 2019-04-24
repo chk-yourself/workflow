@@ -20,7 +20,6 @@ const withAuthentication = WrappedComponent => {
         firebase,
         history,
         setCurrentUser,
-        setActiveWorkspace,
         resetActiveWorkspace,
         syncCurrentUser
       } = this.props;

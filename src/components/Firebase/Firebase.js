@@ -92,6 +92,10 @@ class Firebase {
       });
   };
 
+  signInAsGuest = () => {
+    return this.auth.signInAnonymously().then(user => console.log(user));
+  };
+
   createUserWithEmailAndPassword = (email, password) =>
     this.auth.createUserWithEmailAndPassword(email, password);
 
@@ -513,6 +517,37 @@ class Firebase {
   // User API
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
+
+  createGuest = userId => {
+    const batch = this.createBatch();
+    this.setBatch(batch, ['guests', userId], {
+      userId,
+      createdAt: this.getTimestamp(),
+      photoURL: null,
+      name: 'Guest',
+      email: 'guest@workspace.com',
+      displayName: 'guest',
+      about: '',
+      role: 'guest',
+      linkedin: '',
+      github: '',
+      settings: {
+        activeWorkspace: 'DEMO',
+        tasks: {
+          sortBy: 'folder',
+          view: 'all'
+        }
+      },
+      workspaceIds: ['DEMO'],
+      workspaces: {
+        Demo: {
+          id: 'DEMO',
+          name: 'Demo'
+        }
+      }
+    });
+    this.createWorkspaceFolders({ userId, workspaceId: 'DEMO' }, batch, false);
+  };
 
   createAccount = ({ userId, email, profile, workspace, invites }) => {
     const workspaces = {};
@@ -1038,6 +1073,8 @@ class Firebase {
           });
       });
   };
+
+  createDemoProject = userId => {};
 
   addProject = ({
     userId,

@@ -26,14 +26,33 @@ class LoginForm extends Component {
   onSubmit = e => {
     const { email, password } = this.state;
     const { firebase } = this.props;
-    firebase
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        this.setState({ ...INITIAL_STATE });
-      })
-      .catch(error => {
+    if (email === 'Guest') {
+      try {
+        console.log('is guest');
+        if (password !== process.env.REACT_APP_GUEST_PW) {
+          throw new Error('Incorrect password.');
+        }
+        firebase
+          .signInAsGuest()
+          .then(() => {
+            this.setState({ ...INITIAL_STATE });
+          })
+          .catch(error => {
+            this.setState({ error });
+          });
+      } catch (error) {
         this.setState({ error });
-      });
+      }
+    } else {
+      firebase
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          this.setState({ ...INITIAL_STATE });
+        })
+        .catch(error => {
+          this.setState({ error });
+        });
+    }
     e.preventDefault();
   };
 
