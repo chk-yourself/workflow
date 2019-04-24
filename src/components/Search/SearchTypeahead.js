@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { Icon } from '../Icon';
+import { JamIcon } from '../JamIcon';
 import * as keys from '../../constants/keys';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import SearchSuggestions from './SearchSuggestions';
@@ -202,11 +203,7 @@ class SearchTypeahead extends Component {
     return name
       .split(regExp)
       .map(text =>
-        regExp.test(text) ? (
-          <Mark key={generateKey()}>{text}</Mark>
-        ) : (
-          text
-        )
+        regExp.test(text) ? <Mark key={generateKey()}>{text}</Mark> : text
       );
   };
 
@@ -265,7 +262,11 @@ class SearchTypeahead extends Component {
               query={query}
               renderMatch={item => (
                 <>
-                  <Icon name={item.layout === 'board' ? 'trello' : 'list'} />
+                  {item.settings.layout === 'board' ? (
+                    <Icon name="trello" />
+                  ) : (
+                    <JamIcon name="task-list" />
+                  )}
                   {this.highlightMatch(item)}
                 </>
               )}

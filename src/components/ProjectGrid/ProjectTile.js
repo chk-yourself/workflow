@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
+import { JamIcon } from '../JamIcon';
 
 const ProjectTile = ({ projectId, name, layout, onClick, color }) => {
   return (
@@ -12,7 +13,11 @@ const ProjectTile = ({ projectId, name, layout, onClick, color }) => {
       >
         <span className="project-grid__title">{name}</span>
         <span className="project-grid__icon">
-          <Icon name={layout === 'board' ? 'trello' : 'list'} />
+          {layout === 'board' ? (
+            <Icon name="trello" />
+          ) : (
+            <JamIcon name="task-list" />
+          )}
         </span>
       </Link>
     </li>

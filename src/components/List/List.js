@@ -22,7 +22,10 @@ class List extends Component {
   state = {
     name: this.props.list ? this.props.list.name : '',
     prevName: this.props.list ? this.props.list.name : '',
-    isMoreActionsMenuVisible: false
+    isMoreActionsMenuVisible: false,
+    isFocused: false,
+    pointX: null,
+    pointY: null
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -34,6 +37,10 @@ class List extends Component {
     }
     return null;
   }
+
+  setInputRef = el => {
+    this.input = el;
+  };
 
   handleListDelete = e => {
     e.preventDefault();
@@ -57,6 +64,16 @@ class List extends Component {
     if (newName !== name) {
       firebase.updateListName({ listId, name: newName });
     }
+
+    this.setState({
+      isFocused: false
+    });
+  };
+
+  onFocus = () => {
+    this.setState({
+      isFocused: true
+    });
   };
 
   toggleMoreActionsMenu = e => {
@@ -100,6 +117,26 @@ class List extends Component {
     }
   };
 
+  onMouseDown = e => {
+    if (e.target.matches('input') || e.target.matches('label')) return;
+    this.setState({
+      pointX: e.pageX,
+      pointY: e.pageY
+    });
+  };
+
+  onMouseUp = e => {
+    const { pointX, pointY, isFocused } = this.state;
+    if (isFocused) return;
+    if (e.pageX === pointX && e.pageY === pointY) {
+      this.input.focus();
+    }
+    this.setState({
+      pointX: null,
+      pointY: null
+    });
+  };
+
   render() {
     const {
       taskIdsByViewFilter,
@@ -115,7 +152,7 @@ class List extends Component {
     if (!list) return null;
     const { name: listName } = list;
     const isBoardView = layout === 'board';
-    const { name, isMoreActionsMenuVisible } = this.state;
+    const { name, isMoreActionsMenuVisible, isFocused } = this.state;
     const taskIds = this.applySortRule(taskIdsByViewFilter[viewFilter]);
 
     return (
@@ -123,22 +160,32 @@ class List extends Component {
         {provided => (
           <>
             <section
-              className={`list is-${layout}-layout`}
+              className={`list is-${layout}-layout ${
+                isFocused ? 'is-focused' : ''
+              }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
               <header className="list__header">
-                <Input
-                  className="list__input--title"
-                  name="name"
-                  type="text"
-                  value={name}
-                  onChange={this.onChange}
-                  required={!isRestricted}
-                  isReadOnly={isRestricted}
-                  onBlur={this.onBlur}
-                />
+                <div
+                  className="list__input-wrapper"
+                  onMouseDown={this.onMouseDown}
+                  onMouseUp={this.onMouseUp}
+                >
+                  <Input
+                    className="list__input--title"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={this.onChange}
+                    required={!isRestricted}
+                    isReadOnly={isRestricted}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}
+                    innerRef={this.setInputRef}
+                  />
+                </div>
                 <PopoverWrapper
                   isActive={isMoreActionsMenuVisible}
                   onOutsideClick={this.closeMoreActionsMenu}

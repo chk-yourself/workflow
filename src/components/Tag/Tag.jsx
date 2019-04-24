@@ -21,10 +21,12 @@ const Tag = ({
     } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
   >
-    {!isLinkDisabled && (
+    {!isLinkDisabled ? (
       <Link to={`/0/tasks?tag=${name}`} className="tag__link">
         {name}
       </Link>
+    ) : (
+      <span className="tag__link">{name}</span>
     )}
     {size === 'md' && (
       <Button
