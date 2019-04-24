@@ -23,8 +23,8 @@
   padding: 4px 0;
   position: relative;
   margin: 0 4px;
+  height: 46px;
   @include md {
-    padding: 8px 0;
     margin: 0 8px;
   }
 }
@@ -60,20 +60,18 @@
 }
 
 .folder__input--title {
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   font-weight: 700;
-  padding: 8px 4px 8px 0;
+  padding: 8px 4px;
   background-color: transparent;
   width: calc(100% - 72px);
-  height: 38px;
+  height: 36px;
   font-size: 18px;
+  line-height: 1.2;
   cursor: pointer;
   &:focus:not(:read-only) {
     border-color: $primary;
     background-color: rgba($white, 0.6);
-  }
-  @include md {
-    padding: 8px 8px 8px 0;
   }
   &:read-only {
     pointer-events: none;
@@ -82,12 +80,11 @@
 
 .folder__tasks {
   position: relative;
-  padding: 0 4px;
   margin: 0;
 }
 
 .folder__btn--toggle {
-  height: 38px;
+  height: 36px;
   width: 24px;
   padding: 0;
   vertical-align: middle;
@@ -99,5 +96,14 @@
       transform: rotate(90deg);
       transition: all 0.2s ease-in-out;
     }
+  }
+}
+
+.folder__content {
+  margin: 0 4px;
+  background-color: $white;
+  @include bootstrap-box-shadow(1);
+  @include md {
+    margin: 0 8px;
   }
 }

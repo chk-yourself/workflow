@@ -24,11 +24,12 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9;
+  z-index: 11;
   min-height: 100vh;
   max-height: 100vh;
   @include md {
-    margin-top: 50px;
+    z-index: 9;
+    margin-top: 46px;
     height: auto;
     min-height: auto;
     align-self: flex-start;
@@ -42,7 +43,6 @@
     flex: 0 0 400px;
   }
   @include xl {
-    margin-top: 56px;
     max-height: calc(100vh - 96px);
   }
 }
