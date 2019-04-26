@@ -217,7 +217,6 @@
   height: auto;
   z-index: 4;
   position: relative;
-  max-width: calc(100% - 18px);
   &:focus {
     padding-left: 8px;
     text-align: left;
@@ -243,7 +242,8 @@
   border: 1px solid transparent;
   font-weight: 600;
   text-align: center;
-  @include xs {
+  max-width: calc(100vw - 68px);
+  @include min-width(428px) {
     max-width: 360px;
   }
   @include md {
@@ -256,6 +256,14 @@
   }
 }
 
+.project__input--name,
+.project__name-wrapper {
+  max-width: calc(100% - 68px);
+  @include min-width(428px) {
+    max-width: 360px;
+  }
+}
+
 .project__name-wrapper {
   position: absolute;
   pointer-events: none;
@@ -265,7 +273,6 @@
   width: auto;
   height: auto;
   font-size: 0;
-  max-width: calc(100% - 18px);
   span {
     pointer-events: none;
   }
@@ -315,11 +322,9 @@
 .project__settings-btn {
   width: 28px;
   height: 28px;
-  line-height: 16px;
   padding: 0;
   margin-left: 8px;
   .feather {
-    vertical-align: middle;
     width: 16px;
     height: 16px;
   }
@@ -495,5 +500,46 @@
   display: none;
   @include md {
     display: flex;
+  }
+}
+
+.project__more-actions-wrapper {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.project__more-actions {
+  border: 1px solid $grey-300;
+  border-radius: 4px;
+  padding: 8px 0;
+  background-color: #fff;
+  min-width: 192px;
+  line-height: 1.15;
+  @include box-shadow(2);
+}
+
+.project__btn--more-actions {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  .feather {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.project__more-actions-btn {
+  font-size: 14px;
+  padding: 8px 8px 8px 16px;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+  text-align: left;
+  &:hover {
+    background-color: $primary;
+    color: $white;
   }
 }

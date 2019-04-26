@@ -20,7 +20,11 @@ const Checkbox = ({
       onClick={onClick}
       className={`checkbox__label ${isChecked ? 'is-checked' : ''} ${labelClass}`}
     >
-      <Icon name="check" />
+      {
+        isChecked && (
+          <Icon name="check" />
+        )
+      }
       <input
         type="checkbox"
         id={id}

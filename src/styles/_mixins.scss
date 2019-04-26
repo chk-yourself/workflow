@@ -32,6 +32,18 @@
   }
 } // 1440px Extra large devices
 
+@mixin min-width($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin max-width($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
 // Box shadows
 
 @mixin box-shadow($level) {

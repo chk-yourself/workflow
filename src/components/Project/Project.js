@@ -13,7 +13,10 @@ import { Settings } from '../Settings';
 import { projectActions } from '../../ducks/projects';
 import { ProjectIcon } from '../ProjectIcon';
 import ProjectOverview from './ProjectOverview';
+import { PopoverWrapper } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
+import { Menu, MenuItem } from '../Menu';
+import ProjectDuplicator from './ProjectDuplicator';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -21,7 +24,9 @@ class Project extends Component {
     name: this.props.name,
     prevName: this.props.name,
     isListComposerActive: false,
-    isProjectSettingsActive: false
+    isProjectSettingsActive: false,
+    isMoreActionsMenuVisible: false,
+    isProjectDuplicatorOpen: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -109,6 +114,30 @@ class Project extends Component {
     e.preventDefault();
   };
 
+  toggleMoreActionsMenu = e => {
+    this.setState(prevState => ({
+      isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
+    }));
+  };
+
+  closeMoreActionsMenu = e => {
+    this.setState({
+      isMoreActionsMenuVisible: false
+    });
+  };
+
+  toggleProjectDuplicator = e => {
+    this.setState(prevState => ({
+      isProjectDuplicatorOpen: !prevState.isProjectDuplicatorOpen
+    }));
+  };
+
+  closeProjectDuplicator = e => {
+    this.setState({
+      isProjectDuplicatorOpen: false
+    });
+  };
+
   render() {
     const {
       projectId,
@@ -124,7 +153,7 @@ class Project extends Component {
       }
     } = this.props;
 
-    const { name, isListComposerActive, isProjectSettingsActive } = this.state;
+    const { name, isListComposerActive, isProjectSettingsActive, isMoreActionsMenuVisible, isProjectDuplicatorOpen } = this.state;
     return (
       <div className={`project project--${layout} project--${section}`}>
         <div className="project__header">
@@ -142,6 +171,34 @@ class Project extends Component {
               onBlur={this.onNameBlur}
               isRequired
             />
+            <PopoverWrapper
+                  isActive={isMoreActionsMenuVisible}
+                  onOutsideClick={this.closeMoreActionsMenu}
+                  classes={{
+                    wrapper: 'project__more-actions-wrapper',
+                    popover: 'project__more-actions'
+                  }}
+                  align={{ inner: 'right' }}
+                  buttonProps={{
+                    size: 'sm',
+                    iconOnly: true,
+                    isActive: isMoreActionsMenuVisible,
+                    className: 'project__btn--more-actions',
+                    children: <Icon name="more-vertical" />,
+                    onClick: this.toggleMoreActionsMenu
+                  }}
+                >
+                  <Menu>
+                    <MenuItem className="project__more-actions-item">
+                    <Button
+                      className="project__more-actions-btn"
+                      onClick={this.toggleProjectDuplicator}
+                    >
+                      Duplicate Project
+                    </Button>
+                    </MenuItem>
+                  </Menu>
+                </PopoverWrapper>
             <div className="project__links">
               <NavLink
                 className="project__link"
@@ -158,6 +215,9 @@ class Project extends Component {
             </div>
           </div>
         </div>
+        {isProjectDuplicatorOpen && (
+          <ProjectDuplicator onClose={this.closeProjectDuplicator} projectId={projectId} />
+        )}
         <Switch>
           <Route
             path={ROUTES.PROJECT_TASKS}

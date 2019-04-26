@@ -141,15 +141,15 @@ button {
 }
 
 .icon-only {
-  padding: 8px;
+  padding: 0;
   margin: 0;
   min-width: 0;
+  line-height: 0;
   .feather {
-    vertical-align: baseline;
+    vertical-align: middle;
   }
   &--sm {
     font-size: 18px;
-    line-height: 18px;
     height: 36px;
     width: 36px;
     .feather {
@@ -159,7 +159,6 @@ button {
   }
   &--md {
     font-size: 22px;
-    line-height: 22px;
     height: 40px;
     width: 40px;
     .feather {
@@ -169,7 +168,6 @@ button {
   }
   &--lg {
     font-size: 32px;
-    line-height: 32px;
     height: 50px;
     width: 50px;
     .feather {
