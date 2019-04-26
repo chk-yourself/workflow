@@ -1252,7 +1252,52 @@ class Firebase {
       });
   };
 
-  deleteProject = projectId => {}
+  deleteProject = async ({projectId, workspaceId, listIds, memberIds}) => {
+    const batch = this.createBatch();
+    const projectRef = this.getDocRef('projects', projectId);
+      batch.delete(projectRef);
+    // delete tasks
+      this.queryCollection('tasks', ['projectId', '==', projectId])
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const taskId = doc.id;
+          const taskData = doc.data();
+          this.deleteTask({
+            taskId,
+            ...taskData,
+            projectId: null,
+            listId: null
+          })
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+      // delete lists
+      listIds.forEach(listId => {
+        const listRef = this.getDocRef('lists', listId);
+        batch.delete(listRef);
+      });
+      memberIds.forEach(memberId => {
+        const folderRef = this.getDocRef('users', memberId, 'workspaces', workspaceId, 'folders', projectId);
+        batch.delete(folderRef);
+        this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
+          projectIds: this.removeFromArray(projectId)
+        });
+        this.updateBatch(batch, ['workspaces', workspaceId], {
+          [`members.${memberId}.projectIds`]: this.removeFromArray(projectId),
+          projectIds: this.removeFromArray(projectId)
+        })
+      });
+      return batch.commit()
+      .then(() => {
+        console.log('Project deleted');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   // List API
 
@@ -1749,8 +1794,7 @@ class Firebase {
       listId = null,
       projectId = null,
       userId,
-      workspaceId,
-      tags
+      workspaceId
     },
     batch = this.createBatch(),
     shouldCommit = true
@@ -1847,30 +1891,6 @@ class Firebase {
         batch.delete(commentRef);
       });
       console.log('3. Task comments deleted.');
-    }
-
-    // Update tag counts
-    if (tags) {
-      if (projectId) {
-        tags.forEach(tag => {
-          this.updateBatch(batch, ['projects', projectId], {
-            [`tags.${tag}.count`]: this.minus(1)
-          });
-          /*
-          this.updateBatch(batch,
-            ['projects', projectId, 'tags', tag], {
-              count: this.minus(1)
-            });
-            */
-        });
-      } else {
-        tags.forEach(tag => {
-          this.updateBatch(batch,
-            ['users', userId, 'tags', tag], {
-              count: this.minus(1)
-            });
-        });
-      }
     }
     
     if (shouldCommit) {

@@ -17,6 +17,7 @@ import { PopoverWrapper } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
 import { Menu, MenuItem } from '../Menu';
 import ProjectDuplicator from './ProjectDuplicator';
+import {selectProject as selectProjectAction} from '../../ducks/selectedProject';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -137,12 +138,27 @@ class Project extends Component {
     });
   };
 
+  deleteProject = () => {
+    const { firebase, currentUser, selectProject, history, projectId, workspaceId, listIds, memberIds } = this.props;
+    const { userId } = currentUser;
+    firebase.deleteProject({
+      projectId,
+      workspaceId,
+      listIds,
+      memberIds
+    });
+    selectProject(null);
+    history.push(`/0/home/${userId}`);
+  }
+
   render() {
     const {
       projectId,
       color,
       children,
       memberIds,
+      ownerId,
+      currentUser,
       tempSettings: {
         layout,
         tasks: { view, sortBy }
@@ -189,6 +205,13 @@ class Project extends Component {
                 >
                   <Menu>
                     <MenuItem className="project__more-actions-item">
+                    <Button
+                      className="project__more-actions-btn"
+                      onClick={this.deleteProject}
+                      disabled={ownerId !== currentUser.userId}
+                    >
+                      Delete Project
+                    </Button>
                     <Button
                       className="project__more-actions-btn"
                       onClick={this.toggleProjectDuplicator}
@@ -339,6 +362,7 @@ class Project extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
+    selectProject: projectId => dispatch(selectProjectAction(projectId)),
     setTempProjectSettings: ({ projectId, view, sortBy, layout }) =>
       dispatch(
         projectActions.setTempProjectSettings({
