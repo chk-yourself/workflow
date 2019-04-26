@@ -522,35 +522,40 @@ class Firebase {
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
-  createGuest = userId => {
-    const batch = this.createBatch();
-    this.setBatch(batch, ['guests', userId], {
+  createGuest = async userId => {
+     await this.createUser({
       userId,
-      createdAt: this.getTimestamp(),
-      photoURL: null,
       name: 'Guest',
+      displayName: 'Guest',
       email: 'guest@workspace.com',
-      displayName: 'guest',
       about: '',
       role: 'guest',
-      linkedin: '',
-      github: '',
-      settings: {
-        activeWorkspace: 'DEMO',
-        tasks: {
-          sortBy: 'folder',
-          view: 'all'
-        }
-      },
+      isGuest: true,
       workspaceIds: ['DEMO'],
       workspaces: {
-        Demo: {
+        DEMO: {
           id: 'DEMO',
           name: 'Demo'
         }
       }
     });
-    this.createWorkspaceFolders({ userId, workspaceId: 'DEMO' }, batch, false);
+    return this.cloneProject({ 
+      name: 'Tutorial', 
+      userId, 
+      projectId: process.env.REACT_APP_DEMO_PROJECT_ID, 
+      workspaceId: 'DEMO' 
+    }, {
+      includeNotes: true,
+      includeSubtasks: true,
+      includeMembers: true,
+      isDemo: true
+    })
+    .then(() => {
+      console.log('Guest created');
+    })
+    .catch(error => {
+      console.error(error);
+    });
   };
 
   createAccount = ({ userId, email, profile, workspace, invites }) => {
@@ -807,7 +812,9 @@ class Firebase {
     about,
     workspaces,
     workspaceIds,
-    photoURL = null
+    photoURL = null,
+    role = 'member',
+    isGuest = false
   }) => {
     const batch = this.createBatch();
     this.setBatch(batch, ['users', userId], {
@@ -819,6 +826,8 @@ class Firebase {
       photoURL,
       workspaces,
       workspaceIds,
+      role,
+      isGuest,
       linkedin: '',
       github: '',
       createdAt: this.getTimestamp(),
@@ -1089,7 +1098,8 @@ class Firebase {
   cloneProject = async ({ name, userId, projectId, workspaceId }, {
     includeNotes = true,
     includeSubtasks = true,
-    includeMembers = true
+    includeMembers = true,
+    isDemo = false
   }) => {
     const [project, listsById, tasksById, subtasksById] = await Promise.all([
       this.getDocRef('projects', projectId)
