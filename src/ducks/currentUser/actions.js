@@ -151,10 +151,10 @@ export const updateTag = ({ tagId, tagData }) => {
   };
 };
 
-export const deleteTag = name => {
+export const deleteTag = tagId => {
   return {
     type: types.DELETE_TAG,
-    name
+    tagId
   };
 };
 

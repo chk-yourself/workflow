@@ -52,8 +52,8 @@ class HomePage extends Component {
       syncUserWorkspaceTasks,
       syncUserPrivateTasks
     } = this.props;
-    const { userId, projectIds } = currentUser;
-    const { workspaceId } = activeWorkspace;
+    const { userId } = currentUser;
+    const { workspaceId, projectIds } = activeWorkspace;
 
     await Promise.all([
       syncWorkspaceMembers(workspaceId),
@@ -184,6 +184,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(
         projectActions.syncUserWorkspaceProjects({ userId, workspaceId })
       ),
+    syncProjectTags: projectId => dispatch(projectActions.syncProjectTags(projectId)),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>
       dispatch(taskActions.syncUserWorkspaceTasks({ userId, workspaceId })),
     syncUserPrivateTasks: ({ userId, workspaceId }) =>

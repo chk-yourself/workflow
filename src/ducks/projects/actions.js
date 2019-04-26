@@ -74,6 +74,40 @@ export const updateProjectTags = (projectId, tags) => {
   };
 };
 
+export const loadProjectTags = ({ projectId, tags }) => {
+  return {
+    type: types.LOAD_PROJECT_TAGS,
+    projectId,
+    tags
+  };
+};
+
+export const createTag = ({ tagId, tagData, projectId }) => {
+  return {
+    type: types.CREATE_TAG,
+    tagId,
+    tagData,
+    projectId
+  };
+};
+
+export const updateTag = ({ tagId, tagData, projectId }) => {
+  return {
+    type: types.UPDATE_TAG,
+    tagId,
+    tagData,
+    projectId
+  };
+};
+
+export const deleteTag = ({tagId, projectId}) => {
+  return {
+    type: types.DELETE_TAG,
+    tagId,
+    projectId
+  };
+};
+
 export const syncProject = projectId => {
   return async dispatch => {
     try {
@@ -112,7 +146,8 @@ export const syncUserWorkspaceProjects = ({ userId, workspaceId }) => {
                 isLoaded: {
                   subtasks: projectData.listIds.length === 0,
                   tasks: true,
-                  lists: projectData.listIds.length === 0
+                  lists: projectData.listIds.length === 0,
+                  tags: projectData.listIds.length === 0
                 },
                 tempSettings: {
                   layout: projectData.settings.layout,
@@ -170,6 +205,57 @@ export const fetchProjectLists = projectId => {
           return lists;
         });
       dispatch(loadListsById(projectLists));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const syncProjectTags = projectId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .getDocRef('projects', projectId)
+        .collection('tags')
+        .onSnapshot(async snapshot => {
+          const changes = await snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+          if (isInitialLoad) {
+            const tags = {};
+            snapshot.forEach(doc => {
+              tags[doc.id] = doc.data();
+            });
+            dispatch(loadProjectTags({tags, projectId}));
+            dispatch(setProjectLoadedState(projectId, 'tags'));
+          } else {
+            changes.forEach(async change => {
+              const { projectsById } = getState();
+              const [tagId, tagData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { tags } = projectsById[projectId];
+              if (changeType === 'added') {
+                if (tags && tagId in tags) return;
+                dispatch(createTag({ tagId, tagData, projectId }));
+                console.log('tag added');
+              } else if (changeType === 'removed') {
+                dispatch(deleteTag({ tagId, projectId }));
+              } else {
+                if (tagData.count === 0) {
+                  firebase.deleteTag({ projectId, tagId });
+                } else {
+                  dispatch(updateTag({ tagId, tagData, projectId }));
+                  console.log(`Updated Tag: ${tagData.name}`);
+                }
+              }
+            });
+          }
+        });
+      return subscription;
     } catch (error) {
       console.log(error);
     }

@@ -23,7 +23,8 @@ const projectsById = (state = INITIAL_STATE, action) => {
           isLoaded: {
             subtasks: !isDuplicate && listCount === 0,
             tasks: listCount === 0,
-            lists: !isDuplicate && listCount === 0
+            lists: !isDuplicate && listCount === 0,
+            tags: !isDuplicate && listCount === 0
           },
           tempSettings: {
             tasks: { ...settings.tasks }
@@ -78,6 +79,59 @@ const projectsById = (state = INITIAL_STATE, action) => {
           ...state[projectId],
           tags: {
             ...tags
+          }
+        }
+      };
+    }
+    case types.LOAD_PROJECT_TAGS: {
+      const { projectId, tags } = action;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          tags
+        }
+      };
+    }
+    case types.CREATE_TAG: {
+      const { tagId, tagData, projectId } = action;
+      if (!projectId) return state;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          tags: {
+            ...state[projectId].tags,
+            [tagId]: tagData
+          }
+        }
+      };
+    }
+    case types.DELETE_TAG: {
+      const { tagId, projectId } = action;
+      if (!projectId) return state;
+      const { [tagId]: deletedTag, ...restOfTags } = state[projectId].tags;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          tags: restOfTags
+        }
+      };
+    }
+    case types.UPDATE_TAG: {
+      const { tagId, tagData, projectId } = action;
+      if (!projectId) return state;
+      return {
+        ...state,
+        [projectId]: {
+          ...state[projectId],
+          tags: {
+            ...state[projectId].tags,
+            [tagId]: {
+              ...state[projectId].tags[tagId],
+              ...tagData
+            }
           }
         }
       };

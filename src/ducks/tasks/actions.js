@@ -114,13 +114,10 @@ export const deleteTask = ({ taskId, listId = null }) => {
         commentIds,
         dueDate,
         projectId,
-        workspaceId
+        workspaceId,
+        tags,
+        userId
       });
-      if (tags && tags.length > 0) {
-        tags.forEach(name => {
-          dispatch(removeTaskTag({ taskId: null, name, userId, projectId }));
-        });
-      }
     } catch (error) {
       console.error(error);
     }
