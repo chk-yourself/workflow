@@ -25,9 +25,7 @@ const Members = ({
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar
             classes={{
-              avatar: `members__avatar members__avatar--sm ${
-                isOnline && showOnlineStatus ? 'is-online' : ''
-              } ${classes.avatar || ''}`,
+              avatar: `members__avatar members__avatar--sm ${classes.avatar || ''}`,
               placeholder: `members__avatar-placeholder--sm ${classes.placeholder ||
                 ''}`
             }}
@@ -35,6 +33,8 @@ const Members = ({
             size="sm"
             variant="circle"
             imgSrc={photoURL}
+            showOnlineStatus={showOnlineStatus}
+            isOnline={isOnline}
           />
           {details.map(detail => (
             <span

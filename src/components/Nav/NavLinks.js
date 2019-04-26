@@ -15,6 +15,14 @@ export const NavLinksNonAuth = ({ onClick }) => (
         Sign Up
       </NavLink>
     </li>
+    <li>
+    <NavLink
+      className="navbar__link"
+      to={ROUTES.USER_GUIDE}
+    >
+    Guide
+    </NavLink>
+    </li>
   </>
 );
 

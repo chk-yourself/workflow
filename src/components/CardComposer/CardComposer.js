@@ -38,7 +38,7 @@ class CardComposer extends Component {
     } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
-    firebase.addTask({
+    firebase.createTask({
       projectId,
       listId,
       name,

@@ -79,7 +79,7 @@ class ProjectComposer extends Component {
     const { onClose, firebase, currentUser, activeWorkspace } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
-    firebase.addProject({
+    firebase.createProject({
       userId,
       name,
       color,

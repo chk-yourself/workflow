@@ -32,7 +32,6 @@ class Topbar extends Component {
   render() {
     const {
       currentUser,
-      activeWorkspace,
       openWorkspaceComposer,
       openWorkspaceSettings
     } = this.props;
@@ -41,13 +40,6 @@ class Topbar extends Component {
       <>
         <div className="topbar">
           <SearchTypeahead />
-          <Link
-            target="_blank"
-            className="topbar__link--help"
-            to={ROUTES.USER_GUIDE}
-          >
-            <Icon name="help-circle" />
-          </Link>
           <PopoverWrapper
             isActive={isUserActionsVisible}
             onOutsideClick={this.hideUserActions}

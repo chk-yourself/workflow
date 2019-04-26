@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { Button } from '../Button';
 import { Textarea } from '../Textarea';
 import { Icon } from '../Icon';
 import * as keys from '../../constants/keys';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import './SubtaskComposer.scss';
 
 class SubtaskComposer extends Component {
@@ -51,10 +49,16 @@ class SubtaskComposer extends Component {
   addSubtask = e => {
     const { name } = this.state;
     if ((e.type === 'keydown' && e.key !== keys.ENTER) || !name) return;
-    const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
+    const {
+      currentUser,
+      firebase,
+      taskId,
+      projectId,
+      activeWorkspace
+    } = this.props;
     const { workspaceId } = activeWorkspace;
     const { userId } = currentUser;
-    firebase.addSubtask({ userId, name, taskId, projectId, workspaceId });
+    firebase.createSubtask({ userId, name, taskId, projectId, workspaceId });
     this.resetForm();
     e.preventDefault();
   };
@@ -112,6 +116,7 @@ class SubtaskComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(SubtaskComposer);

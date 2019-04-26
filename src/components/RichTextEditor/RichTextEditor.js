@@ -290,9 +290,9 @@ class RichTextEditor extends Component {
 
   matchUser = (user, query) => {
     if (query === '') return false;
-    const { name, email, username } = user;
+    const { name, email, displayName } = user;
     const regExp = new RegExp(query, 'i');
-    return regExp.test(name) || regExp.test(email) || regExp.test(username);
+    return regExp.test(name) || regExp.test(email) || regExp.test(displayName);
   };
 
   onClickMark = e => {
@@ -441,14 +441,14 @@ class RichTextEditor extends Component {
           href: `/0/${user.userId}/profile`,
           userId: user.userId,
           name: user.name,
-          username: user.username
+          displayName: user.displayName
         },
         nodes: [
           {
             object: 'text',
             leaves: [
               {
-                text: `@${user.name}`
+                text: `@${user.displayName}`
               }
             ]
           }
@@ -495,14 +495,6 @@ class RichTextEditor extends Component {
     const { isFocused } = this.state;
     if (!this.editor || !isFocused) return;
     this.editor.blur();
-    /*
-    setTimeout(() => {
-      this.setState({
-        isFocused: false,
-        isMentionsListVisible: false
-      });
-    }, 0);
-    */
   };
 
   render() {

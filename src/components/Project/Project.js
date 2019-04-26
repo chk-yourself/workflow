@@ -12,8 +12,8 @@ import { Icon } from '../Icon';
 import { Settings } from '../Settings';
 import { projectActions } from '../../ducks/projects';
 import { ProjectIcon } from '../ProjectIcon';
-import { DropdownMenu } from '../DropdownMenu';
 import ProjectOverview from './ProjectOverview';
+import { MemberAssigner } from '../MemberAssigner';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -53,8 +53,6 @@ class Project extends Component {
   onNameBlur = e => {
     const { name: prevName, projectId, firebase } = this.props;
     const { name } = this.state;
-
-    // When field loses focus, update list title if change is detected
 
     if (prevName !== name) {
       firebase.updateProjectName({ projectId, name });
@@ -97,11 +95,26 @@ class Project extends Component {
     });
   };
 
+  handleMemberAssignment = (userId, e) => {
+    const { firebase, projectId, project, activeWorkspace } = this.props;
+    const { workspaceId } = activeWorkspace;
+    const { memberIds, name: projectName } = project;
+
+    if (memberIds.includes(userId)) {
+      firebase.removeAssignee({ projectId, userId, workspaceId });
+    } else {
+      firebase.addAssignee({ projectId, projectName, userId, workspaceId });
+    }
+
+    e.preventDefault();
+  };
+
   render() {
     const {
       projectId,
       color,
       children,
+      memberIds,
       tempSettings: {
         layout,
         tasks: { view, sortBy }
@@ -143,25 +156,6 @@ class Project extends Component {
                 Overview
               </NavLink>
             </div>
-            {/*
-            <DropdownMenu
-              classes={{
-                wrapper: 'project__submenu-wrapper',
-                menu: 'project__submenu',
-                link: 'project__link',
-                button: 'project__btn--toggle-submenu'
-              }}
-              links={[
-                { href: `/0/projects/${projectId}/tasks`, text: 'Tasks' },
-                { href: `/0/projects/${projectId}/overview`, text: 'Overview' }
-              ]}
-              activeLink={section}
-              align={{
-                outer: 'left',
-                inner: 'right'
-              }}
-            />
-            */}
           </div>
         </div>
         <Switch>
@@ -170,15 +164,30 @@ class Project extends Component {
             render={props => (
               <>
                 <Toolbar className="project__toolbar">
-                  <Button
-                    className="project__btn project__btn--add-list"
-                    onClick={this.activateListComposer}
-                    color="primary"
-                    variant="contained"
-                    size="sm"
-                  >
-                    Add List
-                  </Button>
+                  {layout === 'list' && (
+                    <Button
+                      className="project__btn project__btn--add-list"
+                      onClick={this.activateListComposer}
+                      color="primary"
+                      variant="contained"
+                      size="sm"
+                    >
+                      Add List
+                    </Button>
+                  )}
+                  <MemberAssigner
+                    placeholder="Add or remove member"
+                    memberIds={memberIds}
+                    onSelectMember={this.handleMemberAssignment}
+                    classes={{
+                      memberAssigner: 'project__member-assigner',
+                      avatar: 'project__avatar',
+                      button: 'project__btn--add-member'
+                    }}
+                    isSelfAssignmentDisabled
+                    align='right'
+                    showOnlineStatus
+                  />
                   <Settings
                     icon="sliders"
                     isActive={isProjectSettingsActive}

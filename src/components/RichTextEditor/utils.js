@@ -17,7 +17,7 @@ export const getMentionedUsers = value => {
     .map(mention => ({
       userId: mention.data.get('userId'),
       name: mention.data.get('name'),
-      username: mention.data.get('username')
+      displayName: mention.data.get('displayName')
     }))
     .toJS();
 };

@@ -185,10 +185,14 @@ class Firebase {
   };
 
   updateDoc = (path = [], newValue = {}) =>
-    this.getDocRef(...path).update({
-      lastUpdatedAt: this.getTimestamp(),
-      ...newValue
-    });
+    this.getDocRef(...path)
+      .update({
+        lastUpdatedAt: this.getTimestamp(),
+        ...newValue
+      })
+      .catch(error => {
+        console.error(`Error updating document at path '${path}': ${error}`);
+      });
 
   createBatch = () => this.fs.batch();
 
@@ -1076,7 +1080,92 @@ class Firebase {
 
   createDemoProject = userId => {};
 
-  addProject = ({
+  cloneProject = async ({ userId, projectId, workspaceId }) => {
+    const [project, listsById, tasksById, subtasksById] = await Promise.all([
+      this.getDocRef('projects', projectId)
+        .get()
+        .then(snapshot => {
+          return snapshot.data();
+        }),
+      this.queryCollection('lists', ['projectId', '==', projectId])
+        .get()
+        .then(snapshot => {
+          const lists = {};
+          snapshot.forEach(doc => {
+            const listId = doc.id;
+            const listData = doc.data();
+            lists[listId] = {
+              ...listData
+            };
+          });
+          return lists;
+        }),
+      this.queryCollection('tasks', ['projectId', '==', projectId])
+        .get()
+        .then(snapshot => {
+          const tasks = {};
+          snapshot.forEach(doc => {
+            const taskId = doc.id;
+            const taskData = doc.data();
+            tasks[taskId] = {
+              ...taskData
+            };
+          });
+          return tasks;
+        }),
+      this.queryCollection('subtasks', ['projectId', '==', projectId])
+        .get()
+        .then(snapshot => {
+          const subtasks = {};
+          snapshot.forEach(doc => {
+            const subtaskId = doc.id;
+            const subtaskData = doc.data();
+            subtasks[subtaskId] = {
+              ...subtaskData
+            };
+          });
+          return subtasks;
+        })
+    ]);
+    const clonedProjectId = await this.createProject({
+      ...project,
+      userId,
+      workspaceId
+    });
+    project.listIds.forEach(async listId => {
+      const list = listsById[listId];
+      const { name, taskIds } = list;
+      const clonedListId = await this.createList({
+        name,
+        userId,
+        projectId: clonedProjectId,
+        workspaceId
+      });
+      taskIds.forEach(async taskId => {
+        const task = tasksById[taskId];
+        const { subtaskIds } = task;
+        const clonedTaskId = await this.createTask({
+          ...task,
+          projectId: clonedProjectId,
+          listId: clonedListId,
+          userId,
+          workspaceId
+        });
+        subtaskIds.forEach(subtaskId => {
+          const subtask = subtasksById[subtaskId];
+          this.createSubtask({
+            ...subtask,
+            userId,
+            workspaceId,
+            projectId: clonedProjectId,
+            taskId: clonedTaskId
+          });
+        });
+      });
+    });
+  };
+
+  createProject = async ({
     userId,
     name,
     workspaceId,
@@ -1086,7 +1175,7 @@ class Firebase {
     memberIds = [],
     notes = null
   }) => {
-    this.fs
+    const projectId = await this.fs
       .collection('projects')
       .add({
         createdAt: this.getTimestamp(),
@@ -1108,45 +1197,39 @@ class Firebase {
         workspaceId
       })
       .then(ref => {
-        const batch = this.createBatch();
-        const { id: projectId } = ref;
-        memberIds.forEach(memberId => {
-          this.updateBatch(
-            batch,
-            ['users', memberId, 'workspaces', workspaceId],
-            {
-              projectIds: this.addToArray(projectId)
-            }
-          );
-          this.updateBatch(batch, ['workspaces', workspaceId], {
-            projectIds: this.addToArray(projectId),
-            [`members.${userId}.projectIds`]: this.addToArray(projectId)
-          });
-          this.setBatch(
-            batch,
-            [
-              'users',
-              memberId,
-              'workspaces',
-              workspaceId,
-              'folders',
-              projectId
-            ],
-            {
-              name,
-              taskIds: []
-            }
-          );
-        });
+        return ref.id;
+      })
+      .catch(error => {
+        console.error(error.message);
+      });
 
-        return batch
-          .commit()
-          .then(() => {
-            console.log(`Created Project: ${name}`);
-          })
-          .catch(error => {
-            console.error(error);
-          });
+    const batch = this.createBatch();
+    memberIds.forEach(memberId => {
+      this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
+        projectIds: this.addToArray(projectId)
+      });
+      this.updateBatch(batch, ['workspaces', workspaceId], {
+        projectIds: this.addToArray(projectId),
+        [`members.${userId}.projectIds`]: this.addToArray(projectId)
+      });
+      this.setBatch(
+        batch,
+        ['users', memberId, 'workspaces', workspaceId, 'folders', projectId],
+        {
+          name,
+          taskIds: []
+        }
+      );
+    });
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log(`Created Project: ${name}`);
+        return projectId;
+      })
+      .catch(error => {
+        console.error(error.message);
       });
   };
 
@@ -1176,13 +1259,13 @@ class Firebase {
             console.log('List name updated.');
           })
           .catch(error => {
-            console.error(error);
+            console.log(error.message);
           });
       });
   };
 
-  addList = ({ name, userId, workspaceId, projectId }) => {
-    this.fs
+  createList = async ({ name, userId, workspaceId, projectId }) => {
+    const listId = await this.fs
       .collection('lists')
       .add({
         ownerId: userId,
@@ -1194,10 +1277,17 @@ class Firebase {
         workspaceId
       })
       .then(ref => {
-        this.updateDoc(['projects', projectId], {
-          listIds: this.addToArray(ref.id)
-        });
+        return ref.id;
+      })
+      .catch(error => {
+        console.error(error.message);
       });
+
+    return this.updateDoc(['projects', projectId], {
+      listIds: this.addToArray(listId)
+    }).then(() => {
+      return listId;
+    });
   };
 
   deleteList = ({ listId, projectId }) => {
@@ -1236,7 +1326,7 @@ class Firebase {
 
   getTaskDoc = taskId => this.fs.collection('tasks').doc(taskId);
 
-  addTask = ({
+  createTask = async ({
     name,
     projectId,
     projectName,
@@ -1251,7 +1341,7 @@ class Firebase {
   }) => {
     const isFolderItem = !!folderId;
 
-    this.fs
+    const taskId = await this.fs
       .collection('tasks')
       .add({
         ownerId: userId,
@@ -1278,91 +1368,96 @@ class Firebase {
         isPrivate
       })
       .then(ref => {
-        const { id: taskId } = ref;
-        const batch = this.createBatch();
+        return ref.id;
+      })
+      .catch(error => {
+        console.error(error);
+      });
 
-        if (listId) {
-          this.updateBatch(batch, ['lists', listId], {
-            taskIds: this.addToArray(taskId)
-          });
-          if (assignedTo.length > 0) {
-            assignedTo.forEach(memberId => {
-              this.updateBatch(batch, ['workspaces', workspaceId], {
-                [`members.${memberId}.activeTaskCount`]: this.plus(1)
-              });
-            });
-          }
-        }
+    const batch = this.createBatch();
 
-        if (isFolderItem) {
+    if (listId) {
+      this.updateBatch(batch, ['lists', listId], {
+        taskIds: this.addToArray(taskId)
+      });
+      if (assignedTo.length > 0) {
+        assignedTo.forEach(memberId => {
           this.updateBatch(batch, ['workspaces', workspaceId], {
-            [`members.${userId}.activeTaskCount`]: this.plus(1)
+            [`members.${memberId}.activeTaskCount`]: this.plus(1)
           });
+        });
+      }
+    }
 
-          if (!projectId && folderId !== '4') {
-            this.updateBatch(
-              batch,
-              ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
-              {
-                taskIds: this.addToArray(taskId)
-              }
-            );
+    if (isFolderItem) {
+      this.updateBatch(batch, ['workspaces', workspaceId], {
+        [`members.${userId}.activeTaskCount`]: this.plus(1)
+      });
+
+      if (!projectId && folderId !== '4') {
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', '4'],
+          {
+            taskIds: this.addToArray(taskId)
           }
+        );
+      }
 
-          if (!dueDate && folderId !== '5') {
-            this.updateBatch(
-              batch,
-              ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
-              {
-                taskIds: this.addToArray(taskId)
-              }
-            );
+      if (!dueDate && folderId !== '5') {
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
+          {
+            taskIds: this.addToArray(taskId)
           }
+        );
+      }
 
-          if (dueDate) {
-            console.log(`${+dueDate}`);
-            batch.set(
-              this.getDocRef(
-                'users',
-                userId,
-                'workspaces',
-                workspaceId,
-                'folders',
-                `${+dueDate}`
-              ),
-              {
-                taskIds: this.addToArray(taskId)
-              },
-              { merge: true }
-            );
+      if (dueDate) {
+        console.log(`${+dueDate}`);
+        batch.set(
+          this.getDocRef(
+            'users',
+            userId,
+            'workspaces',
+            workspaceId,
+            'folders',
+            `${+dueDate}`
+          ),
+          {
+            taskIds: this.addToArray(taskId)
+          },
+          { merge: true }
+        );
+      }
+
+      if (folderId !== '0') {
+        this.updateBatch(
+          batch,
+          ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+          {
+            taskIds: this.addToArray(taskId)
           }
+        );
+      }
 
-          if (folderId !== '0') {
-            this.updateBatch(
-              batch,
-              ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
-              {
-                taskIds: this.addToArray(taskId)
-              }
-            );
-          }
-
-          this.updateBatch(
-            batch,
-            ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
-            {
-              taskIds: this.addToArray(taskId)
-            }
-          );
+      this.updateBatch(
+        batch,
+        ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
+        {
+          taskIds: this.addToArray(taskId)
         }
-        return batch
-          .commit()
-          .then(() => {
-            console.log('Added task');
-          })
-          .catch(error => {
-            console.error(error);
-          });
+      );
+    }
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Created task');
+        return taskId;
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
@@ -1825,16 +1920,16 @@ class Firebase {
 
   getSubtaskDoc = subtaskId => this.fs.collection('subtasks').doc(subtaskId);
 
-  addSubtask = ({
+  createSubtask = async ({
     userId,
     name,
     workspaceId,
     memberIds = [],
+    taskId,
     projectId = null,
-    taskId = null,
     dueDate = null
   }) => {
-    this.fs
+    const subtaskId = await this.fs
       .collection('subtasks')
       .add({
         createdAt: this.getTimestamp(),
@@ -1850,11 +1945,17 @@ class Firebase {
         workspaceId
       })
       .then(ref => {
-        if (taskId === null) return;
-        this.updateDoc(['tasks', taskId], {
-          subtaskIds: this.addToArray(ref.id)
-        });
+        return ref.id;
+      })
+      .catch(error => {
+        console.error(error);
       });
+
+    this.updateDoc(['tasks', taskId], {
+      subtaskIds: this.addToArray(subtaskId)
+    }).then(() => {
+      return subtaskId;
+    });
   };
 
   updateSubtask = async (subtaskId, newValue = {}) => {
@@ -1892,7 +1993,7 @@ class Firebase {
 
   // Comment API
 
-  addComment = ({
+  createComment = async ({
     from,
     content,
     workspaceId,
@@ -1901,7 +2002,7 @@ class Firebase {
     taskId = null,
     createdAt = this.getTimestamp()
   }) => {
-    this.fs
+    const commentId = await this.fs
       .collection('comments')
       .add({
         createdAt,
@@ -1916,33 +2017,44 @@ class Firebase {
         likes: {}
       })
       .then(ref => {
-        if (taskId) {
-          this.updateDoc(['tasks', taskId], {
-            commentIds: this.addToArray(ref.id)
-          });
-        }
+        return ref.id;
+      })
+      .catch(error => {
+        console.error(`Error creating comment: ${error}`);
+      });
 
-        if (to.length > 0) {
-          to.forEach(user => {
-            this.createNotification({
-              workspaceId,
-              recipientId: user.userId,
-              source: {
-                user: from,
-                type: 'comment',
-                id: ref.id,
-                parent: {
-                  type: taskId ? 'task' : 'project',
-                  id: taskId || projectId
-                }
-              },
-              event: {
-                type: 'mention',
-                publishedAt: createdAt
-              }
-            });
-          });
-        }
+    if (taskId) {
+      this.updateDoc(['tasks', taskId], {
+        commentIds: this.addToArray(commentId)
+      });
+    }
+
+    return Promise.all(
+      to.map(user => {
+        this.createNotification({
+          workspaceId,
+          recipientId: user.userId,
+          source: {
+            user: from,
+            type: 'comment',
+            id: commentId,
+            parent: {
+              type: taskId ? 'task' : 'project',
+              id: taskId || projectId
+            }
+          },
+          event: {
+            type: 'mention',
+            publishedAt: createdAt
+          }
+        });
+      })
+    )
+      .then(() => {
+        return commentId;
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
@@ -1959,15 +2071,20 @@ class Firebase {
     event,
     isActionPending = false
   }) => {
-    return this.fs.collection('notifications').add({
-      recipientId,
-      workspaceId,
-      source,
-      event,
-      isActionPending,
-      createdAt: this.getTimestamp(),
-      isActive: true
-    });
+    return this.fs
+      .collection('notifications')
+      .add({
+        recipientId,
+        workspaceId,
+        source,
+        event,
+        isActionPending,
+        createdAt: this.getTimestamp(),
+        isActive: true
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 }
 

@@ -38,7 +38,7 @@ class TaskComposer extends Component {
     } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
-    firebase.addTask({
+    firebase.createTask({
       dueDate: dueDate ? new Date(dueDate) : null,
       name,
       userId,

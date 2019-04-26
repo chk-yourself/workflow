@@ -30,7 +30,7 @@ class ListComposer extends Component {
     const { projectId, firebase, currentUser, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const { userId } = currentUser;
-    firebase.addList({ projectId, name, workspaceId, userId });
+    firebase.createList({ projectId, name, workspaceId, userId });
     this.clear();
   };
 

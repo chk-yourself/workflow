@@ -12,7 +12,8 @@ export default class Avatar extends Component {
     },
     size: 'md',
     variant: 'circle',
-    name: 'Guest'
+    name: 'Guest',
+    showOnlineStatus: false
   };
 
   getUserInitials = fullName => {
@@ -31,11 +32,13 @@ export default class Avatar extends Component {
       name,
       variant,
       color,
-      size
+      size,
+      showOnlineStatus,
+      isOnline
     } = this.props;
     return (
       <span
-        className={`avatar avatar--${size} avatar--${variant} ${
+        className={`avatar avatar--${size} avatar--${variant} ${showOnlineStatus && isOnline ? 'is-online' : ''} ${
           classes.avatar
         }`}
       >

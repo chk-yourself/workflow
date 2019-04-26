@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
+import { Link } from 'react-router-dom';
 import { Logo } from '../Logo';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
@@ -7,6 +8,7 @@ import { withOutsideClick } from '../withOutsideClick';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
 import { JamIcon } from '../JamIcon';
+import * as ROUTES from '../../constants/routes';
 import './Sidebar.scss';
 
 export const SidebarIcon = ({ name }) => {
@@ -58,6 +60,7 @@ class Sidebar extends Component {
             <div className="sidebar__logo">
               <Logo size="sm" />
             </div>
+            <div className="sidebar__content">
             <ul className="sidebar__list">{children}</ul>
             <Button
               isActive={isWorkspaceSettingsActive}
@@ -92,7 +95,20 @@ class Sidebar extends Component {
                   details={['name', 'displayName']}
                 />
               </li>
+              <ul className="sidebar__list">
+              <li className="sidebar__item">
+              <Link
+            target="_blank"
+            className="sidebar__link"
+            to={ROUTES.USER_GUIDE}
+          >
+            <Icon className="sidebar__icon" name="help-circle" />
+            <span className="sidebar__section-name">Help</span>
+          </Link>
+              </li>
+              </ul>
             </ul>
+            </div>
           </nav>
         </div>
       </div>

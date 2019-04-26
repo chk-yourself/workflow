@@ -4,6 +4,7 @@
 .member-assigner {
   display: flex;
   position: relative;
+  align-items: center;
 }
 
 .member-assigner__input {
@@ -38,7 +39,6 @@
 }
 
 .member-assigner__popover-wrapper {
-  width: 30px;
   display: inline-block;
   position: static;
 }
@@ -64,12 +64,13 @@
   line-height: 28px;
   margin-right: 4px;
   position: relative;
+  font-size: 12px;
+  flex: none;
 }
 
 .member-assigner__avatar-placeholder {
   font-weight: 700;
   letter-spacing: 0.03em;
-  font-size: 12px;
 }
 
 .member-assigner__btn--toggle-member-search {
@@ -78,7 +79,7 @@
   margin: 0;
   width: 30px;
   height: 30px;
-  line-height: 16px;
+  line-height: 0;
   vertical-align: middle;
   text-align: center;
   font-weight: 400;
@@ -119,4 +120,6 @@
 
 .member-assigner__members {
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }

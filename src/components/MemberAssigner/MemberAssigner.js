@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { withAuthorization } from '../Session';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { MemberSearch } from '../MemberSearch';
@@ -19,7 +21,9 @@ class MemberAssigner extends Component {
     },
     placeholder: '',
     memberSearchIsDisabled: false,
-    isSelfAssignmentDisabled: false
+    isSelfAssignmentDisabled: false,
+    align: 'left',
+    showOnlineStatus: false
   };
 
   state = {
@@ -47,31 +51,41 @@ class MemberAssigner extends Component {
       placeholder,
       memberSearchIsDisabled,
       isSelfAssignmentDisabled,
-      userId
+      align,
+      showOnlineStatus,
+      currentUser,
+      activeWorkspace
     } = this.props;
     const { isMemberSearchActive } = this.state;
 
     const users = isSelfAssignmentDisabled
-      ? this.props.users.filter(user => user.userId !== userId)
+      ? this.props.users.filter(user => user.userId !== currentUser.userId)
       : this.props.users;
 
     return (
       <div className={`member-assigner ${classes.memberAssigner || ''}`}>
         <div className={`member-assigner__members ${classes.members || ''}`}>
-          {members.map(member => (
-            <Avatar
+          {members.map(member => {
+            const { userId, name, photoURL, settings, status } = member;
+            const isOnline = status &&
+        status.state === 'online' &&
+        settings.activeWorkspace === activeWorkspace.workspaceId;
+           return (
+             <Avatar
               classes={{
                 avatar: `member-assigner__avatar ${classes.avatar || ''}`,
                 placeholder: `member-assigner__avatar-placeholder ${classes.avatarPlaceholder ||
                   ''}`
               }}
-              name={member.name}
+              name={name}
               size="sm"
               variant="circle"
-              imgSrc={member.photoURL}
-              key={member.userId}
+              imgSrc={photoURL}
+              key={userId}
+              showOnlineStatus={showOnlineStatus}
+              isOnline={isOnline}
             />
-          ))}
+          )})}
         </div>
         {!memberSearchIsDisabled && (
           <PopoverWrapper
@@ -90,6 +104,9 @@ class MemberAssigner extends Component {
               } ${isMemberSearchActive ? 'is-active' : ''}`,
               children: <Icon name="plus" />,
               onClick: this.toggleMemberSearch
+            }}
+            align={{
+              inner: align
             }}
           >
             {isMemberSearchActive && (
@@ -119,17 +136,16 @@ class MemberAssigner extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    userId: currentUserSelectors.getCurrentUserId(state),
     users: userSelectors.getUsersArray(state),
     members: userSelectors.getMembersArray(state, ownProps.memberIds)
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  connect(
+  mapStateToProps
+),
+withAuthorization(condition)
 )(MemberAssigner);

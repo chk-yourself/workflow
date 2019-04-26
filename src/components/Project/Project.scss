@@ -10,12 +10,12 @@
 
 .project--board {
   min-width: 100%;
-  margin-top: 108px;
+  margin-top: 104px;
   @include md {
-    margin-top: 110px;
+    margin-top: 106px;
   }
   @include xl {
-    margin-top: 118px;
+    margin-top: 114px;
   }
   .project__lists {
     display: flex;
@@ -27,7 +27,6 @@
     left: 0;
     top: 104px;
     position: fixed;
-    padding: 8px 8px 8px 14px;
     background-color: $cloud;
     @include md {
       top: 106px;
@@ -53,9 +52,6 @@
   @include xl {
     margin-top: 82px;
   }
-  .project__overview {
-    margin-top: 36px;
-  }
   .project__submenu-wrapper {
     top: 34px;
     @include md {
@@ -73,7 +69,6 @@
   .project__toolbar {
     position: fixed;
     top: 112px;
-    padding: 8px;
     z-index: 5;
     width: calc(100% - 16px);
     max-width: 960px;
@@ -87,7 +82,7 @@
     }
   }
   .project__lists {
-    margin-top: 44px;
+    margin-top: 40px;
     -webkit-overflow-scrolling: touch;
     display: inline-flex;
     flex-direction: column;
@@ -148,7 +143,7 @@
   position: fixed;
   top: 40px;
   z-index: 6;
-  padding: 0 4px;
+  padding: 0;
   @include xx {
     width: calc(100% - 48px);
     left: 48px;
@@ -203,6 +198,14 @@
         .project__toolbar {
           width: calc(100% - 432px);
         }
+      }
+    }
+    .task-editor-pane {
+      @include md {
+        margin-top: 74px;
+      }
+      @include xl {
+        margin-top: 82px;
       }
     }
   }
@@ -289,8 +292,9 @@
 .project__toolbar {
   display: flex;
   justify-content: flex-end;
-  padding: 8px;
+  padding: 6px 8px;
   z-index: 5;
+  vertical-align: middle;
 }
 
 .project__settings-wrapper {
@@ -311,10 +315,13 @@
 .project__settings-btn {
   width: 28px;
   height: 28px;
+  line-height: 16px;
   padding: 0;
   margin-left: 8px;
   .feather {
     vertical-align: middle;
+    width: 16px;
+    height: 16px;
   }
   &.is-active {
     color: $primary;
@@ -463,5 +470,30 @@
   }
   @include xl {
     margin-top: 92px;
+  }
+}
+
+.project__avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+  line-height: 22px;
+}
+
+.project__btn--add-member {
+  width: 24px;
+  height: 24px;
+  line-height: 0;
+  .feather {
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+  }
+}
+
+.project__member-assigner {
+  display: none;
+  @include md {
+    display: flex;
   }
 }

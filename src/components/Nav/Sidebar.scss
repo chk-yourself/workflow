@@ -109,9 +109,6 @@
   height: 140px;
   flex-flow: column wrap;
   justify-content: center;
-  @include md {
-    padding-bottom: 28px;
-  }
   &.active {
     background-color: $white;
   }
@@ -192,4 +189,9 @@
   &:not(.is-active) {
     border-bottom: none;
   }
+}
+
+.sidebar__content {
+  overflow-y: auto;
+  max-height: calc(100vh - 140px);
 }

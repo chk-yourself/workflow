@@ -7,6 +7,17 @@
   box-sizing: border-box;
   flex: none;
   display: inline-block;
+  &.is-online:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $success;
+    border: 1px solid $white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
 }
 
 .avatar--md {

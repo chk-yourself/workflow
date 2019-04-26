@@ -142,12 +142,12 @@
   -ms-overflow-style: none;
   overflow-x: visible;
   overflow-y: auto;
-  max-height: calc(100vh - 330px);
+  max-height: calc(100vh - 326px);
   @include md {
-    max-height: calc(100vh - 332px);
+    max-height: calc(100vh - 328px);
   }
   @include xl {
-    max-height: calc(100vh - 340px);
+    max-height: calc(100vh - 336px);
   }
 }
 
