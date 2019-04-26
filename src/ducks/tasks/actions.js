@@ -83,6 +83,7 @@ export const removeTaskTag = ({ taskId, name, userId, projectId }) => {
         projectId,
         projectCount
       });
+      console.log('tag removed');
       dispatch(removeTag({ taskId, name }));
     } catch (error) {
       console.error(error);

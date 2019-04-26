@@ -6,6 +6,7 @@ import {
   setTaskLoadedState
 } from '../tasks/actions';
 import { setProjectLoadedState } from '../projects/actions';
+import { deleteTask } from '../tasks/actions';
 
 export const loadListsById = listsById => {
   return {
@@ -72,16 +73,9 @@ export const deleteList = ({ listId, projectId }) => {
                 dueDate,
                 workspaceId
               } = tasksById[taskId];
-              await firebase.deleteTask({
-                taskId,
-                assignedTo,
-                folders,
-                subtaskIds,
-                commentIds,
-                projectId,
-                dueDate,
-                workspaceId
-              });
+              dispatch(deleteTask({
+                taskId
+              }));
             });
           }
         })

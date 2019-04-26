@@ -13,13 +13,15 @@ const Tag = ({
   innerRef,
   isFocused,
   variant,
-  isLinkDisabled
+  isLinkDisabled,
+  ...rest
 }) => (
   <span
     className={`tag tag--${size} bg--${color} ${
       variant !== 'default' ? `tag--${variant}` : ''
     } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
+    {...rest}
   >
     {!isLinkDisabled ? (
       <Link to={`/0/tasks?tag=${name}`} className="tag__link">
@@ -35,6 +37,7 @@ const Tag = ({
         className="tag__btn--delete"
         onClick={onDelete}
         iconOnly
+        data-name={name}
       >
         <Icon name="x" />
       </Button>

@@ -14,16 +14,16 @@ const projectsById = (state = INITIAL_STATE, action) => {
     }
     case types.ADD_PROJECT: {
       const { projectId, projectData } = action;
-      const { listIds, settings } = projectData;
+      const { listIds, settings, isDuplicate } = projectData;
       const listCount = listIds.length;
       return {
         ...(state && state),
         [projectId]: {
           projectId,
           isLoaded: {
-            subtasks: listCount === 0,
+            subtasks: !isDuplicate && listCount === 0,
             tasks: listCount === 0,
-            lists: listCount === 0
+            lists: !isDuplicate && listCount === 0
           },
           tempSettings: {
             tasks: { ...settings.tasks }

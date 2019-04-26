@@ -185,13 +185,11 @@ class TagsInput extends Component {
     const isUserTag = userTags && name in userTags;
     const projectTag = isProjectTag ? projectTags[name] : null;
     const userTag = isUserTag ? userTags[name] : null;
-    const projectCount = isProjectTag ? projectTag.count + 1 : 1;
-    const userCount = isUserTag ? userTag.count + 1 : 1;
     const tagData = isProjectTag
-      ? { ...projectTag, projectCount, userCount }
+      ? { ...projectTag }
       : isUserTag
-      ? { ...userTag, projectCount, userCount }
-      : { name, userCount, projectCount };
+      ? { ...userTag }
+      : { name };
 
     firebase
       .addTag({

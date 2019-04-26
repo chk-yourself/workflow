@@ -101,9 +101,8 @@ class Project extends Component {
   };
 
   handleMemberAssignment = (userId, e) => {
-    const { firebase, projectId, project, activeWorkspace } = this.props;
+    const { firebase, projectId, name: projectName, memberIds, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
-    const { memberIds, name: projectName } = project;
 
     if (memberIds.includes(userId)) {
       firebase.removeAssignee({ projectId, userId, workspaceId });

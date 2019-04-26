@@ -910,44 +910,31 @@ class Firebase {
     userId,
     name,
     projectId,
-    color = 'default',
-    projectCount,
-    userCount
+    color = 'default'
   }) => {
     const batch = this.createBatch();
-    const userTagRef = this.getDocRef('users', userId, 'tags', name);
 
     this.updateBatch(batch, ['tasks', taskId], {
       tags: this.addToArray(name)
     });
 
-    batch.set(
-      userTagRef,
-      {
-        name,
-        color,
-        count: userCount
-      },
-      { merge: true }
-    );
+    this.setBatch(batch, ['users', userId, 'tags', name], {
+      name,
+      color,
+      count: this.plus(1)
+    }, true);
 
     if (projectId) {
       const projectRef = this.getDocRef('projects', projectId);
-
-      batch.set(
-        projectRef,
-        {
-          tags: {
-            [name]: {
-              name,
-              color,
-              count: projectCount
-            }
-          },
-          lastUpdatedAt: this.getTimestamp()
-        },
-        { merge: true }
-      );
+      this.setBatch(batch, ['projects', projectId], {
+        tags: {
+          [name]: {
+            name,
+            color,
+            count: this.plus(1)
+          }
+        }
+      }, true);
     }
 
     return batch
@@ -1080,7 +1067,11 @@ class Firebase {
 
   createDemoProject = userId => {};
 
-  cloneProject = async ({ userId, projectId, workspaceId }) => {
+  cloneProject = async ({ name, userId, projectId, workspaceId }, {
+    includeNotes = true,
+    includeSubtasks = true,
+    includeMembers = true
+  }) => {
     const [project, listsById, tasksById, subtasksById] = await Promise.all([
       this.getDocRef('projects', projectId)
         .get()
@@ -1113,7 +1104,7 @@ class Firebase {
           });
           return tasks;
         }),
-      this.queryCollection('subtasks', ['projectId', '==', projectId])
+      includeSubtasks ? this.queryCollection('subtasks', ['projectId', '==', projectId])
         .get()
         .then(snapshot => {
           const subtasks = {};
@@ -1125,12 +1116,16 @@ class Firebase {
             };
           });
           return subtasks;
-        })
+        }) : () => null
     ]);
     const clonedProjectId = await this.createProject({
       ...project,
+      name,
+      notes: includeNotes ? project.notes : null,
+      memberIds: includeMembers ? project.memberIds : [userId],
       userId,
-      workspaceId
+      workspaceId,
+      isDuplicate: true
     });
     project.listIds.forEach(async listId => {
       const list = listsById[listId];
@@ -1147,20 +1142,23 @@ class Firebase {
         const clonedTaskId = await this.createTask({
           ...task,
           projectId: clonedProjectId,
+          projectName: name,
           listId: clonedListId,
           userId,
           workspaceId
         });
-        subtaskIds.forEach(subtaskId => {
-          const subtask = subtasksById[subtaskId];
-          this.createSubtask({
-            ...subtask,
-            userId,
-            workspaceId,
-            projectId: clonedProjectId,
-            taskId: clonedTaskId
+        if (includeSubtasks) {
+          subtaskIds.forEach(subtaskId => {
+            const subtask = subtasksById[subtaskId];
+            this.createSubtask({
+              ...subtask,
+              userId,
+              workspaceId,
+              projectId: clonedProjectId,
+              taskId: clonedTaskId
+            });
           });
-        });
+        }
       });
     });
   };
@@ -1173,7 +1171,8 @@ class Firebase {
     layout = 'board',
     isPrivate = false,
     memberIds = [],
-    notes = null
+    notes = null,
+    isDuplicate = false
   }) => {
     const projectId = await this.fs
       .collection('projects')
@@ -1194,7 +1193,8 @@ class Firebase {
         notes,
         color,
         name,
-        workspaceId
+        workspaceId,
+        isDuplicate
       })
       .then(ref => {
         return ref.id;
@@ -1210,7 +1210,7 @@ class Firebase {
       });
       this.updateBatch(batch, ['workspaces', workspaceId], {
         projectIds: this.addToArray(projectId),
-        [`members.${userId}.projectIds`]: this.addToArray(projectId)
+        [`members.${memberId}.projectIds`]: this.addToArray(projectId)
       });
       this.setBatch(
         batch,

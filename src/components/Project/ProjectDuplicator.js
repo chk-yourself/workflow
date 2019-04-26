@@ -12,7 +12,7 @@ import './ProjectDuplicator.scss';
 
 const options = [
   {
-    value: 'includeDescription',
+    value: 'includeNotes',
     name: 'Description'
   },
   {
@@ -28,7 +28,7 @@ const options = [
 class ProjectDuplicator extends Component {
   state = {
     name: `Duplicate of ${this.props.project.name}`,
-    includeDescription: true,
+    includeNotes: true,
     includeSubtasks: true,
     includeMembers: true
   };
@@ -39,7 +39,7 @@ class ProjectDuplicator extends Component {
     
     this.setState({
       name: `Duplicate of ${name}`,
-      includeDescription: true,
+      includeNotes: true,
       includeSubtasks: true,
       includeMembers: true
     });
@@ -47,11 +47,12 @@ class ProjectDuplicator extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { name, includeDescription, includeSubtasks, includeMembers } = this.state;
+    const { name, ...options } = this.state;
     if (!name) return;
-    const { onClose, firebase, currentUser, activeWorkspace } = this.props;
+    const { onClose, firebase, currentUser, activeWorkspace, projectId } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
+    firebase.cloneProject({ name, userId, workspaceId, projectId }, options);
     onClose();
     this.reset();
   };
@@ -72,7 +73,7 @@ class ProjectDuplicator extends Component {
   render() {
     const {
       name,
-      includeDescription,
+      includeNotes,
       includeSubtasks,
       includeMembers
     } = this.state;
@@ -100,6 +101,7 @@ class ProjectDuplicator extends Component {
           <legend className="project-duplicator__legend">Include:</legend>
             {options.map(option => (
               <Checkbox
+                key={option.value}
                 id={option.value}
                 value={option.value}
                 name="projectDuplicateOptions"
