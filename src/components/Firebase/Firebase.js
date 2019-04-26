@@ -926,10 +926,12 @@ class Firebase {
 
     if (projectId) {
       this.setBatch(batch, ['projects', projectId], {
-        [`tags.${name}`]: {
-          name,
-          color,
-          count: this.plus(1)
+        tags: {
+          [name]: {
+            name,
+            color,
+            count: this.plus(1)
+          }
         }
       }, true);
       /*
@@ -952,7 +954,7 @@ class Firebase {
   };
 
   removeTag = (
-    { taskId = null, name, userId, projectId },
+    { taskId = null, name, userId, projectId, userCount, projectCount },
     batch = this.createBatch(),
     shouldCommit = true
   ) => {
@@ -962,16 +964,24 @@ class Firebase {
       });
     }
 
-    if (userId) {
-      this.updateBatch(batch, ['users', userId, 'tags', name], {
-        count: this.minus(1)
-      });
+    if (userId && userCount !== null) {
+      if (userCount === 0) {
+        this.deleteTag({ userId, name});
+      } else {
+        this.updateBatch(batch, ['users', userId, 'tags', name], {
+          count: this.minus(1)
+        });
+      }
     }
     
-    if (projectId) {
-      this.updateBatch(batch, ['projects', projectId], {
-        [`tags.${name}.count`]: this.minus(1)
-      });
+    if (projectId && projectCount !== null) {
+      if (projectCount === 0) {
+        this.deleteTag({ projectId, name });
+      } else {
+        this.updateBatch(batch, ['projects', projectId], {
+          [`tags.${name}.count`]: this.minus(1)
+        });
+      }
     }
 
     /*
@@ -994,17 +1004,17 @@ class Firebase {
     }
   };
 
-  deleteTag = ({ userId, projectId, tagId}) => {
+  deleteTag = ({ userId, projectId, name}) => {
     if (projectId) {
       /*
       this.getDocRef('projects', projectId, 'tags', tagId).delete();
       */
      this.updateDoc(['projects', projectId], {
-       [`tags.${tagId}`]: this.deleteField()
+       [`tags.${name}`]: this.deleteField()
      });
     }
     if (userId) {
-      this.getDocRef('users', userId, 'tags', tagId).delete();
+      this.getDocRef('users', userId, 'tags', name).delete();
     }
   };
 
@@ -1242,9 +1252,7 @@ class Firebase {
       });
   };
 
-  deleteProject = projectId => {
-
-  };
+  deleteProject = projectId => {}
 
   // List API
 
