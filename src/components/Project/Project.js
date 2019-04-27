@@ -208,7 +208,7 @@ class Project extends Component {
                     <Button
                       className="project__more-actions-btn"
                       onClick={this.deleteProject}
-                      disabled={ownerId !== currentUser.userId}
+                      disabled={ownerId !== currentUser.userId && currentUser.role !== 'admin'}
                     >
                       Delete Project
                     </Button>

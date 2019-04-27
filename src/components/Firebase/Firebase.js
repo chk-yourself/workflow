@@ -522,8 +522,27 @@ class Firebase {
 
   getUserDoc = userId => this.fs.collection('users').doc(userId);
 
-  createGuest = async userId => {
-     await this.createUser({
+  createDemoProject = userId => {
+    return this.cloneProject({
+      name: 'Tutorial', 
+      userId, 
+      projectId: process.env.REACT_APP_DEMO_PROJECT_ID, 
+      workspaceId: 'DEMO' 
+    }, {
+      includeNotes: true,
+      includeSubtasks: true,
+      includeMembers: true,
+      isDemo: true
+    }).then(() => {
+      console.log('created demo project');
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  }
+
+  createGuest = userId => {
+     return this.createUser({
       userId,
       name: 'Guest',
       displayName: 'Guest',
@@ -538,17 +557,6 @@ class Firebase {
           name: 'Demo'
         }
       }
-    });
-    return this.cloneProject({ 
-      name: 'Tutorial', 
-      userId, 
-      projectId: process.env.REACT_APP_DEMO_PROJECT_ID, 
-      workspaceId: 'DEMO' 
-    }, {
-      includeNotes: true,
-      includeSubtasks: true,
-      includeMembers: true,
-      isDemo: true
     })
     .then(() => {
       console.log('Guest created');
@@ -1093,8 +1101,6 @@ class Firebase {
       });
   };
 
-  createDemoProject = userId => {};
-
   cloneProject = async ({ name, userId, projectId, workspaceId }, {
     includeNotes = true,
     includeSubtasks = true,
@@ -1151,14 +1157,16 @@ class Firebase {
       ...project,
       name,
       notes: includeNotes ? project.notes : null,
-      memberIds: includeMembers ? project.memberIds : [userId],
+      memberIds: isDemo ? [...project.memberIds, userId] : includeMembers ? project.memberIds : [userId],
       userId,
       workspaceId,
       isDuplicate: true
     });
+    console.log(clonedProjectId);
     project.listIds.forEach(async listId => {
       const list = listsById[listId];
       const { name, taskIds } = list;
+      console.log(clonedProjectId);
       const clonedListId = await this.createList({
         name,
         userId,
@@ -1231,6 +1239,8 @@ class Firebase {
       .catch(error => {
         console.error(error.message);
       });
+
+      console.log(projectId);
 
     const batch = this.createBatch();
     memberIds.forEach(memberId => {

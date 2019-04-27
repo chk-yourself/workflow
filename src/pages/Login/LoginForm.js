@@ -28,7 +28,6 @@ class LoginForm extends Component {
     const { firebase } = this.props;
     if (email === 'Guest') {
       try {
-        console.log('is guest');
         if (password !== process.env.REACT_APP_GUEST_PW) {
           throw new Error('Incorrect password.');
         }

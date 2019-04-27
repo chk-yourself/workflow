@@ -31,9 +31,22 @@ const withAuthentication = WrappedComponent => {
 
       this.authListener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
-          const { uid, emailVerified } = authUser;
+          const { uid, emailVerified, isAnonymous } = authUser;
           if (emailVerified) {
             this.userListener = await syncCurrentUser(uid, history);
+          } else if (isAnonymous) {
+            console.log(uid);
+            if (firebase.isNewUser(authUser)) {
+              await firebase.createGuest(uid).then(() => {
+                return firebase.createDemoProject(uid);
+              }).then(async() => {
+                this.userListener = await syncCurrentUser(uid, history);
+              }).catch(error => {
+                console.error(error);
+              });
+            } else {
+              this.userListener = await syncCurrentUser(uid, history);
+            }
           } else {
             history.push(ROUTES.VERIFICATION_REQUIRED);
           }
