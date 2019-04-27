@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const firebase_tools = require('firebase-tools');
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -20,4 +21,44 @@ exports.onUserStatusChanged = functions.database
         status: eventStatus
       });
     });
+  });
+
+exports.mintAdminToken = functions.https.onCall((data, context) => {
+  const uid = data.uid;
+  return admin
+    .auth()
+    .createCustomToken(uid, { admin: true })
+    .then(token => {
+      return { token: token };
+    });
+  });
+
+exports.recursiveDelete = functions
+  .runWith({
+    timeoutSeconds: 540,
+    memory: '2GB'
+  })
+  .https.onCall((data, context) => {
+    if (!(context.auth && context.auth.token && context.auth.token.admin)) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'Must be an administrative user to initiate delete.'
+      );
+    }
+    const path = data.path;
+    console.log(
+      `User ${context.auth.uid} has requested to delete path ${path}`
+    );
+    return firebase_tools.firestore
+      .delete(path, {
+        project: process.env.REACT_APP_PROJECT_ID,
+        recursive: true,
+        yes: true,
+        token: functions.config().fb.token
+      })
+      .then(() => {
+        return {
+          path: path 
+        };
+      });
   });

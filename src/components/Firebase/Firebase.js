@@ -566,6 +566,10 @@ class Firebase {
     });
   };
 
+  deleteGuest = userId => {
+
+  };
+
   createAccount = ({ userId, email, profile, workspace, invites }) => {
     const workspaces = {};
     let workspaceIds = [];

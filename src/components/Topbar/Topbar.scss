@@ -49,10 +49,13 @@
   font-weight: 500;
   border-radius: 0;
   border: none;
-  &:hover,
-  &:active {
+  &:hover:not(:disabled),
+  &:active:not(:disabled) {
     background-color: $primary;
     color: $white;
+  }
+  &:disabled {
+    color: $grey-300;
   }
   .feather {
     position: absolute;

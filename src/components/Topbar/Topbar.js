@@ -73,6 +73,7 @@ class Topbar extends Component {
                 <Button
                   className="topbar__link"
                   onClick={openWorkspaceComposer}
+                  disabled={currentUser.isGuest}
                 >
                   <Icon name="plus" />
                   Create Workspace

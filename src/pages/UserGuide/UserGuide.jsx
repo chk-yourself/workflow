@@ -1,5 +1,6 @@
 import React from 'react';
 import { Main } from '../../components/Main';
+import UserGuidePanel from './UserGuidePanel';
 import './UserGuide.scss';
 
 const UserGuide = () => (
