@@ -1,3 +1,122 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
+.landing {
+  margin-top: 44px;
+}
+
+@media (min-width: 768px) {
+  .landing {
+    margin-top: 46px;
+  }
+}
+
+.landing__title {
+  text-align: center;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .landing__title {
+    font-size: 1.8rem;
+  }
+}
+
+.landing__section-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.landing__intro {
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.4;
+  margin: 0 auto;
+}
+
+.landing__intro:not(:first-child) {
+  margin-top: 16px;
+}
+
+.landing__link {
+  text-decoration: none;
+  color: #3e7aff;
+}
+
+.landing__link--get-started {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #3e7aff;
+  color: #fff;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.landing__features {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+  margin: 0 auto;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  max-width: 272px;
+  list-style: none;
+  padding: 0;
+}
+
+@media (min-width: 576px) {
+  .landing__features {
+    max-width: 480px;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing__features {
+    max-width: 800px;
+  }
+}
+
+.landing__feature {
+  border-radius: 8px;
+  position: relative;
+  width: 100%;
+  margin: 0 8px 16px 8px;
+  height: 120px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.landing__feature:hover {
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.landing__feature:hover .guide__icon--arrow {
+  color: #495057;
+}
+
+@media (min-width: 576px) {
+  .landing__feature {
+    height: 136px;
+    margin: 0 8px 16px 8px;
+    width: calc(50% - 16px);
+  }
+}
+
+@media (min-width: 768px) {
+  .landing__feature {
+    margin: 0 16px 16px 16px;
+    width: calc(33.33% - 32px);
+  }
+}
 /*# sourceMappingURL=Landing.css.map */

@@ -1,2 +1,93 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
+
+.landing {
+  margin-top: 44px;
+  @include md {
+    margin-top: 46px;
+  }
+}
+
+.landing__title {
+  text-align: center;
+  font-weight: 500;
+  @include md {
+    font-size: 1.8rem;
+  }
+}
+
+.landing__section-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.landing__intro {
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.4;
+  margin: 0 auto;
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+}
+
+.landing__link {
+  text-decoration: none;
+  color: $primary;
+}
+
+.landing__link--get-started {
+  display: inline-block;
+  text-decoration: none;
+  background-color: $primary;
+  color: $white;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.landing__features {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 0 auto;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 272px;
+  list-style: none;
+  padding: 0;
+  @include sm {
+    max-width: 480px;
+  }
+  @include md {
+    max-width: 800px;
+  }
+}
+
+.landing__feature {
+  border-radius: 8px;
+  position: relative;
+  width: 100%;
+  margin: 0 8px 16px 8px;
+  height: 120px;
+  padding: 16px 0;
+  text-align: center;
+  &:hover {
+    @include box-shadow(2);
+    .guide__icon--arrow {
+      color: $grey-700;
+    }
+  }
+  @include sm {
+    height: 136px;
+    margin: 0 8px 16px 8px;
+    width: calc(50% - 16px);
+  }
+  @include md {
+    margin: 0 16px 16px 16px;
+    width: calc(33.33% - 32px);
+  }
+}

@@ -80,7 +80,7 @@
   .header.expand-nav + .main,
   .header.expand-nav + main {
     width: calc(100% - 200px);
-    left: 100px;
+    left: 200px;
   }
 }
 
