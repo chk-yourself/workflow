@@ -13,7 +13,7 @@ import { Header } from '../../components/Header';
 import { AccountSetup } from '../AccountSetup';
 import { VerificationRequired } from '../VerificationRequired';
 import { Tooltip } from '../../components/Tooltip';
-import { UserGuide } from '../UserGuide';
+import { Guide } from '../Guide';
 import './App.scss';
 
 class App extends Component {
@@ -81,7 +81,7 @@ class App extends Component {
             path={ROUTES.VERIFICATION_REQUIRED}
             component={VerificationRequired}
           />
-          <Route path={ROUTES.USER_GUIDE} component={UserGuide} />
+          <Route path={ROUTES.GUIDE} component={Guide} />
         </Switch>
         <Tooltip anchorEl={tooltipAnchor} {...tooltipProps} />
       </div>

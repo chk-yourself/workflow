@@ -5,7 +5,13 @@
   &:hover {
     cursor: pointer;
   }
-  &:focus:not(:focus-visible) {
+  &:focus {
     outline: none;
+  }
+  &.is-expanded {
+    .feather-chevron-right {
+      transform: rotate(90deg);
+      transition: all 0.2s ease-in-out;
+    }
   }
 }

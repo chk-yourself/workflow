@@ -77,36 +77,36 @@ class Folder extends Component {
             <ExpansionPanel
               isExpanded={isExpanded}
               onToggle={this.toggleFolder}
-              classes={{ panel: 'folder', content: 'folder__content' }}
+              classes={{
+                panel: 'folder',
+                content: 'folder__content',
+                header: 'folder__header'
+              }}
               innerRef={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              header={{
-                className: 'folder__header',
-                children: (
-                  <>
-                    <Button
-                      type="button"
-                      size="sm"
-                      className={`folder__btn--toggle ${
-                        isExpanded ? 'is-expanded' : ''
-                      }`}
-                      iconOnly
-                    >
-                      <Icon name="chevron-right" />
-                    </Button>
-                    <Input
-                      className="folder__input--title"
-                      name="name"
-                      type="text"
-                      value={name}
-                      onChange={this.onChange}
-                      isRequired={userPermissions.enableNameChange}
-                      isReadOnly={!userPermissions.enableNameChange}
-                      onBlur={this.onBlur}
-                      onClick={this.toggleFolder}
-                    />
-                    {/*
+              header={
+                <>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="folder__btn--toggle"
+                    iconOnly
+                  >
+                    <Icon name="chevron-right" />
+                  </Button>
+                  <Input
+                    className="folder__input--title"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={this.onChange}
+                    isRequired={userPermissions.enableNameChange}
+                    isReadOnly={!userPermissions.enableNameChange}
+                    onBlur={this.onBlur}
+                    onClick={this.toggleFolder}
+                  />
+                  {/*
                     <PopoverWrapper
                       classes={{
                         wrapper: 'folder__popover-wrapper',
@@ -125,9 +125,8 @@ class Folder extends Component {
                       </Menu>
                     </PopoverWrapper>
                     */}
-                  </>
-                )
-              }}
+                </>
+              }
             >
               <div className="folder__tasks">
                 <Tasks

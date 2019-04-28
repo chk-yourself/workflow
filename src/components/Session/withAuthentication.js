@@ -27,7 +27,7 @@ const withAuthentication = WrappedComponent => {
       const {
         location: { pathname }
       } = history;
-      if (pathname === ROUTES.USER_GUIDE) return;
+      if (pathname.includes(ROUTES.GUIDE)) return;
 
       this.authListener = firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
@@ -60,7 +60,7 @@ const withAuthentication = WrappedComponent => {
           }
           firebase.auth
             .signInWithEmailLink(email, window.location.href)
-            .then(async result => {
+            .then(async () => {
               window.localStorage.removeItem('loginEmail');
             })
             .catch(error => {
@@ -113,7 +113,7 @@ const withAuthentication = WrappedComponent => {
           activeWorkspace: prevWorkspace
         } = prevProps.currentUser.settings;
         if (prevWorkspace !== activeWorkspace) {
-          // history.push(`/0/home/${userId}`);
+          history.push(`/0/home/${userId}`);
           resetActiveWorkspace();
           this.workspaceListener();
           this.workspaceListener = await syncActiveWorkspace(activeWorkspace);

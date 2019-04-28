@@ -11,8 +11,7 @@ export default class ExpansionPanel extends Component {
       header: '',
       content: ''
     },
-    isExpanded: null,
-    onChange: null,
+    isExpanded: undefined,
     id: null,
     innerRef: null
   };
@@ -25,17 +24,12 @@ export default class ExpansionPanel extends Component {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
     const { onToggle, id } = this.props;
     if (!onToggle) {
-      this.setState(prevProps => ({
-        isExpanded: !prevProps.isExpanded
+      this.setState(prevState => ({
+        isExpanded: !prevState.isExpanded
       }));
     } else {
       onToggle(e, id);
     }
-  };
-
-  onDragOver = e => {
-    e.preventDefault();
-    console.log(e.target);
   };
 
   render() {
@@ -48,21 +42,23 @@ export default class ExpansionPanel extends Component {
       ...rest
     } = this.props;
     const isExpanded =
-      propsIsExpanded !== null ? propsIsExpanded : this.state.isExpanded;
+      propsIsExpanded !== undefined ? propsIsExpanded : this.state.isExpanded;
 
     return (
       <div
-        className={`expansion-panel ${classes.panel || ''}`}
+        className={`expansion-panel ${
+          isExpanded ? 'is-expanded' : ''
+        } ${classes.panel || ''}`}
         aria-expanded={isExpanded}
         ref={innerRef}
         {...rest}
-        onDragOver={this.onDragOver}
       >
         <ExpansionPanelHeader
           onClick={this.toggleContent}
-          className={classes.header || header.className || ''}
+          className={`${isExpanded ? 'is-expanded' : ''} ${classes.header ||
+            ''}`}
         >
-          {header.children}
+          {header}
         </ExpansionPanelHeader>
         {isExpanded && (
           <ExpansionPanelContent className={classes.content || ''}>

@@ -61,53 +61,53 @@ class Sidebar extends Component {
               <Logo size="sm" />
             </div>
             <div className="sidebar__content">
-            <ul className="sidebar__list">{children}</ul>
-            <Button
-              isActive={isWorkspaceSettingsActive}
-              className="sidebar__btn sidebar__btn--workspace-settings"
-              onClick={openWorkspaceSettings}
-            >
-              <Icon className="sidebar__icon" name="settings" />
-              <span className="sidebar__section-name sidebar__workspace-name">
-                {workspaceName}
-              </span>
-            </Button>
-            <ul className="sidebar__list sidebar__workspace-links">
-              <li className="sidebar__item sidebar__item--team">
-                <Button
-                  isActive={isMembersListVisible}
-                  className="sidebar__btn sidebar__btn--toggle-members"
-                  onClick={this.toggleMembersList}
-                >
-                  <Icon className="sidebar__icon" name="users" />
-                  <span className="sidebar__section-name">Team</span>
-                  <Icon className="sidebar__icon" name="chevron-left" />
-                </Button>
-                <Members
-                  style={{ display: isMembersListVisible ? 'block' : 'none' }}
-                  classes={{
-                    list: 'sidebar__list sidebar__members-list',
-                    item: 'sidebar__item sidebar__member',
-                    detail: 'sidebar__member-detail',
-                    avatar: 'sidebar__avatar'
-                  }}
-                  showOnlineStatus
-                  details={['name', 'displayName']}
-                />
-              </li>
-              <ul className="sidebar__list">
-              <li className="sidebar__item">
-              <Link
-            target="_blank"
-            className="sidebar__link"
-            to={ROUTES.USER_GUIDE}
-          >
-            <Icon className="sidebar__icon" name="help-circle" />
-            <span className="sidebar__section-name">Help</span>
-          </Link>
-              </li>
+              <ul className="sidebar__list">{children}</ul>
+              <Button
+                isActive={isWorkspaceSettingsActive}
+                className="sidebar__btn sidebar__btn--workspace-settings"
+                onClick={openWorkspaceSettings}
+              >
+                <Icon className="sidebar__icon" name="settings" />
+                <span className="sidebar__section-name sidebar__workspace-name">
+                  {workspaceName}
+                </span>
+              </Button>
+              <ul className="sidebar__list sidebar__workspace-links">
+                <li className="sidebar__item sidebar__item--team">
+                  <Button
+                    isActive={isMembersListVisible}
+                    className="sidebar__btn sidebar__btn--toggle-members"
+                    onClick={this.toggleMembersList}
+                  >
+                    <Icon className="sidebar__icon" name="users" />
+                    <span className="sidebar__section-name">Team</span>
+                    <Icon className="sidebar__icon" name="chevron-left" />
+                  </Button>
+                  <Members
+                    style={{ display: isMembersListVisible ? 'block' : 'none' }}
+                    classes={{
+                      list: 'sidebar__list sidebar__members-list',
+                      item: 'sidebar__item sidebar__member',
+                      detail: 'sidebar__member-detail',
+                      avatar: 'sidebar__avatar'
+                    }}
+                    showOnlineStatus
+                    details={['name', 'displayName']}
+                  />
+                </li>
+                <ul className="sidebar__list">
+                  <li className="sidebar__item">
+                    <Link
+                      target="_blank"
+                      className="sidebar__link"
+                      to={ROUTES.GUIDE}
+                    >
+                      <Icon className="sidebar__icon" name="help-circle" />
+                      <span className="sidebar__section-name">Help</span>
+                    </Link>
+                  </li>
+                </ul>
               </ul>
-            </ul>
             </div>
           </nav>
         </div>

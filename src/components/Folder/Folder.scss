@@ -91,12 +91,6 @@
   .feather {
     stroke-width: 3px;
   }
-  &.is-expanded {
-    .feather {
-      transform: rotate(90deg);
-      transition: all 0.2s ease-in-out;
-    }
-  }
 }
 
 .folder__content {
