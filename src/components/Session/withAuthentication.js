@@ -35,15 +35,18 @@ const withAuthentication = WrappedComponent => {
           if (emailVerified) {
             this.userListener = await syncCurrentUser(uid, history);
           } else if (isAnonymous) {
-            console.log(uid);
             if (firebase.isNewUser(authUser)) {
-              await firebase.createGuest(uid).then(() => {
-                return firebase.createDemoProject(uid);
-              }).then(async() => {
-                this.userListener = await syncCurrentUser(uid, history);
-              }).catch(error => {
-                console.error(error);
-              });
+              await firebase
+                .createGuest(uid)
+                .then(() => {
+                  return firebase.createDemoProject(uid);
+                })
+                .then(async () => {
+                  this.userListener = await syncCurrentUser(uid, history);
+                })
+                .catch(error => {
+                  console.error(error);
+                });
             } else {
               this.userListener = await syncCurrentUser(uid, history);
             }
@@ -85,14 +88,14 @@ const withAuthentication = WrappedComponent => {
         currentUser,
         syncActiveWorkspace,
         syncUserTags,
-        resetActiveWorkspace
+        resetActiveWorkspace,
+        history
       } = this.props;
       if (!currentUser) return;
-      const { settings } = currentUser;
+      const { userId, settings } = currentUser;
       const { activeWorkspace } = settings;
       if (!prevProps.currentUser) {
         console.log('current user detected');
-        const { userId } = currentUser;
         await Promise.all([
           syncActiveWorkspace(activeWorkspace),
           syncUserTags(userId)
@@ -110,6 +113,7 @@ const withAuthentication = WrappedComponent => {
           activeWorkspace: prevWorkspace
         } = prevProps.currentUser.settings;
         if (prevWorkspace !== activeWorkspace) {
+          // history.push(`/0/home/${userId}`);
           resetActiveWorkspace();
           this.workspaceListener();
           this.workspaceListener = await syncActiveWorkspace(activeWorkspace);
