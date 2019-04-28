@@ -1,6 +1,31 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.guide {
+  width: 100%;
+  min-height: 100%;
+  padding: 8px;
+  overflow: visible;
+  margin-top: 44px;
+  @include md {
+    margin-top: 46px;
+  }
+  @include lg {
+    padding: 8px 16px;
+  }
+}
+
+.guide__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 24px auto;
+  color: $grey-900;
+  width: 100%;
+  padding: 0;
+  line-height: 1.3;
+  text-align: center;
+}
+
 .guide__grid {
   display: flex;
   flex-wrap: wrap;
@@ -17,13 +42,6 @@
   @include md {
     max-width: 800px;
   }
-}
-
-.guide__heading {
-  text-align: center;
-  font-weight: 600;
-  margin: 24px auto;
-  line-height: 1.3;
 }
 
 .guide__intro {
@@ -106,7 +124,7 @@
   }
 }
 
-.guide__section-link {
+.guide__tile-link {
   display: inline-block;
   width: 100%;
   height: 100%;
@@ -160,4 +178,72 @@
   bottom: 12px;
   right: 16px;
   color: $grey-400;
+}
+
+.guide__article {
+  padding: 0 8px;
+  @include md {
+    padding: 0 16px;
+  }
+}
+
+.guide__article-intro {
+  text-align: left;
+  margin-bottom: 40px;
+  line-height: 1.4;
+  font-size: 14px;
+  margin-top: -8px;
+}
+
+.guide__article-title {
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin: 24px auto;
+  color: $grey-900;
+  width: 100%;
+  line-height: 1.3;
+  @include md {
+    font-size: 1.8rem;
+  }
+}
+
+.guide__panel {
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
+}
+
+.guide__panel-header {
+  font-size: 20px;
+  font-weight: 600;
+  .feather {
+    width: 22px;
+    height: 22px;
+    vertical-align: text-top;
+    margin-right: 4px;
+  }
+}
+
+.guide__panel-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.guide__panel-content {
+  margin-left: 26px;
+}
+
+.guide__panel-section {
+  p {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  margin-top: 24px;
+}
+
+.guide__item {
+  font-size: 15px;
+  margin-top: 16px;
+  line-height: 1.3;
 }

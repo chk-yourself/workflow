@@ -204,4 +204,9 @@
 .header--dk .navbar__link:hover {
   color: #fb5072;
 }
+
+.navbar__btn--toggle {
+  width: 32px;
+  height: 32px;
+}
 /*# sourceMappingURL=Header.css.map */

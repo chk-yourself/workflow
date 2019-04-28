@@ -4,6 +4,7 @@
 .logo {
   vertical-align: middle;
   display: inline-block;
+  line-height: 1;
   color: $primary;
   .feather {
     position: relative;
@@ -14,34 +15,15 @@
     font-family: $heading-font;
     font-weight: 500;
   }
-  &--lg {
-    padding: 24px 0;
-    .logo__text {
-      font-size: 2.2rem;
-      @include md {
-        font-size: 3rem;
-      }
-    }
-    .feather {
-      width: 2.2rem;
-      height: 2.2rem;
-      top: 0;
-      @include md {
-        width: 3rem;
-        height: 3rem;
-        top: -5px;
-      }
-    }
+  &--md {
+    font-size: 22px;
     .logo__link {
-      font-size: 3rem;
       line-height: 1;
       color: inherit;
     }
-    @include md {
-      padding: 40px 0 24px;
-    }
   }
   &--sm {
+    font-size: 1.2rem;
     .feather {
       height: 1.2rem;
       width: 1.2rem;

@@ -16,6 +16,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: $cloud;
+  color: $grey-900;
   min-width: 100%;
   min-height: 100%;
   position: relative;
@@ -39,13 +40,6 @@ body {
 
 main {
   overflow: visible;
-  margin-top: 48px;
-  @include md {
-    margin-top: 52px;
-  }
-  @include xl {
-    margin-top: 68px;
-  }
 }
 
 h1,

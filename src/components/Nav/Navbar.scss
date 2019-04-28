@@ -7,6 +7,7 @@
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  padding: 4px 0;
   a {
     text-decoration: none;
   }
@@ -53,7 +54,7 @@
     }
   }
   @include md {
-    padding: 4px 0;
+    padding: 8px 0;
   }
 }
 
@@ -72,10 +73,7 @@
     color: inherit;
   }
   @include md {
-    padding: 8px 0;
-  }
-  @include xl {
-    padding: 16px 0;
+    padding: 0;
   }
   a,
   button {

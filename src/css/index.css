@@ -16,6 +16,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f9fafb;
+  color: #212529;
   min-width: 100%;
   min-height: 100%;
   position: relative;
@@ -40,19 +41,6 @@ body::-webkit-scrollbar {
 
 main {
   overflow: visible;
-  margin-top: 48px;
-}
-
-@media (min-width: 768px) {
-  main {
-    margin-top: 52px;
-  }
-}
-
-@media (min-width: 1200px) {
-  main {
-    margin-top: 68px;
-  }
 }
 
 h1,

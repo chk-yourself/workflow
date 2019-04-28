@@ -13,6 +13,7 @@
   position: relative;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  padding: 4px 0;
 }
 
 .navbar a {
@@ -73,7 +74,7 @@
 
 @media (min-width: 768px) {
   .navbar {
-    padding: 4px 0;
+    padding: 8px 0;
   }
 }
 
@@ -102,13 +103,7 @@
 
 @media (min-width: 768px) {
   .navbar__links {
-    padding: 8px 0;
-  }
-}
-
-@media (min-width: 1200px) {
-  .navbar__links {
-    padding: 16px 0;
+    padding: 0;
   }
 }
 

@@ -15,7 +15,8 @@ const Logo = ({ size, className, onClick }) => {
 };
 
 Logo.defaultProps = {
-  className: ''
+  className: '',
+  size: 'md'
 };
 
 export default Logo;

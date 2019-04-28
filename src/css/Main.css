@@ -5,6 +5,13 @@
   min-height: 100%;
   padding: 8px;
   overflow: visible;
+  margin-top: 36px;
+}
+
+@media (min-width: 768px) {
+  .main {
+    margin-top: 40px;
+  }
 }
 
 @media (min-width: 992px) {
@@ -16,7 +23,7 @@
 .main__title {
   font-size: 1.6rem;
   font-weight: 600;
-  margin: 0 0 24px 0;
+  margin: 16px 0 24px 0;
   color: #212529;
   width: 100%;
   padding: 0 4px;
