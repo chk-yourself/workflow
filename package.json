@@ -2,7 +2,7 @@
   "name": "workflow",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://chk-yourself.github.io/workflow",
+  "homepage": "https://wrkflw.tk",
   "dependencies": {
     "ajv": "^6.10.0",
     "braces": "^2.3.2",
