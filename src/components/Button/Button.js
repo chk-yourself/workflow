@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 import React from 'react';
 import './Button.scss';
 
@@ -18,10 +19,9 @@ const Button = ({
   isActive,
   ...props
 }) => (
-  // eslint-disable-next-line react/button-has-type
   <button
-    className={`${className} ${variant}--${color} ${!iconOnly ? size : ''} ${
-      iconOnly ? `icon-only icon-only--${size}` : ''
+    className={`${className} ${variant} ${variant}--${color} ${
+      iconOnly ? `icon-only icon-only--${size}` : `btn--${size}`
     } ${isActive ? 'is-active' : ''}`}
     type={type}
     onClick={onClick}

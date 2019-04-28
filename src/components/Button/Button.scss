@@ -18,11 +18,6 @@ button {
   &:focus {
     outline: none;
   }
-  &:disabled {
-    background-color: $grey-200;
-    color: $grey-500;
-    border: 1px solid $grey-400;
-  }
   .feather {
     pointer-events: none;
     vertical-align: middle;
@@ -35,6 +30,14 @@ button {
 // Colors + Variants
 
 // Contained
+.contained {
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-400;
+  }
+}
+
 .contained--primary {
   background-color: $primary;
   color: $white;
@@ -47,23 +50,42 @@ button {
 .contained--secondary {
   background-color: $secondary;
   color: $white;
+  &:not(:disabled):hover {
+    background-color: rgba($secondary, 0.8);
+    @include box-shadow(1);
+  }
 }
 
 .contained--neutral {
   background-color: $grey-700;
   color: $white;
+  &:not(:disabled):hover {
+    background-color: rgba($grey-700, 0.8);
+    @include box-shadow(1);
+  }
 }
 .contained--success {
   background-image: linear-gradient(-20deg, $success-dk 0%, 20%, $success 100%);
   color: $white;
   font-weight: 600;
+  &:not(:disabled):hover {
+    background-color: rgba($success, 0.8);
+    @include box-shadow(1);
+  }
 }
 
 // Outlined
+.outlined {
+  &:disabled {
+    color: $grey-300;
+    border: 1px solid $grey-400;
+  }
+}
+
 .outlined--primary {
   border: 1px solid $primary;
   color: $primary;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $primary;
     color: $white;
   }
@@ -72,7 +94,7 @@ button {
 .outlined--secondary {
   border: 1px solid $secondary;
   color: $secondary;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $secondary;
     color: $white;
   }
@@ -81,7 +103,7 @@ button {
 .outlined--neutral {
   border: 1px solid $grey-700;
   color: $grey-700;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $grey-700;
     color: $white;
   }
@@ -89,7 +111,7 @@ button {
 .outlined--success {
   border: 1px solid $success-dk;
   color: $success-dk;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $success;
     border-color: $success;
     color: $white;
@@ -97,6 +119,12 @@ button {
 }
 
 // Text
+.text {
+  &:disabled {
+    color: $grey-300;
+    background-color: transparent;
+  }
+}
 
 .text--primary {
   color: $primary;
@@ -115,7 +143,7 @@ button {
 }
 
 // Sizes
-.sm {
+.btn--sm {
   padding: 4px 8px;
   font-size: 0.8125rem;
   .feather {
@@ -123,7 +151,7 @@ button {
   }
 }
 
-.md {
+.btn--md {
   padding: 10px 12px;
   font-size: 1rem;
   min-height: 36px;
@@ -132,7 +160,7 @@ button {
   }
 }
 
-.lg {
+.btn--lg {
   padding: 10px 24px;
   font-size: 1.1rem;
   .feather {

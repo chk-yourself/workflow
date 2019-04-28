@@ -25,7 +25,7 @@
   .project__toolbar {
     width: 100%;
     left: 0;
-    top: 104px;
+    top: 100px;
     position: fixed;
     background-color: $cloud;
     @include md {
@@ -68,7 +68,7 @@
   }
   .project__toolbar {
     position: fixed;
-    top: 112px;
+    top: 108px;
     z-index: 5;
     width: calc(100% - 16px);
     max-width: 960px;
@@ -141,9 +141,12 @@
   left: 0;
   width: 100%;
   position: fixed;
-  top: 40px;
+  top: 36px;
   z-index: 6;
   padding: 0;
+  @include md {
+    top: 40px;
+  }
   @include xx {
     width: calc(100% - 48px);
     left: 48px;
@@ -171,7 +174,10 @@
   width: 100%;
   position: relative;
   overflow: visible;
-  margin-top: 40px;
+  margin-top: 36px;
+  @include md {
+    margin-top: 40px;
+  }
   &--board {
     overflow-y: hidden;
     min-width: 100%;
@@ -541,9 +547,5 @@
   &:hover:not(:disabled) {
     background-color: $primary;
     color: $white;
-  }
-  &:disabled {
-    color: $grey-300;
-    background-color: transparent;
   }
 }

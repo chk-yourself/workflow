@@ -2,12 +2,12 @@
 @import '../../styles/mixins';
 
 .task-editor {
-  padding: 44px 0 8px;
+  padding: 40px 0 0;
   @include xs {
-    padding: 44px 0 16px;
+    padding: 40px 0 0;
   }
   @include lg {
-    padding: 44px 0 24px;
+    padding: 40px 0 0;
   }
   @include xl {
     max-width: 700px;
@@ -16,25 +16,23 @@
 
 .task-editor__wrapper {
   width: 100%;
-  padding: 0 8px;
+  padding: 0 8px 16px;
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
-  max-height: calc(100vh - 44px);
+  max-height: calc(100vh - 40px);
   @include xs {
-    padding: 0 16px;
+    padding: 0 16px 16px;
   }
-  @include md {
-    max-height: calc(100vh - 158px);
+  @include sm {
+    max-height: calc(90vh - 40px);
   }
   @include lg {
-    padding: 0 24px;
-  }
-  @include xl {
-    max-height: calc(100vh - 164px);
+    padding: 0 24px 16px;
   }
 }
 
 .task-editor__btn--close {
+  top: 0;
   @include md {
     right: 8px;
   }
@@ -68,6 +66,7 @@
 .task-editor__textarea--title {
   width: calc(100% + 12px);
   border: 1px solid transparent;
+  background-color: transparent;
   font-weight: 600;
   font-size: 1.2rem;
   height: 46px;
@@ -250,7 +249,7 @@
 .task-editor__toolbar {
   position: absolute;
   left: 0;
-  top: 4px;
+  top: 0;
   width: calc(100% - 44px);
   justify-content: space-between;
   align-items: center;
@@ -481,6 +480,7 @@
   font-size: 14px;
   line-height: 18px;
   padding: 6px 10px 6px 8px;
+  min-height: 0;
   .feather {
     width: 18px;
     height: 18px;
