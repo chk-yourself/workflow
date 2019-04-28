@@ -1,0 +1,33 @@
+@import url("https://rsms.me/inter/inter.css");
+.textarea {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: "Inter", Arial, sans-serif;
+  resize: none;
+  -webkit-appearance: none;
+}
+
+.textarea:focus {
+  border-color: #3e7aff;
+  outline: none;
+}
+
+.textarea::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.textarea:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.textarea::-ms-input-placeholder {
+  color: #868e96;
+}
+
+.textarea::placeholder {
+  color: #868e96;
+}
+/*# sourceMappingURL=Textarea.css.map */

@@ -1,0 +1,230 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.sidebar {
+  overflow: hidden;
+  position: fixed;
+  min-height: 100%;
+  border-right: 1px solid #dee2e6;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 2;
+  width: 0;
+}
+
+@media (min-width: 1440px) {
+  .sidebar {
+    width: 48px;
+  }
+}
+
+.sidebar__list {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar__list::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  background-color: transparent;
+}
+
+.sidebar__item {
+  padding: 0;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sidebar__btn,
+.sidebar__link {
+  text-align: left;
+  text-decoration: none;
+  color: #495057;
+  padding: 12px 0 12px 12px;
+  display: inline-block;
+  width: 100%;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.sidebar__btn:hover:not(.active),
+.sidebar__link:hover:not(.active) {
+  color: #3e7aff;
+}
+
+.sidebar__btn.active,
+.sidebar__link.active {
+  color: #fff;
+  background-color: #3e7aff;
+}
+
+.sidebar__btn.active .sidebar__icon,
+.sidebar__link.active .sidebar__icon {
+  color: #fff;
+}
+
+.sidebar__btn--workspace-settings.is-active .feather {
+  color: #3e7aff;
+}
+
+.sidebar__btn--toggle {
+  padding: 0;
+  display: block;
+  z-index: 3;
+  position: absolute;
+  margin: 0;
+  top: calc(50% - 16px);
+  width: 32px;
+  height: 32px;
+  line-height: 0;
+  left: 8px;
+}
+
+.sidebar__btn--toggle .feather {
+  pointer-events: none;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  width: 20px;
+  height: 20px;
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}
+
+.sidebar__btn--toggle span {
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .sidebar__btn--toggle {
+    left: 16px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .sidebar__btn--toggle {
+    left: calc(50% - 48px);
+    top: 0;
+  }
+}
+
+.sidebar__logo {
+  margin: 0;
+  text-align: center;
+  padding: 64px 0 26px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+  height: 140px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column wrap;
+          flex-flow: column wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.sidebar__logo.active {
+  background-color: #fff;
+}
+
+.sidebar__canvas {
+  width: 0;
+}
+
+@media (min-width: 1440px) {
+  .sidebar__canvas {
+    width: 48px;
+    position: relative;
+  }
+}
+
+.sidebar__icon {
+  display: inline;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  color: #ced4da;
+}
+
+.sidebar__section-name {
+  display: none;
+}
+
+.sidebar__btn {
+  position: relative;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 0;
+}
+
+.sidebar__btn .feather-chevron-left {
+  display: none;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  position: absolute;
+  right: 8px;
+  top: calc(50% - 10px);
+}
+
+.sidebar__btn.is-active .feather-chevron-left {
+  -webkit-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+}
+
+.sidebar__members-list {
+  padding: 8px 0;
+}
+
+.sidebar__member {
+  padding: 8px 0 8px 12px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-bottom: none;
+}
+
+.sidebar__avatar {
+  position: absolute;
+}
+
+.sidebar__member-detail {
+  width: calc(100% - 36px);
+  margin-left: auto;
+}
+
+.sidebar__member-detail--name {
+  color: #495057;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.sidebar__member-detail--displayName {
+  color: #adb5bd;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.sidebar__btn--toggle-members:not(.is-active) {
+  border-bottom: none;
+}
+
+.sidebar__content {
+  overflow-y: auto;
+  max-height: calc(100vh - 140px);
+}
+/*# sourceMappingURL=Sidebar.css.map */

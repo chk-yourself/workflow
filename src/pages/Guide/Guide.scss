@@ -15,7 +15,7 @@
     max-width: 480px;
   }
   @include md {
-    max-width: 720px;
+    max-width: 800px;
   }
 }
 
@@ -36,6 +36,7 @@
 .guide__icon-wrapper {
   width: 40px;
   height: 40px;
+  flex: none;
   display: inline-block;
   border-radius: 50%;
   line-height: 37px;
@@ -52,14 +53,17 @@
   position: relative;
   width: 100%;
   margin: 0 8px 16px 8px;
-  height: 96px;
+  height: 120px;
   background-color: $white;
   @include box-shadow(1);
   &:hover {
     @include box-shadow(2);
+    .guide__icon--arrow {
+      color: $grey-700;
+    }
   }
   @include sm {
-    height: 140px;
+    height: 136px;
     margin: 0 8px 16px 8px;
     width: calc(50% - 16px);
   }
@@ -70,7 +74,7 @@
   &--primary {
     .guide__icon-wrapper {
       background-color: $primary;
-      color: $white;
+      color: $primary-lt;
     }
     &:hover {
       .guide__icon-wrapper {
@@ -81,7 +85,7 @@
   &--secondary {
     .guide__icon-wrapper {
       background-color: $secondary;
-      color: $white;
+      color: $secondary-lt;
     }
     &:hover {
       .guide__icon-wrapper {
@@ -92,7 +96,7 @@
   &--tertiary {
     .guide__icon-wrapper {
       background-color: $tertiary;
-      color: $white;
+      color: $tertiary-lt;
     }
     &:hover {
       .guide__icon-wrapper {
@@ -108,16 +112,52 @@
   height: 100%;
   text-decoration: none;
   color: inherit;
-  text-align: center;
-  line-height: 96px;
   vertical-align: middle;
   display: flex;
-  align-items: center;
-  padding: 0 16px;
+  align-items: flex-start;
+  padding: 20px 16px 16px;
   span {
     pointer-events: none;
   }
-  @include sm {
-    line-height: 140px;
+  &:after {
+    content: 'Workflow Guide';
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    font-size: 10px;
+    color: $grey-600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
+  @include sm {
+    padding: 32px 16px 16px;
+  }
+}
+
+.guide__tile-content {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.guide__tile-desc {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.3;
+  color: $grey-700;
+}
+.guide__tile-title {
+  display: block;
+  text-align: left;
+  margin-bottom: 8px;
+  color: $grey-800;
+  font-weight: 600;
+}
+
+.guide__icon--arrow {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  color: $grey-400;
 }

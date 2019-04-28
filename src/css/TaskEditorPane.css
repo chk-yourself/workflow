@@ -1,0 +1,105 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.task-editor-pane {
+  background-color: #fff;
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+  padding: 40px 0 0;
+  max-width: 100%;
+  width: 100%;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 11;
+  height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .task-editor-pane {
+    z-index: 9;
+    margin-top: 46px;
+    height: auto;
+    min-height: auto;
+    -ms-flex-item-align: start;
+        align-self: flex-start;
+    max-width: 360px;
+    position: relative;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 360px;
+            flex: 1 0 360px;
+  }
+}
+
+@media (min-width: 992px) {
+  .task-editor-pane {
+    max-width: 400px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 400px;
+            flex: 0 0 400px;
+  }
+}
+
+.task-editor-pane .task-editor__wrapper {
+  padding: 0 16px 16px;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+}
+
+@media (min-width: 768px) {
+  .task-editor-pane .task-editor__wrapper {
+    max-height: calc(100vh - 154px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .task-editor-pane .task-editor__wrapper {
+    max-height: calc(100vh - 162px);
+  }
+}
+
+@media (min-width: 768px) {
+  .header.expand-nav + main .task-editor-pane {
+    max-width: 260px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 260px;
+            flex: 0 0 260px;
+  }
+}
+
+@media (min-width: 992px) {
+  .header.expand-nav + main .task-editor-pane {
+    max-width: 400px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 400px;
+            flex: 0 0 400px;
+  }
+}
+
+.task-editor-pane__btn--close {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  padding: 8px;
+  z-index: 3;
+  min-width: 0;
+  width: 38px;
+  height: 38px;
+  line-height: 0;
+  font-size: 0;
+}
+
+.task-editor-pane__btn--close .feather {
+  color: #adb5bd;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 20px;
+}
+
+.task-editor-pane__btn--close:hover .feather {
+  color: #343a40;
+}
+/*# sourceMappingURL=TaskEditorPane.css.map */

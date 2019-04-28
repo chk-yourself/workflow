@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAEI,iBAFa,AACd,UAAU,CACT,uBAAuB,CAAC;EACtB,KAAK,ECwBD,OAAO;CDvBZ;;AAGL,AACE,2BADyB,AACxB,SAAS,CAAC;EACT,gBAAgB,ECGT,OAAO;EDFd,YAAY,ECIL,OAAO;EDHd,KAAK,ECGE,OAAO;CDFf",
+    "sources": [
+        "../components/SubtaskComposer/SubtaskComposer.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "SubtaskComposer.css"
+}

@@ -1,0 +1,73 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.user-form__container {
+  max-width: 400px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 4px 24px;
+}
+
+@media (min-width: 768px) {
+  .user-form__container {
+    padding: 8px;
+  }
+}
+
+.user-form__input {
+  margin-bottom: 24px;
+  height: 42px;
+  border: 1px solid #868e96;
+}
+
+.user-form__title {
+  font-size: 1.6rem;
+  margin: 1rem 0 1.5rem;
+  color: #212529;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .user-form__title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .user-form__title {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .user-form__title {
+    font-size: 2.2rem;
+  }
+}
+
+.user-form__label {
+  font-size: 12px;
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.user-form__btn {
+  min-width: 80px;
+  padding: 10px 12px;
+}
+
+.user-form__btn:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  border: 1px solid #dee2e6;
+}
+
+.user-form__link {
+  color: #495057;
+  font-size: 13px;
+}
+
+.user-form__link:hover {
+  color: #3e7aff;
+}
+/*# sourceMappingURL=UserFormPage.css.map */

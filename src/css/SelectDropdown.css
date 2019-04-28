@@ -1,0 +1,75 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.select-dropdown__wrapper {
+  z-index: 4;
+}
+
+.select-dropdown__menu {
+  background-color: #fff;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  min-width: 132px;
+  border-radius: 4px;
+  padding: 8px 0;
+  border: 1px solid #dee2e6;
+}
+
+.select-dropdown__btn--toggle {
+  padding: 4px 16px 4px 4px;
+  min-height: 0;
+  position: relative;
+  text-align: left;
+  min-width: 0;
+}
+
+.select-dropdown__btn--toggle .feather {
+  position: absolute;
+  right: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.select-dropdown__btn--toggle:hover, .select-dropdown__btn--toggle.is-active {
+  color: #3e7aff;
+}
+
+.select-dropdown__option {
+  display: none;
+}
+
+.select-dropdown__option:checked + .select-dropdown__label {
+  color: #3e7aff;
+}
+
+.select-dropdown__option:checked + .select-dropdown__label:hover {
+  color: #fff;
+}
+
+.select-dropdown__label {
+  position: relative;
+  display: inline-block;
+  padding: 6px 8px 6px 30px;
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.select-dropdown__label:hover {
+  cursor: pointer;
+  background-color: #3e7aff;
+  color: #fff;
+}
+
+.select-dropdown__label:hover .feather {
+  color: #fff;
+}
+
+.select-dropdown__label .feather {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  left: 8px;
+  color: #3e7aff;
+}
+/*# sourceMappingURL=SelectDropdown.css.map */

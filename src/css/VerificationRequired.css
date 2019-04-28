@@ -1,0 +1,32 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.verification-required__paragraph {
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.verification-required {
+  width: 100%;
+  max-width: 368px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 88px;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .verification-required {
+    max-width: 400px;
+  }
+}
+
+.verification-required__heading {
+  padding: 0;
+  font-weight: 500;
+}
+
+.verification-required__btn:hover, .verification-required__btn:active {
+  background-color: #003ec6;
+}
+/*# sourceMappingURL=VerificationRequired.css.map */

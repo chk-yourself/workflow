@@ -1,0 +1,25 @@
+@import url("https://rsms.me/inter/inter.css");
+.user-form {
+  max-width: 400px;
+}
+
+.user-form__input {
+  margin-bottom: 24px;
+}
+
+.admin {
+  padding: 8px 16px;
+}
+
+@media (min-width: 768px) {
+  .admin {
+    padding: 8px 24px;
+  }
+}
+
+@media (min-width: 992px) {
+  .admin {
+    padding: 8px 32px;
+  }
+}
+/*# sourceMappingURL=Admin.css.map */

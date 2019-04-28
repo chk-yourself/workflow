@@ -1,0 +1,222 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.header + main.profile {
+  position: fixed;
+  top: 40px;
+  height: auto;
+  min-height: 0;
+  margin: 8px auto;
+}
+
+@media (min-width: 576px) {
+  .header + main.profile {
+    margin: 16px auto;
+  }
+}
+
+@media (min-width: 1440px) {
+  .header + main.profile {
+    left: calc(50% + 48px);
+  }
+}
+
+@media (min-width: 768px) {
+  .header.expand-nav + main.profile {
+    left: calc(50% + 100px);
+  }
+}
+
+.profile {
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  width: calc(100% - 16px);
+  max-width: 368px;
+  max-height: calc(100% - 56px);
+  overflow: auto;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  padding: 40px 16px;
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 576px) {
+  .profile {
+    max-height: calc(100vh - 72px);
+  }
+}
+
+@media (min-width: 992px) {
+  .profile {
+    max-width: 380px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .profile {
+    max-width: 400px;
+  }
+}
+
+.profile__name {
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 24px auto 8px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .profile__name {
+    font-size: 1.6rem;
+  }
+}
+
+.profile__status {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+.profile__status.is-online {
+  color: #18b786;
+}
+
+.profile__status.is-offline {
+  color: #f03e3e;
+}
+
+.profile__display-name {
+  color: #495057;
+  text-align: center;
+}
+
+.profile__link {
+  text-decoration: none;
+  color: #495057;
+}
+
+.profile__link:hover {
+  color: #3e7aff;
+}
+
+.profile__contact-info {
+  margin-bottom: 8px;
+  color: #495057;
+  font-size: 14px;
+}
+
+.profile__contact-info .feather {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  vertical-align: bottom;
+}
+
+.profile__contact {
+  margin-top: 24px;
+}
+
+.profile__avatar {
+  width: 96px;
+  height: 96px;
+  line-height: 96px;
+  font-size: 26px;
+}
+
+.profile__about {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #495057;
+  max-width: 85%;
+  margin: 16px auto;
+}
+
+.profile__header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
+}
+
+.profile__workspace-info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.profile__count {
+  font-size: 2.6rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.profile__counter {
+  padding: 24px;
+}
+
+.profile__counter-name {
+  font-size: 13px;
+  color: #868e96;
+  text-align: center;
+}
+
+.profile__link--edit {
+  display: inline-block;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 8px;
+  font-size: 14px;
+  border: 2px solid #3e7aff;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #3e7aff;
+  font-weight: 600;
+}
+
+.profile__link--edit:hover {
+  background-color: #3e7aff;
+  color: #fff;
+}
+
+.profile__section {
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
+}
+/*# sourceMappingURL=Profile.css.map */

@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;ADEZ,AAAA,SAAS,CAAC;EACR,UAAU,EAAE,UAAU;EACtB,MAAM,EAAE,qBAAqB;EAC7B,aAAa,EAAE,GAAG;EAClB,OAAO,EAAE,IAAI;EACb,WAAW,EC8DD,OAAO,EAAE,KAAK,EAAE,UAAU;ED7DpC,MAAM,EAAE,IAAI;EACZ,kBAAkB,EAAE,IAAI;CAQzB;;AAfD,AAQE,SARO,AAQN,MAAM,CAAC;EACN,YAAY,ECmBN,OAAO;EDlBb,OAAO,EAAE,IAAI;CACd;;AAXH,AAYE,SAZO,AAYN,aAAa,CAAC;EACb,KAAK,ECGE,OAAO;CDFf",
+    "sources": [
+        "../components/Textarea/Textarea.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Textarea.css"
+}

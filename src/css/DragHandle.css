@@ -1,0 +1,24 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.drag-handle__icon {
+  width: 16px;
+  height: 16px;
+  fill: #dee2e6;
+  vertical-align: top;
+  position: relative;
+  top: 1px;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  padding: 8px 0;
+  height: 100%;
+}
+
+.drag-handle:hover .drag-handle__icon, .drag-handle.is-active .drag-handle__icon {
+  fill: #868e96;
+}
+/*# sourceMappingURL=DragHandle.css.map */

@@ -1,0 +1,44 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.tabs-container {
+  width: 100%;
+  position: relative;
+}
+
+.tabs-container__header {
+  width: 100%;
+  margin-bottom: 24px;
+  -webkit-box-shadow: inset 0px -2px 1px -1px #dee2e6;
+          box-shadow: inset 0px -2px 1px -1px #dee2e6;
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px solid transparent;
+  width: 100%;
+}
+
+.tab {
+  cursor: pointer;
+  padding: 0 0 8px 0;
+  margin-right: 32px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.tab:active, .tab.is-active {
+  color: #3e7aff;
+  -webkit-box-shadow: inset 0 -2px #3e7aff;
+          box-shadow: inset 0 -2px #3e7aff;
+  outline: none;
+}
+
+.tab:hover, .tab:focus {
+  color: #3e7aff;
+}
+/*# sourceMappingURL=Tabs.css.map */

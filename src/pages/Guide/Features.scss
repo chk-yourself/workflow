@@ -1,0 +1,19 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.features__subheading {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.features__section {
+  padding: 0 8px;
+  &:not(:first-child) {
+    margin-top: 32px;
+  }
+}
+
+.features__item {
+  margin-top: 8px;
+  line-height: 1.3;
+}

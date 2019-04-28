@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,qBAAqB,CAAC;EACpB,SAAS,EAAE,MAAM;EACjB,WAAW,EAAE,GAAG;CACjB;;AAED,AAAA,kBAAkB,CAAC;EACjB,OAAO,EAAE,KAAK;CAIf;;AALD,AAEE,kBAFgB,AAEf,IAAK,CAAA,YAAY,EAAE;EAClB,UAAU,EAAE,IAAI;CACjB;;AAGH,AAAA,eAAe,CAAC;EACd,UAAU,EAAE,GAAG;EACf,WAAW,EAAE,GAAG;CACjB",
+    "sources": [
+        "../pages/Guide/Features.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Features.css"
+}

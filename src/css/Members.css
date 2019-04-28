@@ -1,0 +1,46 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.members__list {
+  padding: 0;
+}
+
+.members__avatar {
+  position: relative;
+}
+
+.members__avatar.is-online:before {
+  content: '';
+  position: absolute;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4de8b8;
+  border: 1px solid #fff;
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.members__detail {
+  margin-left: 16px;
+}
+
+.members__name {
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+.members__item {
+  padding: 12px 0 12px 12px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  width: 100%;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: #495057;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+/*# sourceMappingURL=Members.css.map */

@@ -1,0 +1,123 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.task-editor__subtasks {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.subtask {
+  position: relative;
+  width: 100%;
+  padding: 4px 0 4px 14px;
+  list-style: none;
+  margin-left: auto;
+  overflow: visible;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  vertical-align: middle;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.subtask.is-dragging {
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  background-color: #f1f3f5;
+}
+
+.subtask:focus, .subtask.is-focused {
+  outline: none;
+  background-color: rgba(222, 226, 230, 0.5);
+  -webkit-box-shadow: 0px -2px 1px -1px #dee2e6, 0px 2px 1px -1px #dee2e6;
+          box-shadow: 0px -2px 1px -1px #dee2e6, 0px 2px 1px -1px #dee2e6;
+}
+
+.subtask:focus:before, .subtask.is-focused:before {
+  z-index: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  pointer-events: none;
+}
+
+.subtask:before {
+  content: '';
+  width: calc(100% - 48px);
+  -webkit-box-shadow: inset 0px -2px 1px -1px #dee2e6;
+          box-shadow: inset 0px -2px 1px -1px #dee2e6;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 48px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.subtask__checkbox {
+  width: 16px;
+  height: 16px;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  border: 2px solid #adb5bd;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.subtask__checkbox:checked {
+  background-color: #4de8b8;
+  border: 2px solid #4de8b8;
+}
+
+.subtask__checkbox-label {
+  position: relative;
+  vertical-align: top;
+  padding: 0;
+  width: 30px;
+  height: 32px;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
+}
+
+.subtask__checkbox-label .feather {
+  width: 10px;
+  height: 10px;
+  left: calc(50% - 5px);
+  top: calc(50% - 5px);
+  stroke-width: 4px;
+  color: #fff;
+  z-index: 2;
+}
+
+.subtask__checkbox-label:before {
+  display: none;
+}
+
+.subtask__textarea {
+  border-width: 1px;
+  width: calc(100% - 34px);
+  margin-left: 4px;
+  padding: 8px 6px;
+  vertical-align: middle;
+  font-size: 14px;
+  overflow: visible;
+  background-color: transparent;
+}
+
+.subtask__textarea:focus {
+  border-color: transparent;
+}
+
+.subtask__drag-handle {
+  left: 6px;
+  position: static;
+}
+
+.subtask__drag-handle .drag-handle__icon {
+  fill: #ced4da;
+}
+/*# sourceMappingURL=Subtask.css.map */

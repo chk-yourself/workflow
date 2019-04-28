@@ -1,0 +1,45 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.notes-editor {
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.notes-editor.is-focused {
+  min-height: 140px;
+  padding-top: 12px;
+  padding-bottom: 42px;
+  border: 1px solid #3e7aff;
+  overflow: visible;
+}
+
+.notes-editor__btn--submit {
+  padding: 6px 8px;
+  min-height: 0;
+}
+
+.notes-editor__add-ons {
+  margin-left: auto;
+}
+
+.notes-editor__toolbar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 8px 8px 4px 4px;
+}
+
+.notes-editor__toolbar-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  line-height: 0;
+}
+
+.notes-editor__toolbar-btn .feather {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+/*# sourceMappingURL=NotesEditor.css.map */

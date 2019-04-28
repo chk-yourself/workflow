@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,iBAAiB,CAAC;EAChB,KAAK,ECeI,OAAO;EDdhB,SAAS,EAAE,IAAI;EACf,WAAW,EAAE,GAAG;EAChB,MAAM,EAAE,KAAK;CAQd;;AAZD,AAKE,iBALe,CAKf,QAAQ,CAAC;EACP,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,KAAK,ECoDD,OAAO;EDnDX,cAAc,EAAE,WAAW;EAC3B,YAAY,EAAE,GAAG;CAClB",
+    "sources": [
+        "../components/Success/Success.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Success.css"
+}

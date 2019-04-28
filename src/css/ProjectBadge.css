@@ -1,0 +1,113 @@
+@import url("https://rsms.me/inter/inter.css");
+.project-badge {
+  border-radius: 4px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: #868e96;
+  text-decoration: none;
+  vertical-align: middle;
+  padding: 2px 0;
+  border: 1px solid transparent;
+}
+
+.project-badge--default {
+  background-color: #495057;
+  color: #fff;
+}
+
+.project-badge--blue {
+  background-color: #1c7ed6;
+  color: #fff;
+}
+
+.project-badge--green {
+  background-color: #37b24d;
+  color: #fff;
+}
+
+.project-badge--pink {
+  background-color: #d6336c;
+  color: #fff;
+}
+
+.project-badge--orange {
+  background-color: #f76707;
+  color: #fff;
+}
+
+.project-badge--purple {
+  background-color: #633eff;
+  color: #fff;
+}
+
+.project-badge--red {
+  background-color: #f03e3e;
+  color: #fff;
+}
+
+.project-badge--teal {
+  background-color: #0ca678;
+  color: #fff;
+}
+
+.project-badge--cyan {
+  background-color: #1098ad;
+  color: #fff;
+}
+
+.project-badge--grape {
+  background-color: #ae3ec9;
+  color: #fff;
+}
+
+.project-badge--violet {
+  background-color: #7048e8;
+  color: #fff;
+}
+
+.project-badge--indigo {
+  background-color: #4263eb;
+  color: #fff;
+}
+
+.project-badge--yellow {
+  background-color: #f59f00;
+  color: #fff;
+}
+
+.project-badge--sm {
+  font-size: 10px;
+  line-height: 10px;
+}
+
+.project-badge--sm .project-badge__icon {
+  margin-right: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  vertical-align: bottom;
+}
+
+.project-badge--md {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.project-badge--md .project-badge__icon {
+  margin-right: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.project-badge--contained {
+  padding: 8px;
+  border-radius: 4px;
+  font-style: normal;
+}
+/*# sourceMappingURL=ProjectBadge.css.map */

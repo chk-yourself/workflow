@@ -1,0 +1,42 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.comment-composer {
+  position: relative;
+}
+
+.comment-composer.is-focused {
+  min-height: 140px;
+  padding-bottom: 42px;
+  margin-bottom: 114px;
+}
+
+.comment-composer__btn--submit {
+  padding: 6px 8px;
+  min-height: 0;
+}
+
+.comment-composer__add-ons {
+  margin-left: auto;
+}
+
+.comment-composer__toolbar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 8px 8px 4px 4px;
+}
+
+.comment-composer__toolbar-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  line-height: 0;
+}
+
+.comment-composer__toolbar-btn .feather {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+/*# sourceMappingURL=CommentComposer.css.map */

@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;ADEZ,AAAA,KAAK,CAAC;EACJ,UAAU,EAAE,IAAI;EAChB,UAAU,EAAE,UAAU;EACtB,OAAO,EAAE,CAAC;EACV,MAAM,EAAE,CAAC;CACV;;AAED,AAAA,WAAW,CAAC;EACV,UAAU,EAAE,UAAU;CACvB",
+    "sources": [
+        "../components/Menu/Menu.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Menu.css"
+}

@@ -1,0 +1,204 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.workspace-settings {
+  padding: 24px;
+}
+
+@media (min-width: 768px) {
+  .workspace-settings {
+    padding: 24px 8px 40px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 992px) {
+  .workspace-settings {
+    max-width: 600px;
+  }
+}
+
+.workspace-settings__input {
+  margin-bottom: 24px;
+  height: 42px;
+  width: 100%;
+  border: 1px solid #868e96;
+}
+
+.workspace-settings__input::-webkit-input-placeholder {
+  font-size: 14px;
+}
+
+.workspace-settings__input:-ms-input-placeholder {
+  font-size: 14px;
+}
+
+.workspace-settings__input::-ms-input-placeholder {
+  font-size: 14px;
+}
+
+.workspace-settings__input::placeholder {
+  font-size: 14px;
+}
+
+.workspace-settings__input--teammate-email:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+.workspace-settings__input:-moz-read-only {
+  border: 1px solid #868e96;
+}
+
+.workspace-settings__input:read-only {
+  border: 1px solid #868e96;
+}
+
+.workspace-settings__tabs,
+.workspace-settings__panel {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+  .workspace-settings__tabs,
+  .workspace-settings__panel {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .workspace-settings__tabs,
+  .workspace-settings__panel {
+    max-width: 500px;
+  }
+}
+
+.workspace-settings__heading {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto 18px;
+  font-weight: 600;
+}
+
+@media (min-width: 576px) {
+  .workspace-settings__heading {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .workspace-settings__heading {
+    max-width: 500px;
+  }
+}
+
+.workspace-settings__label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+  font-size: 12px;
+}
+
+.workspace-settings__sub-subheading {
+  font-weight: 600;
+  font-size: 11px;
+  color: #495057;
+  padding-top: 24px;
+  border-top: 2px solid #e9ecef;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 24px 0 16px;
+}
+
+.workspace-settings__btn {
+  min-width: 80px;
+  padding: 10px 12px;
+}
+
+.workspace-settings__btn:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  border: 1px solid #dee2e6;
+}
+
+.workspace-settings__member {
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  position: relative;
+  padding: 0;
+}
+
+.workspace-settings__member:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .workspace-settings__member:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.workspace-settings__member-detail {
+  font-size: 12px;
+  width: calc(100% - 52px);
+  margin-left: 52px;
+  line-height: 1.2;
+}
+
+.workspace-settings__member-detail--name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 576px) {
+  .workspace-settings__member-detail {
+    width: auto;
+    margin-left: 16px;
+    margin-bottom: 0;
+  }
+}
+
+.workspace-settings__avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  line-height: 38px;
+  position: absolute;
+}
+
+@media (min-width: 576px) {
+  .workspace-settings__avatar {
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+    font-size: 12px;
+    position: relative;
+  }
+}
+
+.workspace-settings__avatar-placeholder {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.workspace-settings__pending-invites {
+  list-style: none;
+  padding: 0;
+}
+
+.workspace-settings__pending-invite {
+  font-size: 14px;
+  color: #868e96;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+/*# sourceMappingURL=WorkspaceSettings.css.map */

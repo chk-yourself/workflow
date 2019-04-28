@@ -1,0 +1,30 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.main {
+  width: 100%;
+  min-height: 100%;
+  padding: 8px;
+  overflow: visible;
+}
+
+@media (min-width: 992px) {
+  .main {
+    padding: 8px 16px;
+  }
+}
+
+.main__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: #212529;
+  width: 100%;
+  padding: 0 4px;
+}
+
+@media (min-width: 768px) {
+  .main__title {
+    padding: 0 8px;
+  }
+}
+/*# sourceMappingURL=Main.css.map */

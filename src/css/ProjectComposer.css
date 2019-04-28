@@ -1,0 +1,162 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.project-composer {
+  padding: 24px;
+}
+
+@media (min-width: 768px) {
+  .project-composer {
+    padding: 24px 8px;
+  }
+}
+
+.project-composer__heading {
+  max-width: 340px;
+  width: 100%;
+  margin: 0 auto 24px;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .project-composer__heading {
+    max-width: 85%;
+  }
+}
+
+.project-composer__subheading {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 16px 0 8px;
+}
+
+.project-composer__control-group {
+  width: 100%;
+}
+
+.project-composer__control-group--color {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: relative;
+  margin-top: 16px;
+}
+
+.project-composer__control-group--color .project-composer__subheading {
+  margin: 0;
+}
+
+.project-composer__label {
+  font-weight: 500;
+}
+
+.project-composer__form {
+  max-width: 340px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .project-composer__form {
+    max-width: 85%;
+  }
+}
+
+.project-composer__input--name {
+  height: 42px;
+  padding: 8px;
+  line-height: 1;
+  max-width: 320px;
+}
+
+.project-composer__btn--add {
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+.project-composer__radio {
+  display: none;
+}
+
+.project-composer__radio:checked + .project-composer__radio-label:before {
+  border: 5px solid #3e7aff;
+}
+
+.project-composer__radio-label {
+  display: inline-block;
+  position: relative;
+  padding: 4px 24px 4px 20px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.project-composer__radio-label:before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  border-radius: 50%;
+  border: 1px solid #adb5bd;
+  left: 0;
+  top: calc(50% - 7px);
+  vertical-align: middle;
+}
+
+.project-composer__radio-label .feather {
+  width: 18px;
+  height: 18px;
+  vertical-align: bottom;
+  margin-right: 4px;
+}
+
+.project-composer__btn--toggle-color-picker {
+  width: 64px;
+  padding: 4px 8px;
+  min-height: 0;
+}
+
+.project-composer__btn--toggle-color-picker span,
+.project-composer__btn--toggle-color-picker .feather {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  margin-left: 4px;
+  pointer-events: none;
+}
+
+.project-composer__btn--toggle-color-picker.is-active {
+  color: #3e7aff;
+}
+
+.project-composer__color-swatch {
+  width: 18px;
+  height: 18px;
+}
+
+.project-composer__color-picker {
+  top: 100%;
+  z-index: 3;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.project-composer__color-picker::before, .project-composer__color-picker::after {
+  display: none;
+}
+
+.project-composer__color-picker .color-picker__radio:checked + label.bg--default::after {
+  border-color: white;
+}
+
+.project-composer__color-picker .color-picker__swatch.bg--default {
+  background-color: #495057;
+  color: #fff;
+  border: none;
+}
+/*# sourceMappingURL=ProjectComposer.css.map */

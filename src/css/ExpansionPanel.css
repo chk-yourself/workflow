@@ -1,0 +1,17 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.expansion-panel__header:hover {
+  cursor: pointer;
+}
+
+.expansion-panel__header:focus {
+  outline: none;
+}
+
+.expansion-panel__header.is-expanded .feather-chevron-right {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+/*# sourceMappingURL=ExpansionPanel.css.map */

@@ -1,0 +1,132 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.member-search {
+  line-height: 1.4;
+  height: 38px;
+  overflow: hidden;
+  margin-top: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  vertical-align: top;
+  font-size: 14px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.member-search__wrapper {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-radius: 4px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  max-height: 40px;
+}
+
+.member-search__list {
+  position: absolute;
+  top: 100%;
+  list-style: none;
+  width: 100%;
+  max-width: 400px;
+  max-height: 100%;
+  padding: 8px 0;
+  margin: 0;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background-color: #fff;
+  z-index: 99;
+  overflow: auto;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.member-search__list::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
+
+.member-search__item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 8px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  min-width: calc(100% + 46px);
+  cursor: pointer;
+}
+
+.member-search__item:hover {
+  background-color: #b5ccff;
+}
+
+.member-search__item.is-selected {
+  background-color: #b5ccff;
+}
+
+.member-search__item .feather {
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  pointer-events: none;
+  color: #3e7aff;
+}
+
+.member-search__item span {
+  pointer-events: none;
+}
+
+@media (min-width: 425px) {
+  .member-search__item {
+    min-width: 100%;
+  }
+}
+
+.member-search__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.member-search__info {
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.member-search__info:not(:last-child) {
+  margin-right: 8px;
+}
+
+.member-search__email,
+.member-search__display-name {
+  font-size: 11px;
+}
+
+.member-search__avatar--sm {
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  margin-right: 6px;
+  pointer-events: none;
+}
+
+.member-search__avatar-placeholder--sm {
+  font-size: 8px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.member-search__no-match {
+  font-size: 14px;
+  color: #adb5bd;
+}
+/*# sourceMappingURL=MemberSearch.css.map */

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Main } from '../../components/Main';
 import GuidePanel from './GuidePanel';
-import './Guide.scss';
+import './Fundamentals.scss';
 
 const Fundamentals = () => (
   <Main

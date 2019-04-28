@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,UAAU,CAAC;EACT,SAAS,EAAE,KAAK;CACjB;;AAED,AAAA,iBAAiB,CAAC;EAChB,aAAa,EAAE,IAAI;CACpB;;AAED,AAAA,QAAQ,CAAC;EACP,OAAO,EAAE,QAAQ;CAOlB;;AELC,MAAM,EAAE,SAAS,EAAE,KAAK;EFH1B,AAAA,QAAQ,CAAC;IAGL,OAAO,EAAE,QAAQ;GAKpB;;;AEAC,MAAM,EAAE,SAAS,EAAE,KAAK;EFR1B,AAAA,QAAQ,CAAC;IAML,OAAO,EAAE,QAAQ;GAEpB;;;AAED,AAAA,gBAAgB,CAAC;EACf,aAAa,EAAE,IAAI;CACpB;;AAED,AAAA,wBAAwB,CAAC;EACvB,SAAS,EAAE,MAAM;EACjB,WAAW,EAAE,GAAG;EAChB,MAAM,EAAE,MAAM;CACf",
+    "sources": [
+        "../pages/Account/Account.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Account.css"
+}

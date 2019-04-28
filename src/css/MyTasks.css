@@ -1,0 +1,93 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+@media (min-width: 768px) {
+  .header.expand-nav + .main.user-tasks__container {
+    left: 200px;
+  }
+}
+
+.user-tasks__container {
+  position: relative;
+  min-height: 100vh;
+}
+
+.user-tasks__container.show-task-editor .user-tasks {
+  max-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .user-tasks__container.show-task-editor .user-tasks__title {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .user-tasks__container.show-task-editor .user-tasks {
+    margin-right: 16px;
+    max-height: 100%;
+  }
+}
+
+.user-tasks {
+  max-width: 960px;
+  width: 100%;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .user-tasks {
+    padding: 0 8px;
+  }
+}
+
+.user-tasks__wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: relative;
+}
+
+.user-tasks__title {
+  max-width: 960px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.user-tasks__settings-wrapper {
+  display: inline-block;
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  top: -56px;
+}
+
+@media (min-width: 768px) {
+  .user-tasks__settings-wrapper {
+    right: 8px;
+  }
+}
+
+.user-tasks__settings {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 200px;
+  line-height: 1.15;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.view__options {
+  margin-top: 4px;
+}
+
+.user-tasks__settings-item {
+  text-transform: capitalize;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #343a40;
+}
+/*# sourceMappingURL=MyTasks.css.map */

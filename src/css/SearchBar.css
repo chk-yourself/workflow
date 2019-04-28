@@ -1,0 +1,115 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.search-bar {
+  position: relative;
+  max-width: 360px;
+  width: 0%;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background-color: #fff;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: 1px solid transparent;
+  float: right;
+  -webkit-transition: width 0.3s ease-out;
+  transition: width 0.3s ease-out;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.search-bar:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -16px;
+  width: 16px;
+  height: 100%;
+  background-image: -webkit-gradient(linear, right top, left top, from(#fff), to(rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to left, #fff, rgba(255, 255, 255, 0));
+}
+
+.search-bar.is-expanded {
+  width: calc(100% + 24px);
+  max-width: 360px;
+  border: 1px solid #ced4da;
+}
+
+.search-bar.is-expanded .search-form__btn {
+  z-index: 11;
+}
+
+.search-bar.is-expanded .search-form__submit {
+  z-index: 90;
+}
+
+.search-bar.is-expanded .search-form__input {
+  background-color: transparent;
+}
+
+.search-bar.is-expanded .search-form__btn {
+  color: #3e7aff;
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-form__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 14px;
+  padding: 4px 4px 4px 32px;
+  height: 32px;
+  width: calc(100% - 36px);
+  vertical-align: middle;
+  z-index: 10;
+}
+
+input[type='search'].search-form__input {
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+}
+
+.search-form__btn,
+.search-form__submit {
+  width: 30px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  text-align: center;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.search-form__submit {
+  background-color: #fff;
+  opacity: 0;
+  color: transparent;
+  border: none;
+  outline: none;
+  z-index: -1;
+}
+
+.search-form__btn {
+  z-index: 90;
+  color: #495057;
+}
+
+.search-form__btn .feather {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+/*# sourceMappingURL=SearchBar.css.map */

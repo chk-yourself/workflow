@@ -1,0 +1,22 @@
+.popover-wrapper {
+  position: relative;
+  height: auto;
+  z-index: 2;
+}
+
+.popover {
+  position: absolute;
+  z-index: 3;
+  top: 100%;
+}
+
+.popover.align-left {
+  left: 0;
+  right: auto;
+}
+
+.popover.align-right {
+  right: 0;
+  left: auto;
+}
+/*# sourceMappingURL=Popover.css.map */

@@ -1,0 +1,12 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.subtask-composer.is-active .subtask-composer__icon {
+  color: #3e7aff;
+}
+
+.subtask-composer__btn--add:disabled {
+  background-color: #dee2e6;
+  border-color: #adb5bd;
+  color: #adb5bd;
+}
+/*# sourceMappingURL=SubtaskComposer.css.map */

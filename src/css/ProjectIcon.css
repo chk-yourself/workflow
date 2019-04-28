@@ -1,0 +1,75 @@
+@import url("https://rsms.me/inter/inter.css");
+.project-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 1px solid transparent;
+}
+
+.project-icon--default {
+  background-color: #495057;
+  color: #fff;
+}
+
+.project-icon--blue {
+  background-color: #1c7ed6;
+  color: #fff;
+}
+
+.project-icon--green {
+  background-color: #37b24d;
+  color: #fff;
+}
+
+.project-icon--pink {
+  background-color: #d6336c;
+  color: #fff;
+}
+
+.project-icon--orange {
+  background-color: #f76707;
+  color: #fff;
+}
+
+.project-icon--purple {
+  background-color: #633eff;
+  color: #fff;
+}
+
+.project-icon--red {
+  background-color: #f03e3e;
+  color: #fff;
+}
+
+.project-icon--teal {
+  background-color: #0ca678;
+  color: #fff;
+}
+
+.project-icon--cyan {
+  background-color: #1098ad;
+  color: #fff;
+}
+
+.project-icon--grape {
+  background-color: #ae3ec9;
+  color: #fff;
+}
+
+.project-icon--violet {
+  background-color: #7048e8;
+  color: #fff;
+}
+
+.project-icon--indigo {
+  background-color: #4263eb;
+  color: #fff;
+}
+
+.project-icon--yellow {
+  background-color: #f59f00;
+  color: #fff;
+}
+/*# sourceMappingURL=ProjectIcon.css.map */

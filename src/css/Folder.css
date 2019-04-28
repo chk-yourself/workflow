@@ -1,0 +1,130 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.folder {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow-x: visible;
+  position: relative;
+  width: 100%;
+  margin: 0 0 16px 0;
+}
+
+.folder .folder__popover-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  line-height: 48px;
+  z-index: 3;
+}
+
+.folder__header {
+  padding: 4px 0;
+  position: relative;
+  margin: 0 4px;
+  height: 46px;
+}
+
+@media (min-width: 768px) {
+  .folder__header {
+    margin: 0 8px;
+  }
+}
+
+.folder__popover {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px 0;
+  background-color: #fff;
+  min-width: 200px;
+  line-height: 1.15;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.folder__popover a {
+  color: #212529;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+}
+
+.folder__popover a:hover {
+  background-color: #3e7aff;
+  color: #fff;
+}
+
+.folder__btn--more-actions {
+  vertical-align: middle;
+}
+
+.folder__btn--more-actions .feather {
+  width: 18px;
+  height: 18px;
+}
+
+.folder__input--title {
+  border: 1px solid transparent;
+  font-weight: 700;
+  padding: 8px 4px;
+  background-color: transparent;
+  width: calc(100% - 72px);
+  height: 36px;
+  font-size: 18px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.folder__input--title:focus:not(:-moz-read-only) {
+  border-color: #3e7aff;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.folder__input--title:focus:not(:read-only) {
+  border-color: #3e7aff;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.folder__input--title:-moz-read-only {
+  pointer-events: none;
+}
+
+.folder__input--title:read-only {
+  pointer-events: none;
+}
+
+.folder__tasks {
+  position: relative;
+  margin: 0;
+}
+
+.folder__btn--toggle {
+  height: 36px;
+  width: 24px;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.folder__btn--toggle .feather {
+  stroke-width: 3px;
+}
+
+.folder__content {
+  margin: 0 4px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+@media (min-width: 768px) {
+  .folder__content {
+    margin: 0 8px;
+  }
+}
+/*# sourceMappingURL=Folder.css.map */

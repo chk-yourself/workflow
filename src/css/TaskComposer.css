@@ -1,0 +1,88 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.task-composer {
+  padding: 0 4px;
+}
+
+@media (min-width: 768px) {
+  .task-composer {
+    padding: 0 12px;
+  }
+}
+
+.task-composer.is-active .task-composer__btn--submit .feather {
+  color: #3e7aff;
+}
+
+.task-composer__form {
+  padding: 4px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: #fff;
+}
+
+@media (min-width: 768px) {
+  .task-composer__form {
+    padding: 8px;
+  }
+}
+
+.task-composer__input {
+  border: none;
+  width: calc(100% - 34px);
+  padding: 8px 6px;
+  font-size: 14px;
+  height: 32px;
+}
+
+.task-composer__input:active, .task-composer__input:focus {
+  outline: none;
+  border-color: transparent;
+}
+
+.task-composer__input::-webkit-input-placeholder {
+  color: #adb5bd;
+}
+
+.task-composer__input:-ms-input-placeholder {
+  color: #adb5bd;
+}
+
+.task-composer__input::-ms-input-placeholder {
+  color: #adb5bd;
+}
+
+.task-composer__input::placeholder {
+  color: #adb5bd;
+}
+
+.task-composer__btn--submit {
+  display: inline-block;
+  width: 30px;
+  height: 32px;
+  line-height: 0;
+  font-size: 0;
+  text-align: center;
+  padding: 0;
+}
+
+.task-composer__btn--submit .feather {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  color: #adb5bd;
+}
+
+.task-composer__checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #adb5bd;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}
+/*# sourceMappingURL=TaskComposer.css.map */

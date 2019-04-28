@@ -1,0 +1,14 @@
+@import url("https://rsms.me/inter/inter.css");
+.menu {
+  list-style: none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.menu__item {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+/*# sourceMappingURL=Menu.css.map */

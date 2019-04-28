@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,iCAAiC,CAAC;EAChC,WAAW,EAAE,GAAG;EAChB,aAAa,EAAE,IAAI;CACpB;;AAED,AAAA,sBAAsB,CAAC;EACrB,KAAK,EAAE,IAAI;EACX,SAAS,EAAE,KAAK;EAChB,YAAY,EAAE,IAAI;EAClB,WAAW,EAAE,IAAI;EACjB,UAAU,EAAE,IAAI;EAChB,aAAa,EAAE,GAAG;EAClB,OAAO,EAAE,IAAI;CAId;;AELC,MAAM,EAAE,SAAS,EAAE,KAAK;EFN1B,AAAA,sBAAsB,CAAC;IASnB,SAAS,EAAE,KAAK;GAEnB;;;AAED,AAAA,+BAA+B,CAAC;EAC9B,OAAO,EAAE,CAAC;EACV,WAAW,EAAE,GAAG;CACjB;;AAED,AACE,2BADyB,AACxB,MAAM,EADT,2BAA2B,AAExB,OAAO,CAAC;EACP,gBAAgB,ECIP,OAAO;CDHjB",
+    "sources": [
+        "../pages/VerificationRequired/VerificationRequired.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "VerificationRequired.css"
+}

@@ -8,14 +8,18 @@ import Fundamentals from './Fundamentals';
 import { Icon } from '../../components/Icon';
 import './Guide.scss';
 
-const GuideTile = ({ link, title, color, icon }) => (
+const GuideTile = ({ link, title, description, color, icon }) => (
   <li className={`guide__tile guide__tile--${color}`}>
     <Link className="guide__section-link" to={link}>
       <span className="guide__icon-wrapper">
         <Icon name={icon} />
       </span>
-      {title}
+      <span className="guide__tile-content">
+        <span className="guide__tile-title">{title}</span>
+        <span className="guide__tile-desc">{description}</span>
+      </span>
     </Link>
+    <Icon className="guide__icon--arrow" name="arrow-up-right" />
   </li>
 );
 
@@ -37,19 +41,22 @@ const Guide = () => (
               color="primary"
               title="Features"
               link={ROUTES.FEATURES}
-              icon="star"
+              icon="triangle"
+              description="Explore Workflow's core features"
             />
             <GuideTile
               color="secondary"
               title="Fundamentals"
               link={ROUTES.FUNDAMENTALS}
-              icon="book-open"
+              icon="square"
+              description="Get to know Workflow's interface"
             />
             <GuideTile
               color="tertiary"
               title="How to..."
               link={ROUTES.HOW_TO}
-              icon="crosshair"
+              icon="circle"
+              description="Learn how to perform common tasks"
             />
           </ul>
         </Main>

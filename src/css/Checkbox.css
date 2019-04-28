@@ -1,0 +1,46 @@
+@import url("https://rsms.me/inter/inter.css");
+input[type='checkbox']:focus {
+  outline: none;
+}
+
+.checkbox__label {
+  display: inline-block;
+  position: relative;
+  background-color: transparent;
+  padding-left: 30px;
+  height: 20px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.checkbox__label:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.checkbox__label .feather {
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  color: #3e7aff;
+}
+
+.checkbox {
+  border: 1px solid #3e7aff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+/*# sourceMappingURL=Checkbox.css.map */

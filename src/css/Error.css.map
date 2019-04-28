@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,eAAe,CAAC;EACd,KAAK,ECeI,OAAO;EDdhB,SAAS,EAAE,IAAI;EACf,WAAW,EAAE,GAAG;EAChB,MAAM,EAAE,KAAK;CAQd;;AAZD,AAKE,eALa,CAKb,QAAQ,CAAC;EACP,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,KAAK,EC4CH,OAAO;ED3CT,cAAc,EAAE,WAAW;EAC3B,YAAY,EAAE,GAAG;CAClB",
+    "sources": [
+        "../components/Error/Error.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "Error.css"
+}

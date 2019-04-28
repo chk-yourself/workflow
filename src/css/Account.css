@@ -1,0 +1,36 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.user-form {
+  max-width: 400px;
+}
+
+.user-form__input {
+  margin-bottom: 24px;
+}
+
+.account {
+  padding: 8px 16px;
+}
+
+@media (min-width: 768px) {
+  .account {
+    padding: 8px 24px;
+  }
+}
+
+@media (min-width: 992px) {
+  .account {
+    padding: 8px 32px;
+  }
+}
+
+.account-section {
+  margin-bottom: 50px;
+}
+
+.account-section__header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 24px 0;
+}
+/*# sourceMappingURL=Account.css.map */

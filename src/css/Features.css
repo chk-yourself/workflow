@@ -1,0 +1,20 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.features__subheading {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.features__section {
+  padding: 0 8px;
+}
+
+.features__section:not(:first-child) {
+  margin-top: 32px;
+}
+
+.features__item {
+  margin-top: 8px;
+  line-height: 1.3;
+}
+/*# sourceMappingURL=Features.css.map */

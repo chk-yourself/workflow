@@ -1,0 +1,19 @@
+@import url("https://rsms.me/inter/inter.css");
+.list-badge {
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 10px;
+  padding: 0.24em 0.62em;
+  border: 1px solid transparent;
+  color: #495057;
+  font-style: italic;
+}
+
+.list-badge .feather {
+  width: 11px;
+  height: 11px;
+  vertical-align: bottom;
+  margin-right: 4px;
+}
+/*# sourceMappingURL=ListBadge.css.map */
