@@ -37,7 +37,11 @@ const TaskEditorWrapper = ({
   return layout === 'board' ? (
     <Modal
       onModalClose={handleTaskEditorClose}
-      classes={{ content: 'task-editor', button: 'task-editor__btn--close' }}
+      classes={{
+        modal: 'task-editor-modal',
+        content: 'task-editor',
+        button: 'task-editor__btn--close'
+      }}
       size="lg"
       id="taskEditor"
       onOutsideClick={onOutsideClick}

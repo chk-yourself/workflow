@@ -1,18 +1,51 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.header + main.landing {
+  @include xx {
+    left: 0;
+    width: 100%;
+  }
+}
+
 .landing {
   margin-top: 44px;
+  width: 100%;
+  min-height: 100%;
+  overflow: visible;
   @include md {
     margin-top: 46px;
   }
 }
 
+.landing__section {
+  padding: 24px 16px;
+  @include lg {
+    padding: 32px 16px;
+  }
+}
+
 .landing__title {
+  font-size: 1.6rem;
+  margin: 0 0 24px 0;
+  color: $grey-900;
+  width: 100%;
+  padding: 0 4px;
   text-align: center;
   font-weight: 500;
   @include md {
+    padding: 0 8px;
+  }
+  @include md {
     font-size: 1.8rem;
+  }
+}
+
+.landing__hero {
+  background-color: $white;
+  padding-top: 44px;
+  @include md {
+    padding-top: 46px;
   }
 }
 

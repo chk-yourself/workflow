@@ -10,7 +10,42 @@ class Header extends Component {
   state = {
     isNavExpanded: false,
     isWorkspaceComposerActive: false,
-    isWorkspaceSettingsActive: false
+    isWorkspaceSettingsActive: false,
+    isSticky: false
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.stickNav);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.stickNav);
+  }
+
+  setRef = el => {
+    this.header = el;
+  };
+
+  stickNav = e => {
+    const {
+      history: {
+        location: { pathname }
+      }
+    } = this.props;
+    if (!this.header || pathname !== '/') return;
+    const { height } = this.header.getBoundingClientRect();
+    const { isSticky } = this.state;
+    if (window.scrollY >= height) {
+      if (isSticky) return;
+      this.setState({
+        isSticky: true
+      });
+    } else {
+      if (!isSticky) return;
+      this.setState({
+        isSticky: false
+      });
+    }
   };
 
   toggleNav = e => {
@@ -59,22 +94,29 @@ class Header extends Component {
     const {
       isNavExpanded,
       isWorkspaceComposerActive,
-      isWorkspaceSettingsActive
+      isWorkspaceSettingsActive,
+      isSticky
     } = this.state;
     const {
       firebase,
-      history: { location },
+      history: {
+        location: { pathname }
+      },
       currentUser,
       activeWorkspace
     } = this.props;
-    const isLoginPage = location.pathname === '/login';
-    const isSignUpPage = location.pathname === '/signup';
-    const isForgotPasswordPage = location.pathname === '/forgot-password';
+    const isLandingPage = pathname === '/';
+    const isLoginPage = pathname === '/login';
+    const isSignUpPage = pathname === '/signup';
+    const isForgotPasswordPage = pathname === '/forgot-password';
     return (
       <header
-        className={`header ${isLoginPage ? 'header--login' : ''} ${
-          isSignUpPage || isForgotPasswordPage ? 'header--dk' : ''
-        } ${isNavExpanded ? 'expand-nav' : ''}`}
+        ref={this.setRef}
+        className={`header ${isLandingPage ? 'header--landing' : ''} ${
+          isLoginPage ? 'header--login' : ''
+        } ${isSignUpPage || isForgotPasswordPage ? 'header--dk' : ''} ${
+          isNavExpanded ? 'expand-nav' : ''
+        } ${isSticky ? 'is-sticky' : ''}`}
       >
         {currentUser && activeWorkspace ? (
           <>

@@ -1,7 +1,17 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
+@media (min-width: 1440px) {
+  .header + main.landing {
+    left: 0;
+    width: 100%;
+  }
+}
+
 .landing {
   margin-top: 44px;
+  width: 100%;
+  min-height: 100%;
+  overflow: visible;
 }
 
 @media (min-width: 768px) {
@@ -10,14 +20,46 @@
   }
 }
 
+.landing__section {
+  padding: 24px 16px;
+}
+
+@media (min-width: 992px) {
+  .landing__section {
+    padding: 32px 16px;
+  }
+}
+
 .landing__title {
+  font-size: 1.6rem;
+  margin: 0 0 24px 0;
+  color: #212529;
+  width: 100%;
+  padding: 0 4px;
   text-align: center;
   font-weight: 500;
 }
 
 @media (min-width: 768px) {
   .landing__title {
+    padding: 0 8px;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing__title {
     font-size: 1.8rem;
+  }
+}
+
+.landing__hero {
+  background-color: #fff;
+  padding-top: 44px;
+}
+
+@media (min-width: 768px) {
+  .landing__hero {
+    padding-top: 46px;
   }
 }
 

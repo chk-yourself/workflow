@@ -60,17 +60,19 @@ class Card extends Component {
             }}
           >
             <div className="card__header" ref={el => (this.headerEl = el)}>
-              <div className="card__tags">
-                {tags.map(tag => (
-                  <Tag
-                    key={tag.name}
-                    size="sm"
-                    color={tag.color}
-                    variant="pill"
-                    className="card__tag"
-                  />
-                ))}
-              </div>
+              {tags && tags.length > 0 && (
+                <div className="card__tags">
+                  {tags.map(tag => (
+                    <Tag
+                      key={tag.name}
+                      size="sm"
+                      color={tag.color}
+                      variant="pill"
+                      className="card__tag"
+                    />
+                  ))}
+                </div>
+              )}
               <h3 className="card__title">{name}</h3>
             </div>
             <div className="card__body">

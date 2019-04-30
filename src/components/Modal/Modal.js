@@ -8,8 +8,8 @@ class Modal extends Component {
   static defaultProps = {
     onModalClick: () => null,
     onOutsideClick: () => null
-  }
-  
+  };
+
   onOutsideClick = e => {
     const { onOutsideClick, onModalClose } = this.props;
     if (onOutsideClick) {
@@ -30,19 +30,19 @@ class Modal extends Component {
       innerRef
     } = this.props;
     return (
-      <div className={`modal ${classes.modal || ''}`} onClick={onModalClick}>
+      <div
+        className={`modal modal--${size} ${classes.modal || ''}`}
+        onClick={onModalClick}
+      >
         <div
           id={id}
           ref={innerRef}
-          className={`modal__content ${
-            classes.content || ''
-          } modal__content--${size}`}
+          className={`modal__content ${classes.content ||
+            ''} modal__content--${size}`}
         >
           <Button
             type="button"
-            className={`modal__btn--close ${
-            classes.button || ''
-          }`}
+            className={`modal__btn--close ${classes.button || ''}`}
             onClick={onModalClose}
             iconOnly
           >

@@ -187,21 +187,25 @@
   }
 }
 
-.header--dk .navbar__link {
+.header--signup .navbar__link,
+.header--forgot-password .navbar__link {
   color: #343a40;
 }
 
 @media (min-width: 768px) {
-  .header--dk .navbar__link {
+  .header--signup .navbar__link,
+  .header--forgot-password .navbar__link {
     color: #fff;
   }
 }
 
-.header--dk .navbar__link.active {
+.header--signup .navbar__link.active,
+.header--forgot-password .navbar__link.active {
   color: #fb5072;
 }
 
-.header--dk .navbar__link:hover {
+.header--signup .navbar__link:hover,
+.header--forgot-password .navbar__link:hover {
   color: #fb5072;
 }
 

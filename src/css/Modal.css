@@ -18,6 +18,18 @@
   }
 }
 
+@media (min-width: 425px) {
+  .modal--lg {
+    background-color: #fff;
+  }
+}
+
+@media (min-width: 576px) {
+  .modal--lg {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+}
+
 .modal__content {
   display: -webkit-box;
   display: -ms-flexbox;

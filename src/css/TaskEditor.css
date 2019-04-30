@@ -1,50 +1,47 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
-.task-editor {
-  padding: 40px 0 0;
-}
-
-@media (min-width: 425px) {
-  .task-editor {
-    padding: 40px 0 0;
-  }
-}
-
-@media (min-width: 992px) {
-  .task-editor {
-    padding: 40px 0 0;
-  }
-}
-
-@media (min-width: 1200px) {
-  .task-editor {
-    max-width: 700px;
-  }
-}
-
-.task-editor__wrapper {
+.task-editor-modal .task-editor__wrapper {
   width: 100%;
-  padding: 0 8px 16px;
+  padding: 4px 16px 16px;
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   max-height: calc(100vh - 40px);
 }
 
-@media (min-width: 425px) {
-  .task-editor__wrapper {
-    padding: 0 16px 16px;
+@media (min-width: 576px) {
+  .task-editor-modal .task-editor__wrapper {
+    max-height: calc(90vh - 40px);
+    padding: 8px 20px 16px;
   }
 }
 
-@media (min-width: 576px) {
-  .task-editor__wrapper {
-    max-height: calc(90vh - 40px);
+@media (min-width: 768px) {
+  .task-editor-modal .task-editor__wrapper {
+    padding: 8px 24px 16px;
   }
 }
 
 @media (min-width: 992px) {
-  .task-editor__wrapper {
-    padding: 0 24px 16px;
+  .task-editor-modal .task-editor__wrapper {
+    padding: 8px 28px 16px;
+  }
+}
+
+.task-editor {
+  padding: 40px 0 0;
+}
+
+@media (min-width: 576px) {
+  .task-editor {
+    max-height: 90vh;
+    width: 90%;
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 992px) {
+  .task-editor {
+    max-width: 720px;
   }
 }
 
@@ -102,9 +99,10 @@
   font-size: 1.2rem;
   height: 46px;
   color: #212529;
-  padding: 8px 6px;
+  padding: 6px;
   position: relative;
   left: -6px;
+  line-height: 1.2;
 }
 
 .task-editor__textarea--title:focus {

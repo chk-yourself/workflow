@@ -14,6 +14,14 @@
   @include xs {
     background-color: rgba(0, 0, 0, 0.6);
   }
+  &--lg {
+    @include xs {
+      background-color: $white;
+    }
+    @include sm {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  }
 }
 
 // Content

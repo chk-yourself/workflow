@@ -1,33 +1,35 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.task-editor {
-  padding: 40px 0 0;
-  @include xs {
-    padding: 40px 0 0;
-  }
-  @include lg {
-    padding: 40px 0 0;
-  }
-  @include xl {
-    max-width: 700px;
+.task-editor-modal {
+  .task-editor__wrapper {
+    width: 100%;
+    padding: 4px 16px 16px;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    max-height: calc(100vh - 40px);
+    @include sm {
+      max-height: calc(90vh - 40px);
+      padding: 8px 20px 16px;
+    }
+    @include md {
+      padding: 8px 24px 16px;
+    }
+    @include lg {
+      padding: 8px 28px 16px;
+    }
   }
 }
 
-.task-editor__wrapper {
-  width: 100%;
-  padding: 0 8px 16px;
-  -webkit-overflow-scrolling: touch;
-  overflow-y: auto;
-  max-height: calc(100vh - 40px);
-  @include xs {
-    padding: 0 16px 16px;
-  }
+.task-editor {
+  padding: 40px 0 0;
   @include sm {
-    max-height: calc(90vh - 40px);
+    max-height: 90vh;
+    width: 90%;
+    max-width: 640px;
   }
   @include lg {
-    padding: 0 24px 16px;
+    max-width: 720px;
   }
 }
 
@@ -71,9 +73,10 @@
   font-size: 1.2rem;
   height: 46px;
   color: $grey-900;
-  padding: 8px 6px;
+  padding: 6px;
   position: relative;
   left: -6px;
+  line-height: 1.2;
   &:focus {
     border-color: $primary;
   }
