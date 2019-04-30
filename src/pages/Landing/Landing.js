@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Landing.scss';
 import * as ROUTES from '../../constants/routes';
+import { ReactComponent as TodoList } from '../../assets/undraw/todo-list.svg';
+import { ReactComponent as WorkChat } from '../../assets/undraw/work-chat.svg';
+import { ReactComponent as ScrumBoard } from '../../assets/undraw/scrum-board.svg';
 
 const LandingPage = () => (
   <main className="landing">
@@ -26,9 +29,18 @@ const LandingPage = () => (
     </section>
     <section className="landing__section">
       <div className="landing__features">
-        <div className="landing__feature">Project management</div>
-        <div className="landing__feature">Task management</div>
-        <div className="landing__feature">Real-time collaboration</div>
+        <div className="landing__feature">
+        <ScrumBoard />
+        Project management
+        </div>
+        <div className="landing__feature">
+          <TodoList />
+          Task management
+        </div>
+        <div className="landing__feature">
+        <WorkChat />
+        Real-time collaboration
+        </div>
       </div>
     </section>
   </main>
