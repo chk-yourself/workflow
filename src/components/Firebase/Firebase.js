@@ -1833,12 +1833,11 @@ class Firebase {
       workspaceId,
       tags
     },
-    {
-      batch = this.createBatch(),
-      shouldCommit = true,
-      deleteMode = 'task'
-    }
+    options = {}
   ) => {
+    const batch = options.batch || this.createBatch();
+    const shouldCommit = 'shouldCommit' in options ? options.shouldCommit : true;
+    const deleteMode = options.deleteMode || 'task';
     const taskRef = this.getDocRef('tasks', taskId);
     batch.delete(taskRef);
 

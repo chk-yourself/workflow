@@ -45,11 +45,13 @@
 .select-dropdown__label {
   position: relative;
   display: inline-block;
-  padding: 6px 8px 6px 30px;
+  padding: 6px 16px 6px 30px;
   width: 100%;
   font-weight: 400;
   font-size: 14px;
   line-height: 1;
+  white-space: nowrap;
+  overflow-x: auto;
   &:hover {
     cursor: pointer;
     background-color: $primary;
@@ -65,4 +67,8 @@
     left: 8px;
     color: $primary;
   }
+}
+
+.select-dropdown {
+  width: calc(100% + 38px);
 }

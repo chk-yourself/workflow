@@ -76,6 +76,7 @@
   max-width: 600px;
   line-height: 1.4;
   margin: 0 auto;
+  color: $grey-700;
   &:not(:first-child) {
     margin-top: 16px;
   }
@@ -151,6 +152,7 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin: 8px 0 12px;
+  color: $grey-800;
   @include md {
   font-size: 1.4rem;
   }
@@ -159,6 +161,7 @@
 .landing__feature-desc {
   line-height: 1.46;
   font-size: 14px;
+  color: $grey-700;
   @include md {
     font-size: 1rem;
   }
