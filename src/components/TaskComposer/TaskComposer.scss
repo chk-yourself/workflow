@@ -3,6 +3,7 @@
 
 .task-composer {
   padding: 0 4px;
+  position: relative;
   @include md {
     padding: 0 12px;
   }

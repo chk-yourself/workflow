@@ -50,4 +50,12 @@
 .search-results__tasks {
   width: 100%;
   max-width: 960px;
+  .search-results__task {
+    &:not(.is-focused):last-child::before {
+      box-shadow: inset 0px 2px 1px -1px $grey-200;
+    }
+    &.is-focused + .search-results__task:last-child::before {
+      box-shadow: none;
+    }
+  }
 }

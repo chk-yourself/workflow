@@ -1,7 +1,7 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.tags__container {
+.tags-input__container {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -18,6 +18,14 @@
     .tags-input {
       padding-left: 0;
       padding-right: 0;
+    }
+  }
+  .tag__link {
+    pointer-events: none;
+  }
+  @include md {
+    .tag__link {
+      pointer-events: auto;
     }
   }
 }

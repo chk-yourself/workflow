@@ -27,6 +27,9 @@
   @include md {
     margin: 0 8px;
   }
+  &.is-expanded {
+    border-bottom: 1px solid $grey-700;
+  }
 }
 
 .folder__popover {
@@ -81,6 +84,14 @@
 .folder__tasks {
   position: relative;
   margin: 0;
+  .task::before {
+    width: calc(100% - 46px);
+  }
+  @include md {
+    .task::before {
+      width: calc(100% - 70px);
+    }
+  }
 }
 
 .folder__btn--toggle {
@@ -94,10 +105,5 @@
 }
 
 .folder__content {
-  margin: 0 4px;
-  background-color: $white;
-  @include bootstrap-box-shadow(1);
-  @include md {
-    margin: 0 8px;
-  }
+  margin: 0;
 }

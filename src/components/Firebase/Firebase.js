@@ -950,24 +950,6 @@ class Firebase {
         true
       );
     }
-    /*
-    if (projectId) {
-      this.setBatch(
-        batch,
-        ['projects', projectId],
-        {
-          tags: {
-            [name]: {
-              name,
-              color,
-              count: this.plus(1)
-            }
-          }
-        },
-        true
-      );
-    }
-    */
 
     return batch
       .commit()
@@ -995,18 +977,6 @@ class Firebase {
         count: this.minus(1)
       });
     }
-
-    /*
-    if (projectId && projectCount !== null) {
-      if (projectCount === 0) {
-        this.deleteTag({ projectId, name });
-      } else {
-        this.updateBatch(batch, ['projects', projectId], {
-          [`tags.${name}.count`]: this.minus(1)
-        });
-      }
-    }
-*/
     if (shouldCommit) {
       return batch
         .commit()
@@ -1035,13 +1005,6 @@ class Firebase {
     this.updateBatch(batch, ['tasks', taskId], {
       [`tags.${tag}.color`]: color
     });
-    /*
-    if (projectId) {
-      this.updateBatch(batch, ['projects', projectId], {
-        [`tags.${tag}.color`]: color
-      });
-    }
-    */
 
     if (!projectId) {
       this.updateBatch(batch, ['users', userId, 'tags', tag], {

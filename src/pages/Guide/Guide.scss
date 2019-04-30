@@ -6,9 +6,8 @@
   min-height: 100%;
   padding: 8px;
   overflow: visible;
-  margin-top: 44px;
   max-width: 960px;
-  margin: 0 auto;
+  margin: 44px auto 0;
   @include md {
     margin-top: 46px;
   }

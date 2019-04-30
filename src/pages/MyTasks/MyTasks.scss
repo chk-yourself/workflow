@@ -31,9 +31,9 @@
   max-width: 960px;
   width: 100%;
   padding: 0;
-  @include md {
-    padding: 0 8px;
-  }
+  background-color: $white;
+  @include bootstrap-box-shadow(1);
+  border-radius: 4px;
 }
 
 .user-tasks__wrapper {

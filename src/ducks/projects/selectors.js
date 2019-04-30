@@ -1,3 +1,5 @@
+import { getTasksArray } from '../tasks/selectors';
+
 export const getProjectsById = state => {
   return state.projectsById;
 };
@@ -15,17 +17,10 @@ export const getProject = (state, projectId) => {
 };
 
 export const getProjectTasks = (state, projectId) => {
-  const { projectsById, listsById, tasksById } = state;
-  if (!projectsById || !listsById || !tasksById) return [];
-  const { listIds } = projectsById[projectId];
-  return listIds.reduce((tasks, listId) => {
-    const list = listsById[listId];
-    if (list) {
-      const { taskIds } = list;
-      return tasks.concat(taskIds.map(taskId => tasksById[taskId]));
-    }
-    return tasks;
-  }, []);
+  const { projectsById } = state;
+  if (!projectId || !projectsById) return [];
+  const tasks = getTasksArray(state);
+  return tasks.filter(task => task.projectId === projectId);
 };
 
 /*
@@ -37,6 +32,7 @@ export const getProjectTags = (state, projectId) => {
 */
 
 export const getProjectTags = (state, projectId) => {
+  if (!projectId) return {};
   const tasks = getProjectTasks(state, projectId);
   return tasks.reduce((tags, task) => {
     return {

@@ -35,13 +35,14 @@ class TagSearchResults extends Component {
     const isTaskEditorOpen = !!selectedTaskId;
     return (
       <Main
-        title={<>
-        <Icon name="tag" />
-          {tag}
+        title={
+          <>
+            <Icon name="tag" />
+            {tag}
           </>
-          }
+        }
         classes={{
-          main: 'search-results',
+          main: `search-results ${isTaskEditorOpen ? 'show-task-editor' : ''}`,
           title: 'search-results__title'
         }}
       >

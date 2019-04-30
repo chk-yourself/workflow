@@ -25,7 +25,12 @@ class App extends Component {
   onMouseOver = e => {
     const { target } = e;
     const { tooltipAnchor } = this.state;
-    if (!target.matches('[data-tooltip]') || tooltipAnchor === target) return;
+    if (
+      target.matches('.tag') ||
+      !target.matches('[data-tooltip]') ||
+      tooltipAnchor === target
+    )
+      return;
     const { dataset } = target;
     const { tooltip, tooltipAlignY, tooltipAlignX, tooltipArrow } = dataset;
     this.setState({

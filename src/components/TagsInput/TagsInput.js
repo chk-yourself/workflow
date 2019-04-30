@@ -216,7 +216,13 @@ class TagsInput extends Component {
   };
 
   removeTag = name => {
-    const { firebase, taskId, currentUser, projectId, removeTaskTag } = this.props;
+    const {
+      firebase,
+      taskId,
+      currentUser,
+      projectId,
+      removeTaskTag
+    } = this.props;
     const { userId } = currentUser;
     firebase.removeTag({ taskId, name, userId, projectId });
     /*
@@ -269,7 +275,7 @@ class TagsInput extends Component {
 
     return (
       <div
-        className={`tags__container ${isActive ? 'is-active' : ''} ${
+        className={`tags-input__container ${isActive ? 'is-active' : ''} ${
           !hasTags ? 'no-tags' : ''
         }`}
         ref={innerRef}
@@ -283,7 +289,6 @@ class TagsInput extends Component {
             onDelete={() => this.removeTag(tag.name)}
             isFocused={focusedTag === tag.name}
             innerRef={currentTag === tag.name ? this.setCurrentTagRef : null}
-            isLinkDisabled
           />
         ))}
         <div className="tags-input__wrapper">

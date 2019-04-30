@@ -36,7 +36,8 @@ export const getNotificationsArray = state => {
       const notificationA = notifications[a];
       const notificationB = notifications[b];
       return getMillis(notificationB) - getMillis(notificationA);
-    }).map(notificationId => notifications[notificationId]);
+    })
+    .map(notificationId => notifications[notificationId]);
 };
 
 export const getTaskSettings = state => {
@@ -67,7 +68,13 @@ export const getFolderIds = state => {
 export const getSortedFilteredTaskGroups = state => {
   const { currentUser, tasksById } = state;
   if (!currentUser || !tasksById) return [];
-  const { tempSettings, assignedTasks, folders: foldersById, projectIds, folderIds } = currentUser;
+  const {
+    tempSettings,
+    assignedTasks,
+    folders: foldersById,
+    projectIds,
+    folderIds
+  } = currentUser;
   if (!foldersById || !assignedTasks || !projectIds || !folderIds) return [];
   const { sortBy, view } = tempSettings.tasks;
   switch (sortBy) {
@@ -79,7 +86,9 @@ export const getSortedFilteredTaskGroups = state => {
           return tasksByProject.concat(
             taskIds.length > 0
               ? {
-                  taskIds: getTaskIdsByViewFilter(state, { folderId: projectId })[view],
+                  taskIds: getTaskIdsByViewFilter(state, {
+                    folderId: projectId
+                  })[view],
                   projectId,
                   name,
                   projectName: name,
@@ -102,7 +111,7 @@ export const getSortedFilteredTaskGroups = state => {
         projectId: null,
         projectName: null,
         dueDate: null,
-        taskIds: getTaskIdsByViewFilter(state, { folderId: '4'})[view],
+        taskIds: getTaskIdsByViewFilter(state, { folderId: '4' })[view],
         userPermissions: {
           enableNameChange: false,
           enableTaskAdd: true,
@@ -115,18 +124,18 @@ export const getSortedFilteredTaskGroups = state => {
       return folderIds.reduce((folders, folderId) => {
         const folder = foldersById[folderId];
         if (folder) {
-        return folders.concat({
-          ...folder,
-          taskIds: getTaskIdsByViewFilter(state, { folderId })[view],
-          projectId: null,
-          projectName: null,
-          dueDate: null,
-          userPermissions: {
-            enableNameChange: !['0', '1', '2', '3'].includes(folderId),
-            enableTaskAdd: true,
-            enableDragNDrop: true
-          }
-        });
+          return folders.concat({
+            ...folder,
+            taskIds: getTaskIdsByViewFilter(state, { folderId })[view],
+            projectId: null,
+            projectName: null,
+            dueDate: null,
+            userPermissions: {
+              enableNameChange: !['0', '1', '2', '3'].includes(folderId),
+              enableTaskAdd: true,
+              enableDragNDrop: true
+            }
+          });
         }
         return folders;
       }, []);
@@ -137,7 +146,11 @@ export const getSortedFilteredTaskGroups = state => {
         const task = tasksById[taskId];
         if (!task) return tasksByDueDate;
         const { dueDate, isCompleted } = task;
-        if ((view === 'active' && isCompleted) || (view === 'completed' && !isCompleted)) return tasksByDueDate;
+        if (
+          (view === 'active' && isCompleted) ||
+          (view === 'completed' && !isCompleted)
+        )
+          return tasksByDueDate;
         const isPastDue = dueDate && isPriorDate(dueDate.toDate());
         if (dueDate && !isPastDue) {
           const dueDateMillis = dueDate.toMillis();
@@ -190,7 +203,7 @@ export const getSortedFilteredTaskGroups = state => {
       const unscheduled = foldersById['5'];
       const noDueDate = {
         ...unscheduled,
-        taskIds: getTaskIdsByViewFilter(state, { folderId: '5'})[view],
+        taskIds: getTaskIdsByViewFilter(state, { folderId: '5' })[view],
         projectId: null,
         projectName: null,
         dueDate: null,
@@ -208,7 +221,9 @@ export const getSortedFilteredTaskGroups = state => {
           `${date}` in foldersById
             ? {
                 ...foldersById[`${date}`],
-                taskIds: getTaskIdsByViewFilter(state, { folderId: `${date}`})[view],
+                taskIds: getTaskIdsByViewFilter(state, { folderId: `${date}` })[
+                  view
+                ],
                 projectId: null,
                 name: toDateString(new Date(date), {
                   useRelative: true,
@@ -326,7 +341,7 @@ export const getAllMergedTags = state => {
   const projectTags = projectIds.reduce((tags, projectId) => {
     return {
       ...tags,
-      ...(getProjectTags(state, projectId))
+      ...getProjectTags(state, projectId)
     };
   }, {});
   const mergedTags = { ...userTags, ...projectTags };
