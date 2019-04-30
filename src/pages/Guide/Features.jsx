@@ -34,6 +34,10 @@ const Features = () => (
         <li className="features__item">
           <strong>Subtasks:</strong> Break up tasks into smaller steps.
         </li>
+        <li className="features__item">
+          <strong>Rich text:</strong> Use rich text to organize your thoughts
+          and clarify what you mean.
+        </li>
       </ul>
     </Feature>
     <Feature title="Collaboration">
@@ -46,10 +50,6 @@ const Features = () => (
           <strong>Task comments:</strong> Comment directly on a task to clarify
           exactly what needs to be done, and mention teammates to ensure your
           message is heard by your intended audience.
-        </li>
-        <li className="features__item">
-          <strong>Rich text:</strong> Use rich text to organize your thoughts
-          and clarify what you mean.
         </li>
         <li className="features__item">
           <strong>Presence detection:</strong> Keep track of your teammates'
