@@ -142,6 +142,7 @@ class Project extends Component {
     const { firebase, currentUser, selectProject, history, projectId, workspaceId, listIds, memberIds } = this.props;
     const { userId } = currentUser;
     firebase.deleteProject({
+      userId,
       projectId,
       workspaceId,
       listIds,

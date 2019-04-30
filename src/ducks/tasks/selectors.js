@@ -4,16 +4,19 @@ export const getTasksById = state => {
 
 export const getTasksArray = state => {
   const { tasksById } = state;
-  return tasksById ? Object.keys(tasksById).map(taskId => tasksById[taskId]) : [];
+  return tasksById
+    ? Object.keys(tasksById).map(taskId => tasksById[taskId])
+    : [];
 };
 
 export const getTasksMatchingQuery = (state, query) => {
   const regExp = new RegExp(`\\b${query}`, 'i');
   return getTasksArray(state).filter(task => {
+    const { name, projectName, tags } = task;
     return (
-      regExp.test(task.name) ||
-      regExp.test(task.projectName) ||
-      (task.tags && task.tags.some(tag => regExp.test(tag)))
+      regExp.test(name) ||
+      regExp.test(projectName) ||
+      (tags && Object.keys(tags).some(tag => regExp.test(tag)))
     );
   });
 };
@@ -45,20 +48,13 @@ export const getFolderTasks = (state, taskIds) => {
 };
 
 export const getTaskTags = (state, taskId) => {
-  const { projectsById, tasksById, currentUser } = state;
+  const { tasksById } = state;
+  if (!tasksById) return [];
   const task = tasksById[taskId];
   if (!task) return [];
-  const { projectId, tags: taskTags } = task;
-  if (!taskTags || taskTags.length === 0) return [];
-  if (projectId && projectId in projectsById) {
-    const { tags: projectTags } = projectsById[projectId];
-    return taskTags.map(taskTag => projectTags[taskTag]);
-  }
-  if (currentUser && 'tags' in currentUser) {
-    const { tags: userTags } = currentUser;
-    return taskTags.map(taskTag => userTags[taskTag]);
-  }
-  return [];
+  const { tags } = task;
+  if (!tags) return [];
+  return Object.keys(tags).map(tag => tags[tag]);
 };
 
 export const getTaskLoadedState = (state, taskId) => {
@@ -73,7 +69,7 @@ export const getTaggedTasks = (state, tag) => {
   return Object.keys(tasksById)
     .map(taskId => tasksById[taskId])
     .filter(task => {
-      return task.tags && task.tags.includes(tag);
+      return task.tags && task.tags[tag];
     });
 };
 
@@ -111,12 +107,9 @@ export const getTasksByViewFilter = (state, listId) => {
 export const getTaskIdsByViewFilter = (state, { listId, folderId }) => {
   const { tasksById, listsById, currentUser } = state;
   const list = listId ? listsById[listId] : null;
-  const folder = folderId && currentUser.folders ? currentUser.folders[folderId] : null;
-  const taskIds = list
-    ? list.taskIds
-    : folder 
-    ? folder.taskIds
-    : [];
+  const folder =
+    folderId && currentUser.folders ? currentUser.folders[folderId] : null;
+  const taskIds = list ? list.taskIds : folder ? folder.taskIds : [];
   return taskIds.reduce(
     (taskIdsByView, taskId) => {
       const task = tasksById[taskId];

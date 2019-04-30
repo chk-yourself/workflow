@@ -209,16 +209,19 @@ class TagsInput extends Component {
   };
 
   setTagColor = color => {
-    const { currentUser, projectId, firebase } = this.props;
+    const { taskId, currentUser, projectId, firebase } = this.props;
     const { userId } = currentUser;
     const { currentTag: tag } = this.state;
-    firebase.setTagColor({ userId, projectId, tag, color });
+    firebase.setTagColor({ userId, projectId, taskId, tag, color });
   };
 
   removeTag = name => {
-    const { taskId, currentUser, projectId, removeTaskTag } = this.props;
+    const { firebase, taskId, currentUser, projectId, removeTaskTag } = this.props;
     const { userId } = currentUser;
+    firebase.removeTag({ taskId, name, userId, projectId });
+    /*
     removeTaskTag({ taskId, name, userId, projectId });
+    */
     this.setState({
       isColorPickerActive: false,
       focusedTag: '',

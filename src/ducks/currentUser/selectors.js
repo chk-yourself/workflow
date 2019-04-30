@@ -1,5 +1,6 @@
 import { toDateString, isPriorDate } from '../../utils/date';
 import { getTaskIdsByViewFilter } from '../tasks/selectors';
+import { getProjectTags } from '../projects/selectors';
 
 export const getCurrentUser = state => {
   return state.currentUser;
@@ -291,11 +292,12 @@ export const getMergedProjectTags = (state, projectId) => {
   const { projectsById, currentUser } = state;
   if (!currentUser || !projectsById) return [];
   const { tags: userTags } = currentUser;
-  const projectTags = projectId ? projectsById[projectId].tags : {};
+  const projectTags = getProjectTags(state, projectId);
   const mergedTags = { ...userTags, ...projectTags };
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);
 };
 
+/*
 export const getAllMergedTags = state => {
   const { projectsById, currentUser } = state;
   if (!currentUser || !projectsById) return [];
@@ -310,6 +312,22 @@ export const getAllMergedTags = state => {
       };
     }
     return tags;
+  }, {});
+  const mergedTags = { ...userTags, ...projectTags };
+  return Object.keys(mergedTags).map(tag => mergedTags[tag]);
+};
+*/
+
+export const getAllMergedTags = state => {
+  const { projectsById, currentUser } = state;
+  if (!currentUser || !projectsById) return [];
+  const { tags: userTags, projectIds } = currentUser;
+  if (!projectIds) return [];
+  const projectTags = projectIds.reduce((tags, projectId) => {
+    return {
+      ...tags,
+      ...(getProjectTags(state, projectId))
+    };
   }, {});
   const mergedTags = { ...userTags, ...projectTags };
   return Object.keys(mergedTags).map(tag => mergedTags[tag]);

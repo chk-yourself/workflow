@@ -63,16 +63,6 @@ export const deleteList = ({ listId, projectId }) => {
         .then(() => {
           if (taskIds.length > 0) {
             taskIds.forEach(async taskId => {
-              const {
-                assignedTo,
-                folders,
-                subtaskIds,
-                commentIds,
-                tags,
-                projectId,
-                dueDate,
-                workspaceId
-              } = tasksById[taskId];
               dispatch(deleteTask({
                 taskId
               }));

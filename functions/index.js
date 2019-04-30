@@ -31,7 +31,7 @@ exports.mintAdminToken = functions.https.onCall((data, context) => {
     .then(token => {
       return { token: token };
     });
-  });
+});
 
 exports.recursiveDelete = functions
   .runWith({
@@ -58,7 +58,18 @@ exports.recursiveDelete = functions
       })
       .then(() => {
         return {
-          path: path 
+          path: path
         };
       });
+  });
+
+exports.deleteTag = functions.firestore
+  .document('users/{userId}/tags/{tagId}')
+  .onUpdate((change, context) => {
+    const tag = change.after.data();
+    const { count } = tag;
+    if (count === 0) {
+      return change.after.ref.delete();
+    }
+    return null;
   });
