@@ -6,8 +6,10 @@
   margin-right: auto;
   margin-left: auto;
   padding: 4px 24px;
+  margin-top: 36px;
   @include md {
     padding: 8px;
+    margin-top: 40px;
   }
 }
 

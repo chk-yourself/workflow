@@ -146,6 +146,7 @@ class Firebase {
       // This must be true.
       handleCodeInApp: true
     };
+    console.log(this.currentUser);
     return this.currentUser.sendEmailVerification(actionCodeSettings);
   };
 
@@ -565,6 +566,11 @@ class Firebase {
     })
       .then(() => {
         console.log('Guest created');
+        return this.updateDoc('workspaces', 'DEMO', {
+          [`members.${userId}.activeTaskCount`]: 0,
+          [`members.${userId}.role`]: 'guest',
+          memberIds: this.addToArray(userId)
+        });
       })
       .catch(error => {
         console.error(error);
@@ -595,7 +601,9 @@ class Firebase {
         tagSnapshot.forEach(tagDoc => {
           return tagBatch.delete(tagDoc.ref);
         });
-        return tagBatch.commit();
+        return tagBatch.commit().then(() => {
+          console.log('Deleted user tags');
+        });
       }),
       this.queryCollection('notifications', ['recipientId', '==', userId])
       .get()
@@ -604,7 +612,9 @@ class Firebase {
         notificationSnapshot.forEach(notificationDoc => {
           notificationBatch.delete(notificationDoc.ref);
         });
-        return notificationBatch.commit();
+        return notificationBatch.commit().then(() => {
+          console.log('Deleted user notifications');
+        });
       }),
         ...workspaceIds.map(async workspaceId => {
           const workspaceBatch = this.createBatch();
@@ -672,7 +682,7 @@ class Firebase {
                 }
                 workspaceBatch.delete(this.getDocRef('workspaces', workspaceId));
               } else {
-                let deletedProjects = [];
+                let deletedProjects = [null];
               projectIds.forEach(async projectId => {
                 const projectData = await this.getDocRef('projects', projectId)
                   .get()
@@ -709,6 +719,8 @@ class Firebase {
                   projectIds: this.removeFromArray(...deletedProjects),
                   [`members.${userId}`]: this.deleteField(),
                   [`members.${newOwnerId}.role`]: 'owner'
+                }).catch(error => {
+                  console.error(`Error updating projects: ${error}`);
                 });
               } else {
                 this.updateBatch(workspaceBatch, ['workspaces', workspaceId], {
@@ -745,7 +757,9 @@ class Firebase {
             assignedTo: this.removeFromArray(userId)
           });
         });
-        return taskBatch.commit();
+        return taskBatch.commit().then(() => {
+          console.log('Account deactivation: removed user from assigned tasks');
+        });
       });
       })
       .then(() => {

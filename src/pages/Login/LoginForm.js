@@ -24,6 +24,7 @@ class LoginForm extends Component {
   }
 
   onSubmit = e => {
+    e.preventDefault();
     const { email, password } = this.state;
     const { firebase } = this.props;
     if (email === 'Guest') {
@@ -52,7 +53,6 @@ class LoginForm extends Component {
           this.setState({ error });
         });
     }
-    e.preventDefault();
   };
 
   onChange = e => {

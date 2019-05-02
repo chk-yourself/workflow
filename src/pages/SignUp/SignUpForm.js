@@ -30,8 +30,8 @@ class SignUpForm extends Component {
     await firebase
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        firebase.sendEmailVerification();
         localStorage.setItem('loginEmail', email);
+        return firebase.sendEmailVerification();
       })
       .catch(error => {
         this.setState({ error });
