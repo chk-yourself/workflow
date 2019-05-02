@@ -220,6 +220,7 @@
     display: block;
     border-radius: 4px;
     width: 80px;
+    line-height: 1.2;
   }
   &::before {
     content: '';
@@ -239,4 +240,8 @@
       opacity: 1;
     }
   }
+}
+
+.tag--summary {
+  padding: 0 1px;
 }

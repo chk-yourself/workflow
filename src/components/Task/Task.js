@@ -22,7 +22,7 @@ class Task extends Component {
   static defaultProps = {
     className: ''
   };
-  
+
   state = {
     isFocused: false,
     name: this.props.task ? this.props.task.name : '',
@@ -120,7 +120,7 @@ class Task extends Component {
   onMouseUp = e => {
     const { pointX, pointY, isFocused } = this.state;
     if (isFocused) return;
-    if (e.pageX === pointX && e.pageY === pointY && window.innerWidth >= 768 ) {
+    if (e.pageX === pointX && e.pageY === pointY && window.innerWidth >= 768) {
       this.textarea.focus();
     }
     this.setState({
@@ -146,7 +146,7 @@ class Task extends Component {
     } = this.props;
     if (!task) return null;
 
-    const { isCompleted, dueDate, projectId } = task;
+    const { isCompleted, dueDate, projectId, tagIds } = task;
     const { isFocused, name } = this.state;
     const draggableProps = provided ? provided.draggableProps : {};
     const dragHandleProps = provided ? provided.dragHandleProps : {};
@@ -193,6 +193,17 @@ class Task extends Component {
                   className="task__tag"
                 />
               ))}
+              {tagIds && tagIds.length > 0 && (
+                <Tag
+                  name="..."
+                  variant="summary"
+                  size="sm"
+                  color="default"
+                  className="task__tag"
+                  tooltip={tagIds.join(', ')}
+                  isLinkDisabled
+                />
+              )}
             </div>
             {dueDate && (
               <Badge
@@ -267,7 +278,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId }))
+    deleteTask: ({ taskId, listId }) =>
+      dispatch(taskActions.deleteTask({ taskId, listId }))
   };
 };
 

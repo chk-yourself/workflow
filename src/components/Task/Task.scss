@@ -191,4 +191,16 @@
 .task__tag {
   margin-top: 0;
   margin-bottom: 0;
+  vertical-align: top;
+  &:not(.tag--summary) {
+    display: none;
+    @include md {
+      display: inline-block;
+    }
+  }
+  &.tag--summary {
+    @include md {
+      display: none;
+    }
+  }
 }
