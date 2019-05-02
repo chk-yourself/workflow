@@ -1,11 +1,14 @@
 import React from 'react';
+import { Main } from '../Main';
 import './UserFormPage.scss';
 
 const UserFormPage = ({ title, children, classes }) => (
-  <main className={`user-form__container ${classes.main || ''}`}>
-    <h1 className={`user-form__title ${classes.heading || ''}`}>{title}</h1>
+  <Main classes={{main: `user-form__container ${classes.main || ''}`,
+  title: `user-form__title ${classes.heading || ''}`}}
+  title={title}
+  >
     {children}
-  </main>
+  </Main>
 );
 
 UserFormPage.defaultProps = {

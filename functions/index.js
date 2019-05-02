@@ -23,6 +23,17 @@ exports.onUserStatusChanged = functions.database
     });
   });
 
+exports.onGuestStatusChanged = functions.firestore
+  .document('users/{userId}')
+  .onUpdate((change, context) => {
+    const { status, role } = change.after.data();
+    const { state } = status;
+    if (role === 'guest' && state === 'offline') {
+      console.log('guest signed off');
+    }
+    return null;
+  });
+
 exports.mintAdminToken = functions.https.onCall((data, context) => {
   const uid = data.uid;
   return admin

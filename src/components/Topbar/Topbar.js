@@ -92,7 +92,7 @@ class Topbar extends Component {
                   className="topbar__link"
                   to={`/0/${currentUser.userId}/account`}
                 >
-                  My Account
+                  Account Settings
                 </NavLink>
               </MenuItem>
               <MenuItem>

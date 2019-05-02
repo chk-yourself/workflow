@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import { truncateSync } from 'fs';
 
 require('firebase/database');
 require('firebase/auth');
@@ -572,6 +573,192 @@ class Firebase {
 
   deleteGuest = userId => {};
 
+  deactivateAccount = async (userId, options = {}) => {
+    const isGuest = 'isGuest' in options ? options.isGuest : false;
+    // Delete workspace folders
+    const workspaceIds = await this.getCollection(`users/${userId}/workspaces`)
+      .get()
+      .then(snapshot => {
+        let workspaces = [];
+        snapshot.forEach(workspaceDoc => {
+          workspaces = workspaces.concat(workspaceDoc.id);
+        });
+        return workspaces;
+      }).catch(error => {
+        console.error(error);
+      });
+      return Promise.all([
+        this.getCollection(`users/${userId}/tags`)
+      .get()
+      .then(tagSnapshot => {
+        const tagBatch = this.createBatch();
+        tagSnapshot.forEach(tagDoc => {
+          return tagBatch.delete(tagDoc.ref);
+        });
+        return tagBatch.commit();
+      }),
+      this.queryCollection('notifications', ['recipientId', '==', userId])
+      .get()
+      .then(notificationSnapshot => {
+        const notificationBatch = this.createBatch();
+        notificationSnapshot.forEach(notificationDoc => {
+          notificationBatch.delete(notificationDoc.ref);
+        });
+        return notificationBatch.commit();
+      }),
+        ...workspaceIds.map(async workspaceId => {
+          const workspaceBatch = this.createBatch();
+          
+          workspaceBatch.delete(this.getDocRef('users', userId, 'workspaces', workspaceId));
+          const workspaceData = await this.getDocRef('workspaces', workspaceId)
+            .get()
+            .then(workspaceSnap => {
+              return workspaceSnap.data();
+            });
+              const { memberIds, members, pendingInvites } = workspaceData;
+              const { projectIds, role } = members[userId];
+              if (memberIds.length === 1) {
+               
+              // Delete projects
+                projectIds.forEach(async projectId => {
+                  const projectData = await this.getDocRef('projects', projectId)
+                    .get()
+                    .then(projectSnapshot => {
+                      return projectSnapshot.data();
+                    });
+                    const { listIds } = projectData;
+                    this.deleteProject({
+                      userId,
+                      projectId,
+                      workspaceId,
+                      listIds
+                    }, workspaceBatch, false);
+                });
+                // Delete workspace invites
+                if (pendingInvites.length > 0) {
+                  const inviteBatch = this.createBatch();
+                  const [inviteRefs, notificationRefs] = await Promise.all([
+                    this.queryCollection('invites', ['type', '==', 'workspace'])
+                      .where('data.id', '==', workspaceId)
+                      .get()
+                      .then(inviteSnapshot => {
+                        let invites = [];
+                        inviteSnapshot.forEach(inviteDoc => {
+                          invites = invites.concat(inviteDoc.ref);
+                        });
+                        return invites;
+                      }),
+                    this.queryCollection('notifications', ['event.type', '==', 'invite'])
+                      .where('source.type', '==', 'workspace')
+                      .where('source.id', '==', workspaceId)
+                      .get()
+                      .then(notificationSnapshot => {
+                        let notifications = [];
+                        notificationSnapshot.forEach(notificationDoc => {
+                          notifications = [
+                            ...notifications,
+                            notificationDoc.ref
+                          ];
+                        });
+                        return notifications;
+                      })
+                  ]);
+                  [...inviteRefs, ...notificationRefs].forEach(ref => {
+                    inviteBatch.delete(ref);
+                  });
+                  inviteBatch.commit().catch(error => {
+                    console.error(error);
+                  });
+                }
+                workspaceBatch.delete(this.getDocRef('workspaces', workspaceId));
+              } else {
+                let deletedProjects = [];
+              projectIds.forEach(async projectId => {
+                const projectData = await this.getDocRef('projects', projectId)
+                  .get()
+                  .then(projectSnapshot => {
+                    return projectSnapshot.data();
+                  });
+                  const { memberIds: projectMembers, listIds, isDemo } = projectData;
+                  const filteredMembers = projectMembers.filter(
+                    projectMemberId => projectMemberId !== userId
+                  );
+                    if (projectMembers.length > 1 && !isGuest) {
+                      const newOwnerId = filteredMembers[0];
+                      this.updateBatch(workspaceBatch, ['projects', projectId], {
+                        ownerId: newOwnerId,
+                        memberIds: this.removeFromArray(userId)
+                      });
+                    } else {
+                      deletedProjects = deletedProjects.concat(projectId);
+                      this.deleteProject({
+                        userId,
+                        projectId,
+                        workspaceId,
+                        listIds,
+                        memberIds: isGuest ? filteredMembers : []
+                      }, workspaceBatch, false);
+                    }
+              });
+              if (role === 'owner') {
+                const newOwnerId = memberIds.filter(
+                  memberId => memberId !== userId
+                )[0];
+                this.updateBatch(workspaceBatch, ['workspaces', workspaceId], {
+                  memberIds: this.removeFromArray(userId),
+                  projectIds: this.removeFromArray(...deletedProjects),
+                  [`members.${userId}`]: this.deleteField(),
+                  [`members.${newOwnerId}.role`]: 'owner'
+                });
+              } else {
+                this.updateBatch(workspaceBatch, ['workspaces', workspaceId], {
+                  memberIds: this.removeFromArray(userId),
+                  projectIds: this.removeFromArray(...deletedProjects),
+                  [`members.${userId}`]: this.deleteField()
+                });
+              }
+              }
+              return workspaceBatch.commit();
+      })
+      ]).then(() => {
+        workspaceIds.forEach(workspaceId => {
+          this.getCollection(
+            `users/${userId}/workspaces/${workspaceId}/folders`
+          )
+            .get()
+            .then(folderSnapshot => {
+              const folderBatch = this.createBatch();
+              folderSnapshot.forEach(folderDoc => {
+                folderBatch.delete(folderDoc.ref);
+              });
+              return folderBatch.commit();
+            });
+        });
+      })
+      .then(() => {
+        this.queryCollection('tasks', ['assignedTo', 'array-contains', userId])
+      .get()
+      .then(taskSnapshot => {
+        const taskBatch = this.createBatch();
+        taskSnapshot.forEach(taskDoc => {
+          this.updateBatch(taskBatch, taskDoc.ref, {
+            assignedTo: this.removeFromArray(userId)
+          });
+        });
+        return taskBatch.commit();
+      });
+      })
+      .then(() => {
+        return this.getDocRef('users', userId).delete();
+      })
+      .then(() => {
+        return this.currentUser.delete();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   createAccount = ({ userId, email, profile, workspace, invites }) => {
     const workspaces = {};
     let workspaceIds = [];
@@ -1104,7 +1291,8 @@ class Firebase {
         : [userId],
       userId,
       workspaceId,
-      isDuplicate: true
+      isDuplicate: true,
+      isDemo
     });
     console.log(clonedProjectId);
     project.listIds.forEach(async listId => {
@@ -1153,7 +1341,8 @@ class Firebase {
     isPrivate = false,
     memberIds = [],
     notes = null,
-    isDuplicate = false
+    isDuplicate = false,
+    isDemo = false
   }) => {
     const projectId = await this.fs
       .collection('projects')
@@ -1175,7 +1364,8 @@ class Firebase {
         color,
         name,
         workspaceId,
-        isDuplicate
+        isDuplicate,
+        isDemo
       })
       .then(ref => {
         return ref.id;
@@ -1195,14 +1385,6 @@ class Firebase {
         projectIds: this.addToArray(projectId),
         [`members.${memberId}.projectIds`]: this.addToArray(projectId)
       });
-      this.setBatch(
-        batch,
-        ['users', memberId, 'workspaces', workspaceId, 'folders', projectId],
-        {
-          name,
-          taskIds: []
-        }
-      );
     });
 
     return batch
@@ -1221,9 +1403,10 @@ class Firebase {
     projectId,
     workspaceId,
     listIds,
-    memberIds
-  }) => {
-    const batch = this.createBatch();
+    memberIds = []
+  },
+  batch = this.createBatch(),
+  shouldCommit = true) => {
     const projectRef = this.getDocRef('projects', projectId);
     batch.delete(projectRef);
     // delete tasks
@@ -1255,15 +1438,14 @@ class Firebase {
       batch.delete(listRef);
     });
     memberIds.forEach(memberId => {
-      const folderRef = this.getDocRef(
+      this.getDocRef(
         'users',
         memberId,
         'workspaces',
         workspaceId,
         'folders',
         projectId
-      );
-      batch.delete(folderRef);
+      ).delete();
       this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId], {
         projectIds: this.removeFromArray(projectId)
       });
@@ -1272,7 +1454,8 @@ class Firebase {
         projectIds: this.removeFromArray(projectId)
       });
     });
-    return batch
+    if (shouldCommit) {
+      return batch
       .commit()
       .then(() => {
         console.log('Project deleted');
@@ -1280,6 +1463,8 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
+    }
+    return batch;
   };
 
   // List API
@@ -1598,21 +1783,9 @@ class Firebase {
   };
 
   removeAssignee = (
-    { projectId, userId, folderId, workspaceId, taskId = null, dueDate = null },
-    batch = this.createBatch(),
-    shouldCommit = true
+    { projectId, userId, folderId, workspaceId, taskId, dueDate = null }
   ) => {
-    if (!taskId) {
-      this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
-        projectIds: this.removeFromArray(projectId)
-      });
-      this.updateBatch(batch, ['projects', projectId], {
-        memberIds: this.removeFromArray(userId)
-      });
-      this.updateBatch(batch, ['workspaces', workspaceId], {
-        [`members.${userId}.projectIds`]: this.removeFromArray(projectId)
-      });
-    } else {
+    const batch = this.createBatch();
       this.updateBatch(
         batch,
         ['users', userId, 'workspaces', workspaceId, 'folders', folderId],
@@ -1649,24 +1822,19 @@ class Firebase {
           }
         );
       }
-      if (projectId) {
-        this.updateBatch(
-          batch,
-          ['users', userId, 'workspaces', workspaceId, 'folders', projectId],
-          {
-            taskIds: this.removeFromArray(taskId)
-          }
-        );
-      }
-    }
 
-    if (shouldCommit) {
-      if (taskId) {
-        this.updateBatch(batch, ['tasks', taskId], {
-          assignedTo: this.removeFromArray(userId),
-          [`folders.${userId}`]: this.deleteField()
-        });
-      }
+      this.updateBatch(
+        batch,
+        ['users', userId, 'workspaces', workspaceId, 'folders', projectId],
+        {
+          taskIds: this.removeFromArray(taskId)
+        }
+      );
+
+      this.updateBatch(batch, ['tasks', taskId], {
+        assignedTo: this.removeFromArray(userId),
+        [`folders.${userId}`]: this.deleteField()
+      });
 
       return batch
         .commit()
@@ -1676,7 +1844,73 @@ class Firebase {
         .catch(error => {
           console.error(error);
         });
-    }
+  };
+
+  removeProjectMember = async ({ projectId, userId, workspaceId }) => {
+    const batch = this.createBatch();
+    this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
+      projectIds: this.removeFromArray(projectId)
+    });
+    this.updateBatch(batch, ['projects', projectId], {
+      memberIds: this.removeFromArray(userId)
+    });
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      [`members.${userId}.projectIds`]: this.removeFromArray(projectId)
+    });
+
+    const assignedTasks = await this.queryCollection('tasks', ['projectId', '==', projectId])
+    .where('assignedTo', 'array-contains', userId)
+    .get()
+    .then(snapshot => {
+      let tasks = [];
+      snapshot.forEach(doc => {
+        tasks = tasks.concat(doc.ref);
+      });
+      return tasks;
+    });
+    assignedTasks.forEach(ref => {
+      this.updateBatch(batch, ref, {
+        assignedTo: this.removeFromArray(userId)
+      });
+    });
+
+      return batch
+        .commit()
+        .then(() => {
+          console.log('Removed project member');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  };
+
+  addProjectMember = ({
+    projectId,
+    userId,
+    workspaceId
+  }) => {
+    const batch = this.createBatch();
+
+    this.updateBatch(batch, ['projects', projectId], {
+      memberIds: this.addToArray(userId)
+    });
+
+    this.updateBatch(batch, ['workspaces', workspaceId], {
+      [`members.${userId}.projectIds`]: this.addToArray(projectId)
+    });
+
+    this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
+      projectIds: this.addToArray(projectId)
+    });
+
+    return batch
+      .commit()
+      .then(() => {
+        console.log('Added project member');
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   addAssignee = ({
@@ -1684,10 +1918,10 @@ class Firebase {
     projectName,
     userId,
     workspaceId,
-    taskId = null,
+    taskId,
     dueDate = null
   }) => {
-    const batch = this.fs.batch();
+    const batch = this.createBatch();
 
     this.updateBatch(batch, ['projects', projectId], {
       memberIds: this.addToArray(userId)
@@ -1695,66 +1929,49 @@ class Firebase {
 
     this.updateBatch(batch, ['workspaces', workspaceId], {
       [`members.${userId}.projectIds`]: this.addToArray(projectId),
-      [`members.${userId}.activeTaskCount`]: this.plus(taskId ? 1 : 0)
+      [`members.${userId}.activeTaskCount`]: this.plus(1)
     });
 
     this.updateBatch(batch, ['users', userId, 'workspaces', workspaceId], {
       projectIds: this.addToArray(projectId)
     });
 
-    if (taskId) {
-      batch.set(
-        this.getDocRef(
-          'users',
-          userId,
-          'workspaces',
-          workspaceId,
-          'folders',
-          projectId
-        ),
-        {
-          name: projectName,
-          taskIds: this.addToArray(taskId)
-        },
-        { merge: true }
-      );
+    this.setBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', projectId],
+      {
+        name: projectName,
+        taskIds: this.addToArray(taskId)
+      },
+      true
+    );
 
+    this.updateBatch(
+      batch,
+      ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+      {
+        taskIds: this.addToArray(taskId)
+      }
+    );
+    this.updateBatch(batch, ['tasks', taskId], {
+      assignedTo: this.addToArray(userId),
+      [`folders.${userId}`]: '0'
+    });
+
+    if (!dueDate) {
       this.updateBatch(
         batch,
-        ['users', userId, 'workspaces', workspaceId, 'folders', '0'],
+        ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
         {
           taskIds: this.addToArray(taskId)
         }
       );
-      this.updateBatch(batch, ['tasks', taskId], {
-        assignedTo: this.addToArray(userId),
-        [`folders.${userId}`]: '0'
-      });
-
-      if (!dueDate) {
-        this.updateBatch(
-          batch,
-          ['users', userId, 'workspaces', workspaceId, 'folders', '5'],
-          {
-            taskIds: this.addToArray(taskId)
-          }
-        );
-      } else {
-        batch.set(
-          this.getDocRef(
-            'users',
-            userId,
-            'workspaces',
-            workspaceId,
-            'folders',
-            `${+dueDate}`
-          ),
-          {
-            taskIds: this.addToArray(taskId)
-          },
-          { merge: true }
-        );
-      }
+    } else {
+      this.setBatch(batch, ['users', userId, 'workspaces', workspaceId, 'folders', `${+dueDate}`], {
+        taskIds: this.addToArray(taskId)
+      },
+        true
+      );
     }
 
     return batch
@@ -1809,19 +2026,11 @@ class Firebase {
     if (assignedTo.length > 0) {
       assignedTo.forEach(memberId => {
         const folderId = folders[memberId];
-        const folderRef = this.getDocRef(
-          'users',
-          memberId,
-          'workspaces',
-          workspaceId,
-          'folders',
-          folderId
-        );
         this.updateBatch(batch, ['workspaces', workspaceId], {
           [`members.${memberId}.activeTaskCount`]: this.minus(1)
         });
 
-        this.updateBatch(batch, folderRef, {
+        this.updateBatch(batch, ['users', memberId, 'workspaces', workspaceId, 'folders', folderId], {
           taskIds: this.removeFromArray(taskId)
         });
 

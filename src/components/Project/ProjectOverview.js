@@ -21,15 +21,15 @@ class ProjectOverview extends Component {
     isColorPickerActive: false
   };
 
-  handleMemberAssignment = (userId, e) => {
+  handleMembership = (userId, e) => {
     const { firebase, projectId, project, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const { memberIds, name: projectName } = project;
 
     if (memberIds.includes(userId)) {
-      firebase.removeAssignee({ projectId, userId, workspaceId });
+      firebase.removeProjectMember({ projectId, userId, workspaceId });
     } else {
-      firebase.addAssignee({ projectId, projectName, userId, workspaceId });
+      firebase.addProjectMember({ projectId, userId, workspaceId });
     }
 
     e.preventDefault();
@@ -91,7 +91,7 @@ class ProjectOverview extends Component {
           <MemberAssigner
             placeholder="Add or remove member"
             memberIds={memberIds}
-            onSelectMember={this.handleMemberAssignment}
+            onSelectMember={this.handleMembership}
             isSelfAssignmentDisabled
           />
         </ProjectOverviewSection>
