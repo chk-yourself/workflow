@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   background-color: $white;
-  &:last-child::before {
+  &:last-child:not(:first-child)::before {
     box-shadow: inset 0px -2px 1px -1px $grey-200,
       inset 0px 2px 1px -1px $grey-200;
   }
@@ -49,8 +49,11 @@
       width: calc(100% - 70px);
     }
   }
-  &:first-child::before {
+  &:first-child:not(:last-child)::before {
     box-shadow: none;
+  }
+  &:last-child::before {
+    box-shadow: inset 0px -2px 1px -1px $grey-200;
   }
   .task__avatar {
     width: 20px;
@@ -63,6 +66,13 @@
   .task__avatar-placeholder {
     font-size: 9px;
     font-weight: 600;
+  }
+  &.is-dragging {
+    background-color: $white;
+    @include box-shadow(1);
+    &:before {
+      box-shadow: none;
+    }
   }
   @include md {
     padding: 2px 20px;
@@ -126,11 +136,14 @@
   margin-left: 6px;
   &--top {
     justify-content: flex-end;
-    @include md {
-    }
+    padding: 2px 0;
   }
   &--btm {
     justify-content: flex-start;
+    min-height: 16px;
+  }
+  .project-badge {
+    padding: 4px 0;
   }
 }
 

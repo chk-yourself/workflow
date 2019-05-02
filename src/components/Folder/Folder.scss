@@ -81,6 +81,9 @@
 .folder__tasks {
   position: relative;
   margin: 0;
+  .task:not(.is-dragging):not(.is-focused) {
+    background-color: transparent;
+  }
   .task::before {
     width: calc(100% - 46px);
   }

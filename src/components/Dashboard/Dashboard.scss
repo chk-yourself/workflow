@@ -134,3 +134,20 @@
     font-style: normal;
   }
 }
+
+.dashboard__task {
+  background-color: #fff;
+  .task__tag {
+    &:not(.tag--summary) {
+      display: none;
+      @include md {
+        display: none;
+      }
+    }
+    &.tag--summary {
+      @include md {
+        display: inline-block;
+      }
+    }
+  }
+}

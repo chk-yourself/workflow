@@ -17,6 +17,7 @@ const DraggableTask = ({ taskId, index, isDragDisabled, tasksById }) => {
           taskId={taskId}
           innerRef={provided.innerRef}
           provided={provided}
+          className={snapshot.isDragging ? 'is-dragging' : ''}
         />
       )}
     </Draggable>

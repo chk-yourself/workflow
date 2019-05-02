@@ -27,6 +27,25 @@
         margin-right: 16px;
       }
     }
+    .task__tag {
+      &:not(.tag--summary) {
+        display: none;
+        @include md {
+          display: none;
+        }
+        @include xl {
+          display: inline-block;
+        }
+      }
+      &.tag--summary {
+        @include md {
+          display: inline-block;
+        }
+        @include xl {
+          display: none;
+        }
+      }
+    }
   }
 }
 
