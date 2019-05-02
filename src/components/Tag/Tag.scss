@@ -44,6 +44,9 @@
   display: inline-block;
   width: 100%;
   height: 100%;
+  span {
+    pointer-events: none;
+  }
 }
 
 .tag--md {
@@ -78,6 +81,9 @@
   &:not(:last-child) {
     margin-right: 4px;
   }
+  .tag__name {
+    display: none;
+  }
 }
 
 // Background Colors
@@ -89,62 +95,101 @@
   .tag__btn--delete {
     color: $grey-500;
   }
+  &:hover {
+    background-color: darken($grey-100, 15%);
+  }
 }
 
 .tag.bg--blue {
   background-color: $blue;
   color: $white;
+  &:hover {
+    background-color: darken($blue, 15%);
+  }
 }
 .tag.bg--green {
   background-color: $green;
   color: $white;
+  &:hover {
+    background-color: darken($green, 15%);
+  }
 }
 .tag.bg--pink {
   background-color: $pink;
   color: $white;
+  &:hover {
+    background-color: darken($pink, 15%);
+  }
 }
 .tag.bg--orange {
   background-color: $orange;
   color: $white;
+  &:hover {
+    background-color: darken($orange, 15%);
+  }
 }
 .tag.bg--purple {
   background-color: $purple;
   color: $white;
+  &:hover {
+    background-color: darken($purple, 15%);
+  }
 }
 
 .tag.bg--red {
   background-color: $red;
   color: $white;
+  &:hover {
+    background-color: darken($red, 15%);
+  }
 }
 
 .tag.bg--teal {
   background-color: $teal;
   color: $white;
+  &:hover {
+    background-color: darken($teal, 15%);
+  }
 }
 
 .tag.bg--cyan {
   background-color: $cyan;
   color: $white;
+  &:hover {
+    background-color: darken($cyan, 15%);
+  }
 }
 
 .tag.bg--grape {
   background-color: $grape;
   color: $white;
+  &:hover {
+    background-color: darken($grape, 15%);
+  }
 }
 
 .tag.bg--violet {
   background-color: $violet;
   color: $white;
+  &:hover {
+    background-color: darken($violet, 15%);
+  }
 }
 
 .tag.bg--indigo {
   background-color: $indigo;
   color: $white;
+  &:hover {
+    background-color: darken($indigo, 15%);
+  }
 }
 
 .tag.bg--yellow {
   background-color: $yellow;
   color: $white;
+  &:hover {
+    background-color: darken($yellow, 15%);
+  }
 }
 
 .tag.is-focused {
@@ -152,5 +197,46 @@
   color: #fff;
   .tag__btn--delete {
     color: $white;
+  }
+}
+
+.tag--pill,
+.tag--summary {
+  cursor: pointer;
+  &::before,
+  &::after {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+  }
+  &::after {
+    content: attr(data-tooltip);
+    background-color: $grey-800;
+    color: $white;
+    padding: 8px;
+    top: calc(100% + 8px);
+    left: calc(50% - 40px);
+    text-align: center;
+    display: block;
+    border-radius: 4px;
+    width: 80px;
+  }
+  &::before {
+    content: '';
+    width: 0;
+    left: calc(50% - 8px);
+    bottom: -8px;
+    border-bottom: 8px solid $grey-800;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+  }
+  &:hover,
+  &.show-tooltip {
+    box-shadow: none;
+    &::before,
+    &::after {
+      visibility: visible;
+      opacity: 1;
+    }
   }
 }

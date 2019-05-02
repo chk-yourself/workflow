@@ -64,6 +64,7 @@ class Card extends Component {
                 <div className="card__tags">
                   {tags.map(tag => (
                     <Tag
+                      name={tag.name}
                       key={tag.name}
                       size="sm"
                       color={tag.color}

@@ -68,7 +68,7 @@ exports.deleteTag = functions.firestore
   .onUpdate((change, context) => {
     const tag = change.after.data();
     const { count } = tag;
-    if (count === 0) {
+    if (count <= 0) {
       return change.after.ref.delete();
     }
     return null;

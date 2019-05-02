@@ -14,6 +14,7 @@ const Tag = ({
   isFocused,
   variant,
   isLinkDisabled,
+  tooltip,
   ...rest
 }) => (
   <span
@@ -21,11 +22,12 @@ const Tag = ({
       variant !== 'default' ? `tag--${variant}` : ''
     } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
+    data-tooltip={tooltip || name}
     {...rest}
   >
     {!isLinkDisabled ? (
       <Link to={`/0/tasks?tag=${name}`} className="tag__link">
-        {name}
+        <span className="tag__name">{name}</span>
       </Link>
     ) : (
       <span className="tag__link">{name}</span>
@@ -52,7 +54,8 @@ Tag.defaultProps = {
   size: 'md',
   variant: 'default',
   isFocused: false,
-  isLinkDisabled: false
+  isLinkDisabled: false,
+  tooltip: ''
 };
 
 export default Tag;
