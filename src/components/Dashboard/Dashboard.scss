@@ -1,6 +1,10 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.header.expand-nav + main.dashboard {
+  left: 100px;
+}
+
 .dashboard {
   width: 100%;
   flex-flow: row wrap;
@@ -14,7 +18,6 @@
 .dashboard__header {
   font-size: 1.6rem;
   font-weight: 600;
-  margin: 0 0 24px 0;
   color: $grey-800;
   width: 100%;
 }

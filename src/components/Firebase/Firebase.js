@@ -932,6 +932,7 @@ class Firebase {
     const batch = this.createBatch();
 
     this.updateBatch(batch, ['tasks', taskId], {
+      tagIds: this.addToArray(name),
       [`tags.${name}`]: {
         name,
         color
@@ -961,43 +962,17 @@ class Firebase {
       });
   };
 
-  removeTag = (
-    { taskId = null, name, userId, projectId, projectCount },
-    batch = this.createBatch(),
-    shouldCommit = true
-  ) => {
-    if (taskId) {
-      this.updateBatch(batch, ['tasks', taskId], {
-        [`tags.${name}`]: this.deleteField()
-      });
-    }
-
+  removeTag = ({ taskId, name, userId, projectId }) => {
     if (!projectId) {
-      this.updateBatch(batch, ['users', userId, 'tags', name], {
+      this.updateDoc(['users', userId, 'tags', name], {
         count: this.minus(1)
       });
     }
-    if (shouldCommit) {
-      return batch
-        .commit()
-        .then(() => {
-          console.log('Tag deleted');
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
-  };
 
-  deleteTag = ({ userId, projectId, name }) => {
-    if (projectId) {
-      this.updateDoc(['projects', projectId], {
-        [`tags.${name}`]: this.deleteField()
-      });
-    }
-    if (userId) {
-      this.getDocRef('users', userId, 'tags', name).delete();
-    }
+    return this.updateDoc(['tasks', taskId], {
+      tagIds: this.removeFromArray(name),
+      [`tags.${name}`]: this.deleteField()
+    });
   };
 
   setTagColor = ({ userId, projectId, taskId, tag, color }) => {
@@ -1241,7 +1216,13 @@ class Firebase {
       });
   };
 
-  deleteProject = async ({ userId, projectId, workspaceId, listIds, memberIds }) => {
+  deleteProject = async ({
+    userId,
+    projectId,
+    workspaceId,
+    listIds,
+    memberIds
+  }) => {
     const batch = this.createBatch();
     const projectRef = this.getDocRef('projects', projectId);
     batch.delete(projectRef);
@@ -1252,14 +1233,17 @@ class Firebase {
         snapshot.forEach(doc => {
           const taskId = doc.id;
           const taskData = doc.data();
-          this.deleteTask({
-            taskId,
-            ...taskData,
-            userId,
-            listId: null
-          }, {
-            deleteMode: 'project'
-          });
+          this.deleteTask(
+            {
+              taskId,
+              ...taskData,
+              userId,
+              listId: null
+            },
+            {
+              deleteMode: 'project'
+            }
+          );
         });
       })
       .catch(error => {
@@ -1414,6 +1398,7 @@ class Firebase {
         lastUpdatedAt: null,
         commentIds: [],
         subtaskIds: [],
+        tagIds: [],
         tags: {},
         isCompleted: false,
         completedAt: null,
@@ -1799,7 +1784,8 @@ class Firebase {
     options = {}
   ) => {
     const batch = options.batch || this.createBatch();
-    const shouldCommit = 'shouldCommit' in options ? options.shouldCommit : true;
+    const shouldCommit =
+      'shouldCommit' in options ? options.shouldCommit : true;
     const deleteMode = options.deleteMode || 'task';
     const taskRef = this.getDocRef('tasks', taskId);
     batch.delete(taskRef);
@@ -1847,23 +1833,21 @@ class Firebase {
               taskIds: this.removeFromArray(taskId)
             }
           );
-        } else {
-          if (deleteMode !== 'project') {
-            this.updateBatch(
-              batch,
-              [
-                'users',
-                memberId,
-                'workspaces',
-                workspaceId,
-                'folders',
-                projectId
-              ],
-              {
-                taskIds: this.removeFromArray(taskId)
-              }
-            );
-          }
+        } else if (deleteMode !== 'project') {
+          this.updateBatch(
+            batch,
+            [
+              'users',
+              memberId,
+              'workspaces',
+              workspaceId,
+              'folders',
+              projectId
+            ],
+            {
+              taskIds: this.removeFromArray(taskId)
+            }
+          );
         }
 
         if (!dueDate) {

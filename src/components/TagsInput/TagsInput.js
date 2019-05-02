@@ -216,18 +216,9 @@ class TagsInput extends Component {
   };
 
   removeTag = name => {
-    const {
-      firebase,
-      taskId,
-      currentUser,
-      projectId,
-      removeTaskTag
-    } = this.props;
+    const { firebase, taskId, currentUser, projectId } = this.props;
     const { userId } = currentUser;
     firebase.removeTag({ taskId, name, userId, projectId });
-    /*
-    removeTaskTag({ taskId, name, userId, projectId });
-    */
     this.setState({
       isColorPickerActive: false,
       focusedTag: '',
@@ -269,6 +260,8 @@ class TagsInput extends Component {
         offsetTop,
         offsetHeight
       } = this.currentTag;
+      console.log(this.currentTag);
+      console.log(offsetLeft, offsetWidth);
       colorPickerStyle.left = offsetLeft + offsetWidth / 2 - 74; // 74 = 1/2 colorPicker width
       colorPickerStyle.top = offsetTop + offsetHeight + 9; // 9 = colorPicker arrow height
     }
@@ -354,18 +347,10 @@ const mapStateToProps = (state, ownProps) => ({
   projectTags: projectSelectors.getProjectTags(state, ownProps.projectId)
 });
 
-const mapDispatchToProps = dispatch => ({
-  removeTaskTag: ({ taskId, name, userId, projectId }) =>
-    dispatch(taskActions.removeTaskTag({ taskId, name, userId, projectId }))
-});
-
 const condition = currentUser => !!currentUser;
 
 export default compose(
   withAuthorization(condition),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
+  connect(mapStateToProps),
   withOutsideClick
 )(TagsInput);

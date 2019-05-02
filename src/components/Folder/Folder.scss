@@ -27,9 +27,6 @@
   @include md {
     margin: 0 8px;
   }
-  &.is-expanded {
-    border-bottom: 1px solid $grey-700;
-  }
 }
 
 .folder__popover {
@@ -106,4 +103,10 @@
 
 .folder__content {
   margin: 0;
+  background-color: $white;
+  border-radius: 4px;
+  @include bootstrap-box-shadow(1);
+  @include md {
+    box-shadow: none;
+  }
 }

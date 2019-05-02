@@ -52,9 +52,9 @@ export const getTaskTags = (state, taskId) => {
   if (!tasksById) return [];
   const task = tasksById[taskId];
   if (!task) return [];
-  const { tags } = task;
-  if (!tags) return [];
-  return Object.keys(tags).map(tag => tags[tag]);
+  const { tagIds, tags } = task;
+  if (!tagIds || !tags) return [];
+  return tagIds.map(tagId => tags[tagId]);
 };
 
 export const getTaskLoadedState = (state, taskId) => {
