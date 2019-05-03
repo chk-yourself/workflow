@@ -197,13 +197,14 @@ export const syncUserWorkspaceTasks = ({ userId, workspaceId }) => {
             changes.every(change => change.type === 'added');
 
           if (isInitialLoad) {
-            const tasksById = {};
+            const tasks = {};
             let assignedTasks = [];
             changes.forEach(change => {
+              const { tasksById } = getState();
               const taskId = change.doc.id;
               const taskData = change.doc.data();
               const { subtaskIds, commentIds } = taskData;
-              tasksById[taskId] = {
+              tasks[taskId] = {
                 isLoaded: {
                   subtasks: subtaskIds.length === 0,
                   comments: commentIds.length === 0
@@ -211,11 +212,12 @@ export const syncUserWorkspaceTasks = ({ userId, workspaceId }) => {
                 taskId,
                 ...taskData
               };
+              if (tasksById && taskId in tasksById) return;
               if (taskData.assignedTo.includes(userId)) {
                 assignedTasks = assignedTasks.concat(taskId);
               }
             });
-            dispatch(loadTasksById(tasksById));
+            dispatch(loadTasksById(tasks));
             dispatch(loadAssignedTasks(assignedTasks));
           } else {
             changes.forEach(async change => {
@@ -277,11 +279,13 @@ export const syncUserPrivateTasks = ({userId, workspaceId}) => {
             changes.every(change => change.type === 'added');
 
           if (isInitialLoad) {
-            const tasksById = {};
+            const tasks = {};
+            let taskIds = [];
             changes.forEach(change => {
+              const { tasksById } = getState();
               const taskId = change.doc.id;
               const taskData = change.doc.data();
-              tasksById[taskId] = {
+              tasks[taskId] = {
                 taskId,
                 isLoaded: {
                   subtasks: false,
@@ -289,9 +293,11 @@ export const syncUserPrivateTasks = ({userId, workspaceId}) => {
                 },
                 ...taskData
               };
+              if (tasksById && taskId in tasksById) return;
+              taskIds = taskIds.concat(taskId);
             });
-            dispatch(loadTasksById(tasksById));
-            dispatch(loadAssignedTasks(Object.keys(tasksById)));
+            dispatch(loadTasksById(tasks));
+            dispatch(loadAssignedTasks(taskIds));
           } else {
             changes.forEach(async change => {
               const [taskId, taskData, changeType] = await Promise.all([
