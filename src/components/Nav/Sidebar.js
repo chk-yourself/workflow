@@ -41,8 +41,10 @@ class Sidebar extends Component {
       activeWorkspace,
       openWorkspaceSettings,
       isWorkspaceSettingsActive,
-      innerRef
+      innerRef,
+      currentUser
     } = this.props;
+    const { userId } = currentUser;
     const { name: workspaceName } = activeWorkspace;
     return (
       <div ref={innerRef} className="sidebar__canvas">
@@ -58,7 +60,7 @@ class Sidebar extends Component {
         <div className="sidebar">
           <nav className="sidebar__nav">
             <div className="sidebar__logo">
-              <Logo size="sm" />
+              <Logo link={`/0/home/${userId}`} size="sm" />
             </div>
             <div className="sidebar__content">
               <ul className="sidebar__list">{children}</ul>
@@ -103,7 +105,7 @@ class Sidebar extends Component {
                       to={ROUTES.GUIDE}
                     >
                       <Icon className="sidebar__icon" name="help-circle" />
-                      <span className="sidebar__section-name">Help</span>
+                      <span className="sidebar__section-name">Guide</span>
                     </Link>
                   </li>
                 </ul>

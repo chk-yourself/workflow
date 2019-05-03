@@ -32,7 +32,7 @@ class Firebase {
 
   // Refreshes current user, if signed in
   reload = () => {
-    this.auth.reload();
+    this.currentUser.reload();
   };
 
   isNewUser = user => {

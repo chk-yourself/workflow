@@ -4,6 +4,7 @@ import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
 import { SignOutButton } from '../SignOutButton';
 import { Topbar } from '../Topbar';
 import { WorkspaceComposer, WorkspaceSettings } from '../Workspace';
+import * as ROUTES from '../../constants/routes';
 import './Header.scss';
 
 class Header extends Component {
@@ -99,16 +100,14 @@ class Header extends Component {
     } = this.state;
     const {
       firebase,
-      history: {
-        location: { pathname }
-      },
+      location: { pathname },
       currentUser,
       activeWorkspace
     } = this.props;
-    const isLandingPage = pathname === '/';
-    const isLoginPage = pathname === '/login';
-    const isSignUpPage = pathname === '/signup';
-    const isForgotPasswordPage = pathname === '/forgot-password';
+    const isLandingPage = pathname === ROUTES.LANDING;
+    const isLoginPage = pathname === ROUTES.LOG_IN;
+    const isSignUpPage = pathname === ROUTES.SIGN_UP;
+    const isForgotPasswordPage = pathname === ROUTES.FORGOT_PASSWORD;
     return (
       <header
         ref={this.setRef}
@@ -144,7 +143,7 @@ class Header extends Component {
           </>
         ) : (
           <Navbar>
-            {!firebase.currentUser ? (
+            {!firebase.currentUser || pathname === ROUTES.LANDING || pathname.includes(ROUTES.GUIDE) ? (
               <NavLinksNonAuth />
             ) : (
               <SignOutButton className="navbar__btn" />

@@ -16,6 +16,76 @@ import { getDisplayName } from '../../utils/react';
 const withAuthentication = WrappedComponent => {
   class WithAuthentication extends Component {
     componentDidMount() {
+      const { location } = this.props;
+
+      const { pathname } = location;
+      if (pathname.includes(ROUTES.GUIDE)) return;
+
+      this.authListener = this.setAuthListener();
+    }
+
+    async componentDidUpdate(prevProps) {
+      const {
+        currentUser,
+        syncActiveWorkspace,
+        syncUserTags,
+        resetActiveWorkspace,
+        history,
+        location,
+        firebase
+      } = this.props;
+      const { pathname } = location;
+      const { pathname: prevPathname } = prevProps.location;
+      if (pathname === ROUTES.LOG_IN && !this.authListener && prevPathname !== pathname) {
+        this.authListener = this.setAuthListener();
+      };
+      if (!currentUser) return;
+      const { userId, settings } = currentUser;
+      const { activeWorkspace } = settings;
+      if (!prevProps.currentUser) {
+        console.log('current user detected');
+        await Promise.all([
+          syncActiveWorkspace(activeWorkspace),
+          syncUserTags(userId)
+        ])
+          .then(listeners => {
+            this.workspaceListener = listeners[0];
+            this.tagListener = listeners[1];
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      if (prevProps.currentUser) {
+        const {
+          activeWorkspace: prevWorkspace
+        } = prevProps.currentUser.settings;
+        if (prevWorkspace !== activeWorkspace) {
+          history.push(`/0/home/${userId}`);
+          resetActiveWorkspace();
+          this.workspaceListener();
+          this.workspaceListener = await syncActiveWorkspace(activeWorkspace);
+          console.log('changed active workspace');
+        }
+      }
+    }
+
+    componentWillUnmount() {
+      if (this.authListener) {
+        this.authListener();
+      }
+      if (this.userListener) {
+        this.userListener();
+      }
+      if (this.workspaceListener) {
+        this.workspaceListener();
+      }
+      if (this.tagListener) {
+        this.tagListener();
+      }
+    }
+
+    setAuthListener = () => {
       const {
         firebase,
         history,
@@ -23,13 +93,7 @@ const withAuthentication = WrappedComponent => {
         resetActiveWorkspace,
         syncCurrentUser
       } = this.props;
-
-      const {
-        location: { pathname }
-      } = history;
-      if (pathname.includes(ROUTES.GUIDE)) return;
-
-      this.authListener = firebase.auth.onAuthStateChanged(async authUser => {
+      return firebase.auth.onAuthStateChanged(async authUser => {
         if (authUser) {
           const { uid, emailVerified, isAnonymous } = authUser;
           if (emailVerified) {
@@ -81,60 +145,6 @@ const withAuthentication = WrappedComponent => {
           }
         }
       });
-    }
-
-    async componentDidUpdate(prevProps) {
-      const {
-        currentUser,
-        syncActiveWorkspace,
-        syncUserTags,
-        resetActiveWorkspace,
-        history
-      } = this.props;
-      if (!currentUser) return;
-      const { userId, settings } = currentUser;
-      const { activeWorkspace } = settings;
-      if (!prevProps.currentUser) {
-        console.log('current user detected');
-        await Promise.all([
-          syncActiveWorkspace(activeWorkspace),
-          syncUserTags(userId)
-        ])
-          .then(listeners => {
-            this.workspaceListener = listeners[0];
-            this.tagListener = listeners[1];
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      }
-      if (prevProps.currentUser) {
-        const {
-          activeWorkspace: prevWorkspace
-        } = prevProps.currentUser.settings;
-        if (prevWorkspace !== activeWorkspace) {
-          history.push(`/0/home/${userId}`);
-          resetActiveWorkspace();
-          this.workspaceListener();
-          this.workspaceListener = await syncActiveWorkspace(activeWorkspace);
-          console.log('changed active workspace');
-        }
-      }
-    }
-
-    componentWillUnmount() {
-      if (this.authListener) {
-        this.authListener();
-      }
-      if (this.userListener) {
-        this.userListener();
-      }
-      if (this.workspaceListener) {
-        this.workspaceListener();
-      }
-      if (this.tagListener) {
-        this.tagListener();
-      }
     }
 
     render() {

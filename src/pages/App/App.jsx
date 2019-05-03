@@ -22,6 +22,10 @@ class App extends Component {
     tooltipProps: {}
   };
 
+  componentDidMount() {
+    console.log('app mounted');
+  }
+
   onMouseOver = e => {
     const { target } = e;
     const { tooltipAnchor } = this.state;
@@ -55,7 +59,7 @@ class App extends Component {
   };
 
   render() {
-    const { firebase, currentUser } = this.props;
+    const { firebase } = this.props;
     const { tooltipAnchor, tooltipProps } = this.state;
     return (
       <div

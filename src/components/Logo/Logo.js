@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import { Icon } from '../Icon';
+import * as ROUTES from '../../constants/routes';
 import './Logo.scss';
 
-const Logo = ({ size, className, onClick }) => {
+const Logo = ({ size, className, onClick, link }) => {
   return (
     <div className={`logo logo--${size} ${className}`}>
-      <Link className="logo__link" to={ROUTES.LANDING} onClick={onClick}>
+      <Link className="logo__link" to={link} onClick={onClick}>
         <span className="logo__text">workflow</span>
       </Link>
     </div>
@@ -16,7 +16,8 @@ const Logo = ({ size, className, onClick }) => {
 
 Logo.defaultProps = {
   className: '',
-  size: 'md'
+  size: 'md',
+  link: ROUTES.LANDING
 };
 
 export default Logo;
