@@ -44,14 +44,17 @@ class VerificationRequired extends Component {
           Thanks for signing up with Workflow! Please verify your email address
           to continue setting up your account.
         </p>
+        <p className="verification-required__paragraph">
+          If you haven't received an email from us, click the button below.
+        </p>
         <Button
           size="md"
-          variant="contained"
-          color="primary"
+          variant="outlined"
+          color="neutral"
           className="verification-required__btn"
           onClick={this.resendVerificationEmail}
         >
-          Resend Verification Link
+          Resend Verification Email
         </Button>
         {error && <ErrorMessage text={error.message} />}
         {success && <SuccessMessage text={success.message} />}

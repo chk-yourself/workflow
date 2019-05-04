@@ -1,4 +1,5 @@
 import { getTasksArray } from '../tasks/selectors';
+import { projectSelectors } from '.';
 
 export const getProjectsById = state => {
   return state.projectsById;
@@ -61,7 +62,8 @@ export const getProjectColor = (state, projectId) => {
 export const getProjectLoadedState = (state, projectId) => {
   if (!projectId) return '';
   const { projectsById } = state;
-  return projectsById[projectId].isLoaded;
+  const project = projectsById[projectId];
+  return project ? project.isLoaded : {};
 };
 
 export const getProjectLists = (state, projectId) => {

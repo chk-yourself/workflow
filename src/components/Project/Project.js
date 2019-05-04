@@ -17,7 +17,7 @@ import { PopoverWrapper } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
 import { Menu, MenuItem } from '../Menu';
 import ProjectDuplicator from './ProjectDuplicator';
-import {selectProject as selectProjectAction} from '../../ducks/selectedProject';
+import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -101,7 +101,7 @@ class Project extends Component {
     });
   };
 
-  handleMemberAssignment = (userId, e) => {
+  handleMembership = (userId, e) => {
     const { firebase, projectId, memberIds, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
 
@@ -139,7 +139,16 @@ class Project extends Component {
   };
 
   deleteProject = () => {
-    const { firebase, currentUser, selectProject, history, projectId, workspaceId, listIds, memberIds } = this.props;
+    const {
+      firebase,
+      currentUser,
+      selectProject,
+      history,
+      projectId,
+      workspaceId,
+      listIds,
+      memberIds
+    } = this.props;
     const { userId } = currentUser;
     firebase.deleteProject({
       userId,
@@ -150,7 +159,7 @@ class Project extends Component {
     });
     selectProject(null);
     history.push(`/0/home/${userId}`);
-  }
+  };
 
   render() {
     const {
@@ -169,7 +178,13 @@ class Project extends Component {
       }
     } = this.props;
 
-    const { name, isListComposerActive, isProjectSettingsActive, isMoreActionsMenuVisible, isProjectDuplicatorOpen } = this.state;
+    const {
+      name,
+      isListComposerActive,
+      isProjectSettingsActive,
+      isMoreActionsMenuVisible,
+      isProjectDuplicatorOpen
+    } = this.state;
     return (
       <div className={`project project--${layout} project--${section}`}>
         <div className="project__header">
@@ -188,40 +203,43 @@ class Project extends Component {
               isRequired
             />
             <PopoverWrapper
-                  isActive={isMoreActionsMenuVisible}
-                  onOutsideClick={this.closeMoreActionsMenu}
-                  classes={{
-                    wrapper: 'project__more-actions-wrapper',
-                    popover: 'project__more-actions'
-                  }}
-                  align={{ inner: 'right' }}
-                  buttonProps={{
-                    size: 'sm',
-                    iconOnly: true,
-                    isActive: isMoreActionsMenuVisible,
-                    className: 'project__btn--more-actions',
-                    children: <Icon name="more-vertical" />,
-                    onClick: this.toggleMoreActionsMenu
-                  }}
-                >
-                  <Menu>
-                    <MenuItem className="project__more-actions-item">
-                    <Button
-                      className="project__more-actions-btn"
-                      onClick={this.deleteProject}
-                      disabled={ownerId !== currentUser.userId && currentUser.role !== 'admin'}
-                    >
-                      Delete Project
-                    </Button>
-                    <Button
-                      className="project__more-actions-btn"
-                      onClick={this.toggleProjectDuplicator}
-                    >
-                      Duplicate Project
-                    </Button>
-                    </MenuItem>
-                  </Menu>
-                </PopoverWrapper>
+              isActive={isMoreActionsMenuVisible}
+              onOutsideClick={this.closeMoreActionsMenu}
+              classes={{
+                wrapper: 'project__more-actions-wrapper',
+                popover: 'project__more-actions'
+              }}
+              align={{ inner: 'right' }}
+              buttonProps={{
+                size: 'sm',
+                iconOnly: true,
+                isActive: isMoreActionsMenuVisible,
+                className: 'project__btn--more-actions',
+                children: <Icon name="more-vertical" />,
+                onClick: this.toggleMoreActionsMenu
+              }}
+            >
+              <Menu>
+                <MenuItem className="project__more-actions-item">
+                  <Button
+                    className="project__more-actions-btn"
+                    onClick={this.deleteProject}
+                    disabled={
+                      ownerId !== currentUser.userId &&
+                      currentUser.role !== 'admin'
+                    }
+                  >
+                    Delete Project
+                  </Button>
+                  <Button
+                    className="project__more-actions-btn"
+                    onClick={this.toggleProjectDuplicator}
+                  >
+                    Duplicate Project
+                  </Button>
+                </MenuItem>
+              </Menu>
+            </PopoverWrapper>
             <div className="project__links">
               <NavLink
                 className="project__link"
@@ -239,7 +257,10 @@ class Project extends Component {
           </div>
         </div>
         {isProjectDuplicatorOpen && (
-          <ProjectDuplicator onClose={this.closeProjectDuplicator} projectId={projectId} />
+          <ProjectDuplicator
+            onClose={this.closeProjectDuplicator}
+            projectId={projectId}
+          />
         )}
         <Switch>
           <Route
@@ -261,14 +282,14 @@ class Project extends Component {
                   <MemberAssigner
                     placeholder="Add or remove member"
                     memberIds={memberIds}
-                    onSelectMember={this.handleMemberAssignment}
+                    onSelectMember={this.handleMembership}
                     classes={{
                       memberAssigner: 'project__member-assigner',
                       avatar: 'project__avatar',
                       button: 'project__btn--add-member'
                     }}
                     isSelfAssignmentDisabled
-                    align='right'
+                    align="right"
                     showOnlineStatus
                   />
                   <Settings
@@ -352,7 +373,10 @@ class Project extends Component {
           <Route
             path={ROUTES.PROJECT_OVERVIEW}
             render={({ match }) => (
-              <ProjectOverview projectId={match.params.id} />
+              <ProjectOverview
+                onSelectMember={this.handleMembership}
+                projectId={match.params.id}
+              />
             )}
           />
         </Switch>

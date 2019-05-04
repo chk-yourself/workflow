@@ -49,6 +49,7 @@
   width: 100%;
   font-size: 14px;
   letter-spacing: 0.02em;
+  white-space: nowrap;
   &:hover:not(.active) {
     color: $primary;
   }
@@ -127,13 +128,15 @@
   width: 20px;
   height: 20px;
   vertical-align: middle;
-  position: relative;
-  top: -2px;
   color: $grey-400;
 }
 
 .sidebar__section-name {
   display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 36px);
+  vertical-align: middle;
 }
 
 .sidebar__btn {

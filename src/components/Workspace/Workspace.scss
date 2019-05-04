@@ -5,6 +5,9 @@
   padding: 12px 16px 12px 32px;
   font-weight: 500;
   color: $grey-700;
+  max-width: calc(100vw - 32px);
+  overflow-x: auto;
+  white-space: nowrap;
   .feather {
     left: 12px;
   }
@@ -83,4 +86,3 @@
     border: 1px solid $grey-300;
   }
 }
-

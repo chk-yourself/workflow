@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { ForgotPasswordForm } from '../../pages/ForgotPassword';
 import { PasswordChangeForm } from '../../pages/PasswordChange';
 import { withAuthorization } from '../Session';
-import { UserFormPage } from '../UserFormPage';
 import { Input } from '../Input';
 import { Button } from '../Button';
 import { ErrorMessage } from '../Error';
@@ -23,17 +22,19 @@ class AccountSettings extends Component {
   };
 
   deactivateAccount = e => {
+    e.preventDefault();
     const { currentUser, firebase, history } = this.props;
     const { userId, email } = currentUser;
-    const { currentPassword } = this.state;
+    const { password } = this.state;
     const {
       reauthenticateWithEmailAuthCredential,
       deactivateAccount
     } = firebase;
-    reauthenticateWithEmailAuthCredential(email, currentPassword)
+    reauthenticateWithEmailAuthCredential(email, password)
       .then(() => {
-        deactivateAccount(userId);
+        history.push(`/home/0/${userId}`);
         this.reset();
+        return deactivateAccount(userId);
       })
       .catch(error => {
         this.setState({ error });
@@ -81,25 +82,31 @@ class AccountSettings extends Component {
             action cannot be undone. Please confirm you want to deactivate your
             account by re-entering your password.
           </p>
-          <Input
-            name="password"
-            id="password"
-            label="Password"
-            value={password}
-            onChange={this.onChange}
-            type="password"
-            className="account-settings__input"
-            labelClass="account-settings__label"
-          />
-          <Button
-            className="account-settings__btn account-settings__btn--deactivate-account"
-            variant="contained"
-            color="danger"
-            disabled={password === ''}
-            onClick={this.deactivateAccount}
+          <form
+            id="account-settings__deactivation-form"
+            onSubmit={this.deactivateAccount}
           >
-            Deactivate
-          </Button>
+            <Input
+              name="password"
+              id="passwordDeactivation"
+              label="Password"
+              value={password}
+              onChange={this.onChange}
+              type="password"
+              className="account-settings__input"
+              labelClass="account-settings__label"
+            />
+            <Button
+              className="account-settings__btn account-settings__btn--deactivate-account"
+              variant="contained"
+              color="danger"
+              disabled={password === ''}
+              type="submit"
+              onClick={this.deactivateAccount}
+            >
+              Deactivate
+            </Button>
+          </form>
           {error && <ErrorMessage text={error.message} />}
         </section>
       </Modal>

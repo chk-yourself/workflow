@@ -49,7 +49,13 @@ class PasswordChangeForm extends Component {
   };
 
   render() {
-    const { currentPassword, newPassword, confirmPassword, error, success } = this.state;
+    const {
+      currentPassword,
+      newPassword,
+      confirmPassword,
+      error,
+      success
+    } = this.state;
     const isInvalid =
       currentPassword === '' ||
       newPassword === '' ||

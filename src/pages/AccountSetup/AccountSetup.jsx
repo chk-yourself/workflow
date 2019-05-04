@@ -62,7 +62,11 @@ class AccountSetup extends Component {
 
   onSubmit = async e => {
     e.preventDefault();
-    const { profile, workspace, invites } = this.state;
+    const { profile, workspace, invites, currentSection } = this.state;
+    if (currentSection === 'profile' && profile.name === '') return null;
+    if (currentSection !== 'workspace') {
+      return this.goToNextSection();
+    }
     const { firebase, history } = this.props;
     workspace.invites = workspace.invites.filter(invite => invite !== '');
     const { uid: userId, email } = firebase.currentUser;
@@ -104,7 +108,9 @@ class AccountSetup extends Component {
   goToPrevSection = () => {
     this.setState(prevState => ({
       currentSection:
-        prevState.currentSection === 'workspace' ? 'invites' : 'profile',
+        prevState.currentSection === 'workspace' && prevState.invites.length > 0
+          ? 'invites'
+          : 'profile',
       nextSection: prevState.currentSection
     }));
   };
@@ -135,7 +141,7 @@ class AccountSetup extends Component {
       workspace.name === '' && invites.every(invite => !invite.isAccepted);
     return (
       <main className="account-setup">
-        <form className="account-setup__form">
+        <form className="account-setup__form" onSubmit={this.onSubmit}>
           <h1 className="account-setup__heading">Set up your account</h1>
           {currentSection === 'profile' && (
             <ProfileSetup
@@ -180,6 +186,7 @@ class AccountSetup extends Component {
               <Button
                 disabled={isProfileInvalid || isWorkspaceInvalid}
                 size="md"
+                type="submit"
                 variant="contained"
                 color="primary"
                 onClick={this.onSubmit}

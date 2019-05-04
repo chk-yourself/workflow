@@ -21,20 +21,6 @@ class ProjectOverview extends Component {
     isColorPickerActive: false
   };
 
-  handleMembership = (userId, e) => {
-    const { firebase, projectId, project, activeWorkspace } = this.props;
-    const { workspaceId } = activeWorkspace;
-    const { memberIds, name: projectName } = project;
-
-    if (memberIds.includes(userId)) {
-      firebase.removeProjectMember({ projectId, userId, workspaceId });
-    } else {
-      firebase.addProjectMember({ projectId, userId, workspaceId });
-    }
-
-    e.preventDefault();
-  };
-
   toggleColorPicker = () => {
     this.setState(prevState => ({
       isColorPickerActive: !prevState.isColorPickerActive
@@ -62,7 +48,7 @@ class ProjectOverview extends Component {
   };
 
   render() {
-    const { projectId, project } = this.props;
+    const { projectId, project, onSelectMember } = this.props;
     const { notes, memberIds, color } = project;
     const { isColorPickerActive } = this.state;
     return (
@@ -91,7 +77,7 @@ class ProjectOverview extends Component {
           <MemberAssigner
             placeholder="Add or remove member"
             memberIds={memberIds}
-            onSelectMember={this.handleMembership}
+            onSelectMember={onSelectMember}
             isSelfAssignmentDisabled
           />
         </ProjectOverviewSection>
