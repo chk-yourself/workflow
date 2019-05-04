@@ -16,7 +16,6 @@ import { MyTasks } from '../MyTasks';
 import { SearchResults, TagSearchResults } from '../../components/Search';
 import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
-import { AccountPage } from '../Account';
 import { getParams } from '../../utils/string';
 import './Home.scss';
 
@@ -161,7 +160,6 @@ class HomePage extends Component {
               }
             }}
           />
-          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
         </Switch>
       </>
     );
@@ -184,7 +182,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(
         projectActions.syncUserWorkspaceProjects({ userId, workspaceId })
       ),
-    syncProjectTags: projectId => dispatch(projectActions.syncProjectTags(projectId)),
+    syncProjectTags: projectId =>
+      dispatch(projectActions.syncProjectTags(projectId)),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>
       dispatch(taskActions.syncUserWorkspaceTasks({ userId, workspaceId })),
     syncUserPrivateTasks: ({ userId, workspaceId }) =>

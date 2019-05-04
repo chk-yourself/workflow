@@ -64,12 +64,23 @@ button {
     @include box-shadow(1);
   }
 }
+
 .contained--success {
   background-image: linear-gradient(-20deg, $success-dk 0%, 20%, $success 100%);
   color: $white;
   font-weight: 600;
   &:not(:disabled):hover {
     background-color: rgba($success, 0.8);
+    @include box-shadow(1);
+  }
+}
+
+.contained--danger {
+  background-color: $red;
+  color: $white;
+  font-weight: 600;
+  &:not(:disabled):hover {
+    background-color: rgba($red, 0.8);
     @include box-shadow(1);
   }
 }
@@ -108,12 +119,22 @@ button {
     color: $white;
   }
 }
+
 .outlined--success {
   border: 1px solid $success-dk;
   color: $success-dk;
   &:hover:not(:disabled) {
     background-color: $success;
     border-color: $success;
+    color: $white;
+  }
+}
+
+.outlined--danger {
+  border: 1px solid $red;
+  color: $red;
+  &:hover:not(:disabled) {
+    background-color: $red;
     color: $white;
   }
 }
@@ -140,6 +161,10 @@ button {
 
 .text--success {
   color: $success-dk;
+}
+
+.text--danger {
+  color: $red;
 }
 
 // Sizes

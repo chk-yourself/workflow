@@ -4,6 +4,7 @@ import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
 import { SignOutButton } from '../SignOutButton';
 import { Topbar } from '../Topbar';
 import { WorkspaceComposer, WorkspaceSettings } from '../Workspace';
+import { AccountSettings } from '../AccountSettings';
 import * as ROUTES from '../../constants/routes';
 import './Header.scss';
 
@@ -12,6 +13,7 @@ class Header extends Component {
     isNavExpanded: false,
     isWorkspaceComposerActive: false,
     isWorkspaceSettingsActive: false,
+    isAccountSettingsActive: false,
     isSticky: false
   };
 
@@ -73,16 +75,10 @@ class Header extends Component {
     });
   };
 
-  toggleWorkspaceSettings = () => {
-    this.setState(prevState => ({
-      isWorkspaceSettingsActive: !prevState.isWorkspaceSettingsActive
-    }));
-  };
-
   openWorkspaceSettings = () => {
-    const { isWorkspaceSettingsActive } = this.state;
-    if (isWorkspaceSettingsActive) return;
-    this.toggleWorkspaceSettings();
+    this.setState({
+      isWorkspaceSettingsActive: true
+    });
   };
 
   closeWorkspaceSettings = () => {
@@ -91,11 +87,24 @@ class Header extends Component {
     });
   };
 
+  toggleAccountSettings = () => {
+    this.setState(prevState => ({
+      isAccountSettingsActive: !prevState.isAccountSettingsActive
+    }));
+  };
+
+  closeAccountSettings = () => {
+    this.setState({
+      isAccountSettingsActive: false
+    });
+  };
+
   render() {
     const {
       isNavExpanded,
       isWorkspaceComposerActive,
       isWorkspaceSettingsActive,
+      isAccountSettingsActive,
       isSticky
     } = this.state;
     const {
@@ -133,6 +142,7 @@ class Header extends Component {
             <Topbar
               openWorkspaceComposer={this.toggleWorkspaceComposer}
               openWorkspaceSettings={this.openWorkspaceSettings}
+              openAccountSettings={this.toggleAccountSettings}
             />
             {isWorkspaceComposerActive && (
               <WorkspaceComposer onClose={this.closeWorkspaceComposer} />
@@ -140,10 +150,15 @@ class Header extends Component {
             {isWorkspaceSettingsActive && (
               <WorkspaceSettings onClose={this.closeWorkspaceSettings} />
             )}
+            {isAccountSettingsActive && (
+              <AccountSettings onClose={this.closeAccountSettings} />
+            )}
           </>
         ) : (
           <Navbar>
-            {!firebase.currentUser || pathname === ROUTES.LANDING || pathname.includes(ROUTES.GUIDE) ? (
+            {!firebase.currentUser ||
+            pathname === ROUTES.LANDING ||
+            pathname.includes(ROUTES.GUIDE) ? (
               <NavLinksNonAuth />
             ) : (
               <SignOutButton className="navbar__btn" />

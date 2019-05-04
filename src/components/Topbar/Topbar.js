@@ -33,7 +33,8 @@ class Topbar extends Component {
     const {
       currentUser,
       openWorkspaceComposer,
-      openWorkspaceSettings
+      openWorkspaceSettings,
+      openAccountSettings
     } = this.props;
     const { isUserActionsVisible } = this.state;
     return (
@@ -88,12 +89,9 @@ class Topbar extends Component {
                 </Button>
               </MenuItem>
               <MenuItem>
-                <NavLink
-                  className="topbar__link"
-                  to={`/0/${currentUser.userId}/account`}
-                >
+                <Button className="topbar__link" onClick={openAccountSettings}>
                   Account Settings
-                </NavLink>
+                </Button>
               </MenuItem>
               <MenuItem>
                 <NavLink

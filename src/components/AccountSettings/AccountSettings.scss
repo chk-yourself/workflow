@@ -1,0 +1,95 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.account-settings {
+  padding: 24px;
+  @include md {
+    padding: 24px 8px 40px;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+  @include lg {
+    max-width: 600px;
+  }
+}
+
+.account-settings__input {
+  margin-bottom: 24px;
+  height: 42px;
+  width: 100%;
+  border: 1px solid $grey-600;
+  max-width: 400px;
+  &::placeholder {
+    font-size: 14px;
+  }
+  &:read-only {
+    border: 1px solid $grey-600;
+  }
+}
+
+.account-settings__section {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  border-top: 2px solid $grey-200;
+  &:not(:nth-of-type(1)) {
+    margin-top: 40px;
+  }
+  @include sm {
+    max-width: 500px;
+  }
+  @include md {
+    max-width: 500px;
+  }
+}
+
+.account-settings__title {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto 18px;
+  font-weight: 600;
+  font-size: 1.4rem;
+  @include sm {
+    max-width: 500px;
+  }
+  @include md {
+    max-width: 500px;
+  }
+}
+
+.account-settings__label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: $grey-700;
+  font-size: 12px;
+}
+
+.account-settings__section-title {
+  font-weight: 600;
+  font-size: 11px;
+  color: $grey-700;
+  padding-top: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 24px;
+}
+
+.account-settings__btn {
+  min-width: 80px;
+  padding: 10px 12px;
+  font-weight: 500;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
+}
+
+.account-settings__info {
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  color: $grey-700;
+  margin-top: -10px;
+}
