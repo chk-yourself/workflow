@@ -3,6 +3,20 @@ import { Link } from 'react-router-dom';
 import { Icon } from '../../components/Icon';
 import * as ROUTES from '../../constants/routes';
 
+const GuideArticleSection = ({ title, children, id }) => (
+  <section id={id} className="guide__article-section">
+    <h2 className="guide__article-section-title">{title}</h2>
+    {children}
+  </section>
+);
+
+const GuideArticleSubsection = ({ title, children }) => (
+  <section className="guide__article-subsection">
+    <h3 className="guide__article-subsection-title">{title}</h3>
+    {children}
+  </section>
+);
+
 const GuideArticle = ({ title, children, icon, color }) => (
   <article className="guide__article">
     <header className="guide__article-header">
@@ -20,4 +34,4 @@ const GuideArticle = ({ title, children, icon, color }) => (
   </article>
 );
 
-export default GuideArticle;
+export { GuideArticle as default, GuideArticleSection, GuideArticleSubsection };

@@ -1,0 +1,29 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.table-of-contents {
+  border: 1px solid $grey-400;
+  padding: 24px;
+}
+
+.table-of-contents__title {
+  color: $grey-600;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.table-of-contents__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.table-of-contents__link {
+  text-decoration: none;
+  color: $primary;
+}
+
+.table-of-contents__item {
+  margin-top: 12px;
+}
