@@ -279,7 +279,8 @@
 }
 
 .guide__article-section {
-  &:not(:first-child) {
-    margin-top: 32px;
+  padding: 44px 0;
+  @include md {
+    padding: 46px 0;
   }
 }

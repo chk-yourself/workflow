@@ -24,7 +24,30 @@ class App extends Component {
 
   componentDidMount() {
     console.log('app mounted');
+    const { history } = this.props;
+    setTimeout(() => {
+      this.scrollToElement(history.location.hash);
+    }, 300);
+    this.unsubscribe = history.listen(location => {
+      const { hash } = location;
+      this.scrollToElement(hash);
+    });
   }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  scrollToElement = hash => {
+    if (hash === '') return;
+    const id = hash.slice(1);
+    const element = document.getElementById(id);
+    if (element) {
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+    }
+  };
 
   onMouseOver = e => {
     const { target } = e;

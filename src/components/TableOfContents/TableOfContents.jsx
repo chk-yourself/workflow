@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { HashLink } from '../HashLink';
 import './TableOfContents.scss';
 
@@ -9,13 +10,16 @@ const TableOfContents = ({ title, sections, classes }) => (
     </div>
     <ul className={`table-of-contents__list ${classes.list || ''}`}>
       {sections.map(section => (
-        <li className={`table-of-contents__item ${classes.item}`}>
-          <HashLink
+        <li
+          key={section.title}
+          className={`table-of-contents__item ${classes.item}`}
+        >
+          <Link
             className={`table-of-contents__link ${classes.link || ''}`}
             to={section.link}
           >
             {section.title}
-          </HashLink>
+          </Link>
         </li>
       ))}
     </ul>
