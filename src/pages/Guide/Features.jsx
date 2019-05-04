@@ -10,7 +10,7 @@ const Feature = ({ title, children }) => (
 );
 
 const Features = () => (
-  <GuideArticle title="Workflow Features">
+  <GuideArticle title="Features" icon="triangle" color="primary">
     <p className="guide__article-intro">
       Workflow is a project management app, inspired by Asana and Trello. Built
       with Firebase, real-time updates allow for seamless collaboration across

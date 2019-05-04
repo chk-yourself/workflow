@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import { Link } from 'react-router-dom';
 import { Avatar } from '../Avatar';
 import { userSelectors } from '../../ducks/users';
 import { withAuthorization } from '../Session';
@@ -12,7 +13,8 @@ const Members = ({
   classes,
   showOnlineStatus,
   details,
-  activeWorkspace
+  activeWorkspace,
+  includeProfileLink
 }) => (
   <ul style={style} className={`members__list ${classes.list || ''}`}>
     {users.map(user => {
@@ -25,7 +27,8 @@ const Members = ({
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar
             classes={{
-              avatar: `members__avatar members__avatar--sm ${classes.avatar || ''}`,
+              avatar: `members__avatar members__avatar--sm ${classes.avatar ||
+                ''}`,
               placeholder: `members__avatar-placeholder--sm ${classes.placeholder ||
                 ''}`
             }}
@@ -45,7 +48,18 @@ const Members = ({
                   : ''
               }`}
             >
-              {detail === 'displayName' ? `@${user[detail]}` : user[detail]}
+              {detail === 'displayName' ? (
+                includeProfileLink ? (
+                  <Link
+                    to={`/0/${userId}/profile`}
+                    className={`members__link ${classes.link || ''}`}
+                  >{`@${user[detail]}`}</Link>
+                ) : (
+                  `@${user[detail]}`
+                )
+              ) : (
+                user[detail]
+              )}
             </span>
           ))}
         </li>
@@ -64,6 +78,7 @@ Members.defaultProps = {
   },
   style: {},
   showOnlineStatus: false,
+  includeProfileLink: true,
   details: ['name', 'displayName', 'email']
 };
 

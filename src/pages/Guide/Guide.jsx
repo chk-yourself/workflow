@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter, Switch, Route, Link } from 'react-router-dom';
-import { Main } from '../../components/Main';
 import * as ROUTES from '../../constants/routes';
 import Features from './Features';
 import HowTo from './HowTo';
@@ -11,7 +10,7 @@ import './Guide.scss';
 const GuideTile = ({ link, title, description, color, icon }) => (
   <li className={`guide__tile guide__tile--${color}`}>
     <Link className="guide__tile-link" to={link}>
-      <span className="guide__icon-wrapper">
+      <span className={`guide__icon-wrapper guide__icon-wrapper--${color}`}>
         <Icon name={icon} />
       </span>
       <span className="guide__tile-content">

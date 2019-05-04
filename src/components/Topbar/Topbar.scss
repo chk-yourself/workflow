@@ -82,3 +82,12 @@
     vertical-align: middle;
   }
 }
+
+.user-actions__item--create-workspace {
+  border-bottom: 1px solid $grey-300;
+  padding-bottom: 8px;
+}
+
+.user-actions__item--open-workspace-settings {
+  padding-top: 8px;
+}

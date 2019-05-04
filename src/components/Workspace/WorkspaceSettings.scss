@@ -113,6 +113,12 @@
     margin-left: 16px;
     margin-bottom: 0;
   }
+  &:last-child {
+    margin-top: 2px;
+    @include md {
+      margin-top: 0;
+    }
+  }
 }
 
 .workspace-settings__avatar {

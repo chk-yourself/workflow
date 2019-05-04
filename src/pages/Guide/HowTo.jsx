@@ -4,7 +4,7 @@ import GuideArticle from './GuideArticle';
 import './Guide.scss';
 
 const HowTo = () => (
-  <GuideArticle title="How to...">
+  <GuideArticle title="How to..." icon="square" color="tertiary">
     <GuidePanel title="Create a project" />
     <GuidePanel title="Edit a project" />
     <GuidePanel title="Create a task" />

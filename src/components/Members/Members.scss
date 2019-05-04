@@ -38,3 +38,11 @@
   color: $grey-700;
   align-items: center;
 }
+
+.members__link {
+  text-decoration: none;
+  color: $grey-600;
+  &:hover {
+    color: $primary;
+  }
+}

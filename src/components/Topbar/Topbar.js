@@ -70,7 +70,7 @@ class Topbar extends Component {
           >
             <WorkspaceSelect />
             <Menu onClick={this.toggleUserActions}>
-              <MenuItem>
+              <MenuItem className="user-actions__item--create-workspace">
                 <Button
                   className="topbar__link"
                   onClick={openWorkspaceComposer}
@@ -80,7 +80,7 @@ class Topbar extends Component {
                   Create Workspace
                 </Button>
               </MenuItem>
-              <MenuItem>
+              <MenuItem className="user-actions__item--open-workspace-settings">
                 <Button
                   className="topbar__link"
                   onClick={openWorkspaceSettings}

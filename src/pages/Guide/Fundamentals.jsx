@@ -4,7 +4,7 @@ import GuideArticle from './GuideArticle';
 import './Fundamentals.scss';
 
 const Fundamentals = () => (
-  <GuideArticle title="Fundamentals">
+  <GuideArticle title="Fundamentals" icon="square" color="secondary">
     <GuidePanel title="Navigating Workflow">
       <GuidePanelSection title="Top Bar">
         <p>From the top bar, you can:</p>
