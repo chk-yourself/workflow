@@ -84,6 +84,7 @@ class Task extends Component {
   };
 
   handleTaskClick = e => {
+    console.log(e.target);
     if (
       e.target.matches('button') ||
       e.target.matches('a') ||
@@ -244,17 +245,19 @@ class Task extends Component {
               </div>
             )}
           </div>
-          <Textarea
-            innerRef={this.setTextareaRef}
-            value={name}
-            onFocus={this.onFocus}
-            onChange={this.onChange}
-            onBlur={this.onBlur}
-            name={taskId}
-            className="task__textarea"
-            onKeyDown={this.deleteTask}
-            minHeight={14}
-          />
+          <div className="task__textarea-wrapper">
+            <Textarea
+              innerRef={this.setTextareaRef}
+              value={name}
+              onFocus={this.onFocus}
+              onChange={this.onChange}
+              onBlur={this.onBlur}
+              name={taskId}
+              className="task__textarea"
+              onKeyDown={this.deleteTask}
+              minHeight={14}
+            />
+          </div>
           <div className="task__badges task__badges--btm">
             {!selectedProjectId && projectId && (
               <ProjectBadge projectId={projectId} size="sm" />

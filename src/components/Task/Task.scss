@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   background-color: $white;
+  cursor: pointer;
   &:last-child:not(:first-child)::before {
     box-shadow: inset 0px -2px 1px -1px $grey-200,
       inset 0px 2px 1px -1px $grey-200;
@@ -21,10 +22,12 @@
       inset 0px 3px 2px -2px rgba($primary, 0.8);
     background-color: rgba($primary-lt, 0.3);
     outline: none;
-    &:before {
+    .task__textarea-wrapper::before {
       z-index: 0;
-      box-shadow: none;
       pointer-events: none;
+    }
+    &:before {
+      box-shadow: none;
     }
     & + .task:not(:last-child)::before {
       box-shadow: none;
@@ -40,7 +43,8 @@
     position: absolute;
     top: 0;
     height: 100%;
-    z-index: 3;
+    z-index: 0;
+    pointer-events: none;
     box-shadow: inset 0px 2px 1px -1px $grey-200;
     left: 38px;
     width: calc(100% - 46px);
@@ -215,5 +219,23 @@
     @include md {
       display: none;
     }
+  }
+}
+
+.task__textarea-wrapper {
+  position: relative;
+  width: auto;
+  height: auto;
+  line-height: 0;
+  &::before {
+    content: '';
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 2;
+    left: 0;
+    width: 100%;
   }
 }

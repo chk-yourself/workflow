@@ -9,6 +9,9 @@
   vertical-align: middle;
   padding: 2px 0;
   border: 1px solid transparent;
+  span {
+    pointer-events: none;
+  }
   &--default {
     background-color: $grey-700;
     color: $white;
