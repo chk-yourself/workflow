@@ -40,8 +40,18 @@ const HowTo = () => (
         <GuidePanel title="Edit a project" />
       </div>
     </GuideArticleSection>
-    <GuideArticleSection id="lists" title="Lists" />
-    <GuideArticleSection id="tasks" title="Tasks" />
+    <GuideArticleSection id="lists" title="Lists">
+      <div className="guide__article-section-wrapper">
+        <GuidePanel title="Create a list" />
+        <GuidePanel title="Edit a list" />
+      </div>
+    </GuideArticleSection>
+    <GuideArticleSection id="tasks" title="Tasks">
+      <div className="guide__article-section-wrapper">
+        <GuidePanel title="Create a task" />
+        <GuidePanel title="Customize a task" />
+      </div>
+    </GuideArticleSection>
   </GuideArticle>
 );
 export default HowTo;
