@@ -39,7 +39,7 @@ ProjectGrid.defaultProps = {
   className: ''
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
     projectsById: projectSelectors.getProjectsById(state),
     projects: projectSelectors.getProjectsArray(state),

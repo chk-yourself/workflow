@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { currentUserSelectors } from '../../ducks/currentUser';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { subtaskSelectors } from '../../ducks/subtasks';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
@@ -28,15 +29,10 @@ import { NotesEditor } from '../NotesEditor';
 import { Badge } from '../Badge';
 import { debounce } from '../../utils/function';
 
-const TaskEditorWrapper = ({
-  layout,
-  handleTaskEditorClose,
-  onOutsideClick,
-  children
-}) => {
+const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
   return layout === 'board' ? (
     <Modal
-      onModalClose={handleTaskEditorClose}
+      onModalClose={onClose}
       classes={{
         modal: 'task-editor-modal',
         content: 'task-editor',
@@ -49,7 +45,7 @@ const TaskEditorWrapper = ({
       {children}
     </Modal>
   ) : (
-    <TaskEditorPane onClose={handleTaskEditorClose}>{children}</TaskEditorPane>
+    <TaskEditorPane onClose={onClose}>{children}</TaskEditorPane>
   );
 };
 
@@ -107,9 +103,9 @@ class TaskEditor extends Component {
   };
 
   deleteTask = () => {
-    const { taskId, listId, handleTaskEditorClose, deleteTask } = this.props;
+    const { taskId, listId, deleteTask } = this.props;
     deleteTask({ taskId, listId });
-    handleTaskEditorClose();
+    this.closeTaskEditor();
   };
 
   onBlur = e => {
@@ -242,18 +238,21 @@ class TaskEditor extends Component {
   };
 
   onOutsideClick = e => {
-    const { handleTaskEditorClose } = this.props;
     if (
       e.target.matches('.member-search__item') ||
       e.target.matches('.tags-input__item')
     )
       return;
-    handleTaskEditorClose();
+    this.closeTaskEditor();
+  };
+
+  closeTaskEditor = () => {
+    const { selectTask } = this.props;
+    selectTask(null);
   };
 
   render() {
     const {
-      handleTaskEditorClose,
       taskId,
       commentIds,
       assignedTo,
@@ -286,7 +285,7 @@ class TaskEditor extends Component {
     const isPrivate = !projectId;
     return (
       <TaskEditorWrapper
-        handleTaskEditorClose={handleTaskEditorClose}
+        onClose={this.closeTaskEditor}
         onOutsideClick={this.onOutsideClick}
         layout={layout}
       >
@@ -532,7 +531,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     deleteTask: ({ taskId, listId }) =>
-      dispatch(taskActions.deleteTask({ taskId, listId }))
+      dispatch(taskActions.deleteTask({ taskId, listId })),
+    selectTask: taskId => dispatch(selectTaskAction(taskId))
   };
 };
 

@@ -6,15 +6,14 @@ import { withAuthorization } from '../Session';
 import { Timestamp } from '../Timestamp';
 import { Button } from '../Button';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
-import './Notification.scss';
 
 class Notification extends Component {
   onClick = () => {
-    const { onTaskClick, source } = this.props;
+    const { onClickTask, source } = this.props;
     const { parent } = source;
     switch (parent.type) {
       case 'task': {
-        return onTaskClick(parent.id);
+        return onClickTask(parent.id);
       }
       default: {
         return () => null;
@@ -22,10 +21,10 @@ class Notification extends Component {
     }
   };
 
-  archiveNotification = () => {
-    const { notificationId, firebase } = this.props;
+  setActiveStatus = () => {
+    const { notificationId, firebase, isActive } = this.props;
     firebase.updateDoc(['notifications', notificationId], {
-      isActive: false
+      isActive: !isActive
     });
   };
 
@@ -140,7 +139,7 @@ class Notification extends Component {
   };
 
   render() {
-    const { source, event, isActionPending } = this.props;
+    const { source, event, isActionPending, isActive } = this.props;
     const { user } = source;
     const { publishedAt } = event;
 
@@ -167,11 +166,11 @@ class Notification extends Component {
               this.renderRequiredActions()
             ) : (
               <Button
-                onClick={this.archiveNotification}
+                onClick={this.setActiveStatus}
                 size="sm"
                 className="notification__btn notification__btn--archive"
               >
-                Archive
+                {isActive ? 'Archive' : 'Unarchive'}
               </Button>
             )}
           </div>

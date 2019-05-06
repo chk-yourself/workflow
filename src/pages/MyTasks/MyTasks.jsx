@@ -303,7 +303,6 @@ class MyTasks extends Component {
 
 const mapStateToProps = state => {
   return {
-    state,
     selectedTask: getSelectedTask(state),
     selectedTaskId: getSelectedTaskId(state),
     taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state)

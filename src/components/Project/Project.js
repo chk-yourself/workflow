@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import { Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
@@ -10,14 +9,12 @@ import { Input } from '../Input';
 import { Toolbar } from '../Toolbar';
 import { Icon } from '../Icon';
 import { Settings } from '../Settings';
-import { projectActions } from '../../ducks/projects';
 import { ProjectIcon } from '../ProjectIcon';
 import ProjectOverview from './ProjectOverview';
 import { PopoverWrapper } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
 import { Menu, MenuItem } from '../Menu';
 import ProjectDuplicator from './ProjectDuplicator';
-import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -80,16 +77,12 @@ class Project extends Component {
   };
 
   setTempProjectSettings = e => {
-    const { projectId } = this.props;
-    const { setTempProjectSettings } = this.props;
+    const { onChangeTempProjectSettings } = this.props;
     const { name, value } = e.target;
-    setTempProjectSettings({
-      projectId,
-      [name]: value
-    });
+    onChangeTempProjectSettings(name, value);
   };
 
-  toggleSettingsMenu = e => {
+  toggleSettingsMenu = () => {
     this.setState(prevState => ({
       isProjectSettingsActive: !prevState.isProjectSettingsActive
     }));
@@ -169,6 +162,7 @@ class Project extends Component {
       memberIds,
       ownerId,
       currentUser,
+      onDelete,
       tempSettings: {
         layout,
         tasks: { view, sortBy }
@@ -223,7 +217,7 @@ class Project extends Component {
                 <MenuItem className="project__more-actions-item">
                   <Button
                     className="project__more-actions-btn"
-                    onClick={this.deleteProject}
+                    onClick={onDelete}
                     disabled={
                       ownerId !== currentUser.userId &&
                       currentUser.role !== 'admin'
@@ -385,26 +379,7 @@ class Project extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    selectProject: projectId => dispatch(selectProjectAction(projectId)),
-    setTempProjectSettings: ({ projectId, view, sortBy, layout }) =>
-      dispatch(
-        projectActions.setTempProjectSettings({
-          projectId,
-          view,
-          sortBy,
-          layout
-        })
-      )
-  };
-};
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
-const condition = currentUser => !!currentUser;
-
-export default withAuthorization(condition)(
-  connect(
-    null,
-    mapDispatchToProps
-  )(Project)
-);
+export default withAuthorization(condition)(Project);

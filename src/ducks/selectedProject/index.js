@@ -26,5 +26,6 @@ export const getSelectedProjectId = state => state.selectedProject;
 
 export const getSelectedProject = state => {
   const { selectedProject: projectId, projectsById } = state;
+  if (!projectsById || !projectId) return null;
   return projectsById[projectId];
 };

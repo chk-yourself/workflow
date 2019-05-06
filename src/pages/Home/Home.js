@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { withAuthorization } from '../../components/Session';
 import * as ROUTES from '../../constants/routes';
-import { userActions, userSelectors } from '../../ducks/users';
+import { userActions } from '../../ducks/users';
 import { ProjectGrid } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { ProjectContainer } from '../../components/Project';
-import { projectActions, projectSelectors } from '../../ducks/projects';
+import { projectActions } from '../../ducks/projects';
 import { taskActions } from '../../ducks/tasks';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Main } from '../../components/Main';
@@ -16,6 +16,7 @@ import { MyTasks } from '../MyTasks';
 import { SearchResults, TagSearchResults } from '../../components/Search';
 import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
+import { Inbox } from '../Inbox';
 import { getParams } from '../../utils/string';
 import './Home.scss';
 
@@ -49,17 +50,19 @@ class HomePage extends Component {
       syncUserWorkspaceData,
       syncUserWorkspaceProjects,
       syncUserWorkspaceTasks,
-      syncUserPrivateTasks
+      syncUserPrivateTasks,
+      syncNotifications
     } = this.props;
     const { userId } = currentUser;
-    const { workspaceId, projectIds } = activeWorkspace;
+    const { workspaceId } = activeWorkspace;
 
     await Promise.all([
       syncWorkspaceMembers(workspaceId),
       syncUserWorkspaceData({ userId, workspaceId }),
       syncUserWorkspaceProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
-      syncUserPrivateTasks({ userId, workspaceId })
+      syncUserPrivateTasks({ userId, workspaceId }),
+      syncNotifications({ userId, workspaceId })
     ])
       .then(async listeners => {
         this.listeners = listeners;
@@ -81,7 +84,6 @@ class HomePage extends Component {
   render() {
     const { isProjectComposerOpen, isLoading } = this.state;
     if (isLoading) return null;
-    const { userId, projectsById } = this.props;
     return (
       <>
         {isProjectComposerOpen && (
@@ -98,14 +100,11 @@ class HomePage extends Component {
               />
             )}
           />
+          <Route path={ROUTES.INBOX} component={Inbox} />
           <Route
             path={ROUTES.PROJECT}
             render={props => (
-              <ProjectContainer
-                userId={userId}
-                projectId={props.match.params.id}
-                {...props}
-              />
+              <ProjectContainer projectId={props.match.params.id} {...props} />
             )}
           />
           <Route
@@ -119,17 +118,13 @@ class HomePage extends Component {
                 }}
               >
                 <ProjectGrid
-                  userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
                   {...props}
                 />
               </Main>
             )}
           />
-          <Route
-            path={ROUTES.MY_TASKS}
-            render={props => <MyTasks userId={userId} {...props} />}
-          />
+          <Route path={ROUTES.MY_TASKS} component={MyTasks} />
           <Route
             path={ROUTES.PROFILE}
             render={props => (
@@ -166,13 +161,6 @@ class HomePage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    projectsById: projectSelectors.getProjectsById(state),
-    membersById: userSelectors.getUsersById(state)
-  };
-};
-
 const mapDispatchToProps = dispatch => {
   return {
     syncWorkspaceMembers: workspaceId =>
@@ -191,7 +179,9 @@ const mapDispatchToProps = dispatch => {
     syncUserWorkspaceData: ({ userId, workspaceId }) =>
       dispatch(
         currentUserActions.syncUserWorkspaceData({ userId, workspaceId })
-      )
+      ),
+    syncNotifications: ({ userId, workspaceId }) =>
+      dispatch(currentUserActions.syncNotifications({ userId, workspaceId }))
   };
 };
 
@@ -200,7 +190,7 @@ const condition = (currentUser, activeWorkspace) =>
 
 export default withAuthorization(condition)(
   connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
   )(HomePage)
 );

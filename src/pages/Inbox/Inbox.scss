@@ -1,0 +1,23 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.inbox {
+  width: 100%;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 0;
+}
+
+.inbox__wrapper {
+  padding: 0 4px;
+  display: flex;
+  justify-content: center;
+  @include md {
+    padding: 0 8px;
+  }
+}
+
+.inbox__tabs-header {
+  box-shadow: inset 0px -2px 1px -1px $grey-400;
+}

@@ -5,8 +5,7 @@ import { withAuthorization } from '../Session';
 import { projectActions, projectSelectors } from '../../ducks/projects';
 import {
   selectTask as selectTaskAction,
-  getSelectedTask,
-  getSelectedTaskId
+  getSelectedTask
 } from '../../ducks/selectedTask';
 import {
   selectProject as selectProjectAction,
@@ -45,11 +44,11 @@ class ProjectContainer extends Component {
   }
 
   componentWillUnmount() {
-    const { selectProject, selectTask, selectedTaskId } = this.props;
-    selectProject(null);
-    if (selectedTaskId) {
+    const { selectProject, selectTask, selectedTask } = this.props;
+    if (selectedTask) {
       selectTask(null);
     }
+    selectProject(null);
     this.unsubscribe.forEach(func => func());
   }
 
@@ -115,24 +114,50 @@ class ProjectContainer extends Component {
     }
   };
 
-  closeTaskEditor = () => {
-    const { selectTask } = this.props;
-    selectTask(null);
+  deleteProject = () => {
+    const {
+      firebase,
+      currentUser,
+      selectProject,
+      history,
+      projectId,
+      project
+    } = this.props;
+    const { workspaceId, listIds, memberIds } = project;
+    const { userId } = currentUser;
+    firebase.deleteProject({
+      userId,
+      projectId,
+      workspaceId,
+      listIds,
+      memberIds
+    });
+    selectProject(null);
+    history.push(`/0/home/${userId}`);
+  };
+
+  setTempProjectSettings = (key, value) => {
+    const { projectId } = this.props;
+    const { setTempProjectSettings } = this.props;
+    setTempProjectSettings({
+      projectId,
+      [key]: value
+    });
   };
 
   render() {
     const {
       selectedTask,
       projectId,
-      userId,
-      selectedTaskId,
       isLoaded,
       project,
+      currentUser,
       tempSettings
     } = this.props;
+    const { userId } = currentUser;
     const { name, listIds } = project;
     const { layout } = tempSettings;
-    const isTaskEditorOpen = !!selectedTaskId;
+    const isTaskEditorOpen = !!selectedTask;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
       <main
@@ -145,7 +170,11 @@ class ProjectContainer extends Component {
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}
           >
-            <Project {...project}>
+            <Project
+              onChangeTempProjectSettings={this.setTempProjectSettings}
+              onDelete={this.deleteProject}
+              {...project}
+            >
               {listIds.map((listId, i) => {
                 return (
                   <List
@@ -164,12 +193,7 @@ class ProjectContainer extends Component {
             </Project>
           </DragDropContext>
           {isTaskEditorOpen && (
-            <TaskEditor
-              {...selectedTask}
-              handleTaskEditorClose={this.closeTaskEditor}
-              userId={userId}
-              layout={layout}
-            />
+            <TaskEditor {...selectedTask} userId={userId} layout={layout} />
           )}
         </div>
       </main>
@@ -181,7 +205,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     state,
     selectedProjectId: getSelectedProjectId(state),
-    selectedTaskId: getSelectedTaskId(state),
     selectedTask: getSelectedTask(state),
     listsById: listSelectors.getListsById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
@@ -204,14 +227,20 @@ const mapDispatchToProps = dispatch => {
     syncProjectSubtasks: projectId =>
       dispatch(subtaskActions.syncProjectSubtasks(projectId)),
     syncProject: projectId => dispatch(projectActions.syncProject(projectId)),
-    setTempProjectSettings: ({ projectId, view, sortBy }) =>
+    setTempProjectSettings: ({ projectId, view, sortBy, layout }) =>
       dispatch(
-        projectActions.setTempProjectSettings({ projectId, view, sortBy })
+        projectActions.setTempProjectSettings({
+          projectId,
+          view,
+          sortBy,
+          layout
+        })
       )
   };
 };
 
-const condition = currentUser => !!currentUser;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

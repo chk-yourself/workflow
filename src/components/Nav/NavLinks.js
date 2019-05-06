@@ -39,6 +39,16 @@ export const NavLinksAuth = ({ userId, onClick }) => (
       <NavLink
         onClick={onClick}
         className="sidebar__link"
+        to={`/0/inbox/${userId}`}
+      >
+        <SidebarIcon name="bell" />
+        <span className="sidebar__section-name">Inbox</span>
+      </NavLink>
+    </li>
+    <li className="sidebar__item">
+      <NavLink
+        onClick={onClick}
+        className="sidebar__link"
         to={`/0/${userId}/tasks`}
       >
         <SidebarIcon name="check-circle" />

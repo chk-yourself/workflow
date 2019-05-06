@@ -403,7 +403,7 @@ export const syncCurrentUser = (userId, history) => {
   };
 };
 
-export const syncUserWorkspaceData = ({userId, workspaceId}) => {
+export const syncUserWorkspaceData = ({ userId, workspaceId }) => {
   return async (dispatch, getState) => {
     try {
       const subscription = await firebase
@@ -426,13 +426,12 @@ export const syncNotifications = ({ userId, workspaceId }) => {
         .getCollection('notifications')
         .where('recipientId', '==', userId)
         .where('workspaceId', '==', workspaceId)
-        .where('isActive', '==', true)
         .onSnapshot(async snapshot => {
           const changes = snapshot.docChanges();
           const isInitialLoad =
             snapshot.size === changes.length &&
             changes.every(change => change.type === 'added');
-          if (isInitialLoad && changes.length > 1) {
+          if (isInitialLoad) {
             const notificationsById = {};
             changes.forEach(change => {
               const notificationId = change.doc.id;
@@ -465,17 +464,12 @@ export const syncNotifications = ({ userId, workspaceId }) => {
                   break;
                 }
                 case 'removed': {
-                  if (
-                    notifications &&
-                    notificationId in notifications
-                  ) {
-                    dispatch(removeNotification(notificationId));
-                    console.log('notification removed');
-                  }
+                  if (notifications && !(notificationId in notifications))
+                    return;
+                  dispatch(removeNotification(notificationId));
                   break;
                 }
                 default: {
-                  if (!notificationData.isActive) return;
                   dispatch(
                     updateNotification({ notificationId, notificationData })
                   );
