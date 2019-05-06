@@ -73,6 +73,11 @@
       margin-left: auto;
       padding-left: 0;
     }
+    @include xx {
+      .sidebar__member-detail {
+        display: inline-block;
+      }
+    }
   }
   + .main,
   + main {

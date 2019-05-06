@@ -401,7 +401,7 @@ class TaskEditor extends Component {
                   placeholder="Assign or remove member"
                   memberIds={assignedTo}
                   onSelectMember={this.assignMember}
-                  memberSearchIsDisabled={isPrivate}
+                  isMemberSearchDisabled={isPrivate}
                 />
               </div>
             </TaskEditorSection>

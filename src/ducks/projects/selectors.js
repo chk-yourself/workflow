@@ -1,15 +1,18 @@
 import { getTasksArray } from '../tasks/selectors';
-import { projectSelectors } from '.';
 
 export const getProjectsById = state => {
   return state.projectsById;
 };
 
-export const getProjectsArray = state => {
+export const getProjectsArray = (state, userId) => {
   const { projectsById } = state;
-  return projectsById
-    ? Object.keys(projectsById).map(projectId => projectsById[projectId])
-    : [];
+  if (!projectsById) return [];
+  const projects = Object.keys(projectsById).map(
+    projectId => projectsById[projectId]
+  );
+  return userId
+    ? projects.filter(project => project.memberIds.includes(userId))
+    : projects;
 };
 
 export const getProject = (state, projectId) => {

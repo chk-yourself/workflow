@@ -7,7 +7,6 @@ import { Avatar } from '../Avatar';
 import { MemberSearch } from '../MemberSearch';
 import { PopoverWrapper } from '../Popover';
 import { userSelectors } from '../../ducks/users';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import './MemberAssigner.scss';
 
 class MemberAssigner extends Component {
@@ -20,7 +19,7 @@ class MemberAssigner extends Component {
       popoverWrapper: ''
     },
     placeholder: '',
-    memberSearchIsDisabled: false,
+    isMemberSearchDisabled: false,
     isSelfAssignmentDisabled: false,
     align: 'left',
     showOnlineStatus: false
@@ -49,7 +48,7 @@ class MemberAssigner extends Component {
       classes,
       memberIds,
       placeholder,
-      memberSearchIsDisabled,
+      isMemberSearchDisabled,
       isSelfAssignmentDisabled,
       align,
       showOnlineStatus,
@@ -67,27 +66,29 @@ class MemberAssigner extends Component {
         <div className={`member-assigner__members ${classes.members || ''}`}>
           {members.map(member => {
             const { userId, name, photoURL, settings, status } = member;
-            const isOnline = status &&
-        status.state === 'online' &&
-        settings.activeWorkspace === activeWorkspace.workspaceId;
-           return (
-             <Avatar
-              classes={{
-                avatar: `member-assigner__avatar ${classes.avatar || ''}`,
-                placeholder: `member-assigner__avatar-placeholder ${classes.avatarPlaceholder ||
-                  ''}`
-              }}
-              name={name}
-              size="sm"
-              variant="circle"
-              imgSrc={photoURL}
-              key={userId}
-              showOnlineStatus={showOnlineStatus}
-              isOnline={isOnline}
-            />
-          )})}
+            const isOnline =
+              status &&
+              status.state === 'online' &&
+              settings.activeWorkspace === activeWorkspace.workspaceId;
+            return (
+              <Avatar
+                classes={{
+                  avatar: `member-assigner__avatar ${classes.avatar || ''}`,
+                  placeholder: `member-assigner__avatar-placeholder ${classes.avatarPlaceholder ||
+                    ''}`
+                }}
+                name={name}
+                size="sm"
+                variant="circle"
+                imgSrc={photoURL}
+                key={userId}
+                showOnlineStatus={showOnlineStatus}
+                isOnline={isOnline}
+              />
+            );
+          })}
         </div>
-        {!memberSearchIsDisabled && (
+        {!isMemberSearchDisabled && (
           <PopoverWrapper
             isActive={isMemberSearchActive}
             onOutsideClick={this.hideMemberSearch}
@@ -141,11 +142,10 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default compose(
-  connect(
-  mapStateToProps
-),
-withAuthorization(condition)
+  connect(mapStateToProps),
+  withAuthorization(condition)
 )(MemberAssigner);

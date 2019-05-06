@@ -97,11 +97,12 @@ class Project extends Component {
   handleMembership = (userId, e) => {
     const { firebase, projectId, memberIds, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
+    console.log(userId, memberIds, memberIds.includes(userId));
 
     if (memberIds.includes(userId)) {
-      firebase.addProjectMember({ projectId, userId, workspaceId });
-    } else {
       firebase.removeProjectMember({ projectId, userId, workspaceId });
+    } else {
+      firebase.addProjectMember({ projectId, userId, workspaceId });
     }
 
     e.preventDefault();
@@ -163,6 +164,7 @@ class Project extends Component {
       ownerId,
       currentUser,
       onDelete,
+      settings: { isPrivate },
       tempSettings: {
         layout,
         tasks: { view, sortBy }
@@ -282,9 +284,9 @@ class Project extends Component {
                       avatar: 'project__avatar',
                       button: 'project__btn--add-member'
                     }}
-                    isSelfAssignmentDisabled
                     align="right"
                     showOnlineStatus
+                    isMemberSearchDisabled={isPrivate}
                   />
                   <Settings
                     icon="sliders"
@@ -344,11 +346,7 @@ class Project extends Component {
                   direction={layout === 'board' ? 'horizontal' : 'vertical'}
                 >
                   {provided => (
-                    <div
-                      className="project__lists"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
+                    <div className="project__lists" ref={provided.innerRef}>
                       {children}
                       {provided.placeholder}
                       <ListComposer

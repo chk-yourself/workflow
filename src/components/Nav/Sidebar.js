@@ -45,7 +45,7 @@ class Sidebar extends Component {
       currentUser
     } = this.props;
     const { userId } = currentUser;
-    const { name: workspaceName } = activeWorkspace;
+    const { name: workspaceName, workspaceId } = activeWorkspace;
     return (
       <div ref={innerRef} className="sidebar__canvas">
         <Button
@@ -75,6 +75,16 @@ class Sidebar extends Component {
                 </span>
               </Button>
               <ul className="sidebar__list sidebar__workspace-links">
+                <li className="sidebar__item">
+                  <Link
+                    className="sidebar__link"
+                    onClick={onToggle}
+                    to={`/0/workspaces/${workspaceId}/projects`}
+                  >
+                    <Icon className="sidebar__icon" name="grid" />
+                    <span className="sidebar__section-name">All Projects</span>
+                  </Link>
+                </li>
                 <li className="sidebar__item sidebar__item--team">
                   <Button
                     isActive={isMembersListVisible}

@@ -18,6 +18,7 @@ import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
 import { Inbox } from '../Inbox';
 import { getParams } from '../../utils/string';
+import { WorkspaceProjects } from '../WorkspaceProjects';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -48,7 +49,8 @@ class HomePage extends Component {
       activeWorkspace,
       syncWorkspaceMembers,
       syncUserWorkspaceData,
-      syncUserWorkspaceProjects,
+      syncWorkspaceProjects,
+      syncPrivateProjects,
       syncUserWorkspaceTasks,
       syncUserPrivateTasks,
       syncNotifications
@@ -59,7 +61,8 @@ class HomePage extends Component {
     await Promise.all([
       syncWorkspaceMembers(workspaceId),
       syncUserWorkspaceData({ userId, workspaceId }),
-      syncUserWorkspaceProjects({ userId, workspaceId }),
+      syncWorkspaceProjects(workspaceId),
+      syncPrivateProjects({ userId, workspaceId }),
       syncUserWorkspaceTasks({ userId, workspaceId }),
       syncUserPrivateTasks({ userId, workspaceId }),
       syncNotifications({ userId, workspaceId })
@@ -83,6 +86,8 @@ class HomePage extends Component {
 
   render() {
     const { isProjectComposerOpen, isLoading } = this.state;
+    const { currentUser } = this.props;
+    const { userId } = currentUser;
     if (isLoading) return null;
     return (
       <>
@@ -108,7 +113,7 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={ROUTES.USER_PROJECTS}
+            path={ROUTES.MY_PROJECTS}
             render={props => (
               <Main
                 title="My Projects"
@@ -118,10 +123,20 @@ class HomePage extends Component {
                 }}
               >
                 <ProjectGrid
+                  userId={userId}
                   openProjectComposer={this.toggleProjectComposer}
                   {...props}
                 />
               </Main>
+            )}
+          />
+          <Route
+            path={ROUTES.WORKSPACE_PROJECTS}
+            render={props => (
+              <WorkspaceProjects
+                openProjectComposer={this.toggleProjectComposer}
+                {...props}
+              />
             )}
           />
           <Route path={ROUTES.MY_TASKS} component={MyTasks} />
@@ -166,10 +181,10 @@ const mapDispatchToProps = dispatch => {
     syncWorkspaceMembers: workspaceId =>
       dispatch(userActions.syncWorkspaceMembers(workspaceId)),
     syncUserPresence: () => dispatch(userActions.syncUserPresence()),
-    syncUserWorkspaceProjects: ({ userId, workspaceId }) =>
-      dispatch(
-        projectActions.syncUserWorkspaceProjects({ userId, workspaceId })
-      ),
+    syncPrivateProjects: ({ userId, workspaceId }) =>
+      dispatch(projectActions.syncPrivateProjects({ userId, workspaceId })),
+    syncWorkspaceProjects: workspaceId =>
+      dispatch(projectActions.syncWorkspaceProjects(workspaceId)),
     syncProjectTags: projectId =>
       dispatch(projectActions.syncProjectTags(projectId)),
     syncUserWorkspaceTasks: ({ userId, workspaceId }) =>

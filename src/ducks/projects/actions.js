@@ -100,7 +100,7 @@ export const updateTag = ({ tagId, tagData, projectId }) => {
   };
 };
 
-export const deleteTag = ({tagId, projectId}) => {
+export const deleteTag = ({ tagId, projectId }) => {
   return {
     type: types.DELETE_TAG,
     tagId,
@@ -187,6 +187,137 @@ export const syncUserWorkspaceProjects = ({ userId, workspaceId }) => {
   };
 };
 
+export const syncWorkspaceProjects = workspaceId => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('projects', ['workspaceId', '==', workspaceId])
+        .where('settings.isPrivate', '==', false)
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad) {
+            const projects = {};
+            changes.forEach(change => {
+              const { projectsById } = getState();
+              const projectId = change.doc.id;
+              if (projectsById && projectId in projectsById) return;
+              const projectData = change.doc.data();
+              projects[projectId] = {
+                projectId,
+                isLoaded: {
+                  subtasks: projectData.listIds.length === 0,
+                  tasks: true,
+                  lists: projectData.listIds.length === 0,
+                  tags: projectData.listIds.length === 0
+                },
+                tempSettings: {
+                  layout: projectData.settings.layout,
+                  tasks: { ...projectData.settings.tasks }
+                },
+                ...projectData
+              };
+            });
+            dispatch(loadProjectsById(projects));
+          } else {
+            changes.forEach(async change => {
+              const [projectId, projectData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { projectsById } = getState();
+              if (changeType === 'added') {
+                if (projectsById && projectId in projectsById) return;
+                dispatch(addProject({ projectId, projectData }));
+                console.log(`Added Project: ${projectData.name}`);
+              } else if (changeType === 'removed') {
+                if (!(projectId in projectsById)) return;
+                dispatch(removeProject(projectId));
+                console.log(`Deleted Project: ${projectData.name}`);
+              } else {
+                dispatch(updateProject({ projectId, projectData }));
+                console.log(`Updated Project: ${projectData.name}`);
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const syncPrivateProjects = ({ workspaceId, userId }) => {
+  return async (dispatch, getState) => {
+    try {
+      const subscription = await firebase
+        .queryCollection('projects', ['workspaceId', '==', workspaceId])
+        .where('settings.isPrivate', '==', true)
+        .where('ownerId', '==', userId)
+        .onSnapshot(async snapshot => {
+          const changes = snapshot.docChanges();
+          const isInitialLoad =
+            snapshot.size === changes.length &&
+            changes.every(change => change.type === 'added');
+
+          if (isInitialLoad) {
+            const projects = {};
+            changes.forEach(change => {
+              const { projectsById } = getState();
+              const projectId = change.doc.id;
+              if (projectsById && projectId in projectsById) return;
+              const projectData = change.doc.data();
+              projects[projectId] = {
+                projectId,
+                isLoaded: {
+                  subtasks: projectData.listIds.length === 0,
+                  tasks: true,
+                  lists: projectData.listIds.length === 0,
+                  tags: projectData.listIds.length === 0
+                },
+                tempSettings: {
+                  layout: projectData.settings.layout,
+                  tasks: { ...projectData.settings.tasks }
+                },
+                ...projectData
+              };
+            });
+            dispatch(loadProjectsById(projects));
+          } else {
+            changes.forEach(async change => {
+              const [projectId, projectData, changeType] = await Promise.all([
+                change.doc.id,
+                change.doc.data(),
+                change.type
+              ]);
+              const { projectsById } = getState();
+              if (changeType === 'added') {
+                if (projectsById && projectId in projectsById) return;
+                dispatch(addProject({ projectId, projectData }));
+                console.log(`Added Project: ${projectData.name}`);
+              } else if (changeType === 'removed') {
+                if (!(projectId in projectsById)) return;
+                dispatch(removeProject(projectId));
+                console.log(`Deleted Project: ${projectData.name}`);
+              } else {
+                dispatch(updateProject({ projectId, projectData }));
+                console.log(`Updated Project: ${projectData.name}`);
+              }
+            });
+          }
+        });
+      return subscription;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const fetchProjectLists = projectId => {
   return async dispatch => {
     try {
@@ -227,7 +358,7 @@ export const syncProjectTags = projectId => {
             snapshot.forEach(doc => {
               tags[doc.id] = doc.data();
             });
-            dispatch(loadProjectTags({tags, projectId}));
+            dispatch(loadProjectTags({ tags, projectId }));
             dispatch(setProjectLoadedState(projectId, 'tags'));
           } else {
             changes.forEach(async change => {
@@ -244,13 +375,11 @@ export const syncProjectTags = projectId => {
                 console.log('tag added');
               } else if (changeType === 'removed') {
                 dispatch(deleteTag({ tagId, projectId }));
+              } else if (tagData.count === 0) {
+                firebase.deleteTag({ projectId, tagId });
               } else {
-                if (tagData.count === 0) {
-                  firebase.deleteTag({ projectId, tagId });
-                } else {
-                  dispatch(updateTag({ tagId, tagData, projectId }));
-                  console.log(`Updated Tag: ${tagData.name}`);
-                }
+                dispatch(updateTag({ tagId, tagData, projectId }));
+                console.log(`Updated Tag: ${tagData.name}`);
               }
             });
           }

@@ -5,7 +5,6 @@ import './ProjectGrid.scss';
 import { projectSelectors } from '../../ducks/projects';
 import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import { Icon } from '../Icon';
-import { currentUserSelectors } from '../../ducks/currentUser';
 
 const ProjectGrid = ({
   projects,
@@ -39,11 +38,9 @@ ProjectGrid.defaultProps = {
   className: ''
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    projectsById: projectSelectors.getProjectsById(state),
-    projects: projectSelectors.getProjectsArray(state),
-    userId: currentUserSelectors.getCurrentUserId(state)
+    projects: projectSelectors.getProjectsArray(state, ownProps.userId)
   };
 };
 

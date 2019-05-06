@@ -49,7 +49,8 @@ class ProjectOverview extends Component {
 
   render() {
     const { projectId, project, onSelectMember } = this.props;
-    const { notes, memberIds, color } = project;
+    const { notes, memberIds, color, settings } = project;
+    const { isPrivate } = settings;
     const { isColorPickerActive } = this.state;
     return (
       <div className="project__overview">
@@ -78,7 +79,7 @@ class ProjectOverview extends Component {
             placeholder="Add or remove member"
             memberIds={memberIds}
             onSelectMember={onSelectMember}
-            isSelfAssignmentDisabled
+            isMemberSearchDisabled={isPrivate}
           />
         </ProjectOverviewSection>
         <ProjectOverviewSection name="Description">
@@ -99,7 +100,8 @@ const mapStateToProps = (state, ownProps) => ({
   project: projectSelectors.getProject(state, ownProps.projectId)
 });
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) =>
+  !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(mapStateToProps)(ProjectOverview)
