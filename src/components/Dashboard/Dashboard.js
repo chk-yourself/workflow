@@ -27,7 +27,10 @@ const Dashboard = ({
       name="My Projects"
       icon="grid"
       link={{
-        path: `/0/workspaces/${activeWorkspace.workspaceId}/projects`,
+        to: {
+          pathname: `/0/${activeWorkspace.workspaceId}/projects`,
+          state: { selectedTabIndex: 1 }
+        },
         text: 'View all projects'
       }}
     >

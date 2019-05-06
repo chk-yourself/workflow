@@ -18,7 +18,7 @@ import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
 import { Inbox } from '../Inbox';
 import { getParams } from '../../utils/string';
-import { WorkspaceProjects } from '../WorkspaceProjects';
+import { Projects } from '../Projects';
 import './Home.scss';
 
 class HomePage extends Component {
@@ -113,29 +113,11 @@ class HomePage extends Component {
             )}
           />
           <Route
-            path={ROUTES.MY_PROJECTS}
-            render={props => (
-              <Main
-                title="My Projects"
-                classes={{
-                  main: 'project-grid__container',
-                  title: 'project-grid__header'
-                }}
-              >
-                <ProjectGrid
-                  userId={userId}
-                  openProjectComposer={this.toggleProjectComposer}
-                  {...props}
-                />
-              </Main>
-            )}
-          />
-          <Route
-            path={ROUTES.WORKSPACE_PROJECTS}
-            render={props => (
-              <WorkspaceProjects
+            path={ROUTES.PROJECTS}
+            render={({ location: { state } }) => (
+              <Projects
                 openProjectComposer={this.toggleProjectComposer}
-                {...props}
+                selectedTabIndex={state ? state.selectedTabIndex : 0}
               />
             )}
           />

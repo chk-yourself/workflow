@@ -10,7 +10,7 @@ const TasksDueSoon = ({ tasksDueSoon, currentUser }) => (
     className="tasks-due-soon"
     size="md"
     name="Tasks Due Soon"
-    link={{ path: `/0/${currentUser.userId}/tasks`, text: 'View all tasks' }}
+    link={{ to: `/0/${currentUser.userId}/tasks`, text: 'View all tasks' }}
   >
     {tasksDueSoon.length > 0 ? (
       <ul className="dashboard__tasks">

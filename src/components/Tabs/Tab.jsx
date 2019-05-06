@@ -7,7 +7,8 @@ const Tab = ({
   isActive,
   children,
   index,
-  onSelectTab
+  onSelectTab,
+  variant
 }) => (
   <li
     onClick={onSelectTab}
@@ -17,7 +18,9 @@ const Tab = ({
     tabIndex={0}
     aria-selected={isActive}
     aria-controls={panelId}
-    className={`tab ${className} ${isActive ? 'is-active' : ''}`}
+    className={`tab tab--${variant} ${className} ${
+      isActive ? 'is-active' : ''
+    }`}
     data-index={index}
   >
     {children}
@@ -25,7 +28,8 @@ const Tab = ({
 );
 
 Tab.defaultProps = {
-  className: ''
+  className: '',
+  variant: 'underlined'
 };
 
 export default Tab;

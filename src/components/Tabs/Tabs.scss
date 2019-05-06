@@ -29,12 +29,28 @@
   color: $grey-700;
   &:active,
   &.is-active {
-    color: $primary;
-    box-shadow: inset 0px -3px 1px -1px $primary;
     outline: none;
   }
   &:hover,
   &:focus {
     color: $primary;
+  }
+}
+
+.tab--underlined {
+  &:active,
+  &.is-active {
+    color: $primary;
+    box-shadow: inset 0px -3px 1px -1px $primary;
+  }
+}
+
+.tab--outlined {
+  border-radius: 4px;
+  padding: 8px;
+  &:active,
+  &.is-active {
+    color: $primary;
+    border: 1px solid $primary;
   }
 }

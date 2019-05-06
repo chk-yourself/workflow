@@ -17,10 +17,10 @@ const GuidePanel = ({ title, children }) => (
       header: 'guide__panel-header'
     }}
     header={
-      <>
+      <h3 className="guide__panel-title">
         <Icon name="chevron-right" />
         {title}
-      </>
+      </h3>
     }
   >
     {children}

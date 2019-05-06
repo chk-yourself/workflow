@@ -14,11 +14,13 @@ export default class TabsContainer extends Component {
       panel: '',
       header: ''
     },
-    tabs: []
+    tabs: [],
+    variant: 'underlined',
+    selectedIndex: 0
   };
 
   state = {
-    selectedIndex: 0
+    selectedIndex: this.props.selectedIndex
   };
 
   onSelectTab = e => {
@@ -31,7 +33,7 @@ export default class TabsContainer extends Component {
   };
 
   render() {
-    const { classes, tabs } = this.props;
+    const { classes, tabs, variant } = this.props;
     const { selectedIndex } = this.state;
     return (
       <div className={`tabs-container ${classes.container || ''}`}>
@@ -46,6 +48,7 @@ export default class TabsContainer extends Component {
                 index={i}
                 onSelectTab={this.onSelectTab}
                 isActive={i === selectedIndex}
+                variant={variant}
               >
                 {tab.label}
               </Tab>

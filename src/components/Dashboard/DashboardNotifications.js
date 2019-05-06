@@ -7,7 +7,7 @@ const DashboardNotifications = ({ userId }) => (
     className="notifications"
     name="Notifications"
     size="sm"
-    link={{ path: `/0/inbox/${userId}`, text: 'View inbox' }}
+    link={{ to: `/0/inbox/${userId}`, text: 'View inbox' }}
   >
     <Notifications isActive />
   </DashboardPanel>

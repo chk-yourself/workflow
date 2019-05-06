@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.projects__header {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.projects {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 960px;
+}
+
+.projects__tab {
+  font-weight: 600;
+  padding-bottom: 12px;
+  color: $grey-600;
+}
+
+.projects__tabs-header {
+  box-shadow: inset 0px -2px 1px -1px $grey-400;
+  margin-bottom: 28px;
+}
+
+.projects__tabs-container {
+  margin: 0 auto;
+  padding: 0 4px;
+  @include md {
+    padding: 0 8px;
+  }
+}

@@ -55,15 +55,5 @@ export const NavLinksAuth = ({ userId, onClick }) => (
         <span className="sidebar__section-name">My Tasks</span>
       </NavLink>
     </li>
-    <li className="sidebar__item">
-      <NavLink
-        onClick={onClick}
-        className="sidebar__link"
-        to={`/0/${userId}/projects`}
-      >
-        <SidebarIcon name="grid" />
-        <span className="sidebar__section-name">My Projects</span>
-      </NavLink>
-    </li>
   </>
 );

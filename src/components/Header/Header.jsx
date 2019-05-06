@@ -57,7 +57,7 @@ class Header extends Component {
     }));
   };
 
-  collapseNav = e => {
+  collapseNav = () => {
     this.setState({
       isNavExpanded: false
     });
@@ -131,6 +131,7 @@ class Header extends Component {
             <Sidebar
               isExpanded={isNavExpanded}
               onToggle={this.toggleNav}
+              onClose={this.collapseNav}
               isWorkspaceSettingsActive={isWorkspaceSettingsActive}
               openWorkspaceSettings={this.openWorkspaceSettings}
             >

@@ -21,4 +21,4 @@ export const MY_PROJECTS = '/0/:id/projects';
 export const MY_TASKS = '/0/:id/tasks';
 export const PROFILE = '/0/:id/profile';
 export const EDIT_PROFILE = '/0/:id/edit-profile';
-export const WORKSPACE_PROJECTS = '/0/workspaces/:id/projects';
+export const PROJECTS = '/0/:id/projects';

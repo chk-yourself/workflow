@@ -2,13 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const DashboardPanel = ({ className, name, children, size, link }) => (
-  <section className={`dashboard-panel ${className ? `dashboard-panel--${className}` : ''} dashboard-panel--${size}`}>
+  <section
+    className={`dashboard-panel ${
+      className ? `dashboard-panel--${className}` : ''
+    } dashboard-panel--${size}`}
+  >
     <header className="dashboard-panel__header">
-      <h2 className="dashboard-panel__name">
-        {name}
-      </h2>
+      <h2 className="dashboard-panel__name">{name}</h2>
       {link && (
-        <Link to={link.path} className="dashboard-panel__link">
+        <Link to={link.to} className="dashboard-panel__link">
           {link.text}
         </Link>
       )}

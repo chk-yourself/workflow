@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Logo } from '../Logo';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
@@ -37,6 +37,7 @@ class Sidebar extends Component {
     const { isMembersListVisible } = this.state;
     const {
       onToggle,
+      onClose,
       children,
       activeWorkspace,
       openWorkspaceSettings,
@@ -76,14 +77,14 @@ class Sidebar extends Component {
               </Button>
               <ul className="sidebar__list sidebar__workspace-links">
                 <li className="sidebar__item">
-                  <Link
+                  <NavLink
                     className="sidebar__link"
-                    onClick={onToggle}
-                    to={`/0/workspaces/${workspaceId}/projects`}
+                    onClick={onClose}
+                    to={`/0/${workspaceId}/projects`}
                   >
                     <Icon className="sidebar__icon" name="grid" />
-                    <span className="sidebar__section-name">All Projects</span>
-                  </Link>
+                    <span className="sidebar__section-name">Projects</span>
+                  </NavLink>
                 </li>
                 <li className="sidebar__item sidebar__item--team">
                   <Button

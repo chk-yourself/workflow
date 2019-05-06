@@ -28,8 +28,18 @@ const HowTo = () => (
         }
       ]}
     />
-    <GuideArticleSection id="workspaces" title="Workspaces" />
-    <GuideArticleSection id="projects" title="Projects" />
+    <GuideArticleSection id="workspaces" title="Workspaces">
+      <div className="guide__article-section-wrapper">
+        <GuidePanel title="Create a workspace" />
+        <GuidePanel title="Edit a workspace" />
+      </div>
+    </GuideArticleSection>
+    <GuideArticleSection id="projects" title="Projects">
+      <div className="guide__article-section-wrapper">
+        <GuidePanel title="Create a project" />
+        <GuidePanel title="Edit a project" />
+      </div>
+    </GuideArticleSection>
     <GuideArticleSection id="lists" title="Lists" />
     <GuideArticleSection id="tasks" title="Tasks" />
   </GuideArticle>
