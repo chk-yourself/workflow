@@ -5,11 +5,13 @@
   width: 100%;
   list-style-type: none;
   margin-left: auto;
+  margin-right: auto;
   overflow: visible;
   position: relative;
   padding: 2px 8px;
   display: flex;
   align-items: center;
+  justify-content: center;
   background-color: $white;
   cursor: pointer;
   &:last-child:not(:first-child)::before {
@@ -142,6 +144,7 @@
   &--top {
     justify-content: flex-end;
     padding: 2px 0;
+    z-index: 4;
   }
   &--btm {
     justify-content: flex-start;
@@ -190,13 +193,16 @@
 }
 
 .task__tags {
-  height: 19px;
+  height: 20px;
 }
 
 .task__tag {
   margin-top: 0;
   margin-bottom: 0;
   vertical-align: top;
+  line-height: 1.3;
+  font-weight: 500;
+  font-size: 10.5px;
   &:not(.tag--summary) {
     display: none;
     @include md {

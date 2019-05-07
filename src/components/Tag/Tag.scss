@@ -215,12 +215,18 @@
     color: $white;
     padding: 8px;
     top: calc(100% + 8px);
-    left: calc(50% - 40px);
+    right: -8px;
     text-align: center;
     display: block;
     border-radius: 4px;
-    width: 80px;
+    width: auto;
+    min-width: 40px;
     line-height: 1.2;
+    @include md {
+      left: 50%;
+      transform: translateX(-50%);
+      right: auto;
+    }
   }
   &::before {
     content: '';
