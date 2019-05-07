@@ -172,7 +172,9 @@
   flex-direction: column;
   padding: 0 8px;
   width: 100%;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   overflow: visible;
   margin-top: 36px;
   @include md {
@@ -259,7 +261,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 17px;
+  font-size: 18px;
   margin: 4px 0;
   line-height: 1.2;
   color: $grey-900;
@@ -369,7 +371,7 @@
 .project__link {
   color: $grey-500;
   display: inline-block;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;

@@ -66,7 +66,7 @@ export default class Tasks extends Component {
             <div
               className="list__cards"
               ref={provided.innerRef}
-              style={{ minHeight: snapshot.isDraggingOver ? 80 : 16 }}
+              style={{ minHeight: snapshot.isDraggingOver ? 80 : 4 }}
               {...provided.droppableProps}
             >
               {inner}

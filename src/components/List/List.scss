@@ -24,17 +24,11 @@
     // box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
     .list__popover-wrapper {
       top: 4px;
-      @include md {
-        top: 8px;
-      }
     }
     .list__header {
       margin: 0 8px;
       padding: 4px 0;
       box-shadow: inset 0px -2px 1px -1px $grey-700;
-      @include md {
-        padding-top: 8px;
-      }
     }
     .list__content {
       padding: 0;
@@ -102,6 +96,7 @@
 
 .list__btn--more-actions {
   vertical-align: middle;
+  height: 32px;
   .feather {
     width: 18px;
     height: 18px;
@@ -115,12 +110,12 @@
 .list__input--title {
   border: 1px solid transparent;
   font-weight: 700;
-  padding: 5px 8px;
+  padding: 6px 8px;
   background-color: transparent;
   width: 100%;
   max-width: 400px;
   font-size: 16px;
-  height: 36px;
+  height: auto;
   &:focus:not(:read-only) {
     border-color: $grey-600;
     box-shadow: inset 0 1px $grey-300;
@@ -142,12 +137,12 @@
   -ms-overflow-style: none;
   overflow-x: visible;
   overflow-y: auto;
-  max-height: calc(100vh - 322px);
+  max-height: calc(100vh - 318px);
   @include md {
-    max-height: calc(100vh - 328px);
+    max-height: calc(100vh - 324px);
   }
   @include xl {
-    max-height: calc(100vh - 336px);
+    max-height: calc(100vh - 332px);
   }
 }
 

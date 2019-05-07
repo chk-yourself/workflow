@@ -73,6 +73,15 @@
     }
   }
   &.is-board-layout {
+    &:after {
+      content: '';
+      background-color: transparent;
+      height: 1px;
+      width: 8px;
+      position: relative;
+      left: calc(100% + 14px);
+      top: 0;
+    }
     .list-composer__btn--add {
       &:disabled {
         background-color: $grey-400;
@@ -85,9 +94,9 @@
 
 .list-composer__input {
   background-color: transparent;
-  height: 36px;
+  height: auto;
   border-color: transparent;
-  padding: 0 8px;
+  padding: 5px 8px;
 }
 
 .list-composer__btn--add {
