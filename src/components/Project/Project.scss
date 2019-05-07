@@ -137,7 +137,6 @@
 
 .project__header {
   flex: none;
-  background-color: $cloud;
   left: 0;
   width: 100%;
   position: fixed;
@@ -177,12 +176,16 @@
   left: 0;
   overflow: visible;
   margin-top: 36px;
+  z-index: 10;
   @include md {
     margin-top: 40px;
   }
   &--board {
     overflow-y: hidden;
     min-width: 100%;
+    &.show-task-editor {
+      z-index: 11;
+    }
   }
   &--list {
     .project__header-content {
