@@ -290,7 +290,7 @@ class Firebase {
             projectIds: []
           }
         },
-        pendingInvites: invites,
+        pendingInvites: invites.map(invite => invite.toLowerCase()),
         ownerId: userId,
         projectIds: []
       })
@@ -315,7 +315,7 @@ class Firebase {
         // Send/store invites
         invites.forEach(email => {
           this.createWorkspaceInvite({
-            email,
+            email: email.toLowerCase(),
             workspaceId,
             workspaceName: name,
             from: { ...user }
@@ -873,7 +873,7 @@ class Firebase {
               projectIds: []
             }
           },
-          pendingInvites: workspace.invites,
+          pendingInvites: workspace.invites.map(invite => invite.toLowerCase()),
           ownerId: userId,
           projectIds: []
         })
@@ -896,7 +896,7 @@ class Firebase {
           });
           workspace.invites.forEach(emailTo => {
             this.createWorkspaceInvite({
-              email: emailTo,
+              email: emailTo.toLowerCase(),
               workspaceId,
               workspaceName: workspace.name,
               from
@@ -917,15 +917,13 @@ class Firebase {
   };
 
   createWorkspaceInvite = ({ email, workspaceId, workspaceName, from }) => {
-    this.fs
-      .collection('users')
-      .where('email', '==', email)
+    return this.queryCollection('users', ['email', '==', email])
       .get()
       .then(snapshot => {
         if (snapshot.size > 0) {
           snapshot.forEach(doc => {
             const { activeWorkspace } = doc.data().settings;
-            this.createNotification({
+            return this.createNotification({
               workspaceId: activeWorkspace,
               recipientId: doc.id,
               isActionPending: true,
@@ -945,7 +943,7 @@ class Firebase {
             });
           });
         } else {
-          this.fs.collection('invites').add({
+          return this.getCollection('invites').add({
             to: email,
             createdAt: this.getTimestamp(),
             type: 'workspace',

@@ -9,6 +9,7 @@ import { Avatar } from '../Avatar';
 import { toDateString, isPriorDate } from '../../utils/date';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { Badge } from '../Badge';
+import { TaskDueDate } from '../Task';
 
 class Card extends Component {
   shouldComponentUpdate(nextProps) {
@@ -84,23 +85,11 @@ class Card extends Component {
                   </span>
                 </Badge>
               )}
-              {dueDate && (
-                <Badge
-                  icon="calendar"
-                  className={`card__detail card__due-date ${
-                    isDueToday
-                      ? 'is-due-today'
-                      : isDueTmrw
-                      ? 'is-due-tmrw'
-                      : isPastDue
-                      ? 'is-past-due'
-                      : ''
-                  }
-                  `}
-                >
-                  {dueDateStr}
-                </Badge>
-              )}
+              <TaskDueDate
+                className="card__detail"
+                icon="calendar"
+                dueDate={dueDate}
+              />
               {subtaskIds && subtaskIds.length > 0 && (
                 <Badge className="card__detail" icon="check-circle">
                   {completedSubtasks.length}/{subtaskIds.length}

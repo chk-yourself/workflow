@@ -125,6 +125,7 @@
   font-size: 14px;
   overflow: visible;
   position: relative;
+  width: 100%;
   background-color: transparent;
   &:active,
   &:focus {
@@ -166,19 +167,6 @@
   }
   &:not(:first-child) {
     margin-left: 4px;
-  }
-  &.task__due-date {
-    font-weight: 600;
-    color: $grey-900;
-  }
-  &.is-due-today {
-    color: $secondary;
-  }
-  &.is-due-tmrw {
-    color: $primary;
-  }
-  &.is-past-due {
-    color: $red;
   }
 }
 

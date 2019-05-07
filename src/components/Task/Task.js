@@ -14,8 +14,9 @@ import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { getSelectedProjectId } from '../../ducks/selectedProject';
 import { Badge } from '../Badge';
 import { ProjectBadge } from '../ProjectBadge';
-import { toDateString, isPriorDate } from '../../utils/date';
+import { toDateString, isPriorDate, isWithinDays } from '../../utils/date';
 import { Avatar } from '../Avatar';
+import TaskDueDate from './TaskDueDate';
 import './Task.scss';
 
 class Task extends Component {
@@ -159,6 +160,7 @@ class Task extends Component {
       : null;
     const isDueToday = dueDateStr === 'Today';
     const isDueTmrw = dueDateStr === 'Tomorrow';
+    const isDueThisWeek = dueDate && isWithinDays(dueDate.toDate(), 7);
     const isPastDue = dueDate && isPriorDate(dueDate.toDate());
 
     return (
@@ -206,22 +208,7 @@ class Task extends Component {
                 />
               )}
             </div>
-            {dueDate && (
-              <Badge
-                className={`task__detail task__due-date ${
-                  isDueToday
-                    ? 'is-due-today'
-                    : isDueTmrw
-                    ? 'is-due-tmrw'
-                    : isPastDue
-                    ? 'is-past-due'
-                    : ''
-                }
-                  `}
-              >
-                {dueDateStr}
-              </Badge>
-            )}
+            <TaskDueDate className="task__detail" dueDate={dueDate} />
             {members && members.length > 0 && (
               <div className="task__detail task__members-wrapper">
                 <div className="task__members">

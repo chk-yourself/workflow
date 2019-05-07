@@ -8,12 +8,15 @@ import { withAuthorization } from '../Session';
 import { Members } from '../Members';
 import { TabsContainer } from '../Tabs';
 import { userSelectors } from '../../ducks/users';
+import { ErrorMessage } from '../Error';
 import './WorkspaceSettings.scss';
 
 class WorkspaceSettings extends Component {
   state = {
     name: this.props.activeWorkspace.name,
-    newInvite: ''
+    newInvite: '',
+    nameChangeError: null,
+    inviteError: null
   };
 
   onChange = e => {
@@ -25,13 +28,22 @@ class WorkspaceSettings extends Component {
 
   resetInvite = () => {
     this.setState({
-      newInvite: ''
+      newInvite: '',
+      inviteError: null
+    });
+  };
+
+  resetName = () => {
+    const { activeWorkspace } = this.props;
+    const { name } = activeWorkspace;
+    this.setState({
+      name
     });
   };
 
   updateWorkspaceName = e => {
     e.preventDefault();
-    const { firebase, activeWorkspace } = this.props;
+    const { firebase, activeWorkspace, currentUser } = this.props;
     const { name } = this.state;
     const {
       workspaceId,
@@ -40,13 +52,37 @@ class WorkspaceSettings extends Component {
       pendingInvites
     } = activeWorkspace;
     if (prevName === name) return;
-    const { updateWorkspaceName } = firebase;
-    updateWorkspaceName({ workspaceId, name, memberIds, pendingInvites });
+    try {
+      if (workspaceId === 'DEMO' && currentUser.isGuest) {
+        this.resetName();
+        throw new Error(
+          'You are currently signed in as a Guest. You must be a member to perform this action.'
+        );
+      }
+      const { updateWorkspaceName } = firebase;
+      updateWorkspaceName({ workspaceId, name, memberIds, pendingInvites })
+        .then(() => {
+          this.setState({
+            nameChangeError: null
+          });
+        })
+        .catch(error => {
+          this.setState({
+            nameChangeError: error
+          });
+        });
+    } catch (error) {
+      this.setState({
+        nameChangeError: error
+      });
+    }
   };
 
   inviteMember = e => {
     e.preventDefault();
     const { newInvite } = this.state;
+    if (newInvite === '') return;
+    const email = newInvite.toLowerCase();
     const { firebase, currentUser, activeWorkspace, memberEmails } = this.props;
     const {
       workspaceId,
@@ -60,20 +96,27 @@ class WorkspaceSettings extends Component {
     };
     this.resetInvite();
     const emails = [...pendingInvites, ...memberEmails];
-    if (emails.includes(newInvite)) return;
+    if (emails.includes(email)) return;
     updateDoc(['workspaces', workspaceId], {
-      pendingInvites: addToArray(newInvite)
-    });
-    createWorkspaceInvite({
-      email: newInvite,
-      workspaceId,
-      workspaceName,
-      from
-    });
+      pendingInvites: addToArray(email)
+    })
+      .then(() => {
+        return createWorkspaceInvite({
+          email,
+          workspaceId,
+          workspaceName,
+          from
+        });
+      })
+      .catch(error => {
+        this.setState({
+          inviteError: error
+        });
+      });
   };
 
   render() {
-    const { name, newInvite } = this.state;
+    const { name, newInvite, inviteError, nameChangeError } = this.state;
     const { onClose, activeWorkspace } = this.props;
     const { pendingInvites } = activeWorkspace;
     const isNameInvalid = name === '';
@@ -121,6 +164,9 @@ class WorkspaceSettings extends Component {
                   >
                     Update Workspace
                   </Button>
+                  {nameChangeError && (
+                    <ErrorMessage text={nameChangeError.message} />
+                  )}
                 </form>
               )
             },
@@ -159,7 +205,7 @@ class WorkspaceSettings extends Component {
                   <h4 className="workspace-settings__sub-subheading">
                     Invite more members
                   </h4>
-                  <form id="workspaceInvite">
+                  <form id="workspaceInvite" onSubmit={this.inviteMember}>
                     <Input
                       name="newInvite"
                       id="newWorkspaceInvite"
@@ -183,6 +229,7 @@ class WorkspaceSettings extends Component {
                     >
                       Invite
                     </Button>
+                    {inviteError && <ErrorMessage text={inviteError.message} />}
                   </form>
                 </>
               )

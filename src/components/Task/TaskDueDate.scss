@@ -1,0 +1,19 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.task__due-date {
+  font-weight: 600;
+  color: $grey-900;
+  &.is-due-today {
+    color: $secondary;
+  }
+  &.is-due-tmrw {
+    color: $teal;
+  }
+  &.is-due-this-week {
+    color: $primary;
+  }
+  &.is-past-due {
+    color: $red;
+  }
+}

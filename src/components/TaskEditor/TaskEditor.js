@@ -28,6 +28,7 @@ import { MemberAssigner } from '../MemberAssigner';
 import { NotesEditor } from '../NotesEditor';
 import { Badge } from '../Badge';
 import { debounce } from '../../utils/function';
+import { TaskDueDate } from '../Task';
 
 const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
   return layout === 'board' ? (
@@ -273,15 +274,6 @@ class TaskEditor extends Component {
     const taskDueDate = dueDate
       ? getSimpleDate(dueDate.toDate())
       : getSimpleDate(new Date());
-    const dueDateStr = dueDate
-      ? toDateString(dueDate.toDate(), {
-          useRelative: true,
-          format: { month: 'short', day: 'numeric' }
-        })
-      : null;
-    const isDueToday = dueDateStr === 'Today';
-    const isDueTmrw = dueDateStr === 'Tomorrow';
-    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
     const isPrivate = !projectId;
     return (
       <TaskEditorWrapper
@@ -364,19 +356,10 @@ class TaskEditor extends Component {
                       <span className="task-editor__section-title--sm">
                         Due Date
                       </span>
-                      <span
-                        className={`task-editor__due-date ${
-                          isDueToday
-                            ? 'is-due-today'
-                            : isDueTmrw
-                            ? 'is-due-tmrw'
-                            : isPastDue
-                            ? 'is-past-due'
-                            : ''
-                        }`}
-                      >
-                        {dueDateStr}
-                      </span>
+                      <TaskDueDate
+                        dueDate={dueDate}
+                        className="task-editor__due-date"
+                      />
                     </>
                   )}
                 </span>

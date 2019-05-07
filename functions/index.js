@@ -4,6 +4,45 @@ const firebase_tools = require('firebase-tools');
 
 admin.initializeApp();
 const firestore = admin.firestore();
+const database = admin.database();
+const auth = admin.auth();
+const removeFromArray = value => admin.firestore.FieldValue.arrayRemove(value);
+const deleteField = () => admin.firestore.FieldValue.delete();
+const deleteGuestDocs = (userId, collection) =>
+  collection === 'comments'
+    ? firestore
+        .collection(collection)
+        .where('from.userId', '==', userId)
+        .get()
+        .then(snapshot => {
+          const batch = firestore.batch();
+          snapshot.forEach(doc => {
+            batch.delete(doc.ref);
+          });
+          return batch.commit();
+        })
+    : firestore
+        .collection(collection)
+        .where('ownerId', '==', userId)
+        .get()
+        .then(snapshot => {
+          const batch = firestore.batch();
+          snapshot.forEach(doc => {
+            batch.delete(doc.ref);
+          });
+          return batch.commit();
+        });
+const deleteCollection = path =>
+  firestore
+    .collection(path)
+    .get()
+    .then(snapshot => {
+      const batch = firestore.batch();
+      snapshot.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    });
 
 exports.onUserStatusChanged = functions.database
   .ref('/status/{uid}')
@@ -32,6 +71,48 @@ exports.onGuestStatusChanged = functions.firestore
       console.log('guest signed off');
     }
     return null;
+  });
+
+exports.onGuestDelete = functions.firestore
+  .document('users/{userId}')
+  .onDelete((snap, context) => {
+    const { isGuest, userId } = snap.data();
+    if (!isGuest) {
+      return null;
+    }
+    return Promise.all([
+      firestore
+        .collection('projects')
+        .where('ownerId', '==', userId)
+        .get()
+        .then(snapshot => {
+          let projectIds = [];
+          const batch = firestore.batch();
+          const workspaceRef = firestore.doc('workspaces/DEMO');
+          snapshot.forEach(doc => {
+            const { id: projectId, ref: projectRef } = doc;
+            projectIds = projectIds.concat(projectId);
+            batch.delete(projectRef);
+          });
+          batch.update(workspaceRef, {
+            [`members.${userId}`]: deleteField(),
+            memberIds: removeFromArray(userId),
+            projectIds: removeFromArray(...projectIds)
+          });
+          return batch.commit();
+        }),
+      deleteGuestDocs(userId, 'lists'),
+      deleteGuestDocs(userId, 'tasks'),
+      deleteGuestDocs(userId, 'subtasks'),
+      deleteGuestDocs(userId, 'comments'),
+      deleteCollection(`users/${userId}/workspaces`),
+      deleteCollection(`users/${userId}/workspaces/DEMO/folders`),
+      firestore.doc(`users/${userId}/workspaces/DEMO`).delete(),
+      auth.deleteUser(userId),
+      database.ref(`status/${userId}`).remove()
+    ]).then(() => {
+      return console.log(userId);
+    });
   });
 
 exports.mintAdminToken = functions.https.onCall((data, context) => {
