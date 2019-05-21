@@ -139,10 +139,10 @@
   overflow-y: auto;
   max-height: calc(100vh - 318px);
   @include md {
-    max-height: calc(100vh - 324px);
+    max-height: calc(100vh - 320px);
   }
   @include xl {
-    max-height: calc(100vh - 332px);
+    max-height: calc(100vh - 328px);
   }
 }
 

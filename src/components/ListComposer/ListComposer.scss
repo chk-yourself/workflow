@@ -28,7 +28,7 @@
     .list-composer__input {
       border: none;
       margin-bottom: 0;
-      padding: 16px 4px;
+      padding: 8px 4px;
       background-color: transparent;
       &::placeholder {
         color: $primary;
@@ -45,7 +45,7 @@
       flex: none;
     }
     .list-composer__btn {
-      padding: 10px 6px;
+      padding: 8px 6px;
     }
     .list-composer__btn--icon {
       border: none;
@@ -65,7 +65,7 @@
       .list-composer__form {
         border-color: $grey-600;
         box-shadow: inset 0 1px $grey-300;
-        padding: 6px;
+        padding: 4px;
       }
     }
     @include md {

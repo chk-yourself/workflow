@@ -8,9 +8,6 @@
   overflow: visible;
   margin-top: 36px;
   position: relative;
-  @include md {
-    margin-top: 40px;
-  }
   @include lg {
     padding: 8px 16px;
   }

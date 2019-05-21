@@ -6,16 +6,17 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 10;
 }
 
 .project--board {
   min-width: 100%;
-  margin-top: 104px;
+  margin-top: 102px;
   @include md {
-    margin-top: 106px;
+    margin-top: 104px;
   }
   @include xl {
-    margin-top: 114px;
+    margin-top: 112px;
   }
   .project__lists {
     display: flex;
@@ -25,14 +26,14 @@
   .project__toolbar {
     width: 100%;
     left: 0;
-    top: 100px;
+    top: 98px;
     position: fixed;
     background-color: $cloud;
     @include md {
-      top: 106px;
+      top: 100px;
     }
     @include xl {
-      top: 114px;
+      top: 108px;
     }
     @include xx {
       left: 48px;
@@ -42,15 +43,15 @@
 }
 
 .project--list {
-  margin-top: 72px;
+  margin-top: 70px;
   max-width: 960px;
   background-color: $white;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
   @include md {
-    margin-top: 74px;
+    margin-top: 72px;
   }
   @include xl {
-    margin-top: 82px;
+    margin-top: 80px;
   }
   .project__submenu-wrapper {
     top: 34px;
@@ -68,17 +69,17 @@
   }
   .project__toolbar {
     position: fixed;
-    top: 108px;
+    top: 106px;
     z-index: 5;
     width: calc(100% - 16px);
     max-width: 960px;
     background-color: $white;
     box-shadow: inset 0px -3px 1px -2px $grey-300;
     @include md {
-      top: 114px;
+      top: 108px;
     }
     @include xl {
-      top: 122px;
+      top: 116px;
     }
   }
   .project__lists {
@@ -144,9 +145,6 @@
   top: 36px;
   z-index: 6;
   padding: 0;
-  @include md {
-    top: 40px;
-  }
   @include xx {
     width: calc(100% - 48px);
     left: 48px;
@@ -171,13 +169,11 @@
   display: flex;
   flex-direction: column;
   padding: 0 8px;
+  position: relative;
   width: 100%;
   overflow: visible;
   margin-top: 36px;
   z-index: 10;
-  @include md {
-    margin-top: 40px;
-  }
   &--board {
     overflow-y: hidden;
     min-width: 100%;
@@ -192,7 +188,9 @@
       margin-left: auto;
     }
     &.show-task-editor {
+      z-index: 11;
       @include md {
+        z-index: 10;
         .project__toolbar {
           width: calc(100% - 392px);
         }
@@ -230,10 +228,10 @@
     }
     .task-editor-pane {
       @include md {
-        margin-top: 74px;
+        margin-top: 72px;
       }
       @include xl {
-        margin-top: 82px;
+        margin-top: 80px;
       }
     }
   }
@@ -264,7 +262,7 @@
   text-overflow: ellipsis;
   font-size: 18px;
   margin: 4px 0;
-  line-height: 1.2;
+  line-height: 1.15;
   color: $grey-900;
   padding: 4px 8px 4px 22px;
   border: 1px solid transparent;
@@ -275,11 +273,13 @@
     max-width: 360px;
   }
   @include md {
+    line-height: 1.2;
     margin: 4px 0;
     font-size: 19px;
   }
   @include xl {
     font-size: 1.4rem;
+    line-height: 1.2;
     padding: 6px 10px 6px 24px;
   }
 }
@@ -314,7 +314,7 @@
 
 .project__icon {
   position: absolute;
-  top: calc(50% - 5px);
+  top: calc(50% - 4px);
   left: 8px;
   width: 10px;
   height: 10px;
@@ -375,6 +375,7 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
+  line-height: 1;
   text-transform: uppercase;
   padding: 6px;
   border: 1px solid $grey-400;
@@ -554,6 +555,14 @@
   .feather {
     width: 16px;
     height: 16px;
+  }
+  @include md {
+    width: 32px;
+    height: 32px;
+  }
+  @include xl {
+    width: 40px;
+    height: 40px;
   }
 }
 
