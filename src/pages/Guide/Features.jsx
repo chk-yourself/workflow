@@ -13,11 +13,17 @@ const Features = () => (
   <GuideArticle title="Features" icon="triangle" color="primary">
     <p className="guide__article-intro">
       Workflow is a project management app, inspired by Asana and Trello. Built
-      with Firebase, real-time updates allow for seamless collaboration across
-      multiple users.
+      with React, Redux, and Firebase, Workflow allows users to create shared
+      projects as mobile-friendly, drag-and-drop Kanban boards and todo lists,
+      and collaborate in real-time to manage their tasks.
     </p>
     <Feature title="Project and task management">
       <ul className="guide__list">
+        <li className="guide__item">
+          <strong>Workspaces:</strong> Organize your projects by the people you
+          work with. Workspaces allow you to create teams for collaborating on
+          projects and tasks.
+        </li>
         <li className="guide__item">
           <strong>Projects:</strong> Organize your work into shared projects as
           mobile-friendly, drag-and-drop lists or kanban boards. Enable access
@@ -28,8 +34,7 @@ const Features = () => (
           <strong>Lists:</strong> Organize related tasks into lists.
         </li>
         <li className="guide__item">
-          <strong>Tasks:</strong> Set due dates, organize tasks with color-coded
-          tag labels, add assignees, notes, subtasks, and comments.
+          <strong>Tasks:</strong> Break work into manageable pieces
         </li>
         <li className="guide__item">
           <strong>Subtasks:</strong> Break up tasks into smaller steps.
@@ -37,6 +42,18 @@ const Features = () => (
         <li className="guide__item">
           <strong>Rich text:</strong> Use rich text to organize your thoughts
           and clarify what you mean.
+        </li>
+        <li className="guide__item">
+          <strong>Due dates:</strong> Set due dates to ensure every task gets
+          completed on time.
+        </li>
+        <li className="guide__item">
+          <strong>Task assignees:</strong> Clarify who exactly is responsible
+          for each task.
+        </li>
+        <li className="guide__item">
+          <strong>Task tags:</strong> Use custom, color-coded labels to give
+          tasks additional context or to categorize them for easy viewing
         </li>
       </ul>
     </Feature>
@@ -71,6 +88,10 @@ const Features = () => (
           <strong>Search:</strong> Use the search bar to quickly find what
           you're looking for. Search for tasks by keywords, tags, project, or
           name.
+        </li>
+        <li className="guide__item">
+          <strong>Inbox:</strong> View all your active and archived
+          notifications in one place.
         </li>
       </ul>
     </Feature>

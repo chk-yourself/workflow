@@ -314,10 +314,13 @@
 
 .project__icon {
   position: absolute;
-  top: calc(50% - 4px);
+  top: calc(50% - 5px);
   left: 8px;
   width: 10px;
   height: 10px;
+  @include xl {
+    top: calc(50% - 4px);
+  }
 }
 
 .project__btn {

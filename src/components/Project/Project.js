@@ -53,7 +53,7 @@ class Project extends Component {
     });
   };
 
-  onNameBlur = e => {
+  onNameBlur = () => {
     const { name: prevName, projectId, firebase } = this.props;
     const { name } = this.state;
 
@@ -62,7 +62,7 @@ class Project extends Component {
     }
   };
 
-  activateListComposer = e => {
+  activateListComposer = () => {
     this.listComposerInput.focus();
   };
 
@@ -108,25 +108,25 @@ class Project extends Component {
     e.preventDefault();
   };
 
-  toggleMoreActionsMenu = e => {
+  toggleMoreActionsMenu = () => {
     this.setState(prevState => ({
       isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
     }));
   };
 
-  closeMoreActionsMenu = e => {
+  closeMoreActionsMenu = () => {
     this.setState({
       isMoreActionsMenuVisible: false
     });
   };
 
-  toggleProjectDuplicator = e => {
+  toggleProjectDuplicator = () => {
     this.setState(prevState => ({
       isProjectDuplicatorOpen: !prevState.isProjectDuplicatorOpen
     }));
   };
 
-  closeProjectDuplicator = e => {
+  closeProjectDuplicator = () => {
     this.setState({
       isProjectDuplicatorOpen: false
     });
