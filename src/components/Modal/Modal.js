@@ -1,13 +1,27 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import './Modal.scss';
 
 class Modal extends Component {
+  static propTypes = {
+    onModalClick: PropTypes.func,
+    onModalClose: PropTypes.func,
+    size: PropTypes.string,
+    classes: PropTypes.objectOf(PropTypes.string)
+  };
+
   static defaultProps = {
     onModalClick: () => null,
-    onOutsideClick: () => null
+    onModalClose: () => null,
+    size: 'md',
+    classes: {
+      modal: '',
+      content: '',
+      button: ''
+    }
   };
 
   onOutsideClick = e => {
@@ -21,10 +35,10 @@ class Modal extends Component {
 
   render() {
     const {
-      onModalClose,
       children,
+      onModalClose,
       onModalClick,
-      size = 'md',
+      size,
       classes,
       id,
       innerRef
@@ -33,6 +47,9 @@ class Modal extends Component {
       <div
         className={`modal modal--${size} ${classes.modal || ''}`}
         onClick={onModalClick}
+        role="dialog"
+        aria-modal
+        tabIndex="-1"
       >
         <div
           id={id}
@@ -54,13 +71,5 @@ class Modal extends Component {
     );
   }
 }
-
-Modal.defaultProps = {
-  classes: {
-    modal: '',
-    content: '',
-    button: ''
-  }
-};
 
 export default withOutsideClick(Modal);

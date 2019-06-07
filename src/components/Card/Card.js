@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { taskSelectors } from '../../ducks/tasks';
-import './Card.scss';
 import { Tag } from '../Tag';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
-import { toDateString, isPriorDate } from '../../utils/date';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { Badge } from '../Badge';
 import { TaskDueDate } from '../Task';
+import * as keys from '../../constants/keys';
+import './Card.scss';
 
 class Card extends Component {
   shouldComponentUpdate(nextProps) {
@@ -21,6 +21,12 @@ class Card extends Component {
 
   onClick = e => {
     if (e.target.matches('button') || e.target.matches('a')) return;
+    const { taskId, selectTask } = this.props;
+    selectTask(taskId);
+  };
+
+  onKeyDown = e => {
+    if (e.key !== keys.ENTER) return;
     const { taskId, selectTask } = this.props;
     selectTask(taskId);
   };
@@ -37,15 +43,6 @@ class Card extends Component {
     if (!task) return null;
 
     const { name, commentIds, dueDate, subtaskIds, isCompleted } = task;
-    const dueDateStr = dueDate
-      ? toDateString(dueDate.toDate(), {
-          useRelative: true,
-          format: { month: 'short', day: 'numeric' }
-        })
-      : null;
-    const isDueToday = dueDateStr === 'Today';
-    const isDueTmrw = dueDateStr === 'Tomorrow';
-    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
     return (
       <Draggable draggableId={taskId} index={index}>
         {provided => (
@@ -54,6 +51,7 @@ class Card extends Component {
             onClick={this.onClick}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            onKeyDown={this.onKeyDown}
             ref={provided.innerRef}
             style={{
               ...provided.draggableProps.style,

@@ -31,14 +31,17 @@ const withAuthentication = WrappedComponent => {
         syncUserTags,
         resetActiveWorkspace,
         history,
-        location,
-        firebase
+        location
       } = this.props;
       const { pathname } = location;
       const { pathname: prevPathname } = prevProps.location;
-      if (pathname === ROUTES.LOG_IN && !this.authListener && prevPathname !== pathname) {
+      if (
+        pathname === ROUTES.LOG_IN &&
+        !this.authListener &&
+        prevPathname !== pathname
+      ) {
         this.authListener = this.setAuthListener();
-      };
+      }
       if (!currentUser) return;
       const { userId, settings } = currentUser;
       const { activeWorkspace } = settings;
@@ -145,7 +148,7 @@ const withAuthentication = WrappedComponent => {
           }
         }
       });
-    }
+    };
 
     render() {
       const { currentUser } = this.props;

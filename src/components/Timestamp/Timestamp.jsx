@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { isDate, toDateString, toTimeString } from '../../utils/date';
+import { toDateString, toTimeString } from '../../utils/date';
 import './Timestamp.scss';
 
 export default class Timestamp extends Component {

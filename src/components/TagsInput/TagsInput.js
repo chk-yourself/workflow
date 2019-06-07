@@ -6,7 +6,6 @@ import { Tag } from '../Tag';
 import { Input } from '../Input';
 import { ColorPicker } from '../ColorPicker';
 import { withOutsideClick } from '../withOutsideClick';
-import { taskActions } from '../../ducks/tasks';
 import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
 import './TagsInput.scss';

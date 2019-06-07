@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { HashLink } from '../HashLink';
 import './TableOfContents.scss';
 
 const TableOfContents = ({ title, sections, classes }) => (

@@ -302,18 +302,6 @@
   background-color: #fff;
   min-width: 160px;
   @include box-shadow(2);
-  a {
-    color: $grey-800;
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    padding: 8px 12px;
-    &:hover {
-      background-color: $primary;
-      color: #fff;
-    }
-  }
   &.task-editor__member-search-popover {
     top: 0;
     left: 44px;
@@ -323,6 +311,21 @@
     box-shadow: none;
     border-color: transparent;
     max-width: 400px;
+  }
+}
+
+.task-editor__more-actions-btn {
+  border-radius: 0;
+  text-align: left;
+  color: $grey-800;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  &:hover {
+    background-color: $primary;
+    color: #fff;
   }
 }
 

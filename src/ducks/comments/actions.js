@@ -139,7 +139,6 @@ export const syncTaskComments = taskId => {
               const commentData = change.doc.data();
               const { commentsById } = getState();
               if (change.type === 'added') {
-                const { createdAt } = commentData;
                 if (commentsById && commentId in commentsById) return;
                 dispatch(addComment({ commentId, commentData }));
               } else if (change.type === 'removed') {

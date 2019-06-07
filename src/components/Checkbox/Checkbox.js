@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Icon } from '../Icon';
 import './Checkbox.scss';
 
@@ -18,13 +19,11 @@ const Checkbox = ({
     <label
       htmlFor={id}
       onClick={onClick}
-      className={`checkbox__label ${isChecked ? 'is-checked' : ''} ${labelClass}`}
+      className={`checkbox__label ${
+        isChecked ? 'is-checked' : ''
+      } ${labelClass}`}
     >
-      {
-        isChecked && (
-          <Icon name="check" />
-        )
-      }
+      {isChecked && <Icon name="check" />}
       <input
         type="checkbox"
         id={id}
@@ -44,6 +43,12 @@ Checkbox.defaultProps = {
   className: '',
   labelClass: '',
   label: ''
+};
+
+Checkbox.propTypes = {
+  className: PropTypes.string,
+  labelClass: PropTypes.string,
+  label: PropTypes.string
 };
 
 export default Checkbox;

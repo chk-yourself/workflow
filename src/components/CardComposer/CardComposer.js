@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { projectActions, projectSelectors } from '../../ducks/projects';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import * as keys from '../../constants/keys';

@@ -7,7 +7,6 @@ import { Button } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
-import { JamIcon } from '../JamIcon';
 import * as ROUTES from '../../constants/routes';
 import './Sidebar.scss';
 

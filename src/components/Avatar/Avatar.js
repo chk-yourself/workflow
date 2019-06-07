@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Avatar.scss';
-import { fromJSON } from 'tough-cookie';
 
 export default class Avatar extends Component {
   static defaultProps = {
@@ -38,9 +37,9 @@ export default class Avatar extends Component {
     } = this.props;
     return (
       <span
-        className={`avatar avatar--${size} avatar--${variant} ${showOnlineStatus && isOnline ? 'is-online' : ''} ${
-          classes.avatar
-        }`}
+        className={`avatar avatar--${size} avatar--${variant} ${
+          showOnlineStatus && isOnline ? 'is-online' : ''
+        } ${classes.avatar}`}
       >
         {imgSrc !== null ? (
           <img

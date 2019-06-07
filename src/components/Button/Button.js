@@ -1,5 +1,6 @@
 /* eslint-disable react/button-has-type */
 import React from 'react';
+import PropTypes from 'prop-types';
 import './Button.scss';
 
 const Button = ({
@@ -42,13 +43,31 @@ Button.defaultProps = {
   color: 'neutral',
   size: 'md',
   variant: 'text',
-  iconOnly: false,
-  ref: null,
-  isActive: false,
   value: '',
   name: '',
+  iconOnly: false,
+  isActive: false,
+  ref: null,
   onClick: () => null,
   onMouseDown: () => null
+};
+
+Button.propTypes = {
+  type: PropTypes.string,
+  className: PropTypes.string,
+  color: PropTypes.string,
+  size: PropTypes.string,
+  variant: PropTypes.string,
+  value: PropTypes.string,
+  name: PropTypes.string,
+  iconOnly: PropTypes.bool,
+  isActive: PropTypes.bool,
+  ref: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  ]),
+  onClick: PropTypes.func,
+  onMouseDown: PropTypes.func
 };
 
 export default Button;

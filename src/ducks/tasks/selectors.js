@@ -178,8 +178,6 @@ export const getCompletedSubtasks = (state, taskId) => {
   if (!subtaskIds) return [];
   return subtaskIds.filter(subtaskId => {
     const subtask = subtasksById[subtaskId];
-    if (subtask) {
-      return subtask.isCompleted;
-    }
+    return subtask && subtask.isCompleted;
   });
 };

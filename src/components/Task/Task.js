@@ -1,20 +1,14 @@
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
 import { Tag } from '../Tag';
-import { Icon } from '../Icon';
 import { withFirebase } from '../Firebase';
 import * as keys from '../../constants/keys';
 import { taskActions, taskSelectors } from '../../ducks/tasks';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { getSelectedProjectId } from '../../ducks/selectedProject';
-import { Badge } from '../Badge';
 import { ProjectBadge } from '../ProjectBadge';
-import { toDateString, isPriorDate, isWithinDays } from '../../utils/date';
 import { Avatar } from '../Avatar';
 import TaskDueDate from './TaskDueDate';
 import './Task.scss';
@@ -85,7 +79,6 @@ class Task extends Component {
   };
 
   handleTaskClick = e => {
-    console.log(e.target);
     if (
       e.target.matches('button') ||
       e.target.matches('a') ||
@@ -150,18 +143,6 @@ class Task extends Component {
 
     const { isCompleted, dueDate, projectId, tagIds } = task;
     const { isFocused, name } = this.state;
-    const draggableProps = provided ? provided.draggableProps : {};
-    const dragHandleProps = provided ? provided.dragHandleProps : {};
-    const dueDateStr = dueDate
-      ? toDateString(dueDate.toDate(), {
-          useRelative: true,
-          format: { month: 'short', day: 'numeric' }
-        })
-      : null;
-    const isDueToday = dueDateStr === 'Today';
-    const isDueTmrw = dueDateStr === 'Tomorrow';
-    const isDueThisWeek = dueDate && isWithinDays(dueDate.toDate(), 7);
-    const isPastDue = dueDate && isPriorDate(dueDate.toDate());
 
     return (
       <li
@@ -169,8 +150,8 @@ class Task extends Component {
         onClick={this.handleTaskClick}
         tabIndex={0}
         ref={innerRef}
-        {...draggableProps}
-        {...dragHandleProps}
+        {...provided && provided.draggableProps}
+        {...provided && provided.dragHandleProps}
         onKeyDown={this.onKeyDown}
         onMouseDown={this.onMouseDown}
         onMouseUp={this.onMouseUp}

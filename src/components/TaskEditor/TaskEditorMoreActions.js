@@ -2,8 +2,9 @@ import React from 'react';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { PopoverWrapper } from '../Popover';
+import { Button } from '../Button';
 
-const TaskEditorMoreActions = ({ onMenuClick }) => (
+const TaskEditorMoreActions = ({ onDelete }) => (
   <PopoverWrapper
     classes={{
       wrapper: 'task-editor__popover-wrapper',
@@ -17,11 +18,11 @@ const TaskEditorMoreActions = ({ onMenuClick }) => (
       children: <Icon name="more-horizontal" />
     }}
   >
-    <Menu onClick={onMenuClick}>
+    <Menu>
       <MenuItem>
-        <a href="" data-action="delete">
+        <Button onClick={onDelete} className="task-editor__more-actions-btn">
           Delete task
-        </a>
+        </Button>
       </MenuItem>
     </Menu>
   </PopoverWrapper>

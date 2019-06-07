@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './Navbar.scss';
+import { withOutsideClick } from '../withOutsideClick';
 import { Logo } from '../Logo';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 
-export default class Navbar extends Component {
+class Navbar extends Component {
   static defaultProps = {
     minWidth: 768,
     classes: {
@@ -15,14 +16,15 @@ export default class Navbar extends Component {
 
   state = {
     viewportWidth: window.innerWidth,
-    isMobileNavVisible: false,
-    isTouchEnabled: false
+    isMobileNavVisible: false
   };
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
-    document.addEventListener('touchstart', this.handleTouch);
-    document.addEventListener('click', this.handleOutsideClick);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   }
 
   handleResize = () => {
@@ -42,31 +44,16 @@ export default class Navbar extends Component {
     const { minWidth } = this.props;
     const isMobileView = viewportWidth < minWidth;
 
-    if (!isMobileView) return;
-    if (e.target.matches('button') || e.target.matches('a')) {
-      this.toggleMobileNavVisibility();
-    }
+    if (!isMobileView || (!e.target.matches('button') && !e.target.matches('a'))) return;
+    this.toggleMobileNavVisibility();
   };
 
-  componentWillUnmount() {
-    const { isTouchEnabled } = this.state;
-    window.removeEventListener('resize', this.handleResize);
-
-    if (isTouchEnabled) {
-      document.removeEventListener('touchstart', this.handleOutsideClick);
-    } else {
-      document.removeEventListener('click', this.handleOutsideClick);
-      document.removeEventListener('touchstart', this.handleTouch);
-    }
-  }
-
-  handleOutsideClick = e => {
+  onOutsideClick = e => {
     const { viewportWidth } = this.state;
     const { minWidth } = this.props;
     const isMobileView = viewportWidth < minWidth;
     if (
       !isMobileView ||
-      this.navLinksEl.contains(e.target) ||
       e.target.matches('button') ||
       e.target.matches('a')
     )
@@ -76,20 +63,9 @@ export default class Navbar extends Component {
     });
   };
 
-  handleTouch = () => {
-    const { isTouchEnabled } = this.state;
-    if (isTouchEnabled === true) return;
-    this.setState({
-      isTouchEnabled: true
-    });
-    document.removeEventListener('touchstart', this.handleTouch);
-    document.removeEventListener('click', this.handleOutsideClick);
-    document.addEventListener('touchstart', this.handleOutsideClick);
-  };
-
   render() {
     const { viewportWidth, isMobileNavVisible } = this.state;
-    const { minWidth, classes, children } = this.props;
+    const { minWidth, classes, children, innerRef } = this.props;
     const isMobileView = viewportWidth < minWidth;
 
     return (
@@ -97,7 +73,7 @@ export default class Navbar extends Component {
         className={`navbar ${isMobileView ? 'is-collapsed' : ''} ${
           isMobileView && isMobileNavVisible ? 'show-links' : ''
         } ${classes.navbar}`}
-        ref={el => (this.navEl = el)}
+        ref={innerRef}
       >
         <Logo className="navbar__logo" onClick={this.handleClick} />
         {isMobileView && (
@@ -114,7 +90,6 @@ export default class Navbar extends Component {
         <ul
           className={`navbar__links ${classes.links}`}
           onClick={this.handleClick}
-          ref={el => (this.navLinksEl = el)}
         >
           {children}
         </ul>
@@ -122,3 +97,5 @@ export default class Navbar extends Component {
     );
   }
 }
+
+export default withOutsideClick(Navbar);

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import { Input } from '../Input';
 import { Button } from '../Button';
 import * as keys from '../../constants/keys';
@@ -60,7 +59,7 @@ class TaskComposer extends Component {
     });
   };
 
-  onFocus = e => {
+  onFocus = () => {
     this.setState({
       isActive: true
     });
@@ -75,7 +74,6 @@ class TaskComposer extends Component {
 
   render() {
     const { name, isActive } = this.state;
-    const { listId, folderId } = this.props;
 
     return (
       <div

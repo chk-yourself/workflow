@@ -4,7 +4,6 @@ import { compose } from 'recompose';
 import { withAuthorization } from '../../components/Session';
 import { Main } from '../../components/Main';
 import { Avatar } from '../../components/Avatar';
-import { Icon } from '../../components/Icon';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Textarea } from '../../components/Textarea';

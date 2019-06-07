@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import * as ROUTES from '../../constants/routes';
+import React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 
-export default class WorkspaceInvites extends Component {
-  render() {
-    const { invites, onChange } = this.props;
-
-    return (
-      <section className="account-setup__section">
-        <h2 className="account-setup__section-heading">You were invited to join the following workspaces:</h2>
-        <p className="account-setup__paragraph">Please select the workspaces you wish to join.</p>
-        <ul className="account-setup__list">
-        {invites.map((invite, i) => (
-          <li key={invite.id} className="account-setup__item">
+const WorkspaceInvites = ({ invites, onChange }) => (
+  <section className="account-setup__section">
+    <h2 className="account-setup__section-heading">
+      You were invited to join the following workspaces:
+    </h2>
+    <p className="account-setup__paragraph">
+      Please select the workspaces you wish to join.
+    </p>
+    <ul className="account-setup__list">
+      {invites.map((invite, i) => (
+        <li key={invite.id} className="account-setup__item">
           <Checkbox
             name={invite.data.id}
             value={invite.data.id}
@@ -24,10 +23,10 @@ export default class WorkspaceInvites extends Component {
             data-index={i}
             label={invite.data.name}
           />
-          </li>
-        ))}
-        </ul>
-      </section>
-    );
-  }
-}
+        </li>
+      ))}
+    </ul>
+  </section>
+);
+
+export default WorkspaceInvites;

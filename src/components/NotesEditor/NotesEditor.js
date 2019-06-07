@@ -4,7 +4,6 @@ import { withFirebase } from '../Firebase';
 import { userSelectors } from '../../ducks/users';
 import { RichTextEditor, getUserIdsFromMentions } from '../RichTextEditor';
 import './NotesEditor.scss';
-import { withAuthorization } from '../Session';
 
 class NotesEditor extends Component {
   static defaultProps = {

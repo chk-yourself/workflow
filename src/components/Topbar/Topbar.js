@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { withAuthorization } from '../Session';
 import { PopoverWrapper } from '../Popover';
 import { Avatar } from '../Avatar';
@@ -9,7 +9,6 @@ import { SearchTypeahead } from '../Search';
 import { WorkspaceSelect } from '../Workspace';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
-import * as ROUTES from '../../constants/routes';
 import './Topbar.scss';
 
 class Topbar extends Component {

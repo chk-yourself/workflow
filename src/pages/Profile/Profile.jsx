@@ -76,6 +76,7 @@ const Profile = ({ user, currentUser, activeWorkspace }) => {
           <ContactInfo icon="github">
             <a
               target="_blank"
+              rel="noreferrer noopener"
               href={`https://github.com/${github}`}
               className="profile__link"
             >
@@ -87,6 +88,7 @@ const Profile = ({ user, currentUser, activeWorkspace }) => {
           <ContactInfo icon="linkedin">
             <a
               target="_blank"
+              rel="noreferrer noopener"
               href={`https://www.linkedin.com/in/${linkedin}`}
               className="profile__link"
             >

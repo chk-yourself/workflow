@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../../components/Firebase';
-import * as ROUTES from '../../constants/routes';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { ErrorMessage } from '../../components/Error';

@@ -12,8 +12,8 @@ const TaskEditorPane = ({ onClose, onClick, children }) => (
       iconOnly
     >
       <Icon name="x" />
-  </Button>
-  { children }
+    </Button>
+    {children}
   </div>
 );
 

@@ -4,13 +4,11 @@ import { Route, Switch } from 'react-router-dom';
 import { withAuthorization } from '../../components/Session';
 import * as ROUTES from '../../constants/routes';
 import { userActions } from '../../ducks/users';
-import { ProjectGrid } from '../../components/ProjectGrid';
 import { ProjectComposer } from '../../components/ProjectComposer';
 import { ProjectContainer } from '../../components/Project';
 import { projectActions } from '../../ducks/projects';
 import { taskActions } from '../../ducks/tasks';
 import { currentUserActions } from '../../ducks/currentUser';
-import { Main } from '../../components/Main';
 import { Dashboard } from '../../components/Dashboard';
 import { MyTasks } from '../MyTasks';
 import { SearchResults, TagSearchResults } from '../../components/Search';
@@ -86,8 +84,6 @@ class HomePage extends Component {
 
   render() {
     const { isProjectComposerOpen, isLoading } = this.state;
-    const { currentUser } = this.props;
-    const { userId } = currentUser;
     if (isLoading) return null;
     return (
       <>

@@ -1,34 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
-import { currentUserSelectors } from '../../ducks/currentUser';
-import { taskActions, taskSelectors } from '../../ducks/tasks';
+import { taskActions } from '../../ducks/tasks';
 import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
-import { subtaskSelectors } from '../../ducks/subtasks';
+import { listSelectors } from '../../ducks/lists';
 import { Textarea } from '../Textarea';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Modal } from '../Modal';
 import { Toolbar } from '../Toolbar';
-import TaskEditorSection from './TaskEditorSection';
-import TaskEditorMoreActions from './TaskEditorMoreActions';
-import { Subtasks } from '../Subtasks';
-import { SubtaskComposer } from '../SubtaskComposer';
-import { TagsInput } from '../TagsInput';
-import './TaskEditor.scss';
-import { listSelectors } from '../../ducks/lists';
-import { DatePicker } from '../DatePicker';
-import TaskEditorPane from './TaskEditorPane';
-import { ProjectBadge } from '../ProjectBadge';
-import { getSimpleDate, toDateString, isPriorDate } from '../../utils/date';
-import { ProjectListDropdown } from '../ProjectListDropdown';
-import { CommentComposer } from '../CommentComposer';
-import { Comments } from '../Comments';
-import { MemberAssigner } from '../MemberAssigner';
-import { NotesEditor } from '../NotesEditor';
-import { Badge } from '../Badge';
 import { debounce } from '../../utils/function';
-import { TaskDueDate } from '../Task';
+import TaskEditorMoreActions from './TaskEditorMoreActions';
+import TaskEditorPane from './TaskEditorPane';
+import TaskEditorComments from './TaskEditorComments';
+import TaskEditorSubtasks from './TaskEditorSubtasks';
+import TaskEditorNotes from './TaskEditorNotes';
+import TaskEditorDueDate from './TaskEditorDueDate';
+import TaskEditorTags from './TaskEditorTags';
+import TaskEditorAssignees from './TaskEditorAssignees';
+import TaskEditorProjectDetails from './TaskEditorProjectDetails';
+import './TaskEditor.scss';
 
 const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
   return layout === 'board' ? (
@@ -50,10 +41,6 @@ const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
   );
 };
 
-/*
-  TODO: Break up logic in child components
-  */
-
 class TaskEditor extends Component {
   state = {
     name: this.props.name,
@@ -71,6 +58,9 @@ class TaskEditor extends Component {
     this.setViewportWidth();
     this.handleResize = debounce(200, this.setViewportWidth);
     window.addEventListener('resize', this.handleResize);
+    if (this.textarea) {
+      this.textarea.focus();
+    }
   }
 
   componentWillUnmount() {
@@ -130,18 +120,7 @@ class TaskEditor extends Component {
     });
   };
 
-  handleMoreActions = e => {
-    if (!e.target.matches('a')) return;
-    const { action } = e.target.dataset;
-    switch (action) {
-      case 'delete':
-        this.deleteTask();
-        break;
-    }
-    e.preventDefault();
-  };
-
-  assignMember = (userId, e) => {
+  assignMember = userId => {
     const {
       taskId,
       projectId,
@@ -202,7 +181,7 @@ class TaskEditor extends Component {
     }));
   };
 
-  toggleCompleted = e => {
+  toggleCompleted = () => {
     const { taskId, isCompleted, firebase } = this.props;
     firebase.updateDoc(['tasks', taskId], {
       isCompleted: !isCompleted,
@@ -252,28 +231,24 @@ class TaskEditor extends Component {
     selectTask(null);
   };
 
+  setTextareaRef = el => {
+    this.textarea = el;
+  };
+
   render() {
     const {
       taskId,
       commentIds,
       assignedTo,
-      taskTags,
-      mergedTags,
       dueDate,
       subtaskIds,
       projectId,
-      completedSubtasks,
       layout,
       listId,
       isCompleted,
       notes
     } = this.props;
     const { name, isDatePickerActive, viewportWidth } = this.state;
-    const hasSubtasks = subtaskIds && subtaskIds.length > 0;
-    const hasComments = commentIds && commentIds.length > 0;
-    const taskDueDate = dueDate
-      ? getSimpleDate(dueDate.toDate())
-      : getSimpleDate(new Date());
     const isPrivate = !projectId;
     return (
       <TaskEditorWrapper
@@ -293,7 +268,7 @@ class TaskEditor extends Component {
             <Icon name="check" />
             {isCompleted ? 'Completed' : 'Mark Completed'}
           </Button>
-          <TaskEditorMoreActions onMenuClick={this.handleMoreActions} />
+          <TaskEditorMoreActions onDelete={this.deleteTask} />
         </Toolbar>
         <div className="task-editor__wrapper">
           <form name="editTaskForm" className="task-editor__edit-task-form">
@@ -302,193 +277,46 @@ class TaskEditor extends Component {
               name="name"
               value={name}
               onChange={this.onChange}
-              required
               onBlur={this.onBlur}
+              innerRef={this.setTextareaRef}
+              required
             />
-            {!isPrivate ? (
-              <TaskEditorSection size="sm">
-                <div className="task-editor__project-name">
-                  <ProjectBadge
-                    projectId={projectId}
-                    size="md"
-                    variant="icon"
-                    classes={{
-                      badge: 'task-editor__project-badge',
-                      icon: 'task-editor__project-badge-icon'
-                    }}
-                  />
-                </div>
-                <div className="task-editor__list-name">
-                  <ProjectListDropdown
-                    classes={{
-                      button: 'task-editor__project-list-dropdown-btn--toggle',
-                      menu: 'task-editor__project-list-dropdown-menu'
-                    }}
-                    projectId={projectId}
-                    selectedList={listId}
-                    onChange={this.moveToList}
-                  />
-                </div>
-              </TaskEditorSection>
-            ) : (
-              <div className="task-editor__private-indicator">
-                <Badge className="task-editor__badge--private">Private</Badge>
-              </div>
-            )}
-            <TaskEditorSection>
-              <Button
-                onClick={this.toggleDatePicker}
-                type="button"
-                className={`task-editor__btn--due-date ${
-                  isDatePickerActive ? 'is-active' : ''
-                }`}
-              >
-                <span className="task-editor__due-date-icon">
-                  <Icon name="calendar" />
-                </span>
-                <span className="task-editor__due-date-wrapper">
-                  {!dueDate ? (
-                    <span className="task-editor__no-due-date">
-                      Set due date
-                    </span>
-                  ) : (
-                    <>
-                      <span className="task-editor__section-title--sm">
-                        Due Date
-                      </span>
-                      <TaskDueDate
-                        dueDate={dueDate}
-                        className="task-editor__due-date"
-                      />
-                    </>
-                  )}
-                </span>
-              </Button>
-              <DatePicker
-                innerRef={el => (this.datePickerEl = el)}
-                onClose={this.toggleDatePicker}
-                selectedDate={dueDate ? taskDueDate : null}
-                currentMonth={taskDueDate.month}
-                currentYear={taskDueDate.year}
-                selectDate={this.setDueDate}
-                isActive={isDatePickerActive}
-              />
-            </TaskEditorSection>
-            <TaskEditorSection>
-              <div className="task-editor__section-icon">
-                <Icon name="user" />
-              </div>
-              <div className="task-editor__members">
-                <MemberAssigner
-                  classes={{ memberAssigner: 'task-editor__member-assigner' }}
-                  placeholder="Assign or remove member"
-                  memberIds={assignedTo}
-                  onSelectMember={this.assignMember}
-                  isMemberSearchDisabled={isPrivate}
-                />
-              </div>
-            </TaskEditorSection>
-            <TaskEditorSection>
-              <div className="task-editor__section-icon">
-                <Icon name="tag" />
-              </div>
-              <TagsInput
-                taskId={taskId}
-                projectId={projectId}
-                tagSuggestions={mergedTags}
-                assignedTags={taskTags}
-              />
-            </TaskEditorSection>
-            <TaskEditorSection>
-              <div className="task-editor__section-icon">
-                <Icon name="edit-3" />
-              </div>
-              <NotesEditor
-                placeholder="Add a description"
-                type="task"
-                key={`notes--${taskId}`}
-                id={taskId}
-                value={notes}
-                isMentionsEnabled={!isPrivate}
-                classes={{
-                  editor:
-                    'task-editor__textarea task-editor__textarea--description'
-                }}
-              />
-            </TaskEditorSection>
+            <TaskEditorProjectDetails
+              isPrivate={isPrivate}
+              projectId={projectId}
+              listId={listId}
+              onSelectList={this.moveToList}
+            />
+            <TaskEditorDueDate
+              dueDate={dueDate}
+              onToggleDatePicker={this.toggleDatePicker}
+              isDatePickerActive={isDatePickerActive}
+              onSelectDueDate={this.setDueDate}
+            />
+            <TaskEditorAssignees
+              memberIds={assignedTo}
+              onSelectMember={this.assignMember}
+              enableSearch={!isPrivate}
+            />
+            <TaskEditorTags taskId={taskId} projectId={projectId} />
+            <TaskEditorNotes
+              taskId={taskId}
+              value={notes}
+              enableMentions={!isPrivate}
+            />
           </form>
-          <TaskEditorSection>
-            <div className="task-editor__section-header">
-              <div className="task-editor__section-icon">
-                <Icon name="check-circle" />
-              </div>
-              <h3 className="task-editor__section-title">
-                {hasSubtasks && (
-                  <span className="task-editor__section-detail">
-                    {completedSubtasks.length}/{subtaskIds.length}
-                  </span>
-                )}
-                Subtasks
-              </h3>
-              <hr className="task-editor__hr" />
-            </div>
-            <div className="task-editor__subtasks-container">
-              <Subtasks
-                taskId={taskId}
-                subtaskIds={subtaskIds}
-                projectId={projectId}
-                usePortal={layout === 'board' && viewportWidth >= 576}
-              />
-              <SubtaskComposer
-                taskId={taskId}
-                projectId={projectId}
-                classes={{
-                  composer: 'task-editor__subtask-composer',
-                  iconWrapper: 'task-editor__subtask-composer-icon-wrapper',
-                  form: 'task-editor__new-subtask-form',
-                  textarea: 'task-editor__textarea--new-subtask',
-                  button: 'task-editor__btn--add-subtask'
-                }}
-              />
-            </div>
-          </TaskEditorSection>
+          <TaskEditorSubtasks
+            taskId={taskId}
+            projectId={projectId}
+            subtaskIds={subtaskIds}
+            usePortal={layout === 'board' && viewportWidth >= 576}
+          />
           {!isPrivate && (
-            <TaskEditorSection className="comments">
-              <div className="task-editor__section-header">
-                <div className="task-editor__section-icon">
-                  <Icon name="message-circle" />
-                </div>
-                <h3 className="task-editor__section-title">
-                  {hasComments && (
-                    <span className="task-editor__section-detail">
-                      {commentIds.length}
-                    </span>
-                  )}
-                  {hasComments && commentIds.length === 1
-                    ? 'Comment'
-                    : 'Comments'}
-                </h3>
-                <hr className="task-editor__hr" />
-              </div>
-
-              {hasComments && (
-                <div className="task-editor__comments">
-                  <Comments taskId={taskId} commentIds={commentIds} />
-                </div>
-              )}
-              <CommentComposer
-                key={`comment-composer--${taskId}`}
-                id={`comment-composer--${taskId}`}
-                taskId={taskId}
-                projectId={projectId}
-                classes={{
-                  avatar: 'task-editor__avatar',
-                  avatarPlaceholder: 'task-editor__avatar-placeholder',
-                  composer: 'task-editor__comment-composer',
-                  button: 'task-editor__btn--submit-comment'
-                }}
-              />
-            </TaskEditorSection>
+            <TaskEditorComments
+              taskId={taskId}
+              projectId={projectId}
+              commentIds={commentIds}
+            />
           )}
         </div>
       </TaskEditorWrapper>
@@ -496,17 +324,8 @@ class TaskEditor extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    taskTags: taskSelectors.getTaskTags(state, ownProps.taskId),
-    mergedTags: currentUserSelectors.getMergedProjectTags(
-      state,
-      ownProps.projectId
-    ),
-    completedSubtasks: subtaskSelectors.getCompletedSubtasks(
-      state,
-      ownProps.subtaskIds
-    ),
     listsById: listSelectors.getListsById(state)
   };
 };

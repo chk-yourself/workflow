@@ -4,20 +4,22 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withFirebase } from '../Firebase';
 import AuthUserContext from './context';
-import * as ROUTES from '../../constants/routes';
 import { getDisplayName } from '../../utils/react';
 import { activeWorkspaceSelectors } from '../../ducks/activeWorkspace';
 
-const withAuthorization = (condition) => WrappedComponent => {
+const withAuthorization = condition => WrappedComponent => {
   class WithAuthorization extends Component {
-
     render() {
       const { activeWorkspace, ...rest } = this.props;
       return (
         <AuthUserContext.Consumer>
-          {currentUser => 
+          {currentUser =>
             condition(currentUser, activeWorkspace) ? (
-              <WrappedComponent currentUser={currentUser} activeWorkspace={activeWorkspace} {...rest} />
+              <WrappedComponent
+                currentUser={currentUser}
+                activeWorkspace={activeWorkspace}
+                {...rest}
+              />
             ) : null
           }
         </AuthUserContext.Consumer>
@@ -38,9 +40,7 @@ const withAuthorization = (condition) => WrappedComponent => {
   return compose(
     withRouter,
     withFirebase,
-    connect(
-      mapStateToProps
-    )
+    connect(mapStateToProps)
   )(WithAuthorization);
 };
 

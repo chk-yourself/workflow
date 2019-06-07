@@ -30,8 +30,6 @@ export default class DatePicker extends Component {
     });
   };
 
-  componentDidMount() {}
-
   selectDate = date => {
     if (typeof date === 'string') {
       const newDate = toSimpleDateObj(date);
@@ -101,7 +99,7 @@ export default class DatePicker extends Component {
     const { onClose } = this.props;
     this.resetCalendar();
     onClose();
-  }
+  };
 
   render() {
     const { isActive, innerRef } = this.props;

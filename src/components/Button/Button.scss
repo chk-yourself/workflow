@@ -157,6 +157,9 @@ button {
 
 .text--neutral {
   color: $grey-700;
+  &:focus {
+    color: $primary;
+  }
 }
 
 .text--success {
