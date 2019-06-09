@@ -31,19 +31,27 @@ class SearchResults extends Component {
   };
 
   render() {
-    const { currentUser, selectedTaskId, tasksById, tasks, query } = this.props;
+    const {
+      currentUser,
+      selectedTaskId,
+      tasksById,
+      tasks,
+      query,
+      title,
+      icon
+    } = this.props;
     const { userId } = currentUser;
     const isTaskEditorOpen = !!selectedTaskId;
     return (
       <Main
-        title="Search Results"
+        title={title}
         classes={{
           main: `search-results ${isTaskEditorOpen ? 'show-task-editor' : ''}`,
           title: 'search-results__title'
         }}
       >
         <h2 className="search-results__subheading">
-          <Icon name="search" />
+          <Icon name={icon} />
           {query}
         </h2>
         <div className="search-results__tasks-wrapper">
@@ -73,9 +81,8 @@ class SearchResults extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    tasks: taskSelectors.getTasksMatchingQuery(state, ownProps.query),
     selectedTaskId: getSelectedTaskId(state),
     tasksById: taskSelectors.getTasksById(state)
   };

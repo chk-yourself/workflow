@@ -11,7 +11,7 @@ import { taskActions } from '../../ducks/tasks';
 import { currentUserActions } from '../../ducks/currentUser';
 import { Dashboard } from '../../components/Dashboard';
 import { MyTasks } from '../MyTasks';
-import { SearchResults, TagSearchResults } from '../../components/Search';
+import { QuerySearchResults, TagSearchResults } from '../../components/Search';
 import { Profile } from '../Profile';
 import { EditProfile } from '../EditProfile';
 import { Inbox } from '../Inbox';
@@ -135,7 +135,7 @@ class HomePage extends Component {
             render={props => {
               const { search } = props.location;
               const params = getParams(search);
-              return <SearchResults query={params.q} {...props} />;
+              return <QuerySearchResults query={params.q} {...props} />;
             }}
           />
           <Route

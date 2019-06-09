@@ -97,13 +97,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(NotesEditor)
-);
+export default withFirebase(connect(mapStateToProps)(NotesEditor));

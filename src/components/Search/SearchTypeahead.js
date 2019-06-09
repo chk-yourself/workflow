@@ -25,7 +25,7 @@ class SearchTypeahead extends Component {
     filteredList: []
   };
 
-  reset = e => {
+  reset = () => {
     this.setState({
       isActive: false,
       query: '',
@@ -304,7 +304,7 @@ class SearchTypeahead extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
     userId: currentUserSelectors.getCurrentUserId(state),
     projects: currentUserSelectors.getCurrentUserProjects(state),

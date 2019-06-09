@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { toDateString, isPriorDate } from '../../utils/date';
 import { getTaskIdsByViewFilter } from '../tasks/selectors';
 import { getProjectTags } from '../projects/selectors';
@@ -116,9 +117,8 @@ export const getSortedFilteredTaskGroups = state => {
         }
         return tasksByProject;
       }, []);
-      const miscFolder = foldersById['4'];
       const noProject = {
-        ...miscFolder,
+        ...foldersById['4'],
         projectId: null,
         projectName: null,
         dueDate: null,
@@ -211,9 +211,8 @@ export const getSortedFilteredTaskGroups = state => {
         }
         return tasksByDueDate;
       }, {});
-      const unscheduled = foldersById['5'];
       const noDueDate = {
-        ...unscheduled,
+        ...foldersById['5'],
         taskIds: getTaskIdsByViewFilter(state, { folderId: '5' })[view],
         projectId: null,
         projectName: null,

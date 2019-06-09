@@ -101,7 +101,10 @@ export default (state = INITIAL_STATE, action) => {
     }
     case types.REMOVE_NOTIFICATION: {
       const { notificationId } = action;
-      const {[notificationId]: removedNotification, ...restOfNotifications} = state.notifications;
+      const {
+        [notificationId]: removedNotification,
+        ...restOfNotifications
+      } = state.notifications;
       return {
         ...state,
         notifications: restOfNotifications
@@ -188,7 +191,14 @@ export default (state = INITIAL_STATE, action) => {
     }
     case RESET_ACTIVE_WORKSPACE: {
       if (!state) return state;
-      const { assignedTasks, notifications, folders, projectIds, folderIds, ...rest } = state;
+      const {
+        assignedTasks,
+        notifications,
+        folders,
+        projectIds,
+        folderIds,
+        ...rest
+      } = state;
       return rest;
     }
     default:

@@ -47,6 +47,7 @@ export default class SearchBar extends Component {
           />
           <Input name="submit" className="search-form__submit" type="submit" />
           <Button
+            onClick={onClick}
             type="button"
             className="search-form__btn"
             name="toggle"
