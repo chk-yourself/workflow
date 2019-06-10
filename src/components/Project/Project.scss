@@ -172,10 +172,10 @@
   position: relative;
   width: 100%;
   overflow: visible;
-  margin-top: 36px;
+  padding-top: 36px;
   z-index: 10;
   &--board {
-   // overflow-y: hidden;
+    // overflow-y: hidden;
     min-width: 100%;
     &.show-task-editor {
       z-index: 11;
