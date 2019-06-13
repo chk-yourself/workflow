@@ -33,7 +33,7 @@ class SubtaskComposer extends Component {
     });
   };
 
-  onFocus = e => {
+  onFocus = () => {
     this.setState({
       isFocused: true
     });

@@ -86,13 +86,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Comment)
-);
+export default withFirebase(connect(mapStateToProps)(Comment));

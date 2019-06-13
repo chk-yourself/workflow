@@ -12,9 +12,7 @@ class Input extends Component {
     label: '',
     id: null,
     helper: null,
-    helperClass: '',
-    onFocus: () => null,
-    onBlur: () => null
+    helperClass: ''
   };
 
   state = {
@@ -26,7 +24,9 @@ class Input extends Component {
     this.setState(prevState => ({
       isFocused: !prevState.isFocused
     }));
-    onFocus(e);
+    if (onFocus) {
+      onFocus(e);
+    }
   };
 
   onBlur = e => {
@@ -34,7 +34,9 @@ class Input extends Component {
     this.setState({
       isFocused: false
     });
-    onBlur(e);
+    if (onBlur) {
+      onBlur(e);
+    }
   };
 
   render() {
@@ -44,7 +46,6 @@ class Input extends Component {
       type,
       value,
       onChange,
-      onInput,
       onFocus,
       onBlur,
       placeholder,
@@ -89,7 +90,6 @@ class Input extends Component {
           onBlur={this.onBlur}
           autoComplete={autoComplete}
           ref={innerRef}
-          onInput={onInput}
           onKeyDown={onKeyDown}
           maxLength={maxLength}
           minLength={minLength}

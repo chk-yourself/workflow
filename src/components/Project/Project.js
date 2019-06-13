@@ -97,7 +97,6 @@ class Project extends Component {
   handleMembership = (userId, e) => {
     const { firebase, projectId, memberIds, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
-    console.log(userId, memberIds, memberIds.includes(userId));
 
     if (memberIds.includes(userId)) {
       firebase.removeProjectMember({ projectId, userId, workspaceId });

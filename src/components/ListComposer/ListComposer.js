@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { projectSelectors } from '../../ducks/projects';
 import { Button } from '../Button';
 import './ListComposer.scss';
 
@@ -126,20 +124,4 @@ class ListComposer extends Component {
 const condition = (currentUser, activeWorkspace) =>
   !!currentUser && !!activeWorkspace;
 
-const mapStateToProps = state => {
-  return {
-    projectsById: projectSelectors.getProjectsById(state),
-    projectsArray: projectSelectors.getProjectsArray(state)
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ListComposer)
-);
+export default withAuthorization(condition)(ListComposer);

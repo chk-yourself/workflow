@@ -6,7 +6,6 @@ import { Modal } from '../Modal';
 import { Input } from '../Input';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
-import { Icon } from '../Icon';
 import { projectSelectors } from '../../ducks/projects';
 import './ProjectDuplicator.scss';
 
@@ -36,7 +35,6 @@ class ProjectDuplicator extends Component {
   reset = () => {
     const { project } = this.props;
     const { name } = project;
-    
     this.setState({
       name: `Duplicate of ${name}`,
       includeNotes: true,
@@ -47,12 +45,18 @@ class ProjectDuplicator extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { name, ...options } = this.state;
+    const { name, ...settings } = this.state;
     if (!name) return;
-    const { onClose, firebase, currentUser, activeWorkspace, projectId } = this.props;
+    const {
+      onClose,
+      firebase,
+      currentUser,
+      activeWorkspace,
+      projectId
+    } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
-    firebase.cloneProject({ name, userId, workspaceId, projectId }, options);
+    firebase.cloneProject({ name, userId, workspaceId, projectId }, settings);
     onClose();
     this.reset();
   };
@@ -71,13 +75,7 @@ class ProjectDuplicator extends Component {
   };
 
   render() {
-    const {
-      name,
-      includeNotes,
-      includeSubtasks,
-      includeMembers
-    } = this.state;
-
+    const { name } = this.state;
     const { onClose } = this.props;
     return (
       <Modal
@@ -98,7 +96,7 @@ class ProjectDuplicator extends Component {
             className="project-duplicator__input"
           />
           <fieldset className="project-duplicator__options">
-          <legend className="project-duplicator__legend">Include:</legend>
+            <legend className="project-duplicator__legend">Include:</legend>
             {options.map(option => (
               <Checkbox
                 key={option.value}

@@ -46,7 +46,9 @@ const Settings = ({
         className={`settings__setting ${classes.setting || ''}`}
         key={setting.name}
       >
-        <div className={`settings__name ${classes.name || ''}`}>{setting.name}</div>
+        <div className={`settings__name ${classes.name || ''}`}>
+          {setting.name}
+        </div>
         {
           {
             radio: (

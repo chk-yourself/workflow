@@ -118,16 +118,9 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
 const condition = (currentUser, activeWorkspace) =>
   !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(CommentComposer)
+  connect(mapStateToProps)(CommentComposer)
 );

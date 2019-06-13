@@ -62,13 +62,13 @@ class MemberSearch extends Component {
     return regExp.test(name) || regExp.test(email) || regExp.test(displayName);
   };
 
-  onFocus = e => {
+  onFocus = () => {
     this.setState({
       isActive: true
     });
   };
 
-  onReset = e => {
+  onReset = () => {
     this.setState({
       query: '',
       isActive: false,
@@ -158,6 +158,10 @@ class MemberSearch extends Component {
     }
   };
 
+  setInputRef = el => {
+    this.inputEl = el;
+  };
+
   render() {
     const {
       assignedMembers,
@@ -198,12 +202,12 @@ class MemberSearch extends Component {
           autoComplete="off"
           placeholder={placeholder}
           onKeyDown={this.onKeyDown}
-          innerRef={el => (this.inputEl = el)}
+          innerRef={this.setInputRef}
         />
         {isActive && (
           <ul className={`member-search__list ${classes.list || ''}`}>
             {filteredList.length > 0 ? (
-              filteredList.map((user, i) => {
+              filteredList.map(user => {
                 const { name, photoURL, email, displayName, userId } = user;
                 const isAssigned =
                   assignedMembers && assignedMembers.indexOf(userId) !== -1;

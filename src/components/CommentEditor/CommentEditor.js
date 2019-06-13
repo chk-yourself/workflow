@@ -94,13 +94,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(CommentEditor)
-);
+export default withFirebase(connect(mapStateToProps)(CommentEditor));

@@ -10,12 +10,7 @@ export default class Textarea extends Component {
     id: null,
     isAutoHeightResizeEnabled: true,
     minHeight: 0,
-    tabIndex: 0,
-    onFocus: () => null,
-    onBlur: () => null,
-    onMouseDown: () => null,
-    onMouseUp: () => null,
-    onMouseMove: () => null
+    tabIndex: 0
   };
 
   state = {
@@ -34,7 +29,7 @@ export default class Textarea extends Component {
     window.removeEventListener('resize', this.handleResize);
   }
 
-  ref = el => {
+  setRef = el => {
     this.el = el;
     const { innerRef } = this.props;
     if (innerRef) {
@@ -47,7 +42,9 @@ export default class Textarea extends Component {
     this.setState({
       isFocused: true
     });
-    onFocus(e);
+    if (onFocus) {
+      onFocus(e);
+    }
   };
 
   onBlur = e => {
@@ -55,7 +52,10 @@ export default class Textarea extends Component {
     this.setState({
       isFocused: false
     });
-    onBlur(e);
+
+    if (onBlur) {
+      onBlur(e);
+    }
   };
 
   autoHeightResize = () => {
@@ -73,14 +73,7 @@ export default class Textarea extends Component {
       onChange,
       placeholder,
       isRequired,
-      onKeyDown,
-      onFocus,
-      onBlur,
-      onDragStart,
       isReadOnly,
-      onMouseDown,
-      onMouseUp,
-      onMouseMove,
       tabIndex,
       label,
       id,
@@ -88,6 +81,8 @@ export default class Textarea extends Component {
       isAutoHeightResizeEnabled,
       innerRef,
       minHeight,
+      onFocus,
+      onBlur,
       ...rest
     } = this.props;
 
@@ -113,14 +108,9 @@ export default class Textarea extends Component {
           required={isRequired}
           onBlur={this.onBlur}
           onInput={this.autoHeightResize}
-          ref={this.ref}
+          ref={this.setRef}
           onFocus={this.onFocus}
-          onKeyDown={onKeyDown}
-          onDragStart={onDragStart}
           readOnly={isReadOnly}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
-          onMouseMove={onMouseMove}
           tabIndex={tabIndex}
           {...rest}
         />

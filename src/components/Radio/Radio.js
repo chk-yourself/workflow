@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Radio = ({
-  classes = { radio: '', label: '' },
+  classes,
   name,
   id,
   value,
@@ -42,6 +42,13 @@ const Radio = ({
       )}
     </>
   );
+};
+
+Radio.defaultProps = {
+  classes: {
+    radio: '',
+    label: ''
+  }
 };
 
 export default Radio;

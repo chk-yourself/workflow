@@ -106,7 +106,7 @@ class Notification extends Component {
   };
 
   renderRequiredActions = () => {
-    const { event, source } = this.props;
+    const { event } = this.props;
     switch (event.type) {
       case 'invite': {
         return (
@@ -180,10 +180,6 @@ class Notification extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {};
-};
-
 const mapDispatchToProps = dispatch => {
   return {
     selectTask: taskId => dispatch(selectTaskAction(taskId))
@@ -194,7 +190,7 @@ const condition = currentUser => !!currentUser;
 
 export default compose(
   connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
   ),
   withAuthorization(condition)
