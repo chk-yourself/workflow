@@ -45,9 +45,9 @@ class Card extends Component {
     const { name, commentIds, dueDate, subtaskIds, isCompleted } = task;
     return (
       <Draggable draggableId={taskId} index={index}>
-        {provided => (
+        {(provided, snapshot) => (
           <div
-            className="card"
+            className={`card ${snapshot.isDragging ? 'is-dragging' : ''}`}
             onClick={this.onClick}
             {...provided.draggableProps}
             {...provided.dragHandleProps}

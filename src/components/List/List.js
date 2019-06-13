@@ -157,12 +157,12 @@ class List extends Component {
 
     return (
       <Draggable draggableId={listId} index={index}>
-        {provided => (
+        {(provided, snapshot) => (
           <>
             <section
               className={`list is-${layout}-layout ${
                 isFocused ? 'is-focused' : ''
-              }`}
+              } ${snapshot.isDragging ? 'is-dragging' : ''}`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}

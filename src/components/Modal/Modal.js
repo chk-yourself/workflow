@@ -13,6 +13,15 @@ class Modal extends Component {
     classes: PropTypes.objectOf(PropTypes.string)
   };
 
+  componentDidMount() {
+    this.bodyOverflow = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+  }
+
+  componentWillUnmount() {
+    document.body.style.overflow = this.bodyOverflow;
+  }
+
   static defaultProps = {
     onModalClick: () => null,
     onModalClose: () => null,

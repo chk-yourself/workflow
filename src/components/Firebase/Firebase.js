@@ -41,55 +41,30 @@ class Firebase {
 
   signInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    this.auth
-      .signInWithPopup(provider)
-      .then(result => {
-        if (result.credential) {
-          const token = result.credential.accessToken;
-          const { user } = result;
-        }
-      })
-      .catch(error => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.email;
-        const credential = error.credential;
-
-        if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert(
-            'You have already signed up with a different auth provider for that email.'
-          );
-        } else {
-          console.error(error);
-        }
-      });
+    return this.auth.signInWithPopup(provider).catch(error => {
+      const errorCode = error.code;
+      if (errorCode === 'auth/account-exists-with-different-credential') {
+        alert(
+          'You have already signed up with a different auth provider for that email.'
+        );
+      } else {
+        console.error(error);
+      }
+    });
   };
 
   signInWithGithub = () => {
     const provider = new firebase.auth.GithubAuthProvider();
-    this.auth
-      .signInWithPopup(provider)
-      .then(result => {
-        if (result.credential) {
-          const token = result.credential.accessToken;
-          console.log(token);
-          const { user } = result;
-        }
-      })
-      .catch(error => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.email;
-        const credential = error.credential;
-
-        if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert(
-            'You have already signed up with a different auth provider for that email.'
-          );
-        } else {
-          console.error(error);
-        }
-      });
+    return this.auth.signInWithPopup(provider).catch(error => {
+      const errorCode = error.code;
+      if (errorCode === 'auth/account-exists-with-different-credential') {
+        alert(
+          'You have already signed up with a different auth provider for that email.'
+        );
+      } else {
+        console.error(error);
+      }
+    });
   };
 
   signInAsGuest = () => {
@@ -145,7 +120,6 @@ class Firebase {
       // This must be true.
       handleCodeInApp: true
     };
-    console.log(this.currentUser);
     return this.currentUser.sendEmailVerification(actionCodeSettings);
   };
 
@@ -177,13 +151,9 @@ class Firebase {
     }
   };
 
-  getCollection = name => {
-    return this.fs.collection(name);
-  };
+  getCollection = name => this.fs.collection(name);
 
-  queryCollection = (path, [field, comparisonOperator, value]) => {
-    return this.fs.collection(path).where(field, comparisonOperator, value);
-  };
+  queryCollection = (path, [field, comparisonOperator, value]) => this.fs.collection(path).where(field, comparisonOperator, value);
 
   updateDoc = (path = [], newValue = {}) =>
     this.getDocRef(...path)
@@ -520,8 +490,6 @@ class Firebase {
   };
 
   // User API
-
-  getUserDoc = userId => this.fs.collection('users').doc(userId);
 
   createDemoProject = userId => {
     return this.cloneProject(
@@ -1135,12 +1103,6 @@ class Firebase {
       });
   };
 
-  updateUser = (userId, newValue = {}) =>
-    this.fs
-      .collection('users')
-      .doc(userId)
-      .update(newValue);
-
   // Tags API
 
   addTag = ({ taskId, userId, name, projectId, color = 'default' }) => {
@@ -1215,12 +1177,6 @@ class Firebase {
   // Project API
 
   getProjectDoc = projectId => this.fs.collection('projects').doc(projectId);
-
-  updateProject = (projectId, newValue = {}) =>
-    this.getProjectDoc(projectId).update({
-      lastUpdatedAt: this.getTimestamp(),
-      ...newValue
-    });
 
   updateProjectName = ({ projectId, name }) => {
     const batch = this.createBatch();
@@ -1501,9 +1457,7 @@ class Firebase {
     });
 
     // Update tasks assigned to list
-    this.fs
-      .collection('tasks')
-      .where('listId', '==', listId)
+    this.queryCollection('tasks', ['listId', '==', listId])
       .get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
@@ -1561,9 +1515,7 @@ class Firebase {
     });
 
     // Delete tasks assigned to list
-    this.fs
-      .collection('tasks')
-      .where('listId', '==', listId)
+    this.queryCollection('tasks', ['listId', '==', listId])
       .get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
@@ -1581,8 +1533,6 @@ class Firebase {
   };
 
   // Task API
-
-  getTaskDoc = taskId => this.fs.collection('tasks').doc(taskId);
 
   createTask = async ({
     name,
@@ -1719,14 +1669,6 @@ class Firebase {
       .catch(error => {
         console.error(error);
       });
-  };
-
-  updateTask = (taskId, newValue = {}) => {
-    console.log('task updated');
-    this.getTaskDoc(taskId).update({
-      lastUpdatedAt: this.getTimestamp(),
-      ...newValue
-    });
   };
 
   setTaskDueDate = ({
@@ -2227,8 +2169,6 @@ class Firebase {
 
   // Subtask API
 
-  getSubtaskDoc = subtaskId => this.fs.collection('subtasks').doc(subtaskId);
-
   createSubtask = async ({
     userId,
     name,
@@ -2264,13 +2204,6 @@ class Firebase {
       subtaskIds: this.addToArray(subtaskId)
     }).then(() => {
       return subtaskId;
-    });
-  };
-
-  updateSubtask = async (subtaskId, newValue = {}) => {
-    await this.getSubtaskDoc(subtaskId).update({
-      lastUpdatedAt: this.getTimestamp(),
-      ...newValue
     });
   };
 

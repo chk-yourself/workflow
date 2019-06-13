@@ -51,6 +51,7 @@ export default class SearchBar extends Component {
             type="button"
             className="search-form__btn"
             name="toggle"
+            title="Search"
             iconOnly
           >
             <Icon name="search" />

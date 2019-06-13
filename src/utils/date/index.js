@@ -289,6 +289,7 @@ export const toTimeString = (date, { format = 'h:mm:ss', hour12 = true }) => {
             ? padZero(seconds, digits)
             : seconds;
         }
+        return unit;
       })
       .join(':');
     return hour12 ? `${timeString} ${hours < 12 ? 'AM' : 'PM'}` : timeString;
