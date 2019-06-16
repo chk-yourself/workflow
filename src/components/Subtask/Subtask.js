@@ -62,7 +62,7 @@ class Subtask extends Component {
 
   toggleCompleted = async () => {
     const { subtaskId, isCompleted, firebase } = this.props;
-    await firebase.updateSubtask(subtaskId, {
+    await firebase.updateDoc(['subtasks', subtaskId], {
       isCompleted: !isCompleted,
       completedAt: !isCompleted ? firebase.getTimestamp() : null
     });
