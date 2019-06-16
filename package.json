@@ -53,6 +53,8 @@
   ],
   "devDependencies": {
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.17.2",

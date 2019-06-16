@@ -12,9 +12,6 @@ const TaskEditorDueDate = ({
   isDatePickerActive,
   onSelectDueDate
 }) => {
-  const simpleDueDate = dueDate
-    ? getSimpleDate(dueDate.toDate())
-    : getSimpleDate(new Date());
   return (
     <TaskEditorSection>
       <Button
@@ -43,9 +40,7 @@ const TaskEditorDueDate = ({
       </Button>
       <DatePicker
         onClose={onToggleDatePicker}
-        selectedDate={dueDate ? simpleDueDate : null}
-        currentMonth={simpleDueDate.month}
-        currentYear={simpleDueDate.year}
+        selectedDate={dueDate ? dueDate.toDate() : dueDate}
         selectDate={onSelectDueDate}
         isActive={isDatePickerActive}
       />

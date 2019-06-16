@@ -84,6 +84,21 @@ class Notification extends Component {
           </>
         );
       }
+      case 'like': {
+        return (
+          <>
+            liked your
+            <a
+              href="#"
+              className="notification__link notification__link--task"
+              onClick={this.onClick}
+            >
+              {source.type}
+            </a>
+            .
+          </>
+        );
+      }
       case 'invite': {
         return (
           <>

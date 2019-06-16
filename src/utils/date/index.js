@@ -102,7 +102,10 @@ export const getSimpleDate = date => {
 };
 
 export const isSimpleDate = date => {
-  return date && 'day' in date && 'month' in date && 'year' in date;
+  return (
+    date &&
+    ['day', 'month', 'year'].every(prop => ({}.hasOwnProperty.call(date, prop)))
+  );
 };
 
 export const isSameDate = (date, base = new Date()) => {
@@ -116,7 +119,7 @@ export const isSameDate = (date, base = new Date()) => {
   const dateYear = date.year || date.getFullYear();
   const baseDay = base.day || base.getDate();
   const baseMonth = base.month || base.getMonth();
-  const baseYear = date.year || base.getFullYear();
+  const baseYear = base.year || base.getFullYear();
   return (
     dateDay === baseDay && dateMonth === baseMonth && dateYear === baseYear
   );

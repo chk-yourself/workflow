@@ -1,0 +1,1205 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DatePicker /> renders correctly 1`] = `
+<div
+  className="date-picker"
+  style={
+    Object {
+      "display": "none",
+    }
+  }
+>
+  <div
+    className="date-picker__header"
+  >
+    <div
+      className="date-picker__due-date-wrapper"
+    >
+      <label
+        className="input__label date-picker__label--due-date "
+        htmlFor="dueDate"
+      >
+        Due Date
+      </label>
+      <input
+        className="input date-picker__input--due-date"
+        id="dueDate"
+        maxLength={8}
+        name="dueDate"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        placeholder="mm-dd-yy"
+        readOnly={false}
+        required={false}
+        tabIndex={0}
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+  <div
+    className="calendar date-picker__calendar"
+  >
+    <div
+      className="calendar__year"
+    >
+      <div
+        className="popover-wrapper  calendar__years-dropdown-wrapper"
+        style={null}
+      >
+        <button
+          className="calendar__btn--years-dropdown  text text--neutral btn--md "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          2019
+          <svg
+            className="feather feather-chevron-down "
+            fill="none"
+            height={24}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width={24}
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+          >
+            <use
+              xlinkHref="feather-sprite.svg#chevron-down"
+            />
+          </svg>
+        </button>
+        <div
+          className="popover align-left calendar__years-dropdown"
+          onClick={[Function]}
+          style={
+            Object {
+              "display": "none",
+            }
+          }
+        >
+          <ul
+            className="calendar__years-list"
+          >
+            <li
+              className="calendar__years-item"
+            >
+              <input
+                checked={true}
+                className="radio calendar__radio"
+                id={2019}
+                name="year"
+                onChange={[Function]}
+                type="radio"
+                value={2019}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor={2019}
+              >
+                <svg
+                  className="feather feather-check "
+                  fill="none"
+                  height={24}
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  width={24}
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlnsXlink="http://www.w3.org/1999/xlink"
+                >
+                  <use
+                    xlinkHref="feather-sprite.svg#check"
+                  />
+                </svg>
+                2019
+              </label>
+            </li>
+            <li
+              className="calendar__years-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id={2020}
+                name="year"
+                onChange={[Function]}
+                type="radio"
+                value={2020}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor={2020}
+              >
+                2020
+              </label>
+            </li>
+            <li
+              className="calendar__years-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id={2021}
+                name="year"
+                onChange={[Function]}
+                type="radio"
+                value={2021}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor={2021}
+              >
+                2021
+              </label>
+            </li>
+            <li
+              className="calendar__years-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id={2022}
+                name="year"
+                onChange={[Function]}
+                type="radio"
+                value={2022}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor={2022}
+              >
+                2022
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div
+      className="calendar__month"
+    >
+      <div
+        className="popover-wrapper  calendar__months-dropdown-wrapper"
+        style={null}
+      >
+        <button
+          className="calendar__btn--months-dropdown  text text--neutral btn--md "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          June
+          <svg
+            className="feather feather-chevron-down "
+            fill="none"
+            height={24}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width={24}
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+          >
+            <use
+              xlinkHref="feather-sprite.svg#chevron-down"
+            />
+          </svg>
+        </button>
+        <div
+          className="popover align-left calendar__months-dropdown"
+          onClick={[Function]}
+          style={
+            Object {
+              "display": "none",
+            }
+          }
+        >
+          <ul
+            className="calendar__months-list"
+          >
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="January"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={0}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="January"
+              >
+                January
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="February"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={1}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="February"
+              >
+                February
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="March"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={2}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="March"
+              >
+                March
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="April"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={3}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="April"
+              >
+                April
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="May"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={4}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="May"
+              >
+                May
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={true}
+                className="radio calendar__radio"
+                id="June"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={5}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="June"
+              >
+                <svg
+                  className="feather feather-check "
+                  fill="none"
+                  height={24}
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  width={24}
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlnsXlink="http://www.w3.org/1999/xlink"
+                >
+                  <use
+                    xlinkHref="feather-sprite.svg#check"
+                  />
+                </svg>
+                June
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="July"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={6}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="July"
+              >
+                July
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="August"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={7}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="August"
+              >
+                August
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="September"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={8}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="September"
+              >
+                September
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="October"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={9}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="October"
+              >
+                October
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="November"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={10}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="November"
+              >
+                November
+              </label>
+            </li>
+            <li
+              className="calendar__months-item"
+            >
+              <input
+                checked={false}
+                className="radio calendar__radio"
+                id="December"
+                name="month"
+                onChange={[Function]}
+                type="radio"
+                value={11}
+              />
+              <label
+                className="radio__label calendar__radio-label"
+                htmlFor="December"
+              >
+                December
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="calendar__month--prev-next"
+      >
+        <button
+          className="calendar__btn--month calendar__btn--prev-month text text--neutral icon-only icon-only--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          <svg
+            className="feather feather-chevron-left "
+            fill="none"
+            height={24}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width={24}
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+          >
+            <use
+              xlinkHref="feather-sprite.svg#chevron-left"
+            />
+          </svg>
+        </button>
+        <button
+          className="calendar__btn--month calendar__btn--next-month text text--neutral icon-only icon-only--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          <svg
+            className="feather feather-chevron-right "
+            fill="none"
+            height={24}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width={24}
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+          >
+            <use
+              xlinkHref="feather-sprite.svg#chevron-right"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      className="calendar__week-days"
+    >
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        S
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        M
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        T
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        W
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        T
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        F
+      </div>
+      <div
+        className="calendar__week-day date-picker__week-day"
+      >
+        S
+      </div>
+    </div>
+    <div
+      className="calendar__days"
+    >
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          26
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          27
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          28
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          29
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          30
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          31
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          1
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          2
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          3
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          4
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          5
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          6
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          7
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          8
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          9
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          10
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          11
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          12
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          13
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          14
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          15
+        </button>
+      </div>
+      <div
+        className="calendar__day  is-today  undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          16
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          17
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          18
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          19
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          20
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          21
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          22
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          23
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          24
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          25
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          26
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          27
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          28
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          29
+        </button>
+      </div>
+      <div
+        className="calendar__day    undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          30
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          1
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          2
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          3
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          4
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          5
+        </button>
+      </div>
+      <div
+        className="calendar__day calendar__day--prev-next   undefined"
+      >
+        <button
+          className="calendar__btn--day text text--neutral btn--sm "
+          name=""
+          onClick={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+          value=""
+        >
+          6
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="date-picker__footer"
+  >
+    <button
+      className="date-picker__btn--clear text text--neutral btn--sm "
+      name=""
+      onClick={[Function]}
+      onMouseDown={[Function]}
+      type="button"
+      value=""
+    >
+      Clear
+    </button>
+    <button
+      className="date-picker__btn--set-due-date contained contained--primary btn--sm "
+      name=""
+      onClick={[Function]}
+      onMouseDown={[Function]}
+      type="button"
+      value=""
+    >
+      Done
+    </button>
+    <button
+      className="date-picker__btn--cancel text text--neutral btn--sm "
+      name=""
+      onClick={[Function]}
+      onMouseDown={[Function]}
+      type="button"
+      value=""
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+`;

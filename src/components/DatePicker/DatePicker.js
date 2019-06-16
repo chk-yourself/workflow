@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   toSimpleDateString,
   toSimpleDateObj,
+  getSimpleDate,
   isSDSFormat,
   isSameDate
 } from '../../utils/date';
@@ -11,22 +13,50 @@ import { Input } from '../Input';
 import './DatePicker.scss';
 
 export default class DatePicker extends Component {
+  static defaultProps = {
+    currentMonth: new Date().getMonth(),
+    currentYear: new Date().getFullYear(),
+    selectedDate: null
+  };
+
+  static propTypes = {
+    selectedDate: PropTypes.oneOfType([() => null, PropTypes.instanceOf(Date)]),
+    currentMonth: PropTypes.number,
+    currentYear: PropTypes.number
+  };
+
   state = {
     today: {
       day: new Date().getDate(),
       month: new Date().getMonth(),
       year: new Date().getFullYear()
     },
-    selectedDate: this.props.selectedDate,
-    currentMonth: this.props.currentMonth,
-    currentYear: this.props.currentYear,
+    selectedDate: this.props.selectedDate
+      ? getSimpleDate(this.props.selectedDate)
+      : null,
+    currentMonth:
+      this.props.currentMonth ||
+      (this.props.selectedDate
+        ? this.props.selectedDate.getMonth()
+        : new Date().getMonth()),
+    currentYear:
+      this.props.currentYear ||
+      (this.props.selectedDate
+        ? this.props.selectedDate.getFullYear()
+        : new Date().getFullYear()),
     dateString: toSimpleDateString(this.props.selectedDate) || ''
   };
 
   resetCalendar = () => {
+    const { currentMonth, currentYear, selectedDate } = this.props;
     this.setState({
-      currentMonth: this.props.currentMonth,
-      currentYear: this.props.currentYear
+      selectedDate,
+      currentMonth:
+        currentMonth ||
+        (selectedDate ? selectedDate.getMonth() : new Date().getMonth()),
+      currentYear:
+        currentYear ||
+        (selectedDate ? selectedDate.getFullYear() : new Date().getFullYear())
     });
   };
 
@@ -97,8 +127,14 @@ export default class DatePicker extends Component {
 
   closeDatePicker = () => {
     const { onClose } = this.props;
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  cancel = () => {
+    this.closeDatePicker();
     this.resetCalendar();
-    onClose();
   };
 
   render() {
@@ -168,7 +204,7 @@ export default class DatePicker extends Component {
             variant="text"
             color="neutral"
             className="date-picker__btn--cancel"
-            onClick={this.closeDatePicker}
+            onClick={this.cancel}
           >
             Cancel
           </Button>

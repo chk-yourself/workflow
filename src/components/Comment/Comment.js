@@ -16,23 +16,67 @@ class Comment extends Component {
   };
 
   handleLike = () => {
-    const { commentId, likes, currentUserId, firebase } = this.props;
+    const {
+      commentId,
+      likes,
+      currentUser,
+      firebase,
+      from,
+      workspaceId,
+      taskId,
+      projectId
+    } = this.props;
 
-    if (likes[currentUserId]) {
+    const { userId, name } = currentUser;
+
+    if (likes[userId]) {
       firebase.updateDoc(['comments', commentId], {
-        [`likes.${currentUserId}`]: firebase.deleteField()
+        [`likes.${userId}`]: firebase.deleteField()
       });
     } else {
-      firebase.updateDoc([`comments`, commentId], {
-        [`likes.${currentUserId}`]: true
-      });
+      firebase
+        .updateDoc([`comments`, commentId], {
+          [`likes.${userId}`]: true
+        })
+        .then(() => {
+          firebase.createNotification({
+            workspaceId,
+            recipientId: from.userId,
+            event: {
+              type: 'like',
+              publishedAt: firebase.getTimestamp()
+            },
+            source: {
+              type: 'comment',
+              id: commentId,
+              parent: {
+                type: taskId ? 'task' : 'project',
+                id: taskId || projectId
+              },
+              user: {
+                userId,
+                name
+              }
+            }
+          });
+        })
+        .catch(error => {
+          console.error(error);
+        });
     }
   };
 
   render() {
-    const { commentId, user, content, createdAt, likes, isPinned } = this.props;
+    const {
+      commentId,
+      author,
+      content,
+      createdAt,
+      likes,
+      isPinned
+    } = this.props;
     const { isCommentEditorActive } = this.state;
-    const { name, photoURL } = user;
+    const { name, photoURL } = author;
     const likesCount = Object.keys(likes).length;
     if (!createdAt) return null;
     return (
@@ -81,8 +125,8 @@ class Comment extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: userSelectors.getUserData(state, ownProps.from.userId),
-    currentUserId: currentUserSelectors.getCurrentUserId(state)
+    author: userSelectors.getUserData(state, ownProps.from.userId),
+    currentUser: currentUserSelectors.getCurrentUser(state)
   };
 };
 

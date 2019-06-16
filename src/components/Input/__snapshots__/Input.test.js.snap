@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Input /> renders correctly 1`] = `
+Array [
+  "",
+  <input
+    className="input "
+    id={null}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    readOnly={false}
+    required={false}
+    tabIndex={0}
+    type="text"
+  />,
+]
+`;
