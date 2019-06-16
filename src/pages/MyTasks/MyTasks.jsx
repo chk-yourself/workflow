@@ -74,7 +74,6 @@ class MyTasks extends Component {
         const updatedTaskIds = [...taskIdsByView[view]];
 
         if (isMovedWithinFolder) {
-          console.log(newFolderId);
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.updateDoc(
@@ -96,7 +95,6 @@ class MyTasks extends Component {
             }
           );
         } else {
-          console.log(origFolderId, newFolderId);
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.moveTaskToFolder({
             workspaceId,
@@ -303,6 +301,7 @@ class MyTasks extends Component {
 
 const mapStateToProps = state => {
   return {
+    state,
     selectedTask: getSelectedTask(state),
     selectedTaskId: getSelectedTaskId(state),
     taskGroups: currentUserSelectors.getSortedFilteredTaskGroups(state)

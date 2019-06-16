@@ -34,10 +34,6 @@
       }
     }
     @include md {
-      .user-tasks__title {
-        margin-right: 0;
-        margin-left: 0;
-      }
       .user-tasks {
         margin-right: 16px;
         max-height: 100%;
@@ -47,7 +43,6 @@
 }
 
 .user-tasks {
-  max-width: 960px;
   width: 100%;
   padding: 0;
   border-radius: 4px;
@@ -61,6 +56,8 @@
   display: flex;
   justify-content: center;
   position: relative;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 .user-tasks__title {

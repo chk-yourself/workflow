@@ -261,12 +261,14 @@ class TaskEditor extends Component {
             type="button"
             onClick={this.toggleCompleted}
             size="md"
-            variant={isCompleted ? 'contained' : 'outlined'}
-            color="success"
-            className="task-editor__btn--toggle-completed"
+            variant="text"
+            color="neutral"
+            className={`task-editor__btn--toggle-completed ${
+              isCompleted ? 'is-completed' : ''
+            }`}
           >
             <Icon name="check" />
-            {isCompleted ? 'Completed' : 'Mark Completed'}
+            <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
           </Button>
           <TaskEditorMoreActions onDelete={this.deleteTask} />
         </Toolbar>

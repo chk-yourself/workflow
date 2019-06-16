@@ -41,7 +41,7 @@ class Subtasks extends Component {
     const updatedSubtaskIds = [...subtaskIds];
     updatedSubtaskIds.splice(source.index, 1);
     updatedSubtaskIds.splice(destination.index, 0, draggableId);
-    firebase.updateTask(source.droppableId, {
+    firebase.updateDoc(['tasks', source.droppableId], {
       subtaskIds: updatedSubtaskIds
     });
   };

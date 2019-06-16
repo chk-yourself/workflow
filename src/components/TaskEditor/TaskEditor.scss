@@ -475,14 +475,46 @@
 
 .task-editor__btn--toggle-completed {
   font-size: 14px;
-  line-height: 18px;
+  line-height: 1;
   padding: 6px 10px 6px 8px;
   min-height: 0;
+  min-width: 0;
+  color: $grey-500;
   .feather {
     width: 18px;
     height: 18px;
     font-size: 18px;
-    margin-right: 4px;
+  }
+  span {
+    vertical-align: middle;
+    display: none;
+    margin-left: 4px;
+    color: $grey-600;
+    @include sm {
+      display: inline;
+    }
+  }
+  &.is-completed {
+    color: $success-dk;
+    span {
+      color: $success-dk;
+    }
+    @include sm {
+      border-color: transparent;
+      background-image: linear-gradient(
+        -20deg,
+        $success-dk 0%,
+        20%,
+        $success 100%
+      );
+      color: #fff;
+      span {
+        color: #fff;
+      }
+    }
+  }
+  @include sm {
+    border-color: $grey-500;
   }
 }
 

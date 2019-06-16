@@ -66,7 +66,7 @@ class NotesEditor extends Component {
           },
           {
             type: 'underlined',
-            icon: 'underline'
+            icon: 'underlined'
           }
         ]}
         inlines={[
@@ -74,7 +74,7 @@ class NotesEditor extends Component {
             ? [
                 {
                   type: 'mention',
-                  icon: 'at-sign'
+                  icon: 'mention'
                 }
               ]
             : [])
@@ -82,7 +82,15 @@ class NotesEditor extends Component {
         blocks={[
           {
             type: 'unordered-list',
-            icon: 'list'
+            icon: 'unordered-list'
+          },
+          {
+            type: 'ordered-list',
+            icon: 'ordered-list'
+          },
+          {
+            type: 'code',
+            icon: 'code'
           }
         ]}
       />

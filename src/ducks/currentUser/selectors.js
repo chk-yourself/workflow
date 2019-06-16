@@ -95,14 +95,16 @@ export const getSortedFilteredTaskGroups = state => {
         const folder = foldersById[projectId];
         if (folder) {
           const { name, taskIds } = folder;
+          const taskIdsByFilter = getTaskIdsByViewFilter(state, {
+            folderId: projectId
+          });
           return tasksByProject.concat(
             taskIds.length > 0
               ? {
-                  taskIds: getTaskIdsByViewFilter(state, {
-                    folderId: projectId
-                  })[view],
+                  taskIds: taskIdsByFilter[view],
                   projectId,
                   name,
+                  activeTaskCount: taskIdsByFilter.active.length,
                   projectName: name,
                   dueDate: null,
                   folderId: projectId,
@@ -117,12 +119,16 @@ export const getSortedFilteredTaskGroups = state => {
         }
         return tasksByProject;
       }, []);
+      const privateTaskIdsByFilter = getTaskIdsByViewFilter(state, {
+        folderId: '4'
+      });
       const noProject = {
         ...foldersById['4'],
         projectId: null,
         projectName: null,
         dueDate: null,
-        taskIds: getTaskIdsByViewFilter(state, { folderId: '4' })[view],
+        taskIds: privateTaskIdsByFilter[view],
+        activeTaskCount: privateTaskIdsByFilter.active.length,
         userPermissions: {
           enableNameChange: false,
           enableTaskAdd: true,
@@ -135,9 +141,11 @@ export const getSortedFilteredTaskGroups = state => {
       return folderIds.reduce((folders, folderId) => {
         const folder = foldersById[folderId];
         if (folder) {
+          const taskIdsByFilter = getTaskIdsByViewFilter(state, { folderId });
           return folders.concat({
             ...folder,
-            taskIds: getTaskIdsByViewFilter(state, { folderId })[view],
+            taskIds: taskIdsByFilter[view],
+            activeTaskCount: taskIdsByFilter.active.length,
             projectId: null,
             projectName: null,
             dueDate: null,

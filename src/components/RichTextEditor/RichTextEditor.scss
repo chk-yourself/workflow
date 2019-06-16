@@ -4,14 +4,29 @@
 .rich-text-editor {
   line-height: 1.4;
   font-size: 14px;
+  pre {
+    background-color: $grey-900;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: $white;
+  }
+  p {
+    margin: 0 0 8px 0;
+  }
+  ol,
+  ul {
+    padding-left: 24px;
+    margin: 0 0 8px 0;
+  }
 }
 
 .rich-text-editor__btn {
-  .feather {
+  .editor-icon {
     color: $grey-400;
+    pointer-events: none;
   }
   &.is-active {
-    .feather {
+    .editor-icon {
       color: $grey-800;
     }
   }
@@ -21,15 +36,6 @@
   color: $primary;
   font-weight: 500;
   text-decoration: none;
-}
-
-p {
-  margin: 0 0 8px 0;
-}
-
-ul {
-  padding-left: 24px;
-  margin: 0 0 8px 0;
 }
 
 .rich-text-editor__mentions-wrapper {

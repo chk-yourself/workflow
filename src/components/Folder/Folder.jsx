@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
-import { currentUserSelectors } from '../../ducks/currentUser';
 import { TaskComposer } from '../TaskComposer';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
@@ -13,7 +11,7 @@ import { ExpansionPanel } from '../ExpansionPanel';
 import * as droppableTypes from '../../constants/droppableTypes';
 import './Folder.scss';
 
-class Folder extends Component {
+export default class Folder extends Component {
   static defaultProps = {
     userPermissions: {
       enableNameChange: false,
@@ -62,8 +60,7 @@ class Folder extends Component {
       folderId,
       index,
       dueDate,
-      userPermissions,
-      tempTaskSettings
+      userPermissions
     } = this.props;
     const { name, isExpanded } = this.state;
     return (
@@ -161,18 +158,3 @@ class Folder extends Component {
     );
   }
 }
-
-const mapStateToProps = (state, ownProps) => {
-  return {
-    tempTaskSettings: currentUserSelectors.getTempTaskSettings(state)
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Folder);

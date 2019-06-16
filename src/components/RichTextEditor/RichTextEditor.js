@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import isEqual from 'lodash.isequal';
 import { Toolbar } from '../Toolbar';
 import { Button } from '../Button';
-import { Icon } from '../Icon';
 import initialValue from './value.json';
 import * as keys from '../../constants/keys';
 import { MemberSearch } from '../MemberSearch';
 import { withOutsideClick } from '../withOutsideClick';
+import EditorIcon from './EditorIcon';
 import './RichTextEditor.scss';
 
 const DEFAULT_BLOCK = 'paragraph';
@@ -132,6 +132,12 @@ class RichTextEditor extends Component {
             {node.text}
           </Link>
         );
+      case 'code':
+        return (
+          <pre>
+            <code {...attributes}>{children}</code>
+          </pre>
+        );
       default:
         return next();
     }
@@ -218,7 +224,7 @@ class RichTextEditor extends Component {
         case keys.BACKSPACE: {
           e.preventDefault();
           if (firstText.text === '' && !nextText) {
-            if (this.hasBlock('list-item')) {
+            if (this.hasBlock('list-item' || this.hasBlock('code'))) {
               const parent = document.getParent(value.focusBlock.key);
               const ancestor = document.getParent(parent.key);
               if (ancestor.object === 'document') {
@@ -539,7 +545,7 @@ class RichTextEditor extends Component {
               iconOnly
               isActive={this.hasMark(mark.type)}
             >
-              <Icon name={mark.icon} />
+              <EditorIcon name={mark.icon} />
             </Button>
           ))}
           {inlines.map(inline => (
@@ -552,7 +558,7 @@ class RichTextEditor extends Component {
               iconOnly
               isActive={this.hasInline(inline.type)}
             >
-              <Icon name={inline.icon} />
+              <EditorIcon name={inline.icon} />
             </Button>
           ))}
           {blocks.map(block => (
@@ -565,7 +571,7 @@ class RichTextEditor extends Component {
               iconOnly
               isActive={this.hasBlock(block.type)}
             >
-              <Icon name={block.icon} />
+              <EditorIcon name={block.icon} />
             </Button>
           ))}
           {addOns.length > 0 && (

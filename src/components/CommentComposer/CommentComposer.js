@@ -96,13 +96,27 @@ class CommentComposer extends Component {
             },
             {
               type: 'underlined',
-              icon: 'underline'
+              icon: 'underlined'
             }
           ]}
           inlines={[
             {
               type: 'mention',
-              icon: 'at-sign'
+              icon: 'mention'
+            }
+          ]}
+          blocks={[
+            {
+              type: 'unordered-list',
+              icon: 'unordered-list'
+            },
+            {
+              type: 'ordered-list',
+              icon: 'ordered-list'
+            },
+            {
+              type: 'code',
+              icon: 'code'
             }
           ]}
         />
