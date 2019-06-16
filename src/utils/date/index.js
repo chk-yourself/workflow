@@ -17,13 +17,17 @@ export const isToday = date =>
 export const isYesterday = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today.setDate(today.getDate() - 1) === new Date(+date).setHours(0, 0, 0, 0);
+  return (
+    today.setDate(today.getDate() - 1) === new Date(+date).setHours(0, 0, 0, 0)
+  );
 };
 
 export const isTomorrow = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today.setDate(today.getDate() + 1) === new Date(+date).setHours(0, 0, 0, 0);
+  return (
+    today.setDate(today.getDate() + 1) === new Date(+date).setHours(0, 0, 0, 0)
+  );
 };
 
 export const isThisYear = date => {

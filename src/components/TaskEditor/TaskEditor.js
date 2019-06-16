@@ -83,7 +83,7 @@ class TaskEditor extends Component {
 
   setViewportWidth = () => {
     this.setState({
-      viewportWidth: window.innerWidth
+      viewportWidth: window.innerWidth || document.documentElement.clientWidth
     });
   };
 

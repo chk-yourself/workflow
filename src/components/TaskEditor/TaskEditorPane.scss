@@ -33,6 +33,7 @@
     padding: 4px 16px 16px;
     -webkit-overflow-scrolling: touch;
     overflow-y: auto;
+    height: 100%;
     max-height: calc(100vh - 40px);
     @include md {
       max-height: calc(100vh - 154px);

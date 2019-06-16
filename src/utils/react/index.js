@@ -1,6 +1,9 @@
 export const getDisplayName = WrappedComponent =>
   WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
+/**
+ * Generates random unique number
+ */
 export const generateKey = () =>
   +Date.now() +
   Math.random()

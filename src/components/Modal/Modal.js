@@ -13,15 +13,6 @@ class Modal extends Component {
     classes: PropTypes.objectOf(PropTypes.string)
   };
 
-  componentDidMount() {
-    this.bodyOverflow = window.getComputedStyle(document.body).overflow;
-    document.body.style.overflow = 'hidden';
-  }
-
-  componentWillUnmount() {
-    document.body.style.overflow = this.bodyOverflow;
-  }
-
   static defaultProps = {
     onModalClick: () => null,
     onModalClose: () => null,
@@ -32,6 +23,15 @@ class Modal extends Component {
       button: ''
     }
   };
+
+  componentDidMount() {
+    this.bodyOverflow = window.getComputedStyle(document.body).overflow; // store current value of body overflow
+    document.body.style.overflow = 'hidden'; // locks body scroll
+  }
+
+  componentWillUnmount() {
+    document.body.style.overflow = this.bodyOverflow; // reset body overflow to original value
+  }
 
   onOutsideClick = e => {
     const { onOutsideClick, onModalClose } = this.props;

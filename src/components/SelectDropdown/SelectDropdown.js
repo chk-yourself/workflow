@@ -5,6 +5,10 @@ import { Radio } from '../Radio';
 import { Icon } from '../Icon';
 import './SelectDropdown.scss';
 
+// TODO: Make more accessible
+// TODO: Enable autocomplete
+// TODO: Enable multi-select
+
 export default class SelectDropdown extends Component {
   static defaultProps = {
     classes: {
@@ -71,7 +75,10 @@ export default class SelectDropdown extends Component {
           )
         }}
       >
-        <Menu className={`select-dropdown__menu ${classes.menu || ''}`}>
+        <Menu
+          role="listbox"
+          className={`select-dropdown__menu ${classes.menu || ''}`}
+        >
           {Object.keys(options).map(key => {
             const option = options[key];
             return (

@@ -15,8 +15,8 @@
     width: 20px;
     height: 20px;
     line-height: 20px;
-    &:not(:last-child) {
-      margin-right: 4px;
+    &:not(:first-child) {
+      margin-left: -4px;
     }
   }
   .card__avatar-placeholder {
