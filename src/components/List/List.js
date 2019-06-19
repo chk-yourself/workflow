@@ -8,10 +8,11 @@ import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
 import { Button } from '../Button';
+import { Confirm } from '../Confirm';
 import './List.scss';
 
 class List extends Component {
@@ -42,7 +43,7 @@ class List extends Component {
     this.input = el;
   };
 
-  handleListDelete = e => {
+  handleDelete = e => {
     e.preventDefault();
     const { listId, projectId, deleteList } = this.props;
     deleteList({ listId, projectId });
@@ -54,7 +55,7 @@ class List extends Component {
     });
   };
 
-  onBlur = e => {
+  onBlur = () => {
     const { list, listId, firebase } = this.props;
     const { name } = list;
     const { name: newName } = this.state;
@@ -76,13 +77,13 @@ class List extends Component {
     });
   };
 
-  toggleMoreActionsMenu = e => {
+  toggleMoreActionsMenu = () => {
     this.setState(prevState => ({
       isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
     }));
   };
 
-  closeMoreActionsMenu = e => {
+  hideMoreActionsMenu = () => {
     this.setState({
       isMoreActionsMenuVisible: false
     });
@@ -95,10 +96,8 @@ class List extends Component {
         return [...taskIds].sort((a, b) => {
           const taskA = tasksById[a];
           const taskB = tasksById[b];
-          const dueDateA =
-            taskA && taskA.dueDate ? taskA.dueDate.toMillis() : null;
-          const dueDateB =
-            taskB && taskB.dueDate ? taskB.dueDate.toMillis() : null;
+          const dueDateA = taskA && taskA.dueDate ? taskA.dueDate.toMillis() : null;
+          const dueDateB = taskB && taskB.dueDate ? taskB.dueDate.toMillis() : null;
           if (!dueDateA && dueDateB) {
             return 1;
           }
@@ -160,9 +159,9 @@ class List extends Component {
         {(provided, snapshot) => (
           <>
             <section
-              className={`list is-${layout}-layout ${
-                isFocused ? 'is-focused' : ''
-              } ${snapshot.isDragging ? 'is-dragging' : ''}`}
+              className={`list is-${layout}-layout ${isFocused ? 'is-focused' : ''} ${
+                snapshot.isDragging ? 'is-dragging' : ''
+              }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -186,36 +185,41 @@ class List extends Component {
                     innerRef={this.setInputRef}
                   />
                 </div>
-                <PopoverWrapper
-                  isActive={isMoreActionsMenuVisible}
-                  onOutsideClick={this.closeMoreActionsMenu}
-                  classes={{
-                    wrapper: 'list__popover-wrapper',
-                    popover: 'list__popover'
-                  }}
-                  align={{ inner: 'right' }}
-                  buttonProps={{
-                    size: 'md',
-                    iconOnly: true,
-                    isActive: isMoreActionsMenuVisible,
-                    className: 'list__btn--more-actions',
-                    children: <Icon name="more-vertical" />,
-                    onClick: this.toggleMoreActionsMenu
-                  }}
-                >
-                  <Menu>
-                    <MenuItem className="list__more-actions-item">
-                      {!isRestricted && (
-                        <Button
-                          className="list__btn"
-                          onClick={this.handleListDelete}
-                        >
-                          Delete
-                        </Button>
-                      )}
-                    </MenuItem>
-                  </Menu>
-                </PopoverWrapper>
+                <Confirm>
+                  {confirm => (
+                    <Popover
+                      isActive={isMoreActionsMenuVisible}
+                      onOutsideClick={this.hideMoreActionsMenu}
+                      classes={{
+                        wrapper: 'list__popover-wrapper',
+                        popover: 'list__popover'
+                      }}
+                      align={{ inner: 'right' }}
+                      buttonProps={{
+                        size: 'md',
+                        iconOnly: true,
+                        isActive: isMoreActionsMenuVisible,
+                        className: 'list__btn--more-actions',
+                        children: <Icon name="more-vertical" />,
+                        onClick: this.toggleMoreActionsMenu
+                      }}
+                      onClose={this.hideMoreActionsMenu}
+                    >
+                      <Menu>
+                        <MenuItem className="list__more-actions-item">
+                          {!isRestricted && (
+                            <Button
+                              className="list__btn"
+                              onClick={confirm(this.handleDelete, 'Delete List', 'danger')}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </MenuItem>
+                      </Menu>
+                    </Popover>
+                  )}
+                </Confirm>
               </header>
               <div className="list__content">
                 <Tasks taskIds={taskIds} listId={listId} layout={layout} />
@@ -254,8 +258,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteList: ({ listId, projectId }) =>
-      dispatch(listActions.deleteList({ listId, projectId }))
+    deleteList: ({ listId, projectId }) => dispatch(listActions.deleteList({ listId, projectId }))
   };
 };
 

@@ -10,6 +10,8 @@ import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
 import './TagsInput.scss';
 
+// TODO: accept tagProps and inputProps for reusability
+
 class TagsInput extends Component {
   state = {
     value: '',

@@ -4,7 +4,7 @@ import { TaskComposer } from '../TaskComposer';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
 import { ExpansionPanel } from '../ExpansionPanel';
@@ -104,7 +104,7 @@ export default class Folder extends Component {
                     onClick={this.toggleFolder}
                   />
                   {/*
-                    <PopoverWrapper
+                    <Popover
                       classes={{
                         wrapper: 'folder__popover-wrapper',
                         popover: 'folder__popover'
@@ -120,7 +120,7 @@ export default class Folder extends Component {
                       <Menu>
                         <MenuItem />
                       </Menu>
-                    </PopoverWrapper>
+                    </Popover>
                     */}
                 </>
               }

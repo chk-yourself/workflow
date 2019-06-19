@@ -4,7 +4,6 @@ import { DatePicker } from '../DatePicker';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { TaskDueDate } from '../Task';
-import { getSimpleDate } from '../../utils/date';
 
 const TaskEditorDueDate = ({
   dueDate,

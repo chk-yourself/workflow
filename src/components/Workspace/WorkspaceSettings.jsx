@@ -45,12 +45,7 @@ class WorkspaceSettings extends Component {
     e.preventDefault();
     const { firebase, activeWorkspace, currentUser } = this.props;
     const { name } = this.state;
-    const {
-      workspaceId,
-      name: prevName,
-      memberIds,
-      pendingInvites
-    } = activeWorkspace;
+    const { workspaceId, name: prevName, memberIds, pendingInvites } = activeWorkspace;
     if (prevName === name) return;
     try {
       if (workspaceId === 'DEMO' && currentUser.isGuest) {
@@ -84,11 +79,7 @@ class WorkspaceSettings extends Component {
     if (newInvite === '') return;
     const email = newInvite.toLowerCase();
     const { firebase, currentUser, activeWorkspace, memberEmails } = this.props;
-    const {
-      workspaceId,
-      name: workspaceName,
-      pendingInvites
-    } = activeWorkspace;
+    const { workspaceId, name: workspaceName, pendingInvites } = activeWorkspace;
     const { createWorkspaceInvite, updateDoc, addToArray } = firebase;
     const from = {
       userId: currentUser.userId,
@@ -122,11 +113,7 @@ class WorkspaceSettings extends Component {
     const isNameInvalid = name === '';
     const isInviteInvalid = newInvite === '';
     return (
-      <Modal
-        onModalClose={onClose}
-        size="lg"
-        classes={{ content: 'workspace-settings ' }}
-      >
+      <Modal onClose={onClose} size="lg" classes={{ content: 'workspace-settings ' }}>
         <h2 className="workspace-settings__heading">Workspace Settings</h2>
         <TabsContainer
           classes={{
@@ -164,9 +151,7 @@ class WorkspaceSettings extends Component {
                   >
                     Update Workspace
                   </Button>
-                  {nameChangeError && (
-                    <ErrorMessage text={nameChangeError.message} />
-                  )}
+                  {nameChangeError && <ErrorMessage text={nameChangeError.message} />}
                 </form>
               )
             },
@@ -187,24 +172,17 @@ class WorkspaceSettings extends Component {
                   />
                   {pendingInvites.length > 0 && (
                     <>
-                      <h4 className="workspace-settings__sub-subheading">
-                        Pending Invites
-                      </h4>
+                      <h4 className="workspace-settings__sub-subheading">Pending Invites</h4>
                       <ul className="workspace-settings__pending-invites">
                         {pendingInvites.map(email => (
-                          <li
-                            key={email}
-                            className="workspace-settings__pending-invite"
-                          >
+                          <li key={email} className="workspace-settings__pending-invite">
                             {email}
                           </li>
                         ))}
                       </ul>
                     </>
                   )}
-                  <h4 className="workspace-settings__sub-subheading">
-                    Invite more members
-                  </h4>
+                  <h4 className="workspace-settings__sub-subheading">Invite more members</h4>
                   <form id="workspaceInvite" onSubmit={this.inviteMember}>
                     <Input
                       name="newInvite"
@@ -241,8 +219,7 @@ class WorkspaceSettings extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 const mapStateToProps = state => ({
   memberEmails: userSelectors.getUserEmails(state)

@@ -5,31 +5,28 @@ import './Button.scss';
 
 const Button = ({
   children,
-  type = 'button',
+  type,
   onClick,
   onMouseDown,
-  className = '',
-  color = 'neutral',
-  size = 'md',
-  variant = 'text',
+  className,
+  color,
+  size,
+  variant,
   disabled,
-  name,
-  iconOnly = false,
-  value,
+  iconOnly,
   innerRef,
   isActive,
+  intent,
   ...props
 }) => (
   <button
-    className={`${className} ${variant} ${variant}--${color} ${
+    className={`${className} ${variant} ${variant}--${intent || color} ${
       iconOnly ? `icon-only icon-only--${size}` : `btn--${size}`
     } ${isActive ? 'is-active' : ''}`}
     type={type}
     onClick={onClick}
     onMouseDown={onMouseDown}
     disabled={disabled}
-    name={name}
-    value={value}
     ref={innerRef}
     {...props}
   >
@@ -47,13 +44,13 @@ Button.defaultProps = {
   name: '',
   iconOnly: false,
   isActive: false,
-  ref: null,
   onClick: () => null,
-  onMouseDown: () => null
+  onMouseDown: () => null,
+  innerRef: () => null
 };
 
 Button.propTypes = {
-  type: PropTypes.string,
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
   className: PropTypes.string,
   color: PropTypes.string,
   size: PropTypes.string,
@@ -62,7 +59,7 @@ Button.propTypes = {
   name: PropTypes.string,
   iconOnly: PropTypes.bool,
   isActive: PropTypes.bool,
-  ref: PropTypes.oneOfType([
+  innerRef: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]),

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Button } from '../Button';
 
 const TaskEditorMoreActions = ({ onDelete }) => (
-  <PopoverWrapper
+  <Popover
     classes={{
       wrapper: 'task-editor__popover-wrapper',
       popover: 'task-editor__popover'
@@ -25,7 +25,7 @@ const TaskEditorMoreActions = ({ onDelete }) => (
         </Button>
       </MenuItem>
     </Menu>
-  </PopoverWrapper>
+  </Popover>
 );
 
 export default TaskEditorMoreActions;

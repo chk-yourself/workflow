@@ -68,18 +68,10 @@ const withOutsideClick = WrappedComponent => {
     };
 
     render() {
-      return (
-        <WrappedComponent
-          ref={this.setInstance}
-          innerRef={this.setRef}
-          {...this.props}
-        />
-      );
+      return <WrappedComponent ref={this.setInstance} innerRef={this.setRef} {...this.props} />;
     }
   }
-  WithOutsideClick.displayName = `WithOutsideClick(${getDisplayName(
-    WrappedComponent
-  )})`;
+  WithOutsideClick.displayName = `WithOutsideClick(${getDisplayName(WrappedComponent)})`;
   return WithOutsideClick;
 };
 

@@ -24,7 +24,7 @@ import './TaskEditor.scss';
 const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
   return layout === 'board' ? (
     <Modal
-      onModalClose={onClose}
+      onClose={onClose}
       classes={{
         modal: 'task-editor-modal',
         content: 'task-editor',

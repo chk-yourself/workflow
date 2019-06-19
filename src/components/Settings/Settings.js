@@ -1,21 +1,13 @@
 import React from 'react';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Icon } from '../Icon';
 import { Radio } from '../Radio';
 import { Button } from '../Button';
 import { SelectDropdown } from '../SelectDropdown';
 import './Settings.scss';
 
-const Settings = ({
-  icon,
-  onToggle,
-  onClose,
-  onSave,
-  isActive,
-  settings,
-  classes
-}) => (
-  <PopoverWrapper
+const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes }) => (
+  <Popover
     isActive={isActive}
     onOutsideClick={onClose}
     classes={{
@@ -32,29 +24,16 @@ const Settings = ({
       onClick: onToggle
     }}
   >
-    <Button
-      type="button"
-      className="settings__btn--close"
-      size="sm"
-      onClick={onClose}
-      iconOnly
-    >
+    <Button type="button" className="settings__btn--close" size="sm" onClick={onClose} iconOnly>
       <Icon name="x" />
     </Button>
     {settings.map(setting => (
-      <div
-        className={`settings__setting ${classes.setting || ''}`}
-        key={setting.name}
-      >
-        <div className={`settings__name ${classes.name || ''}`}>
-          {setting.name}
-        </div>
+      <div className={`settings__setting ${classes.setting || ''}`} key={setting.name}>
+        <div className={`settings__name ${classes.name || ''}`}>{setting.name}</div>
         {
           {
             radio: (
-              <fieldset
-                className={`settings__fieldset ${classes.fieldset || ''}`}
-              >
+              <fieldset className={`settings__fieldset ${classes.fieldset || ''}`}>
                 {Object.keys(setting.options).map(key => {
                   const option = setting.options[key];
                   return (
@@ -68,8 +47,7 @@ const Settings = ({
                       onChange={setting.onChange}
                       classes={{
                         radio: `settings__radio ${classes.radio || ''}`,
-                        label: `settings__radio-label ${classes.radioLabel ||
-                          ''}`
+                        label: `settings__radio-label ${classes.radioLabel || ''}`
                       }}
                     />
                   );
@@ -83,16 +61,13 @@ const Settings = ({
                 value={setting.value}
                 options={setting.options}
                 classes={{
-                  wrapper: `settings__dropdown-wrapper ${classes.dropdownWrapper ||
-                    ''}`,
+                  wrapper: `settings__dropdown-wrapper ${classes.dropdownWrapper || ''}`,
                   dropdown: `settings__dropdown ${classes.dropdown || ''}`,
-                  option: `settings__select-option ${classes.selectOption ||
-                    ''}`,
+                  option: `settings__select-option ${classes.selectOption || ''}`,
                   label: `settings__select-label ${classes.selectLabel || ''}`,
                   menu: `settings__menu ${classes.menu || ''}`,
                   item: `settings__item ${classes.item || ''}`,
-                  button: `settings__btn--dropdown ${classes.dropdownButton ||
-                    ''}`
+                  button: `settings__btn--dropdown ${classes.dropdownButton || ''}`
                 }}
               />
             )
@@ -110,7 +85,7 @@ const Settings = ({
     >
       Save Settings
     </Button>
-  </PopoverWrapper>
+  </Popover>
 );
 
 Settings.defaultProps = {

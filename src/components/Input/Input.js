@@ -41,7 +41,7 @@ class Input extends Component {
 
   render() {
     const {
-      className = '',
+      className,
       name,
       type,
       value,

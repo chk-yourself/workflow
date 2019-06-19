@@ -114,8 +114,7 @@ class ProjectComposer extends Component {
     const { isColorPickerActive } = this.state;
     if (
       !isColorPickerActive ||
-      (isColorPickerActive &&
-        e.target.matches('.project-composer__btn--toggle-color-picker'))
+      (isColorPickerActive && e.target.matches('.project-composer__btn--toggle-color-picker'))
     )
       return;
     this.setState({
@@ -134,21 +133,11 @@ class ProjectComposer extends Component {
   };
 
   render() {
-    const {
-      name,
-      layout,
-      privacy,
-      color,
-      memberIds,
-      isColorPickerActive
-    } = this.state;
+    const { name, layout, privacy, color, memberIds, isColorPickerActive } = this.state;
 
+    const { onClose } = this.props;
     return (
-      <Modal
-        onModalClose={this.props.onClose}
-        size="md"
-        classes={{ content: 'project-composer' }}
-      >
+      <Modal onClose={onClose} size="md" classes={{ content: 'project-composer' }}>
         <h3 className="project-composer__heading">Create new project</h3>
         <form className="project-composer__form" onSubmit={this.onSubmit}>
           <Input
@@ -172,10 +161,7 @@ class ProjectComposer extends Component {
                   isColorPickerActive ? 'is-active' : ''
                 }`}
               >
-                <ProjectIcon
-                  className="project-composer__color-swatch"
-                  color={color}
-                />
+                <ProjectIcon className="project-composer__color-swatch" color={color} />
                 <Icon name="chevron-down" />
               </Button>
               <ColorPicker
@@ -246,7 +232,6 @@ class ProjectComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(ProjectComposer);

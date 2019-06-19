@@ -14,6 +14,9 @@
   @include xs {
     background-color: rgba(0, 0, 0, 0.6);
   }
+  &--sm {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
   &--lg {
     @include xs {
       background-color: $white;
@@ -92,12 +95,14 @@
 }
 
 .modal__content--sm {
-  padding: 32px 12px 12px;
-  @include xs {
-    width: 300px;
-    padding: 24px 20px 20px;
-    height: auto;
-  }
+  width: 300px;
+  padding: 24px 20px 20px;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  @include box-shadow(5);
   @include sm {
     width: 340px;
     padding: 32px 24px 24px;
@@ -148,5 +153,38 @@
   }
   @include xl {
     max-width: 800px;
+  }
+}
+
+.modal__header {
+  width: 100%;
+}
+
+.modal__title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.modal__body {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.modal__text {
+  font-size: 14px;
+}
+
+.modal__footer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  &--align-center {
+    justify-content: center;
+  }
+  &--align-left {
+    justify-content: flex-start;
+  }
+  &--align-right {
+    justify-content: flex-end;
   }
 }

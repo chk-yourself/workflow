@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { withAuthorization } from '../Session';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Avatar } from '../Avatar';
 import { Menu, MenuItem } from '../Menu';
 import { SignOutButton } from '../SignOutButton';
@@ -40,7 +40,7 @@ class Topbar extends Component {
       <>
         <div className="topbar">
           <SearchTypeahead />
-          <PopoverWrapper
+          <Popover
             isActive={isUserActionsVisible}
             onOutsideClick={this.hideUserActions}
             classes={{
@@ -104,7 +104,7 @@ class Topbar extends Component {
                 <SignOutButton className="topbar__link" />
               </MenuItem>
             </Menu>
-          </PopoverWrapper>
+          </Popover>
         </div>
       </>
     );

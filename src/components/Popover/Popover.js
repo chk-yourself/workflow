@@ -1,13 +1,97 @@
 import React, { Component } from 'react';
+import { Button } from '../Button';
+import PopoverContent from './PopoverContent';
+import './Popover.scss';
 
-export default class Popover extends Component {
+class Popover extends Component {
+  state = {
+    isActive: 'isActive' in this.props ? null : false
+  };
+
+  static defaultProps = {
+    classes: {
+      wrapper: '',
+      popover: ''
+    },
+    buttonProps: {},
+    align: {
+      outer: 'left',
+      inner: 'left'
+    },
+    anchorEl: null
+  };
+
+  onOutsideClick = e => {
+    const { onOutsideClick, onClose } = this.props;
+
+    if (onOutsideClick) {
+      onOutsideClick(e);
+    } else {
+      this.setState({
+        isActive: false
+      });
+
+      if (onClose) {
+        onClose(e);
+      }
+    }
+  };
+
+  toggleOpen = () => {
+    this.setState(prevState => ({
+      isActive: !prevState.isActive
+    }));
+  };
+
+  handleClose = e => {
+    if ('isActive' in this.props) {
+      const { onClose } = this.props;
+      if (onClose) {
+        onClose(e);
+      }
+    } else {
+      if (e.target.matches('input')) return;
+      this.setState({
+        isActive: false
+      });
+    }
+  };
 
   render() {
-    const { className, onClick, style, children, isVisible } = this.props;
+    const { children, align, onWrapperClick, buttonProps, classes, anchorEl } = this.props;
+    const isActive = 'isActive' in this.props ? this.props.isActive : this.state.isActive;
+
+    let popoverWrapperStyle = null;
+
+    if (anchorEl) {
+      const { offsetTop, offsetLeft } = anchorEl;
+      popoverWrapperStyle = {
+        position: 'absolute',
+        top: offsetTop,
+        [align.outer || 'left']: offsetLeft
+      };
+    }
+
     return (
-      <div className={`popover ${className}`} onClick={onClick} style={{...style, display: isVisible ? 'block' : 'none'}}>
-        {children}
+      <div
+        className={`popover-wrapper ${isActive ? 'is-active' : ''} ${classes.wrapper}`}
+        style={popoverWrapperStyle}
+        onClick={onWrapperClick}
+      >
+        <Button type="button" onClick={this.toggleOpen} {...buttonProps} />
+        {isActive && (
+          <PopoverContent
+            onOutsideClick={this.onOutsideClick}
+            isVisible={isActive}
+            className={`align-${align.inner || 'left'} ${classes.popover}`}
+            onClick={this.handleClose}
+          >
+            {children}
+          </PopoverContent>
+        )}
       </div>
     );
   }
 }
+
+export default Popover;

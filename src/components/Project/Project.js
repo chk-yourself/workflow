@@ -11,7 +11,7 @@ import { Icon } from '../Icon';
 import { Settings } from '../Settings';
 import { ProjectIcon } from '../ProjectIcon';
 import ProjectOverview from './ProjectOverview';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
 import { Menu, MenuItem } from '../Menu';
 import ProjectDuplicator from './ProjectDuplicator';
@@ -197,7 +197,7 @@ class Project extends Component {
               onBlur={this.onNameBlur}
               isRequired
             />
-            <PopoverWrapper
+            <Popover
               isActive={isMoreActionsMenuVisible}
               onOutsideClick={this.closeMoreActionsMenu}
               classes={{
@@ -234,7 +234,7 @@ class Project extends Component {
                   </Button>
                 </MenuItem>
               </Menu>
-            </PopoverWrapper>
+            </Popover>
             <div className="project__links">
               <NavLink
                 className="project__link"

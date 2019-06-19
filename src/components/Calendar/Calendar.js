@@ -9,7 +9,7 @@ import {
 } from '../../utils/date';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Radio } from '../Radio';
 import './Calendar.scss';
 
@@ -68,14 +68,7 @@ export default class Calendar extends Component {
   };
 
   render() {
-    const {
-      month,
-      year,
-      selectedDate,
-      today,
-      onDayClick,
-      classes
-    } = this.props;
+    const { month, year, selectedDate, today, onDayClick, classes } = this.props;
     const { isMonthsDropdownActive, isYearsDropdownActive } = this.state;
     const dates = getMonthDates(month, year);
     const years = getNextYears(4);
@@ -83,7 +76,7 @@ export default class Calendar extends Component {
     return (
       <div className={`calendar ${classes.calendar}`}>
         <div className="calendar__year">
-          <PopoverWrapper
+          <Popover
             isActive={isYearsDropdownActive}
             onOutsideClick={this.closeYearsDropdown}
             classes={{
@@ -130,10 +123,10 @@ export default class Calendar extends Component {
                 </li>
               ))}
             </ul>
-          </PopoverWrapper>
+          </Popover>
         </div>
         <div className="calendar__month">
-          <PopoverWrapper
+          <Popover
             isActive={isMonthsDropdownActive}
             onOutsideClick={this.closeMonthsDropdown}
             classes={{
@@ -180,7 +173,7 @@ export default class Calendar extends Component {
                 </li>
               ))}
             </ul>
-          </PopoverWrapper>
+          </Popover>
           <div className="calendar__month--prev-next">
             <Button
               type="button"
@@ -204,10 +197,7 @@ export default class Calendar extends Component {
         </div>
         <div className="calendar__week-days">
           {WEEK_DAYS.map(day => (
-            <div
-              key={day.long}
-              className={`calendar__week-day ${classes.weekDay}`}
-            >
+            <div key={day.long} className={`calendar__week-day ${classes.weekDay}`}>
               {day.narrow}
             </div>
           ))}
@@ -215,9 +205,7 @@ export default class Calendar extends Component {
         <div className="calendar__days">
           {dates.map(date => {
             const isToday =
-              date.day === today.day &&
-              date.month === today.month &&
-              date.year === today.year;
+              date.day === today.day && date.month === today.month && date.year === today.year;
             const isSelectedDate =
               selectedDate &&
               date.day === selectedDate.day &&
@@ -228,9 +216,9 @@ export default class Calendar extends Component {
                 key={`${date.month}--${date.day}`}
                 className={`calendar__day ${
                   date.month !== month ? 'calendar__day--prev-next' : ''
-                } ${isToday ? 'is-today' : ''} ${
-                  isSelectedDate ? 'is-selected' : ''
-                } ${classes.day}`}
+                } ${isToday ? 'is-today' : ''} ${isSelectedDate ? 'is-selected' : ''} ${
+                  classes.day
+                }`}
               >
                 <Button
                   type="button"

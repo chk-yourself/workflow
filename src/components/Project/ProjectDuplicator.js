@@ -47,13 +47,7 @@ class ProjectDuplicator extends Component {
     e.preventDefault();
     const { name, ...settings } = this.state;
     if (!name) return;
-    const {
-      onClose,
-      firebase,
-      currentUser,
-      activeWorkspace,
-      projectId
-    } = this.props;
+    const { onClose, firebase, currentUser, activeWorkspace, projectId } = this.props;
     const { userId } = currentUser;
     const { workspaceId } = activeWorkspace;
     firebase.cloneProject({ name, userId, workspaceId, projectId }, settings);
@@ -78,11 +72,7 @@ class ProjectDuplicator extends Component {
     const { name } = this.state;
     const { onClose } = this.props;
     return (
-      <Modal
-        onModalClose={onClose}
-        size="md"
-        classes={{ content: 'project-duplicator' }}
-      >
+      <Modal onClose={onClose} size="md" classes={{ content: 'project-duplicator' }}>
         <h3 className="project-duplicator__heading">Duplicate Project</h3>
         <form className="project-duplicator__form" onSubmit={this.onSubmit}>
           <Input
@@ -133,8 +123,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default compose(
   connect(mapStateToProps),

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Menu, MenuItem } from '../Menu';
 import { Radio } from '../Radio';
 import { Icon } from '../Icon';
@@ -55,7 +55,7 @@ export default class SelectDropdown extends Component {
     const { classes, options, name, value, align } = this.props;
 
     return (
-      <PopoverWrapper
+      <Popover
         isActive={isActive}
         onOutsideClick={this.closeDropdown}
         align={align}
@@ -112,7 +112,7 @@ export default class SelectDropdown extends Component {
             );
           })}
         </Menu>
-      </PopoverWrapper>
+      </Popover>
     );
   }
 }

@@ -46,11 +46,7 @@ class WorkspaceComposer extends Component {
     const { onClose } = this.props;
     const isInvalid = name === '';
     return (
-      <Modal
-        onModalClose={onClose}
-        size="md"
-        classes={{ content: 'workspace-composer ' }}
-      >
+      <Modal onClose={onClose} size="md" classes={{ content: 'workspace-composer ' }}>
         <h3 className="workspace-composer__heading">Create new workspace</h3>
         <form className="workspace-composer__form" onSubmit={this.onSubmit}>
           <Input
@@ -64,9 +60,7 @@ class WorkspaceComposer extends Component {
             labelClass="workspace-composer__label"
             data-section="workspace"
           />
-          <h3 className="workspace-composer__subheading">
-            Your team (optional)
-          </h3>
+          <h3 className="workspace-composer__subheading">Your team (optional)</h3>
           {invites.map((email, i) => (
             <Input
               key={i}

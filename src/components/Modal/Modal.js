@@ -7,15 +7,15 @@ import './Modal.scss';
 
 class Modal extends Component {
   static propTypes = {
-    onModalClick: PropTypes.func,
-    onModalClose: PropTypes.func,
+    onClick: PropTypes.func,
+    onClose: PropTypes.func,
     size: PropTypes.string,
     classes: PropTypes.objectOf(PropTypes.string)
   };
 
   static defaultProps = {
-    onModalClick: () => null,
-    onModalClose: () => null,
+    onClick: () => null,
+    onClose: () => null,
     size: 'md',
     classes: {
       modal: '',
@@ -34,28 +34,20 @@ class Modal extends Component {
   }
 
   onOutsideClick = e => {
-    const { onOutsideClick, onModalClose } = this.props;
+    const { onOutsideClick, onClose } = this.props;
     if (onOutsideClick) {
       onOutsideClick(e);
     } else {
-      onModalClose(e);
+      onClose(e);
     }
   };
 
   render() {
-    const {
-      children,
-      onModalClose,
-      onModalClick,
-      size,
-      classes,
-      id,
-      innerRef
-    } = this.props;
+    const { children, onClose, onClick, size, classes, id, innerRef } = this.props;
     return (
       <div
         className={`modal modal--${size} ${classes.modal || ''}`}
-        onClick={onModalClick}
+        onClick={onClick}
         role="dialog"
         aria-modal
         tabIndex="-1"
@@ -63,13 +55,12 @@ class Modal extends Component {
         <div
           id={id}
           ref={innerRef}
-          className={`modal__content ${classes.content ||
-            ''} modal__content--${size}`}
+          className={`modal__content ${classes.content || ''} modal__content--${size}`}
         >
           <Button
             type="button"
             className={`modal__btn--close ${classes.button || ''}`}
-            onClick={onModalClose}
+            onClick={onClose}
             iconOnly
           >
             <Icon name="x" />

@@ -5,7 +5,7 @@ import { withAuthorization } from '../Session';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { MemberSearch } from '../MemberSearch';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { userSelectors } from '../../ducks/users';
 import './MemberAssigner.scss';
 
@@ -89,7 +89,7 @@ class MemberAssigner extends Component {
           })}
         </div>
         {!isMemberSearchDisabled && (
-          <PopoverWrapper
+          <Popover
             isActive={isMemberSearchActive}
             onOutsideClick={this.hideMemberSearch}
             classes={{
@@ -128,7 +128,7 @@ class MemberAssigner extends Component {
                 />
               </div>
             )}
-          </PopoverWrapper>
+          </Popover>
         )}
       </div>
     );
