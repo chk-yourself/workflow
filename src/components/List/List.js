@@ -210,7 +210,11 @@ class List extends Component {
                           {!isRestricted && (
                             <Button
                               className="list__btn"
-                              onClick={confirm(this.handleDelete, 'Delete List', 'danger')}
+                              onClick={confirm(this.handleDelete, {
+                                label: 'Delete List',
+                                intent: 'danger',
+                                title: `Delete "${listName}" list?`
+                              })}
                             >
                               Delete
                             </Button>

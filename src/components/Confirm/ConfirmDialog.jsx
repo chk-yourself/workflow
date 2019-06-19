@@ -4,7 +4,7 @@ import { Modal, ModalFooter, ModalHeader, ModalBody } from '../Modal';
 import { Button } from '../Button';
 import './ConfirmDialog.scss';
 
-const ConfirmDialog = ({ title, message, onClose, onConfirm, action, intent, classes }) => {
+const ConfirmDialog = ({ title, message, onClose, onConfirm, label, intent, classes }) => {
   const buttonRef = useRef(null);
   useEffect(() => {
     buttonRef.current.focus();
@@ -22,7 +22,7 @@ const ConfirmDialog = ({ title, message, onClose, onConfirm, action, intent, cla
           Cancel
         </Button>
         <Button variant="contained" intent={intent} onClick={onConfirm}>
-          {action}
+          {label}
         </Button>
       </ModalFooter>
     </Modal>
@@ -35,7 +35,7 @@ ConfirmDialog.defaultProps = {
     body: '',
     footer: ''
   },
-  action: 'Ok',
+  label: 'Ok',
   intent: ''
 };
 
@@ -45,7 +45,7 @@ ConfirmDialog.propTypes = {
   message: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  action: PropTypes.string,
+  label: PropTypes.string,
   intent: PropTypes.string
 };
 
