@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Checkbox } from '../Checkbox';
 import { Textarea } from '../Textarea';
@@ -16,6 +17,11 @@ import './Task.scss';
 class Task extends Component {
   static defaultProps = {
     className: ''
+  };
+
+  static propTypes = {
+    className: PropTypes.string,
+    taskId: PropTypes.string.isRequired
   };
 
   state = {

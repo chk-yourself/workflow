@@ -19,17 +19,7 @@ const ContactInfo = ({ icon, children }) => (
 const Profile = ({ user, currentUser, activeWorkspace }) => {
   if (!user) return null;
   const { members } = activeWorkspace;
-  const {
-    userId,
-    name,
-    photoURL,
-    email,
-    displayName,
-    status,
-    github,
-    linkedin,
-    about
-  } = user;
+  const { userId, name, photoURL, email, displayName, status, github, linkedin, about } = user;
   const { activeTaskCount, projectIds } = members[userId];
   const onlineStatus = status ? status.state : 'offline';
   const isCurrentUserProfile = currentUser.userId === userId;
@@ -107,8 +97,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default compose(
   connect(mapStateToProps),

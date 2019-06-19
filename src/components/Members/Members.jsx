@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
@@ -27,10 +28,8 @@ const Members = ({
         <li className={`members__item ${classes.item || ''}`} key={userId}>
           <Avatar
             classes={{
-              avatar: `members__avatar members__avatar--sm ${classes.avatar ||
-                ''}`,
-              placeholder: `members__avatar-placeholder--sm ${classes.placeholder ||
-                ''}`
+              avatar: `members__avatar members__avatar--sm ${classes.avatar || ''}`,
+              placeholder: `members__avatar-placeholder--sm ${classes.placeholder || ''}`
             }}
             name={name}
             size="sm"
@@ -43,9 +42,7 @@ const Members = ({
             <span
               key={detail}
               className={`members__detail members__${detail} ${
-                classes.detail
-                  ? `${classes.detail} ${classes.detail}--${detail}`
-                  : ''
+                classes.detail ? `${classes.detail} ${classes.detail}--${detail}` : ''
               }`}
             >
               {detail === 'displayName' ? (
@@ -82,12 +79,25 @@ Members.defaultProps = {
   details: ['name', 'displayName', 'email']
 };
 
+Members.propTypes = {
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  showOnlineStatus: PropTypes.bool,
+  includeProfileLink: PropTypes.bool,
+  details: PropTypes.arrayOf(PropTypes.string),
+  classes: PropTypes.shape({
+    list: PropTypes.string,
+    item: PropTypes.string,
+    avatar: PropTypes.string,
+    placeholder: PropTypes.string,
+    detail: PropTypes.string
+  })
+};
+
 const mapStateToProps = state => ({
   users: userSelectors.getUsersArray(state)
 });
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default compose(
   withAuthorization(condition),

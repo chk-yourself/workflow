@@ -284,7 +284,7 @@ class TaskEditor extends Component {
               onSelectList={this.moveToList}
             />
             <TaskEditorDueDate
-              dueDate={dueDate}
+              dueDate={dueDate ? dueDate.toDate() : dueDate}
               onToggleDatePicker={this.toggleDatePicker}
               isDatePickerActive={isDatePickerActive}
               onSelectDueDate={this.setDueDate}

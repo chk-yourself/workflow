@@ -16,9 +16,7 @@ const TaskEditorDueDate = ({
       <Button
         onClick={onToggleDatePicker}
         type="button"
-        className={`task-editor__btn--due-date ${
-          isDatePickerActive ? 'is-active' : ''
-        }`}
+        className={`task-editor__btn--due-date ${isDatePickerActive ? 'is-active' : ''}`}
       >
         <span className="task-editor__due-date-icon">
           <Icon name="calendar" />
@@ -29,17 +27,14 @@ const TaskEditorDueDate = ({
           ) : (
             <>
               <span className="task-editor__section-title--sm">Due Date</span>
-              <TaskDueDate
-                dueDate={dueDate}
-                className="task-editor__due-date"
-              />
+              <TaskDueDate dueDate={dueDate} className="task-editor__due-date" />
             </>
           )}
         </span>
       </Button>
       <DatePicker
         onClose={onToggleDatePicker}
-        selectedDate={dueDate ? dueDate.toDate() : dueDate}
+        selectedDate={dueDate}
         selectDate={onSelectDueDate}
         isActive={isDatePickerActive}
       />

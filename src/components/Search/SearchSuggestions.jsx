@@ -1,13 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const SearchSuggestions = ({
-  items,
-  onClick,
-  selectedItem,
-  category,
-  renderMatch
-}) => {
+const SearchSuggestions = ({ items, onClick, selectedItem, category, renderMatch }) => {
   if (items.length === 0) return null;
   return (
     <li className="search-suggestions__item">
@@ -18,8 +13,7 @@ const SearchSuggestions = ({
             selectedItem === null
               ? false
               : (selectedItem.name === item.name &&
-                  (category === 'Projects' &&
-                    selectedItem.projectId === item.projectId)) ||
+                  (category === 'Projects' && selectedItem.projectId === item.projectId)) ||
                 (category === 'Tags' && selectedItem.color === item.color) ||
                 (category === 'Tasks' && selectedItem.taskId === item.taskId);
           return (
@@ -42,6 +36,10 @@ const SearchSuggestions = ({
 
 SearchSuggestions.defaultProps = {
   onClick: () => null
+};
+
+SearchSuggestions.propTypes = {
+  onClick: PropTypes.func
 };
 
 export default SearchSuggestions;

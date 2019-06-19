@@ -1,19 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Radio = ({
   classes,
   name,
   id,
   value,
-  onFocus,
-  onChange,
-  onInput,
   isRequired,
-  onBlur,
   inputRef,
   hideLabel,
   label,
-  onKeyDown,
   isChecked,
   ...rest
 }) => {
@@ -25,12 +21,7 @@ const Radio = ({
         name={name}
         type="radio"
         value={value}
-        onFocus={onFocus}
-        onChange={onChange}
-        onBlur={onBlur}
         ref={inputRef}
-        onInput={onInput}
-        onKeyDown={onKeyDown}
         required={isRequired}
         checked={isChecked}
         {...rest}
@@ -49,6 +40,14 @@ Radio.defaultProps = {
     radio: '',
     label: ''
   }
+};
+
+Radio.propTypes = {
+  classes: PropTypes.shape({
+    radio: PropTypes.string,
+    label: PropTypes.string
+  }),
+  name: PropTypes.string.isRequired
 };
 
 export default Radio;

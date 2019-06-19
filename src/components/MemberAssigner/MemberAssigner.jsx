@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withAuthorization } from '../Session';
@@ -23,6 +24,14 @@ class MemberAssigner extends Component {
     isSelfAssignmentDisabled: false,
     align: 'left',
     showOnlineStatus: false
+  };
+
+  static propTypes = {
+    placeholder: PropTypes.string,
+    isMemberSearchDisabled: PropTypes.bool,
+    isSelfAssignmentDisabled: PropTypes.bool,
+    align: PropTypes.string,
+    showOnlineStatus: PropTypes.bool
   };
 
   state = {
@@ -93,16 +102,15 @@ class MemberAssigner extends Component {
             isActive={isMemberSearchActive}
             onOutsideClick={this.hideMemberSearch}
             classes={{
-              wrapper: `member-assigner__popover-wrapper ${classes.popoverWrapper ||
-                ''}`,
+              wrapper: `member-assigner__popover-wrapper ${classes.popoverWrapper || ''}`,
               popover: `member-assigner__popover ${classes.popover || ''}`
             }}
             buttonProps={{
               size: 'md',
               iconOnly: true,
-              className: `member-assigner__btn--toggle-member-search ${
-                classes.button
-              } ${isMemberSearchActive ? 'is-active' : ''}`,
+              className: `member-assigner__btn--toggle-member-search ${classes.button} ${
+                isMemberSearchActive ? 'is-active' : ''
+              }`,
               children: <Icon name="plus" />,
               onClick: this.toggleMemberSearch
             }}
@@ -142,8 +150,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default compose(
   connect(mapStateToProps),

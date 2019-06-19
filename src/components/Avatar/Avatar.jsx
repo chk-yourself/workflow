@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './Avatar.scss';
 
 export default class Avatar extends Component {
@@ -12,7 +13,20 @@ export default class Avatar extends Component {
     size: 'md',
     variant: 'circle',
     name: 'Guest',
-    showOnlineStatus: false
+    showOnlineStatus: false,
+    imgProps: {}
+  };
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      avatar: PropTypes.string,
+      img: PropTypes.string,
+      placeholder: PropTypes.string
+    }),
+    name: PropTypes.string,
+    showOnlineStatus: PropTypes.bool,
+    size: PropTypes.oneOf(['sm', 'md', 'lg']),
+    variant: PropTypes.oneOf(['circle', 'square', 'rounded'])
   };
 
   getUserInitials = fullName => {
@@ -42,12 +56,7 @@ export default class Avatar extends Component {
         } ${classes.avatar}`}
       >
         {imgSrc !== null ? (
-          <img
-            src={imgSrc}
-            alt={name}
-            className={`avatar__img ${classes.img}`}
-            {...imgProps}
-          />
+          <img src={imgSrc} alt={name} className={`avatar__img ${classes.img}`} {...imgProps} />
         ) : (
           <span
             className={`avatar__placeholder ${classes.placeholder}`}

@@ -1,7 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Button } from '../Button';
-import { Icon } from '../Icon';
+import { IconButton } from '../Button';
 import './Tag.scss';
 
 const Tag = ({
@@ -18,9 +18,9 @@ const Tag = ({
   ...rest
 }) => (
   <span
-    className={`tag tag--${size} bg--${color} ${
-      variant !== 'default' ? `tag--${variant}` : ''
-    } ${isFocused ? 'is-focused' : ''} ${className}`}
+    className={`tag tag--${size} bg--${color} ${variant !== 'default' ? `tag--${variant}` : ''} ${
+      isFocused ? 'is-focused' : ''
+    } ${className}`}
     ref={innerRef}
     data-tooltip={tooltip || name}
     {...rest}
@@ -33,16 +33,14 @@ const Tag = ({
       <span className="tag__link">{name}</span>
     )}
     {size === 'md' && (
-      <Button
-        type="button"
+      <IconButton
         size="sm"
         className="tag__btn--delete"
         onClick={onDelete}
-        iconOnly
+        icon="x"
         data-name={name}
-      >
-        <Icon name="x" />
-      </Button>
+        label="Remove tag"
+      />
     )}
   </span>
 );
@@ -56,6 +54,16 @@ Tag.defaultProps = {
   isFocused: false,
   isLinkDisabled: false,
   tooltip: ''
+};
+
+Tag.propTypes = {
+  className: PropTypes.string,
+  onDelete: PropTypes.func,
+  size: PropTypes.oneOf(['sm', 'md']),
+  variant: PropTypes.string,
+  isFocused: PropTypes.bool,
+  isLinkDisabled: PropTypes.bool,
+  tooltip: PropTypes.string
 };
 
 export default Tag;

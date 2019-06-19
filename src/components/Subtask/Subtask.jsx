@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { Checkbox } from '../Checkbox';
@@ -10,6 +11,12 @@ import './Subtask.scss';
 class Subtask extends Component {
   static defaultProps = {
     usePortal: false
+  };
+
+  static propTypes = {
+    usePortal: PropTypes.bool,
+    subtaskId: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired
   };
 
   state = {

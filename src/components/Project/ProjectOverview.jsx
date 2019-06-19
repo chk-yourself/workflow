@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { NotesEditor } from '../NotesEditor';
@@ -17,6 +18,10 @@ const ProjectOverviewSection = ({ name, children, className = '' }) => (
 );
 
 class ProjectOverview extends Component {
+  static propTypes = {
+    projectId: PropTypes.string.isRequired
+  };
+
   state = {
     isColorPickerActive: false
   };
@@ -38,8 +43,7 @@ class ProjectOverview extends Component {
     const { isColorPickerActive } = this.state;
     if (
       !isColorPickerActive ||
-      (isColorPickerActive &&
-        e.target.matches('.project__btn--toggle-color-picker'))
+      (isColorPickerActive && e.target.matches('.project__btn--toggle-color-picker'))
     )
       return;
     this.setState({
@@ -54,10 +58,7 @@ class ProjectOverview extends Component {
     const { isColorPickerActive } = this.state;
     return (
       <div className="project__overview">
-        <ProjectOverviewSection
-          name="Highlight Color"
-          className="project__overview-section--color"
-        >
+        <ProjectOverviewSection name="Highlight Color" className="project__overview-section--color">
           <Button
             onClick={this.toggleColorPicker}
             className={`project__btn--toggle-color-picker ${
@@ -100,9 +101,6 @@ const mapStateToProps = (state, ownProps) => ({
   project: projectSelectors.getProject(state, ownProps.projectId)
 });
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
-export default withAuthorization(condition)(
-  connect(mapStateToProps)(ProjectOverview)
-);
+export default withAuthorization(condition)(connect(mapStateToProps)(ProjectOverview));

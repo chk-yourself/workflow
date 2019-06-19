@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
 import { Input } from '../Input';
-import { Button } from '../Button';
+import { IconButton } from '../Button';
 import * as keys from '../../constants/keys';
 import './TaskComposer.scss';
 
@@ -14,7 +13,7 @@ const INITIAL_STATE = {
 class TaskComposer extends Component {
   state = { ...INITIAL_STATE };
 
-  resetForm = () => {
+  reset = () => {
     this.setState({ name: '' });
   };
 
@@ -46,7 +45,7 @@ class TaskComposer extends Component {
       listName,
       isPrivate: !projectId
     });
-    this.resetForm();
+    this.reset();
     e.preventDefault();
   };
 
@@ -79,14 +78,13 @@ class TaskComposer extends Component {
         onBlur={this.onBlur}
       >
         <form className="task-composer__form" onSubmit={this.onSubmit}>
-          <Button
+          <IconButton
             className="task-composer__btn--submit"
             type="submit"
             onClick={this.onSubmit}
-            iconOnly
-          >
-            <Icon name="plus-circle" />
-          </Button>
+            icon="plus-circle"
+            label="Add task"
+          />
           <Input
             onChange={this.onChange}
             value={name}

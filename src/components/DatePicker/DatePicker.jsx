@@ -170,7 +170,7 @@ export default class DatePicker extends Component {
         <Calendar
           classes={{
             calendar: 'date-picker__calendar',
-            weekDay: 'date-picker__week-day'
+            weekday: 'date-picker__week-day'
           }}
           month={currentMonth}
           year={currentYear}

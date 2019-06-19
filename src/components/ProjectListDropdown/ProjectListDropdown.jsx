@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { SelectDropdown } from '../SelectDropdown';
 import { projectSelectors, projectActions } from '../../ducks/projects';
 
 class ProjectListDropdown extends Component {
+  static propTypes = {
+    projectId: PropTypes.string.isRequired
+  };
+
   state = {
     isLoading: !this.props.isLoaded
   };
@@ -48,15 +53,13 @@ class ProjectListDropdown extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     lists: projectSelectors.getProjectLists(state, ownProps.projectId),
-    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId)
-      .lists
+    isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId).lists
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProjectLists: projectId =>
-      dispatch(projectActions.fetchProjectLists(projectId))
+    fetchProjectLists: projectId => dispatch(projectActions.fetchProjectLists(projectId))
   };
 };
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   MONTHS,
   WEEK_DAYS,
@@ -7,13 +8,31 @@ import {
   getMonthDates,
   getNextYears
 } from '../../utils/date';
-import { Button } from '../Button';
+import { Button, IconButton } from '../Button';
 import { Icon } from '../Icon';
 import { Popover } from '../Popover';
 import { Radio } from '../Radio';
 import './Calendar.scss';
 
 export default class Calendar extends Component {
+  static defaultProps = {
+    onDayClick: () => {},
+    classes: {
+      calendar: '',
+      weekday: '',
+      day: ''
+    }
+  };
+
+  static propTypes = {
+    onDayClick: PropTypes.func,
+    classes: PropTypes.shape({
+      calendar: PropTypes.string,
+      weekday: PropTypes.string,
+      day: PropTypes.string
+    })
+  };
+
   state = {
     isMonthsDropdownActive: false,
     isYearsDropdownActive: false
@@ -175,29 +194,26 @@ export default class Calendar extends Component {
             </ul>
           </Popover>
           <div className="calendar__month--prev-next">
-            <Button
-              type="button"
+            <IconButton
               className="calendar__btn--month calendar__btn--prev-month"
               size="sm"
-              iconOnly
               onClick={this.goToPrevMonth}
-            >
-              <Icon name="chevron-left" />
-            </Button>
-            <Button
+              icon="chevron-left"
+              label="Select previous month"
+            />
+            <IconButton
               type="button"
               className="calendar__btn--month calendar__btn--next-month"
               size="sm"
-              iconOnly
+              icon="chevron-right"
               onClick={this.goToNextMonth}
-            >
-              <Icon name="chevron-right" />
-            </Button>
+              label="Select next month"
+            />
           </div>
         </div>
         <div className="calendar__week-days">
           {WEEK_DAYS.map(day => (
-            <div key={day.long} className={`calendar__week-day ${classes.weekDay}`}>
+            <div key={day.long} className={`calendar__week-day ${classes.weekday}`}>
               {day.narrow}
             </div>
           ))}

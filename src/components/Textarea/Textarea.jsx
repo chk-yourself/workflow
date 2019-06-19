@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './Textarea.scss';
 import { debounce } from '../../utils/function';
 
@@ -7,10 +8,18 @@ export default class Textarea extends Component {
     className: '',
     label: '',
     labelClass: '',
-    id: null,
     isAutoHeightResizeEnabled: true,
     minHeight: 0,
     tabIndex: 0
+  };
+
+  static propTypes = {
+    className: PropTypes.string,
+    label: PropTypes.string,
+    labelClass: PropTypes.string,
+    minHeight: PropTypes.number,
+    tabIndex: PropTypes.number,
+    isAutoHeightResizeEnabled: PropTypes.bool
   };
 
   state = {
@@ -91,10 +100,7 @@ export default class Textarea extends Component {
     return (
       <>
         {label !== '' && (
-          <label
-            className={`${labelClass} ${isFocused ? 'is-focused' : ''}`}
-            htmlFor={id}
-          >
+          <label className={`${labelClass} ${isFocused ? 'is-focused' : ''}`} htmlFor={id}>
             {label}
           </label>
         )}

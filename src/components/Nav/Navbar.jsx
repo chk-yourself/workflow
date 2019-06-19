@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './Navbar.scss';
 import { withOutsideClick } from '../withOutsideClick';
 import { Logo } from '../Logo';
 import { IconButton } from '../Button';
-import { Icon } from '../Icon';
 
 class Navbar extends Component {
   static defaultProps = {
@@ -12,6 +12,14 @@ class Navbar extends Component {
       navbar: '',
       links: ''
     }
+  };
+
+  static propTypes = {
+    minWidth: PropTypes.number,
+    classes: PropTypes.shape({
+      navbar: PropTypes.string,
+      links: PropTypes.string
+    })
   };
 
   state = {

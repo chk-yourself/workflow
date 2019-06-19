@@ -11,12 +11,9 @@ const INITIAL_STATE = {
 };
 
 class CardComposer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  state = { ...INITIAL_STATE };
 
-  resetForm = () => {
+  clear = () => {
     this.setState({ name: '' });
   };
 
@@ -43,7 +40,7 @@ class CardComposer extends Component {
       userId,
       workspaceId
     });
-    this.resetForm();
+    this.clear();
     e.preventDefault();
   };
 
@@ -53,13 +50,13 @@ class CardComposer extends Component {
     });
   };
 
-  onFocus = e => {
+  onFocus = () => {
     this.setState({
       isActive: true
     });
   };
 
-  onReset = e => {
+  reset = () => {
     this.setState({ ...INITIAL_STATE });
   };
 
@@ -104,12 +101,7 @@ class CardComposer extends Component {
               >
                 Add Task
               </Button>
-              <Button
-                className="card-composer__btn"
-                type="reset"
-                onClick={this.onReset}
-                size="sm"
-              >
+              <Button className="card-composer__btn" type="reset" onClick={this.reset} size="sm">
                 Cancel
               </Button>
             </div>
@@ -120,7 +112,6 @@ class CardComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(CardComposer);

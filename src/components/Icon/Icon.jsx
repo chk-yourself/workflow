@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import featherIcons from 'feather-icons/dist/feather-sprite.svg';
 
 const Icon = ({ name, className, width, height }) => (
@@ -23,6 +24,13 @@ Icon.defaultProps = {
   className: '',
   width: 24,
   height: 24
+};
+
+Icon.propTypes = {
+  className: PropTypes.string,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  name: PropTypes.string.isRequired
 };
 
 export default Icon;

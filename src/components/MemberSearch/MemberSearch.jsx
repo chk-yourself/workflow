@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Input } from '../Input';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
@@ -23,6 +24,10 @@ class MemberSearch extends Component {
     placeholder: '',
     type: 'text',
     query: null
+  };
+
+  static propTypes = {
+    placeholder: PropTypes.string
   };
 
   state = {
