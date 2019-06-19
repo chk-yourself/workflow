@@ -17,6 +17,7 @@ const Button = ({
   innerRef,
   isActive,
   intent,
+  label,
   ...props
 }) => (
   <button
@@ -28,6 +29,7 @@ const Button = ({
     onMouseDown={onMouseDown}
     disabled={disabled}
     ref={innerRef}
+    aria-label={label}
     {...props}
   >
     {children}
@@ -40,8 +42,6 @@ Button.defaultProps = {
   color: 'neutral',
   size: 'md',
   variant: 'text',
-  value: '',
-  name: '',
   iconOnly: false,
   isActive: false,
   onClick: () => null,
@@ -55,8 +55,6 @@ Button.propTypes = {
   color: PropTypes.string,
   size: PropTypes.string,
   variant: PropTypes.string,
-  value: PropTypes.string,
-  name: PropTypes.string,
   iconOnly: PropTypes.bool,
   isActive: PropTypes.bool,
   innerRef: PropTypes.oneOfType([

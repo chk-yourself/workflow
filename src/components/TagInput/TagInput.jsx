@@ -8,11 +8,11 @@ import { ColorPicker } from '../ColorPicker';
 import { withOutsideClick } from '../withOutsideClick';
 import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
-import './TagsInput.scss';
+import './TagInput.scss';
 
 // TODO: accept tagProps and inputProps for reusability
 
-class TagsInput extends Component {
+class TagInput extends Component {
   state = {
     value: '',
     isActive: false,
@@ -68,11 +68,8 @@ class TagsInput extends Component {
     const { tagSuggestions } = this.props;
     const { selectedTag } = this.state;
     const { value } = e.target;
-    const filteredList = tagSuggestions.filter(tag =>
-      this.matchTag(tag, value)
-    );
-    const hasExactMatch =
-      filteredList.findIndex(item => item.name === value) !== -1;
+    const filteredList = tagSuggestions.filter(tag => this.matchTag(tag, value));
+    const hasExactMatch = filteredList.findIndex(item => item.name === value) !== -1;
     const newIndex = filteredList.indexOf(selectedTag);
     const persistSelectedTag = newIndex !== -1;
 
@@ -101,20 +98,11 @@ class TagsInput extends Component {
     )
       return;
 
-    const {
-      filteredList,
-      selectedIndex,
-      selectedTag,
-      value,
-      focusedTag
-    } = this.state;
+    const { filteredList, selectedIndex, selectedTag, value, focusedTag } = this.state;
     const { assignedTags } = this.props;
     const nextIndex =
-      selectedIndex === filteredList.length - 1 || selectedIndex === null
-        ? 0
-        : selectedIndex + 1;
-    const prevIndex =
-      selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
+      selectedIndex === filteredList.length - 1 || selectedIndex === null ? 0 : selectedIndex + 1;
+    const prevIndex = selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
 
     // eslint-disable-next-line default-case
     switch (e.key) {
@@ -155,7 +143,7 @@ class TagsInput extends Component {
   };
 
   onOutsideClick = e => {
-    if (e.target.matches('.tags-input__item')) return;
+    if (e.target.matches('.tag-input__item')) return;
     this.setState({
       isActive: false
     });
@@ -174,23 +162,13 @@ class TagsInput extends Component {
   };
 
   addTag = name => {
-    const {
-      firebase,
-      currentUser,
-      projectTags,
-      taskId,
-      projectId
-    } = this.props;
+    const { firebase, currentUser, projectTags, taskId, projectId } = this.props;
     const { userId, tags: userTags } = currentUser;
     const isProjectTag = projectTags && name in projectTags;
     const isUserTag = userTags && name in userTags;
     const projectTag = isProjectTag ? projectTags[name] : null;
     const userTag = isUserTag ? userTags[name] : null;
-    const tagData = isProjectTag
-      ? { ...projectTag }
-      : isUserTag
-      ? { ...userTag }
-      : { name };
+    const tagData = isProjectTag ? { ...projectTag } : isUserTag ? { ...userTag } : { name };
 
     firebase
       .addTag({
@@ -232,7 +210,7 @@ class TagsInput extends Component {
   };
 
   onClickSuggestion = e => {
-    if (!e.target.matches('.tags-input__item')) return;
+    if (!e.target.matches('.tag-input__item')) return;
     const { tag } = e.target.dataset;
     this.reset();
     this.addTag(tag);
@@ -255,12 +233,7 @@ class TagsInput extends Component {
 
     const colorPickerStyle = {};
     if (this.currentTag) {
-      const {
-        offsetLeft,
-        offsetWidth,
-        offsetTop,
-        offsetHeight
-      } = this.currentTag;
+      const { offsetLeft, offsetWidth, offsetTop, offsetHeight } = this.currentTag;
       console.log(this.currentTag);
       console.log(offsetLeft, offsetWidth);
       colorPickerStyle.left = offsetLeft + offsetWidth / 2 - 74; // 74 = 1/2 colorPicker width
@@ -269,7 +242,7 @@ class TagsInput extends Component {
 
     return (
       <div
-        className={`tags-input__container ${isActive ? 'is-active' : ''} ${
+        className={`tag-input__container ${isActive ? 'is-active' : ''} ${
           !hasTags ? 'no-tags' : ''
         }`}
         ref={innerRef}
@@ -285,9 +258,9 @@ class TagsInput extends Component {
             innerRef={currentTag === tag.name ? this.setCurrentTagRef : null}
           />
         ))}
-        <div className="tags-input__wrapper">
+        <div className="tag-input__wrapper">
           <Input
-            className="tags-input"
+            className="tag-input"
             onChange={this.onChange}
             onBlur={this.onBlur}
             value={value}
@@ -297,7 +270,7 @@ class TagsInput extends Component {
             onKeyDown={this.onKeyDown}
           />
           {isActive && (
-            <ul className="tags-input__list">
+            <ul className="tag-input__list">
               {filteredList.map((item, i) => {
                 return (
                   <li
@@ -305,22 +278,16 @@ class TagsInput extends Component {
                     data-tag={item.name}
                     onClick={this.onClickSuggestion}
                     tabIndex={0}
-                    className={`tags-input__item ${
+                    className={`tag-input__item ${
                       selectedTag === item.name ? 'is-selected' : ''
                     } ${
-                      !hasExactMatch && i === filteredList.length - 1
-                        ? 'tags-input__item--new'
-                        : ''
+                      !hasExactMatch && i === filteredList.length - 1 ? 'tag-input__item--new' : ''
                     }`}
                   >
                     {!hasExactMatch && i === filteredList.length - 1 ? (
                       <>
-                        <span className="tags-input__item--heading">
-                          New Tag
-                        </span>
-                        <span className="tags-input__item--name">
-                          {item.name}
-                        </span>
+                        <span className="tag-input__item--heading">New Tag</span>
+                        <span className="tag-input__item--name">{item.name}</span>
                       </>
                     ) : (
                       <Tag name={item.name} color={item.color} size="sm" />
@@ -354,4 +321,4 @@ export default compose(
   withAuthorization(condition),
   connect(mapStateToProps),
   withOutsideClick
-)(TagsInput);
+)(TagInput);

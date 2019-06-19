@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { taskActions } from '../../ducks/tasks';
@@ -42,6 +43,10 @@ const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
 };
 
 class TaskEditor extends Component {
+  static propTypes = {
+    taskId: PropTypes.string.isRequired
+  };
+
   state = {
     name: this.props.name,
     isDatePickerActive: false,
@@ -157,13 +162,7 @@ class TaskEditor extends Component {
   };
 
   setDueDate = newDueDate => {
-    const {
-      firebase,
-      taskId,
-      assignedTo,
-      dueDate,
-      activeWorkspace
-    } = this.props;
+    const { firebase, taskId, assignedTo, dueDate, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const prevDueDate = dueDate ? new Date(dueDate.toDate()) : null;
     firebase.setTaskDueDate({
@@ -218,11 +217,7 @@ class TaskEditor extends Component {
   };
 
   onOutsideClick = e => {
-    if (
-      e.target.matches('.member-search__item') ||
-      e.target.matches('.tags-input__item')
-    )
-      return;
+    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item')) return;
     this.closeTaskEditor();
   };
 
@@ -263,9 +258,8 @@ class TaskEditor extends Component {
             size="md"
             variant="text"
             color="neutral"
-            className={`task-editor__btn--toggle-completed ${
-              isCompleted ? 'is-completed' : ''
-            }`}
+            label="Toggle completion status"
+            className={`task-editor__btn--toggle-completed ${isCompleted ? 'is-completed' : ''}`}
           >
             <Icon name="check" />
             <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
@@ -301,11 +295,7 @@ class TaskEditor extends Component {
               enableSearch={!isPrivate}
             />
             <TaskEditorTags taskId={taskId} projectId={projectId} />
-            <TaskEditorNotes
-              taskId={taskId}
-              value={notes}
-              enableMentions={!isPrivate}
-            />
+            <TaskEditorNotes taskId={taskId} value={notes} enableMentions={!isPrivate} />
           </form>
           <TaskEditorSubtasks
             taskId={taskId}
@@ -314,11 +304,7 @@ class TaskEditor extends Component {
             usePortal={layout === 'board' && viewportWidth >= 576}
           />
           {!isPrivate && (
-            <TaskEditorComments
-              taskId={taskId}
-              projectId={projectId}
-              commentIds={commentIds}
-            />
+            <TaskEditorComments taskId={taskId} projectId={projectId} commentIds={commentIds} />
           )}
         </div>
       </TaskEditorWrapper>
@@ -334,14 +320,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteTask: ({ taskId, listId }) =>
-      dispatch(taskActions.deleteTask({ taskId, listId })),
+    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId })),
     selectTask: taskId => dispatch(selectTaskAction(taskId))
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

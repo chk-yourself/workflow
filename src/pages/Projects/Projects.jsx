@@ -2,15 +2,10 @@ import React from 'react';
 import { withAuthorization } from '../../components/Session';
 import { Main } from '../../components/Main';
 import { ProjectGrid } from '../../components/ProjectGrid';
-import { TabsContainer } from '../../components/Tabs';
+import { Tabs } from '../../components/Tabs';
 import './Projects.scss';
 
-const Projects = ({
-  openProjectComposer,
-  currentUser,
-  activeWorkspace,
-  selectedTabIndex
-}) => (
+const Projects = ({ openProjectComposer, currentUser, activeWorkspace, selectedTabIndex }) => (
   <Main
     title={`Projects in ${activeWorkspace.name}`}
     classes={{
@@ -18,14 +13,14 @@ const Projects = ({
       title: 'projects__header'
     }}
   >
-    <TabsContainer
+    <Tabs
       selectedIndex={selectedTabIndex}
       classes={{
         panel: 'projects__panel',
-        tabs: 'projects__tabs',
+        tablist: 'projects__tablist',
         tab: 'projects__tab',
         header: 'projects__tabs-header',
-        container: 'projects__tabs-container'
+        tabs: 'project__tabs'
       }}
       tabs={[
         {
@@ -33,10 +28,7 @@ const Projects = ({
           panelId: 'panelMyProjects',
           label: 'My Projects',
           content: (
-            <ProjectGrid
-              userId={currentUser.userId}
-              openProjectComposer={openProjectComposer}
-            />
+            <ProjectGrid userId={currentUser.userId} openProjectComposer={openProjectComposer} />
           )
         },
         {
@@ -54,7 +46,6 @@ Projects.defaultProps = {
   selectedTabIndex: 0
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(Projects);

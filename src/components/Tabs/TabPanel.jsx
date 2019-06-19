@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TabPanel = ({ className, id, tabId, children, isActive }) => (
   <section
@@ -14,7 +15,15 @@ const TabPanel = ({ className, id, tabId, children, isActive }) => (
 );
 
 TabPanel.defaultProps = {
-  className: ''
+  className: '',
+  isActive: false
+};
+
+TabPanel.propTypes = {
+  className: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  tabId: PropTypes.string.isRequired,
+  isActive: PropTypes.bool
 };
 
 export default TabPanel;

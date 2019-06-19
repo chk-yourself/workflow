@@ -1,7 +1,7 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.tags-input__container {
+.tag-input__container {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -15,7 +15,7 @@
     border-color: $primary;
   }
   &.no-tags {
-    .tags-input {
+    .tag-input {
       padding-left: 0;
       padding-right: 0;
     }
@@ -30,7 +30,7 @@
   }
 }
 
-.tags-input__wrapper {
+.tag-input__wrapper {
   position: relative;
   display: inline-block;
   height: 30px;
@@ -39,7 +39,7 @@
   z-index: 2;
 }
 
-.tags-input {
+.tag-input {
   border: 1px solid transparent;
   height: 30px;
   font-size: 14px;
@@ -52,7 +52,7 @@
   }
 }
 
-.tags-input__list {
+.tag-input__list {
   list-style: none;
   padding: 0;
   position: absolute;
@@ -67,7 +67,7 @@
   @include box-shadow(2);
 }
 
-.tags-input__item {
+.tag-input__item {
   cursor: pointer;
   padding: 6px;
   overflow-x: auto;
@@ -87,7 +87,7 @@
   }
 }
 
-.tags-input__item--heading {
+.tag-input__item--heading {
   display: block;
   font-size: 11px;
   text-transform: uppercase;
@@ -95,10 +95,10 @@
   font-weight: 400;
 }
 
-.tags-input__item--new {
+.tag-input__item--new {
   background-color: $grey-000;
 }
 
-.tags-input__item--name {
+.tag-input__item--name {
   font-size: 12px;
 }

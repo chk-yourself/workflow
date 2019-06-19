@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import { Input } from '../Input';
 import { Avatar } from '../Avatar';
 import { Icon } from '../Icon';
@@ -9,7 +8,7 @@ import './MemberSearch.scss';
 
 class MemberSearch extends Component {
   static defaultProps = {
-    style: null,
+    style: {},
     anchor: null,
     classes: {
       avatar: '',
@@ -87,9 +86,7 @@ class MemberSearch extends Component {
     const { users } = this.props;
     const { selectedMember } = this.state;
     const filteredList = users.filter(user => this.matchUser(user, query));
-    const newIndex = filteredList.findIndex(
-      item => item.userId === selectedMember
-    );
+    const newIndex = filteredList.findIndex(item => item.userId === selectedMember);
     const persistSelectedMember = newIndex !== -1;
 
     this.setState({
@@ -124,18 +121,14 @@ class MemberSearch extends Component {
       // eslint-disable-next-line no-fallthrough
       case keys.TAB: {
         this.setState({
-          selectedMember: !query
-            ? filteredList[0].userId
-            : filteredList[nextIndex].userId,
+          selectedMember: !query ? filteredList[0].userId : filteredList[nextIndex].userId,
           selectedIndex: !query ? 0 : nextIndex
         });
         break;
       }
       case keys.ARROW_UP: {
         this.setState({
-          selectedMember: !query
-            ? filteredList[lastIndex].userId
-            : filteredList[prevIndex].userId,
+          selectedMember: !query ? filteredList[lastIndex].userId : filteredList[prevIndex].userId,
           selectedIndex: !query ? lastIndex : prevIndex
         });
         break;
@@ -163,19 +156,10 @@ class MemberSearch extends Component {
   };
 
   render() {
-    const {
-      assignedMembers,
-      style,
-      classes,
-      placeholder,
-      type,
-      innerRef,
-      anchor
-    } = this.props;
+    const { assignedMembers, style, classes, placeholder, type, innerRef, anchor } = this.props;
     const { filteredList } = this.state;
     const query = type === 'hidden' ? this.props.query : this.state.query;
-    const isActive =
-      type === 'hidden' ? this.props.isActive : this.state.isActive;
+    const isActive = type === 'hidden' ? this.props.isActive : this.state.isActive;
     const selectedMember =
       type === 'hidden' ? this.props.selectedMember : this.state.selectedMember;
     const position = {};
@@ -209,8 +193,7 @@ class MemberSearch extends Component {
             {filteredList.length > 0 ? (
               filteredList.map(user => {
                 const { name, photoURL, email, displayName, userId } = user;
-                const isAssigned =
-                  assignedMembers && assignedMembers.indexOf(userId) !== -1;
+                const isAssigned = assignedMembers && assignedMembers.indexOf(userId) !== -1;
                 return (
                   <li
                     className={`member-search__item ${classes.item || ''} ${
@@ -223,8 +206,7 @@ class MemberSearch extends Component {
                     <Icon name={isAssigned ? 'user-minus' : 'user-plus'} />
                     <Avatar
                       classes={{
-                        avatar: `member-search__avatar--sm ${classes.avatar ||
-                          ''}`,
+                        avatar: `member-search__avatar--sm ${classes.avatar || ''}`,
                         placeholder: `member-search__avatar-placeholder--sm ${classes.avatarPlaceholder ||
                           ''}`
                       }}
@@ -234,8 +216,7 @@ class MemberSearch extends Component {
                       imgSrc={photoURL}
                     />
                     <span
-                      className={`member-search__info member-search__name ${classes.info ||
-                        ''}`}
+                      className={`member-search__info member-search__name ${classes.info || ''}`}
                     >
                       {name}
                     </span>
@@ -246,8 +227,7 @@ class MemberSearch extends Component {
                       {displayName}
                     </span>
                     <span
-                      className={`member-search__info member-search__email ${classes.info ||
-                        ''}`}
+                      className={`member-search__info member-search__email ${classes.info || ''}`}
                     >
                       {email}
                     </span>
@@ -256,9 +236,7 @@ class MemberSearch extends Component {
               })
             ) : (
               <li className={`member-search__item ${classes.item || ''}`}>
-                <span
-                  className={`member-search__no-match ${classes.noMatch || ''}`}
-                >
+                <span className={`member-search__no-match ${classes.noMatch || ''}`}>
                   No matches found
                 </span>
               </li>

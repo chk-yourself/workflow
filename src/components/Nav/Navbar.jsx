@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Navbar.scss';
 import { withOutsideClick } from '../withOutsideClick';
 import { Logo } from '../Logo';
-import { Button } from '../Button';
+import { IconButton } from '../Button';
 import { Icon } from '../Icon';
 
 class Navbar extends Component {
@@ -52,12 +52,7 @@ class Navbar extends Component {
     const { viewportWidth } = this.state;
     const { minWidth } = this.props;
     const isMobileView = viewportWidth < minWidth;
-    if (
-      !isMobileView ||
-      e.target.matches('button') ||
-      e.target.matches('a')
-    )
-      return;
+    if (!isMobileView || e.target.matches('button') || e.target.matches('a')) return;
     this.setState({
       isMobileNavVisible: false
     });
@@ -77,20 +72,15 @@ class Navbar extends Component {
       >
         <Logo className="navbar__logo" onClick={this.handleClick} />
         {isMobileView && (
-          <Button
-            type="button"
+          <IconButton
             color="primary"
+            icon="menu"
+            label="Toggle menu"
             onClick={this.toggleMobileNavVisibility}
-            iconOnly
             className="navbar__btn--toggle"
-          >
-            <Icon name="menu" />
-          </Button>
+          />
         )}
-        <ul
-          className={`navbar__links ${classes.links}`}
-          onClick={this.handleClick}
-        >
+        <ul className={`navbar__links ${classes.links}`} onClick={this.handleClick}>
           {children}
         </ul>
       </nav>

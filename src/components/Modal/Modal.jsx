@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '../Icon';
-import { Button } from '../Button';
+import { IconButton } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import './Modal.scss';
 
@@ -57,14 +56,13 @@ class Modal extends Component {
           ref={innerRef}
           className={`modal__content ${classes.content || ''} modal__content--${size}`}
         >
-          <Button
+          <IconButton
             type="button"
             className={`modal__btn--close ${classes.button || ''}`}
             onClick={onClose}
-            iconOnly
-          >
-            <Icon name="x" />
-          </Button>
+            icon="x"
+            label="Close modal"
+          />
           {children}
         </div>
       </div>

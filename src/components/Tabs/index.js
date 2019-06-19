@@ -1,1 +1,1 @@
-export { default as TabsContainer } from './TabsContainer';
+export { default as Tabs } from './Tabs';

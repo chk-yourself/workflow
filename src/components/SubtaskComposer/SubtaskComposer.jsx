@@ -49,13 +49,7 @@ class SubtaskComposer extends Component {
   addSubtask = e => {
     const { name } = this.state;
     if ((e.type === 'keydown' && e.key !== keys.ENTER) || !name) return;
-    const {
-      currentUser,
-      firebase,
-      taskId,
-      projectId,
-      activeWorkspace
-    } = this.props;
+    const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const { userId } = currentUser;
     firebase.createSubtask({ userId, name, taskId, projectId, workspaceId });
@@ -67,19 +61,9 @@ class SubtaskComposer extends Component {
     const { name, isFocused } = this.state;
     const { classes } = this.props;
     return (
-      <div
-        className={`subtask-composer ${
-          isFocused ? 'is-active' : ''
-        } ${classes.composer || ''}`}
-      >
-        <div
-          className={`subtask-composer__icon-wrapper ${classes.iconWrapper ||
-            ''}`}
-        >
-          <Icon
-            name="plus-circle"
-            className={`subtask-composer__icon ${classes.icon || ''}`}
-          />
+      <div className={`subtask-composer ${isFocused ? 'is-active' : ''} ${classes.composer || ''}`}>
+        <div className={`subtask-composer__icon-wrapper ${classes.iconWrapper || ''}`}>
+          <Icon name="plus-circle" className={`subtask-composer__icon ${classes.icon || ''}`} />
         </div>
         <form
           name="newSubtaskForm"
@@ -101,7 +85,7 @@ class SubtaskComposer extends Component {
             <Button
               type="submit"
               color="primary"
-              size="small"
+              size="sm"
               variant="contained"
               disabled={name === ''}
               onClick={this.addSubtask}
@@ -116,7 +100,6 @@ class SubtaskComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(SubtaskComposer);

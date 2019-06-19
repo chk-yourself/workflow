@@ -8,7 +8,7 @@ import {
 } from '../../ducks/selectedTask';
 import { Main } from '../../components/Main';
 import { TaskEditor } from '../../components/TaskEditor';
-import { TabsContainer } from '../../components/Tabs';
+import { Tabs } from '../../components/Tabs';
 import { Notifications } from '../../components/Notifications';
 import './Inbox.scss';
 
@@ -26,7 +26,7 @@ class Inbox extends Component {
         }}
       >
         <div className="inbox__wrapper">
-          <TabsContainer
+          <Tabs
             classes={{
               panel: 'inbox__panel',
               tabs: 'inbox__tabs',

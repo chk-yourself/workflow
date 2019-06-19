@@ -1,18 +1,18 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.tabs-container {
+.tabs {
   width: 100%;
   position: relative;
 }
 
-.tabs-container__header {
+.tabs__header {
   width: 100%;
   margin-bottom: 24px;
   box-shadow: inset 0px -2px 1px -1px $grey-300;
 }
 
-.tabs {
+.tablist {
   list-style: none;
   padding: 0;
   display: flex;
@@ -29,7 +29,7 @@
   color: $grey-700;
   transition: all 0.3s ease-in-out;
   &:active,
-  &.is-active {
+  &.is-selected {
     outline: none;
   }
   &:hover,
@@ -51,7 +51,7 @@
     background-color: $primary;
   }
   &:active,
-  &.is-active {
+  &.is-selected {
     color: $primary;
     &::after {
       height: 0.2em;
@@ -63,7 +63,7 @@
   border-radius: 4px;
   padding: 8px;
   &:active,
-  &.is-active {
+  &.is-selected {
     color: $primary;
     border: 1px solid $primary;
   }

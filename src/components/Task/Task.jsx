@@ -189,7 +189,7 @@ class Task extends Component {
                 />
               )}
             </div>
-            <TaskDueDate className="task__detail" dueDate={dueDate} />
+            <TaskDueDate className="task__detail" dueDate={dueDate ? dueDate.toDate() : dueDate} />
             {members && members.length > 0 && (
               <div className="task__detail task__members-wrapper">
                 <div className="task__members">
@@ -227,9 +227,7 @@ class Task extends Component {
             />
           </div>
           <div className="task__badges task__badges--btm">
-            {!selectedProjectId && projectId && (
-              <ProjectBadge projectId={projectId} size="sm" />
-            )}
+            {!selectedProjectId && projectId && <ProjectBadge projectId={projectId} size="sm" />}
           </div>
         </div>
       </li>
@@ -249,8 +247,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    deleteTask: ({ taskId, listId }) =>
-      dispatch(taskActions.deleteTask({ taskId, listId }))
+    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId }))
   };
 };
 

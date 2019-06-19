@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Input } from '../Input';
 import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
-import { Button } from '../Button';
+import { Button, IconButton } from '../Button';
 import './ListComposer.scss';
 
 class ListComposer extends Component {
@@ -64,22 +64,19 @@ class ListComposer extends Component {
     const { layout, isActive } = this.props;
     return (
       <div
-        className={`list-composer${
-          isActive ? ' is-active' : ''
-        } is-${layout}-layout`}
+        className={`list-composer${isActive ? ' is-active' : ''} is-${layout}-layout`}
         onFocus={this.onFocus}
         onBlur={this.onBlur}
       >
         <form className="list-composer__form" onSubmit={this.onSubmit}>
           {!isActive && layout === 'list' && (
-            <Button
+            <IconButton
               onClick={this.onFocus}
               color="primary"
               className="list-composer__btn--icon"
-              iconOnly
-            >
-              <Icon name="plus-circle" />
-            </Button>
+              icon="plus-circle"
+              label="Add list"
+            />
           )}
           <Input
             innerRef={this.inputRef}
@@ -121,7 +118,6 @@ class ListComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(ListComposer);

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Button } from '../Button';
+import { IconButton } from '../Button';
 import { Input } from '../Input';
-import { Icon } from '../Icon';
 import './SearchBar.scss';
 
 export default class SearchBar extends Component {
@@ -22,15 +21,7 @@ export default class SearchBar extends Component {
   };
 
   render() {
-    const {
-      value,
-      onClick,
-      onChange,
-      onKeyDown,
-      onSubmit,
-      isExpanded,
-      onFocus
-    } = this.props;
+    const { value, onClick, onChange, onKeyDown, onSubmit, isExpanded, onFocus } = this.props;
     return (
       <div className={`search-bar${isExpanded ? ' is-expanded' : ''} clearfix`}>
         <form className="search-form" onClick={onClick} onSubmit={onSubmit}>
@@ -46,16 +37,14 @@ export default class SearchBar extends Component {
             onKeyDown={onKeyDown}
           />
           <Input name="submit" className="search-form__submit" type="submit" />
-          <Button
+          <IconButton
             onClick={onClick}
-            type="button"
             className="search-form__btn"
             name="toggle"
             title="Search"
-            iconOnly
-          >
-            <Icon name="search" />
-          </Button>
+            icon="search"
+            label="Toggle searchbar"
+          />
         </form>
       </div>
     );

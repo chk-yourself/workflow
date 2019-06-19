@@ -32,14 +32,7 @@ class Card extends Component {
   };
 
   render() {
-    const {
-      taskId,
-      index,
-      tags,
-      completedSubtasks,
-      members,
-      task
-    } = this.props;
+    const { taskId, index, tags, completedSubtasks, members, task } = this.props;
     if (!task) return null;
 
     const { name, commentIds, dueDate, subtaskIds, isCompleted } = task;
@@ -86,7 +79,7 @@ class Card extends Component {
               <TaskDueDate
                 className="card__detail"
                 icon="calendar"
-                dueDate={dueDate}
+                dueDate={dueDate ? dueDate.toDate() : dueDate}
               />
               {subtaskIds && subtaskIds.length > 0 && (
                 <Badge className="card__detail" icon="check-circle">
@@ -133,10 +126,7 @@ class Card extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     tags: taskSelectors.getTaskTags(state, ownProps.taskId),
-    completedSubtasks: taskSelectors.getCompletedSubtasks(
-      state,
-      ownProps.taskId
-    ),
+    completedSubtasks: taskSelectors.getCompletedSubtasks(state, ownProps.taskId),
     members: taskSelectors.getAssignees(state, ownProps.taskId),
     task: taskSelectors.getTask(state, ownProps.taskId)
   };

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withFirebase } from '../Firebase';
@@ -12,6 +13,11 @@ import './Subtasks.scss';
 class Subtasks extends Component {
   static defaultProps = {
     usePortal: false
+  };
+
+  static propTypes = {
+    usePortal: PropTypes.bool,
+    taskId: PropTypes.string.isRequired
   };
 
   state = {
@@ -53,11 +59,7 @@ class Subtasks extends Component {
       <DragDropContext onDragEnd={this.moveSubtask}>
         <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
           {provided => (
-            <ul
-              className="subtasks"
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
+            <ul className="subtasks" ref={provided.innerRef} {...provided.droppableProps}>
               {!isLoading &&
                 subtasks.map((subtask, index) => {
                   return (
@@ -92,8 +94,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    syncTaskSubtasks: taskId =>
-      dispatch(subtaskActions.syncTaskSubtasks(taskId))
+    syncTaskSubtasks: taskId => dispatch(subtaskActions.syncTaskSubtasks(taskId))
   };
 };
 

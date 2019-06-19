@@ -1,0 +1,40 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.icon-btn {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  line-height: 0;
+  .feather {
+    vertical-align: middle;
+  }
+  &--sm {
+    font-size: 18px;
+    height: 36px;
+    width: 36px;
+    .feather {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  &--md {
+    font-size: 22px;
+    height: 40px;
+    width: 40px;
+    .feather {
+      width: 22px;
+      height: 22px;
+    }
+  }
+  &--lg {
+    font-size: 32px;
+    height: 50px;
+    width: 50px;
+    .feather {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}

@@ -12,10 +12,7 @@ const INITIAL_STATE = {
 };
 
 class TaskComposer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  state = { ...INITIAL_STATE };
 
   resetForm = () => {
     this.setState({ name: '' });
@@ -105,7 +102,6 @@ class TaskComposer extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(TaskComposer);

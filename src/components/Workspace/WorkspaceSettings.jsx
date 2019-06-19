@@ -6,7 +6,7 @@ import { Modal } from '../Modal';
 import { Button } from '../Button';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
-import { TabsContainer } from '../Tabs';
+import { Tabs } from '../Tabs';
 import { userSelectors } from '../../ducks/users';
 import { ErrorMessage } from '../Error';
 import './WorkspaceSettings.scss';
@@ -115,10 +115,10 @@ class WorkspaceSettings extends Component {
     return (
       <Modal onClose={onClose} size="lg" classes={{ content: 'workspace-settings ' }}>
         <h2 className="workspace-settings__heading">Workspace Settings</h2>
-        <TabsContainer
+        <Tabs
           classes={{
             panel: 'workspace-settings__panel',
-            tabs: 'workspace-settings__tabs'
+            tablist: 'workspace-settings__tablist'
           }}
           tabs={[
             {

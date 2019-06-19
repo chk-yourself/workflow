@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { NavLink, Link } from 'react-router-dom';
 import { Logo } from '../Logo';
 import { Icon } from '../Icon';
-import { Button } from '../Button';
+import { Button, IconButton } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
@@ -48,15 +48,14 @@ class Sidebar extends Component {
     const { name: workspaceName, workspaceId } = activeWorkspace;
     return (
       <div ref={innerRef} className="sidebar__canvas">
-        <Button
+        <IconButton
           type="button"
           onClick={onToggle}
           className="sidebar__btn--toggle"
           size="sm"
-          iconOnly
-        >
-          <Icon name="bar-chart-2" />
-        </Button>
+          icon="bar-chart-2"
+          label="Toggle menu"
+        />
         <div className="sidebar">
           <nav className="sidebar__nav">
             <div className="sidebar__logo">
@@ -109,11 +108,7 @@ class Sidebar extends Component {
                 </li>
                 <ul className="sidebar__list">
                   <li className="sidebar__item">
-                    <Link
-                      target="_blank"
-                      className="sidebar__link"
-                      to={ROUTES.GUIDE}
-                    >
+                    <Link target="_blank" className="sidebar__link" to={ROUTES.GUIDE}>
                       <Icon className="sidebar__icon" name="help-circle" />
                       <span className="sidebar__section-name">Guide</span>
                     </Link>
@@ -128,8 +123,7 @@ class Sidebar extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default compose(
   withAuthorization(condition),

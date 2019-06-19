@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { toDateString, toTimeString } from '../../utils/date';
 import './Timestamp.scss';
 
@@ -23,6 +24,26 @@ export default class Timestamp extends Component {
     }
   };
 
+  static propTypes = {
+    className: PropTypes.string,
+    isRelative: PropTypes.bool,
+    dateOnly: PropTypes.bool,
+    absoluteMin: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
+    timeOptions: PropTypes.shape({
+      format: PropTypes.string,
+      hour12: PropTypes.bool
+    }),
+    dateOptions: PropTypes.shape({
+      useRelative: PropTypes.bool,
+      format: PropTypes.shape({
+        weekday: PropTypes.oneOf(['long', 'short', 'narrow']),
+        month: PropTypes.oneOf(['long', 'short', 'narrow']),
+        day: PropTypes.oneOf(['numeric', '2-digit']),
+        year: PropTypes.oneOf(['numeric', '2-digit'])
+      })
+    })
+  };
+
   state = {
     secondsElapsed: 0
   };
@@ -30,8 +51,7 @@ export default class Timestamp extends Component {
   componentDidMount() {
     const { date, isRelative } = this.props;
     if (!date) return;
-    const secondsElapsed =
-      Math.floor(Date.now() / 1000) - Math.floor(date.getTime() / 1000);
+    const secondsElapsed = Math.floor(Date.now() / 1000) - Math.floor(date.getTime() / 1000);
     this.setState({
       secondsElapsed
     });
@@ -102,8 +122,6 @@ export default class Timestamp extends Component {
   render() {
     const { date, className } = this.props;
     if (!date) return null;
-    return (
-      <span className={`timestamp ${className}`}>{this.getDateString()}</span>
-    );
+    return <span className={`timestamp ${className}`}>{this.getDateString()}</span>;
   }
 }
