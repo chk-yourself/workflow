@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withFirebase } from '../../components/Firebase';
-import { Input } from '../../components/Input';
+import { TextField } from '../../components/TextField';
 import { Button } from '../../components/Button';
 import { ErrorMessage } from '../../components/Error';
 import { SuccessMessage } from '../../components/Success';
@@ -12,6 +13,24 @@ const INITIAL_STATE = {
 };
 
 class ForgotPasswordForm extends Component {
+  static defaultProps = {
+    classes: {
+      form: '',
+      input: '',
+      label: '',
+      button: ''
+    }
+  };
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      form: PropTypes.string,
+      input: PropTypes.string,
+      label: PropTypes.string,
+      button: PropTypes.string
+    })
+  };
+
   state = { ...INITIAL_STATE };
 
   onSubmit = e => {
@@ -43,19 +62,20 @@ class ForgotPasswordForm extends Component {
 
   render() {
     const { email, error, success } = this.state;
+    const { classes } = this.props;
     const isInvalid = email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <Input
+      <form className={classes.form || ''} onSubmit={this.onSubmit}>
+        <TextField
           name="email"
           id="email"
           label="Email"
           value={email}
           onChange={this.onChange}
           type="email"
-          className="form-page__input"
-          labelClass="form-page__label"
+          className={classes.input || ''}
+          labelClass={classes.label || ''}
         />
         <Button
           disabled={isInvalid}
@@ -64,7 +84,7 @@ class ForgotPasswordForm extends Component {
           variant="contained"
           color="secondary"
           onClick={this.onSubmit}
-          className="form-page__btn forgot-password__btn"
+          className={`forgot-password__btn ${classes.button || ''}`}
         >
           Reset Password
         </Button>

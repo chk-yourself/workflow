@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withAuthorization } from '../../components/Session';
-import { Input } from '../../components/Input';
+import { TextField } from '../../components/TextField';
 import { Button } from '../../components/Button';
 import { ErrorMessage } from '../../components/Error';
 import { SuccessMessage } from '../../components/Success';
@@ -14,6 +15,24 @@ const INITIAL_STATE = {
 };
 
 class PasswordChangeForm extends Component {
+  static defaultProps = {
+    classes: {
+      form: '',
+      input: '',
+      label: '',
+      button: ''
+    }
+  };
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      form: PropTypes.string,
+      input: PropTypes.string,
+      label: PropTypes.string,
+      button: PropTypes.string
+    })
+  };
+
   state = { ...INITIAL_STATE };
 
   onSubmit = e => {
@@ -47,40 +66,41 @@ class PasswordChangeForm extends Component {
 
   render() {
     const { currentPassword, newPassword, confirmPassword, error, success } = this.state;
+    const { classes } = this.props;
     const isInvalid =
       currentPassword === '' || newPassword === '' || newPassword !== confirmPassword;
 
     return (
-      <form className="user-form">
-        <Input
+      <form className={classes.form || ''}>
+        <TextField
           name="currentPassword"
           id="currentPassword"
           label="Current Password"
           value={currentPassword}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className={classes.input || ''}
+          labelClass={classes.label || ''}
         />
-        <Input
+        <TextField
           name="newPassword"
           id="newPassword"
           label="New Password"
           value={newPassword}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className={classes.input || ''}
+          labelClass={classes.label || ''}
         />
-        <Input
+        <TextField
           name="confirmPassword"
           id="confirmPassword"
           label="Confirm New Password"
           value={confirmPassword}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className={classes.input || ''}
+          labelClass={classes.label || ''}
         />
         <Button
           disabled={isInvalid}
@@ -89,6 +109,8 @@ class PasswordChangeForm extends Component {
           variant="contained"
           color="primary"
           onClick={this.onSubmit}
+          marginTop={24}
+          className={classes.button || ''}
         >
           Change Password
         </Button>

@@ -18,6 +18,11 @@ const Button = ({
   isActive,
   intent,
   label,
+  marginTop,
+  marginBottom,
+  marginLeft,
+  marginRight,
+  style,
   ...props
 }) => (
   <button
@@ -30,6 +35,7 @@ const Button = ({
     disabled={disabled}
     ref={innerRef}
     aria-label={label}
+    style={{ ...style, marginTop, marginBottom, marginRight, marginLeft }}
     {...props}
   >
     {children}
@@ -46,7 +52,8 @@ Button.defaultProps = {
   isActive: false,
   onClick: () => null,
   onMouseDown: () => null,
-  innerRef: () => null
+  innerRef: () => null,
+  style: {}
 };
 
 Button.propTypes = {
@@ -62,7 +69,8 @@ Button.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]),
   onClick: PropTypes.func,
-  onMouseDown: PropTypes.func
+  onMouseDown: PropTypes.func,
+  style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
 };
 
 export default Button;

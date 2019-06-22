@@ -14,12 +14,14 @@
   }
 }
 
+.account-settings__form {
+  max-width: 400px;
+}
+
 .account-settings__input {
-  margin-bottom: 24px;
   height: 42px;
   width: 100%;
   border: 1px solid $grey-600;
-  max-width: 400px;
   &::placeholder {
     font-size: 14px;
   }
@@ -67,7 +69,7 @@
 
 .account-settings__section-title {
   font-weight: 600;
-  font-size: 11px;
+  font-size: 13px;
   color: $grey-800;
   padding-top: 24px;
   text-transform: uppercase;

@@ -16,7 +16,13 @@ const ForgotPasswordLink = () => (
 
 const ForgotPasswordPage = () => (
   <FormPage title="Forgot your password?" classes={{ title: 'forgot-password__title' }}>
-    <ForgotPasswordForm />
+    <ForgotPasswordForm
+      classes={{
+        input: 'form-page__input',
+        label: 'form-page__label',
+        button: 'form-page__btn'
+      }}
+    />
     <Link to={ROUTES.LOG_IN} className="forgot-password__link">
       <Icon name="arrow-left" />
       Back to Login

@@ -14,8 +14,8 @@ class Input extends Component {
     isReadOnly: false,
     label: '',
     id: null,
-    helper: null,
-    helperClass: '',
+    hint: null,
+    hintClass: '',
     isInvalid: false
   };
 
@@ -108,7 +108,7 @@ class Input extends Component {
         />
         {validationMessage && <ErrorMessage id={validationMessageId} text={validationMessage} />}
         {hint && (
-          <p id={hintId} className={`input__helper ${hintClass} ${isFocused ? 'is-focused' : ''}`}>
+          <p id={hintId} className={`input__hint ${hintClass} ${isFocused ? 'is-focused' : ''}`}>
             {hint}
           </p>
         )}

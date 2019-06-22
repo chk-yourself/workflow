@@ -1,0 +1,11 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.text-field__label {
+  font-size: 12px;
+  color: $grey-700;
+  font-weight: 600;
+  &:not(:nth-of-type(1)) {
+    margin-top: 24px;
+  }
+}
