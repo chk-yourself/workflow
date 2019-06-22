@@ -32,12 +32,14 @@ const TaskEditorDueDate = ({
           )}
         </span>
       </Button>
-      <DatePicker
-        onClose={onToggleDatePicker}
-        selectedDate={dueDate}
-        selectDate={onSelectDueDate}
-        isActive={isDatePickerActive}
-      />
+      {isDatePickerActive && (
+        <DatePicker
+          onClose={onToggleDatePicker}
+          selectedDate={dueDate}
+          selectDate={onSelectDueDate}
+          isActive={isDatePickerActive}
+        />
+      )}
     </TaskEditorSection>
   );
 };

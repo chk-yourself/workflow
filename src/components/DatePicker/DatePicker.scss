@@ -1,21 +1,29 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+.date-picker-wrapper {
+  @include sm {
+    background-color: transparent;
+  }
+}
+
 .date-picker {
   background-color: #fff;
   border-radius: 4px;
-  padding: 12px;
+  padding: 1rem;
+  width: auto;
   @include box-shadow(3);
-  position: absolute;
-  z-index: 99;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+}
+
+.date-picker__btn {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 500;
 }
 
 .date-picker__btn--set-due-date {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  font-weight: 600;
+  padding: 8px 14px;
 }
 
 .date-picker__btn--clear {
@@ -24,12 +32,6 @@
 
 .date-picker__btn--cancel {
   padding-right: 0;
-}
-
-.date-picker__btn--set-due-date,
-.date-picker__btn--clear,
-.date-picker__btn--cancel {
-  font-weight: 600;
 }
 
 .date-picker__calendar {
@@ -47,6 +49,8 @@
 
 .date-picker__header {
   margin-bottom: 8px;
+  width: 248px;
+  margin: 8px auto;
 }
 
 .date-picker__footer {
@@ -54,6 +58,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 248px;
+  margin: 8px auto 0;
 }
 
 .date-picker__label--due-date {

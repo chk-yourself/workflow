@@ -21,7 +21,7 @@ class Input extends Component {
 
   state = {
     isFocused: false,
-    id: (this.props.id || ++idCounter).toString()
+    id: this.props.id || `input-${++idCounter}`
   };
 
   onFocus = e => {
@@ -106,9 +106,14 @@ class Input extends Component {
           aria-describedby={`${hintId} ${validationMessageId}`.trim() || null}
           {...rest}
         />
-        {validationMessage && <ErrorMessage id={validationMessageId} text={validationMessage} />}
+        {validationMessage && (
+          <ErrorMessage id={validationMessageId} text={validationMessage} />
+        )}
         {hint && (
-          <p id={hintId} className={`input__hint ${hintClass} ${isFocused ? 'is-focused' : ''}`}>
+          <p
+            id={hintId}
+            className={`input__hint ${hintClass} ${isFocused ? 'is-focused' : ''}`}
+          >
             {hint}
           </p>
         )}

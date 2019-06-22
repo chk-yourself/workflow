@@ -125,6 +125,11 @@ export const isSameDate = (date, base = new Date()) => {
   );
 };
 
+/**
+ * Returns array of next consecutive years, starting with the given year
+ * @param {number} num - Total number of years to return
+ * @param {number} startingYear - First year at which to begin count
+ */
 export const getNextYears = (num, startingYear = new Date().getFullYear()) => {
   return [...new Array(num)].map((item, i) => {
     return startingYear + i;

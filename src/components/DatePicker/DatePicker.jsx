@@ -10,6 +10,7 @@ import {
 import { Calendar } from '../Calendar';
 import { Button } from '../Button';
 import { Input } from '../Input';
+import { Modal } from '../Modal';
 import './DatePicker.scss';
 
 export default class DatePicker extends Component {
@@ -26,14 +27,7 @@ export default class DatePicker extends Component {
   };
 
   state = {
-    today: {
-      day: new Date().getDate(),
-      month: new Date().getMonth(),
-      year: new Date().getFullYear()
-    },
-    selectedDate: this.props.selectedDate
-      ? getSimpleDate(this.props.selectedDate)
-      : null,
+    selectedDate: this.props.selectedDate ? getSimpleDate(this.props.selectedDate) : null,
     currentMonth:
       this.props.currentMonth ||
       (this.props.selectedDate
@@ -47,13 +41,12 @@ export default class DatePicker extends Component {
     dateString: toSimpleDateString(this.props.selectedDate) || ''
   };
 
-  resetCalendar = () => {
+  reset = () => {
     const { currentMonth, currentYear, selectedDate } = this.props;
     this.setState({
-      selectedDate,
+      selectedDate: selectedDate ? getSimpleDate(selectedDate) : null,
       currentMonth:
-        currentMonth ||
-        (selectedDate ? selectedDate.getMonth() : new Date().getMonth()),
+        currentMonth || (selectedDate ? selectedDate.getMonth() : new Date().getMonth()),
       currentYear:
         currentYear ||
         (selectedDate ? selectedDate.getFullYear() : new Date().getFullYear())
@@ -134,23 +127,17 @@ export default class DatePicker extends Component {
 
   cancel = () => {
     this.closeDatePicker();
-    this.resetCalendar();
+    this.reset();
   };
 
   render() {
-    const { isActive, innerRef } = this.props;
-    const {
-      today,
-      selectedDate,
-      currentMonth,
-      currentYear,
-      dateString
-    } = this.state;
+    const { onClose } = this.props;
+    const { selectedDate, currentMonth, currentYear, dateString } = this.state;
     return (
-      <div
-        className="date-picker"
-        ref={innerRef}
-        style={{ display: !isActive ? 'none' : 'block' }}
+      <Modal
+        classes={{ modal: 'date-picker-wrapper', content: 'date-picker' }}
+        onClose={onClose}
+        size="sm"
       >
         <div className="date-picker__header">
           <div className="date-picker__due-date-wrapper">
@@ -175,17 +162,16 @@ export default class DatePicker extends Component {
           month={currentMonth}
           year={currentYear}
           selectedDate={selectedDate}
-          today={today}
-          onDayClick={this.selectDate}
-          onMonthClick={this.setCurrentMonth}
-          onYearClick={this.setCurrentYear}
+          onSelectDay={this.selectDate}
+          onSelectMonth={this.setCurrentMonth}
+          onSelectYear={this.setCurrentYear}
         />
         <div className="date-picker__footer">
           <Button
             size="sm"
             variant="text"
             color="neutral"
-            className="date-picker__btn--clear"
+            className="date-picker__btn date-picker__btn--clear"
             onClick={this.clearDueDate}
           >
             Clear
@@ -194,7 +180,7 @@ export default class DatePicker extends Component {
             size="sm"
             variant="contained"
             color="primary"
-            className="date-picker__btn--set-due-date"
+            className="date-picker__btn date-picker__btn--set-due-date"
             onClick={this.setDate}
           >
             Done
@@ -203,13 +189,13 @@ export default class DatePicker extends Component {
             size="sm"
             variant="text"
             color="neutral"
-            className="date-picker__btn--cancel"
+            className="date-picker__btn date-picker__btn--cancel"
             onClick={this.cancel}
           >
             Cancel
           </Button>
         </div>
-      </div>
+      </Modal>
     );
   }
 }

@@ -95,7 +95,7 @@ export default class SelectDropdown extends Component {
           className: `select-dropdown__btn--toggle ${classes.button || ''}`,
           children: (
             <>
-              {selected && options[selected].label}
+              {selected !== undefined && selected !== null && options[selected].label}
               <Icon name="chevron-down" />
             </>
           )

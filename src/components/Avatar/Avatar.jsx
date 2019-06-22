@@ -26,7 +26,8 @@ export default class Avatar extends Component {
     name: PropTypes.string,
     showOnlineStatus: PropTypes.bool,
     size: PropTypes.oneOf(['sm', 'md', 'lg']),
-    variant: PropTypes.oneOf(['circle', 'square', 'rounded'])
+    variant: PropTypes.oneOf(['circle', 'square', 'rounded']),
+    imgProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
   };
 
   getUserInitials = fullName => {

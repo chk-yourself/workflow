@@ -60,8 +60,8 @@ Button.propTypes = {
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
   className: PropTypes.string,
   color: PropTypes.string,
-  size: PropTypes.string,
-  variant: PropTypes.string,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  variant: PropTypes.oneOf(['contained', 'underlined', 'text']),
   iconOnly: PropTypes.bool,
   isActive: PropTypes.bool,
   innerRef: PropTypes.oneOfType([
