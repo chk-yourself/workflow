@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../../components/Session';
-import {
-  currentUserActions,
-  currentUserSelectors
-} from '../../ducks/currentUser';
+import { currentUserActions, currentUserSelectors } from '../../ducks/currentUser';
 import { taskSelectors } from '../../ducks/tasks';
 import {
   selectTask as selectTaskAction,
@@ -54,10 +51,7 @@ class MyTasks extends Component {
   onDragEnd = ({ destination, draggableId, source, type }) => {
     if (!destination) return;
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
+    if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
     const { firebase, currentUser, state, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
@@ -76,24 +70,14 @@ class MyTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(
-            [
-              'users',
-              userId,
-              'workspaces',
-              workspaceId,
-              'folders',
-              newFolderId
-            ],
-            {
-              taskIds:
-                view === 'all'
-                  ? updatedTaskIds
-                  : view === 'active'
-                  ? [...taskIdsByView.completed, ...updatedTaskIds]
-                  : [...updatedTaskIds, ...taskIdsByView.active]
-            }
-          );
+          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
+            taskIds:
+              view === 'all'
+                ? updatedTaskIds
+                : view === 'active'
+                ? [...taskIdsByView.completed, ...updatedTaskIds]
+                : [...updatedTaskIds, ...taskIdsByView.active]
+          });
         } else {
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.moveTaskToFolder({
@@ -135,24 +119,14 @@ class MyTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(
-            [
-              'users',
-              userId,
-              'workspaces',
-              workspaceId,
-              'folders',
-              newFolderId
-            ],
-            {
-              taskIds:
-                view === 'all'
-                  ? updatedTaskIds
-                  : view === 'active'
-                  ? [...taskIdsByView.completed, ...updatedTaskIds]
-                  : [...updatedTaskIds, ...taskIdsByView.active]
-            }
-          );
+          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
+            taskIds:
+              view === 'all'
+                ? updatedTaskIds
+                : view === 'active'
+                ? [...taskIdsByView.completed, ...updatedTaskIds]
+                : [...updatedTaskIds, ...taskIdsByView.active]
+          });
         }
       }
     }
@@ -191,12 +165,7 @@ class MyTasks extends Component {
   };
 
   render() {
-    const {
-      currentUser,
-      selectedTaskId,
-      selectedTask,
-      taskGroups
-    } = this.props;
+    const { currentUser, selectedTaskId, selectedTask, taskGroups } = this.props;
     const { userId, tempSettings } = currentUser;
     const { view, sortBy } = tempSettings.tasks;
     const { isLoading, isTaskSettingsMenuVisible } = this.state;
@@ -206,24 +175,15 @@ class MyTasks extends Component {
       <Main
         title="My Tasks"
         classes={{
-          main: `user-tasks__container ${
-            isTaskEditorOpen ? 'show-task-editor' : ''
-          }`,
+          main: `user-tasks__container ${isTaskEditorOpen ? 'show-task-editor' : ''}`,
           title: 'user-tasks__title'
         }}
       >
         <div className="user-tasks__wrapper">
-          <DragDropContext
-            onDragEnd={this.onDragEnd}
-            onDragStart={this.onDragStart}
-          >
+          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
             <Droppable droppableId={userId} type={droppableTypes.FOLDER}>
               {provided => (
-                <div
-                  className="user-tasks"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
+                <div className="user-tasks" ref={provided.innerRef} {...provided.droppableProps}>
                   <Settings
                     icon="sliders"
                     isActive={isTaskSettingsMenuVisible}
@@ -266,8 +226,7 @@ class MyTasks extends Component {
                   />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
-                      key={`${sortBy}-${taskGroup[sortBy] ||
-                        taskGroup[`${sortBy}Id`]}`}
+                      key={`${sortBy}-${taskGroup[sortBy] || taskGroup[`${sortBy}Id`]}`}
                       userId={userId}
                       folderId={taskGroup.folderId}
                       projectId={taskGroup.projectId}
@@ -284,15 +243,7 @@ class MyTasks extends Component {
               )}
             </Droppable>
           </DragDropContext>
-          {isTaskEditorOpen && (
-            <TaskEditor
-              {...selectedTask}
-              handleTaskEditorClose={this.closeTaskEditor}
-              userId={userId}
-              layout="list"
-              key={selectedTaskId}
-            />
-          )}
+          {isTaskEditorOpen && <TaskEditor {...selectedTask} layout="list" key={selectedTaskId} />}
         </div>
       </Main>
     );
@@ -319,8 +270,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

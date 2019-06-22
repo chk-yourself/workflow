@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ErrorMessage } from '../Error';
 import './Input.scss';
 
 class Input extends Component {
@@ -12,7 +13,8 @@ class Input extends Component {
     label: '',
     id: null,
     helper: null,
-    helperClass: ''
+    helperClass: '',
+    isInvalid: false
   };
 
   state = {
@@ -61,6 +63,8 @@ class Input extends Component {
       minLength,
       isReadOnly,
       id,
+      validationMessage,
+      isInvalid,
       ...rest
     } = this.props;
 
@@ -70,9 +74,7 @@ class Input extends Component {
         {label && (
           <label
             htmlFor={id || name}
-            className={`input__label ${labelClass} ${
-              isFocused ? 'is-focused' : ''
-            }`}
+            className={`input__label ${labelClass} ${isFocused ? 'is-focused' : ''}`}
           >
             {label}
           </label>
@@ -95,14 +97,12 @@ class Input extends Component {
           minLength={minLength}
           readOnly={isReadOnly}
           tabIndex={isReadOnly ? -1 : 0}
+          aria-invalid={isInvalid}
           {...rest}
         />
+        {validationMessage && <ErrorMessage text={validationMessage} />}
         {helper && (
-          <p
-            className={`input__helper ${helperClass} ${
-              isFocused ? 'is-focused' : ''
-            }`}
-          >
+          <p className={`input__helper ${helperClass} ${isFocused ? 'is-focused' : ''}`}>
             {helper}
           </p>
         )}

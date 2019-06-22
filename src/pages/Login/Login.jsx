@@ -1,18 +1,17 @@
 import React from 'react';
+import { FormPage } from '../../components/FormPage';
 import LoginForm from './LoginForm';
 import { SignUpLink } from '../SignUp';
 import './Login.scss';
 
 const LoginPage = () => (
-  <main className="login">
-  <div className="login__content">
-    <h1 className="login__heading">Log In</h1>
+  <FormPage
+    title="Log In"
+    classes={{ main: 'login', footer: 'login__footer', title: 'login__title' }}
+    footer={<SignUpLink />}
+  >
     <LoginForm />
-    </div>
-    <footer className="login__footer">
-      <SignUpLink />
-    </footer>
-  </main>
+  </FormPage>
 );
 
 export default LoginPage;

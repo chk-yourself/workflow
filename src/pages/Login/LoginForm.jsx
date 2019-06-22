@@ -83,7 +83,7 @@ class LoginForm extends Component {
           variant="outlined"
           color="neutral"
           onClick={this.enableGoogleLogin}
-          className="login__btn--alt"
+          className="form-page__btn login__btn--alt"
         >
           Continue with Google
         </Button>
@@ -92,7 +92,7 @@ class LoginForm extends Component {
           variant="outlined"
           color="neutral"
           onClick={this.enableGithubLogin}
-          className="login__btn--alt"
+          className="form-page__btn login__btn--alt"
         >
           Continue with Github
         </Button>
@@ -103,8 +103,8 @@ class LoginForm extends Component {
           value={email}
           onChange={this.onChange}
           type="email"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <Input
           name="password"
@@ -113,8 +113,8 @@ class LoginForm extends Component {
           value={password}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <ForgotPasswordLink />
         <Button
@@ -124,7 +124,7 @@ class LoginForm extends Component {
           variant="contained"
           color="secondary"
           onClick={this.onSubmit}
-          className="login__btn"
+          className="form-page__btn login__btn"
         >
           Log In
         </Button>

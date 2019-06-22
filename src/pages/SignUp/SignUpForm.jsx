@@ -43,13 +43,10 @@ class SignUpForm extends Component {
   render() {
     const { email, password, passwordConfirm, error } = this.state;
     const isInvalid =
-      password === '' ||
-      passwordConfirm === '' ||
-      email === '' ||
-      password !== passwordConfirm;
+      password === '' || passwordConfirm === '' || email === '' || password !== passwordConfirm;
 
     return (
-      <form onSubmit={this.onSubmit} className="user-form">
+      <form onSubmit={this.onSubmit}>
         <Input
           name="email"
           id="email"
@@ -57,8 +54,8 @@ class SignUpForm extends Component {
           value={email}
           onChange={this.onChange}
           type="email"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <Input
           name="password"
@@ -67,8 +64,8 @@ class SignUpForm extends Component {
           value={password}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <Input
           name="passwordConfirm"
@@ -77,17 +74,17 @@ class SignUpForm extends Component {
           value={passwordConfirm}
           onChange={this.onChange}
           type="password"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <Button
           disabled={isInvalid}
           type="submit"
           size="md"
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={this.onSubmit}
-          className="sign-up__btn"
+          className="form-page__btn"
         >
           Create Account
         </Button>

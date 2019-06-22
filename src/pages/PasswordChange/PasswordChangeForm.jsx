@@ -14,10 +14,7 @@ const INITIAL_STATE = {
 };
 
 class PasswordChangeForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+  state = { ...INITIAL_STATE };
 
   onSubmit = e => {
     const { newPassword, currentPassword } = this.state;
@@ -49,17 +46,9 @@ class PasswordChangeForm extends Component {
   };
 
   render() {
-    const {
-      currentPassword,
-      newPassword,
-      confirmPassword,
-      error,
-      success
-    } = this.state;
+    const { currentPassword, newPassword, confirmPassword, error, success } = this.state;
     const isInvalid =
-      currentPassword === '' ||
-      newPassword === '' ||
-      newPassword !== confirmPassword;
+      currentPassword === '' || newPassword === '' || newPassword !== confirmPassword;
 
     return (
       <form className="user-form">

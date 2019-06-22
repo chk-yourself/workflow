@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Radio } from '../Radio';
 import { withOutsideClick } from '../withOutsideClick';
 import './ColorPicker.scss';
@@ -11,6 +12,15 @@ class ColorPicker extends Component {
     isActive: false,
     style: {},
     selectColor: () => null
+  };
+
+  static propTypes = {
+    selectColor: PropTypes.func,
+    isActive: PropTypes.bool,
+    style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    classes: PropTypes.shape({
+      colorPicker: PropTypes.string
+    })
   };
 
   state = {

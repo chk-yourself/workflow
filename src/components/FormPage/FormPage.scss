@@ -1,0 +1,100 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.header + main.form-page {
+  @include xx {
+    left: 0;
+    width: 100%;
+  }
+}
+
+.link--outlined {
+  padding: 8px;
+  border: 1px solid $white;
+  border-radius: 4px;
+  margin-left: 8px;
+  color: $white;
+  font-weight: 500;
+  text-decoration: none;
+  &:hover,
+  &:active {
+    background-color: $white;
+    color: $primary;
+  }
+}
+
+.form-page {
+  width: 100%;
+  min-height: 100%;
+  position: absolute;
+  margin-top: 0;
+  left: 0;
+  top: 0;
+  @include gradient--vicious-stance;
+  padding: 16px;
+  .form-page__input {
+    height: 42px;
+    border: 1px solid $grey-500;
+  }
+  
+  .form-page__label {
+    font-size: 12px;
+    color: $grey-700;
+    font-weight: 600;
+    &:not(:nth-of-type(1)) {
+      margin-top: 24px;
+    }
+  }
+}
+
+.form-page__container {
+  width: 100%;
+  max-width: 368px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 88px;
+  padding: 24px;
+  border-radius: 4px;
+  background-color: $white;
+  @include md {
+    padding: 32px;
+  }
+  @include lg {
+    max-width: 380px;
+  }
+  @include xl {
+    max-width: 400px;
+  }
+}
+
+.form-page__title {
+  text-align: center;
+  font-size: 1.65rem;
+  margin: 1rem 0 1.5rem;
+  color: $primary;
+  font-weight: 500;
+  @include md {
+    font-size: 1.8rem;
+  }
+  @include lg {
+    font-size: 2rem;
+  }
+  @include xl {
+    font-size: 2.2rem;
+  }
+}
+
+.form-page__btn {
+  margin: 32px auto 16px;
+  min-width: 160px;
+  display: block;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
+}
+
+.form-page__form {
+  max-width: 400px;
+}

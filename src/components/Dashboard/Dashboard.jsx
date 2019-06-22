@@ -10,16 +10,8 @@ import { TaskEditor } from '../TaskEditor';
 import { Main } from '../Main';
 import './Dashboard.scss';
 
-const Dashboard = ({
-  toggleProjectComposer,
-  selectedTask,
-  currentUser,
-  activeWorkspace
-}) => (
-  <Main
-    title="Home"
-    classes={{ main: 'dashboard', title: 'dashboard__header' }}
-  >
+const Dashboard = ({ toggleProjectComposer, selectedTask, currentUser, activeWorkspace }) => (
+  <Main title="Home" classes={{ main: 'dashboard', title: 'dashboard__header' }}>
     <TasksDueSoon />
     <Notifications userId={currentUser.userId} />
     <DashboardPanel
@@ -50,9 +42,6 @@ const mapStateToProps = state => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
-export default withAuthorization(condition)(
-  connect(mapStateToProps)(Dashboard)
-);
+export default withAuthorization(condition)(connect(mapStateToProps)(Dashboard));

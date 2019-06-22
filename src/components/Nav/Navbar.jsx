@@ -7,7 +7,7 @@ import { IconButton } from '../Button';
 
 class Navbar extends Component {
   static defaultProps = {
-    minWidth: 768,
+    minWidth: 768, // min viewport width required for expanding nav links
     classes: {
       navbar: '',
       links: ''

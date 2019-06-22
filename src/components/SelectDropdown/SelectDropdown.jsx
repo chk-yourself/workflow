@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Popover } from '../Popover';
 import { Menu, MenuItem } from '../Menu';
 import { Radio } from '../Radio';
@@ -25,7 +26,13 @@ export default class SelectDropdown extends Component {
     align: {
       outer: 'left',
       inner: 'left'
-    }
+    },
+    onChange: () => {}
+  };
+
+  static propTypes = {
+    onChange: PropTypes.func,
+    name: PropTypes.string.isRequired
   };
 
   state = {
@@ -75,10 +82,7 @@ export default class SelectDropdown extends Component {
           )
         }}
       >
-        <Menu
-          role="listbox"
-          className={`select-dropdown__menu ${classes.menu || ''}`}
-        >
+        <Menu role="listbox" className={`select-dropdown__menu ${classes.menu || ''}`}>
           {Object.keys(options).map(key => {
             const option = options[key];
             return (

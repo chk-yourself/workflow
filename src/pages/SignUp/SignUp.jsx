@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FormPage } from '../../components/FormPage';
 import SignUpForm from './SignUpForm';
 import * as ROUTES from '../../constants/routes';
 import './SignUp.scss';
@@ -14,12 +15,9 @@ const SignUpLink = () => (
 );
 
 const SignUpPage = () => (
-  <main className="sign-up">
-  <div className="sign-up__content">
-    <h1 className="sign-up__heading">Sign Up</h1>
+  <FormPage title="Sign Up">
     <SignUpForm />
-    </div>
-  </main>
+  </FormPage>
 );
 
 export default SignUpPage;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import './Logo.scss';
@@ -17,6 +18,12 @@ Logo.defaultProps = {
   className: '',
   size: 'md',
   link: ROUTES.LANDING
+};
+
+Logo.propTypes = {
+  className: PropTypes.string,
+  size: PropTypes.oneOf(['sm', 'md']),
+  link: PropTypes.string
 };
 
 export default Logo;

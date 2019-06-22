@@ -54,17 +54,17 @@ class ForgotPasswordForm extends Component {
           value={email}
           onChange={this.onChange}
           type="email"
-          className="user-form__input"
-          labelClass="user-form__label"
+          className="form-page__input"
+          labelClass="form-page__label"
         />
         <Button
           disabled={isInvalid}
           type="submit"
           size="md"
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={this.onSubmit}
-          className="forgot-password__btn"
+          className="form-page__btn forgot-password__btn"
         >
           Reset Password
         </Button>

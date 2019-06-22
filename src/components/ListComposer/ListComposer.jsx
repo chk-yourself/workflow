@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Input } from '../Input';
-import { Icon } from '../Icon';
 import { withAuthorization } from '../Session';
 import { Button, IconButton } from '../Button';
 import './ListComposer.scss';
 
 class ListComposer extends Component {
+  static propTypes = {
+    projectId: PropTypes.string.isRequired
+  };
+
   state = {
     name: ''
   };
