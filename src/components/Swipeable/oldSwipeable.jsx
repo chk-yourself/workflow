@@ -18,9 +18,10 @@ const INITIAL_STATE = {
 
 export default class Swipeable extends Component {
   static defaultProps = {
+    className: '',
+    is: 'div',
     tolerance: 0,
-    allowMouseEvents: false,
-    isSwipeDisabled: false,
+    disableMouseEvents: false,
     innerRef: () => null,
     onSwipeStart: () => {},
     onSwipeEnd: () => {},
@@ -32,9 +33,10 @@ export default class Swipeable extends Component {
   };
 
   static propTypes = {
+    className: PropTypes.string,
+    is: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     tolerance: PropTypes.number,
-    isSwipeDisabled: PropTypes.bool,
-    allowMouseEvents: PropTypes.bool,
+    disableMouseEvents: PropTypes.bool,
     innerRef: PropTypes.oneOfType([
       PropTypes.func,
       PropTypes.shape({ current: PropTypes.instanceOf(Element) })
@@ -49,9 +51,6 @@ export default class Swipeable extends Component {
   };
 
   state = { ...INITIAL_STATE };
-
-  componentDidMount() {
-  }
 
   componentWillUnmount() {
     if (this.mouseDown) {
@@ -69,8 +68,8 @@ export default class Swipeable extends Component {
   };
 
   onMouseDown = e => {
-    const { allowMouseEvents, isSwipeDisabled } = this.props;
-    if (!allowMouseEvents || isSwipeDisabled) return;
+    const { disableMouseEvents } = this.props;
+    if (disableMouseEvents) return;
 
     this.mouseDown = true;
 
@@ -98,8 +97,7 @@ export default class Swipeable extends Component {
   };
 
   handleSwipeStart = e => {
-    const { onSwipeStart, isSwipeDisabled } = this.props;
-    if (isSwipeDisabled) return;
+    const { onSwipeStart } = this.props;
     const startPosition = getCoords(e);
     this.setState({ startPosition });
     onSwipeStart(e);
@@ -110,15 +108,15 @@ export default class Swipeable extends Component {
     if (!startPosition) return;
     const { x: startX, y: startY } = startPosition;
     const { onSwipeMove } = this.props;
-    const { x: currentX, y: currentY } = getCoords(e);
-    const deltaX = currentX - startX;
-    const deltaY = currentY - startY;
+    const { x: endX, y: endY } = getCoords(e);
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
     const movePosition = {
       deltaX,
       deltaY
     };
     this.setState({ movePosition, isSwiping: true });
-    onSwipeMove({ x: deltaX, y: deltaY }, e);
+    onSwipeMove(e);
   };
 
   handleSwipeEnd = e => {
@@ -132,25 +130,24 @@ export default class Swipeable extends Component {
     } = this.props;
     const { movePosition, isSwiping } = this.state;
     if (!movePosition || !isSwiping) return;
+    onSwipeEnd(e);
     const { deltaX, deltaY } = movePosition;
-    let direction = '';
 
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX < -tolerance) {
-        onSwipeLeft(e);
-        direction = 'left';
-      } else if (deltaX > tolerance) {
-        onSwipeRight(e);
-        direction = 'right';
-      }
-    } else if (deltaY < -tolerance) {
-      onSwipeUp(e);
-      direction = 'up';
-    } else if (deltaY > tolerance) {
-      onSwipeDown(e);
-      direction = 'down';
+    if (deltaX < -tolerance) {
+      onSwipeLeft(e);
     }
-    onSwipeEnd({ deltaX, deltaY, direction }, e);
+
+    if (deltaX > tolerance) {
+      onSwipeRight(e);
+    }
+
+    if (deltaY < -tolerance) {
+      onSwipeUp(e);
+    }
+
+    if (deltaY > tolerance) {
+      onSwipeDown(e);
+    }
     this.reset();
   };
 
@@ -159,27 +156,34 @@ export default class Swipeable extends Component {
   };
 
   render() {
-    const { children } = this.props;
-
-    const { isSwiping, movePosition } = this.state;
-    const { deltaX = 0, deltaY = 0 } = movePosition || {};
-
-    const provided = {
-      swipeableProps: {
-        onTouchStart: this.handleSwipeStart,
-        onTouchMove: this.handleSwipeMove,
-        onTouchEnd: this.handleSwipeEnd,
-        onMouseDown: this.onMouseDown
-      },
-      innerRef: this.setRef
-    };
-
-    const snapshot = {
-      isSwiping,
-      deltaX,
-      deltaY
-    };
-
-    return children(provided, snapshot);
+    const {
+      children,
+      is,
+      disableMouseEvents,
+      className,
+      innerRef,
+      tolerance,
+      onSwipeUp,
+      onSwipeDown,
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeStart,
+      onSwipeMove,
+      onSwipeEnd,
+      ...rest
+    } = this.props;
+    return (
+      <this.props.is
+        ref={this.setRef}
+        className={className}
+        onTouchStart={this.handleSwipeStart}
+        onTouchMove={this.handleSwipeMove}
+        onTouchEnd={this.handleSwipeEnd}
+        onMouseDown={this.onMouseDown}
+        {...rest}
+      >
+        {children}
+      </this.props.is>
+    );
   }
 }

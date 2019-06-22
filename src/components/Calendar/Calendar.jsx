@@ -90,99 +90,114 @@ export default class Calendar extends Component {
     }, {});
 
     return (
-      <Swipeable onSwipeRight={this.goToNextMonth} onSwipeLeft={this.goToPrevMonth} className={`calendar ${classes.calendar}`}>
-        <div className="calendar__year">
-          <SelectDropdown
-            name="year"
-            align={{ inner: 'right' }}
-            onChange={this.selectYear}
-            selected={year}
-            options={yearOptions}
-            classes={{
-              wrapper: 'calendar__years-dropdown-wrapper',
-              dropdown: 'calendar__years-dropdown',
-              button: 'calendar__btn--years-dropdown',
-              option: 'calendar__radio',
-              label: 'calendar__radio-label',
-              menu: 'calendar__years-list',
-              item: 'calendar__years-item'
+      <Swipeable
+        onSwipeRight={this.goToNextMonth}
+        onSwipeLeft={this.goToPrevMonth}
+      >
+        {(provided, snapshot) => (
+          <div
+            {...provided.swipeableProps}
+            ref={provided.innerRef}
+            className={`calendar ${classes.calendar}`}
+            style={{
+              transform: `translateX(${snapshot.deltaX}px)`,
+              transition: 'transform .3s ease-in-out'
             }}
-          />
-        </div>
-        <div className="calendar__month">
-          <SelectDropdown
-            name="month"
-            align={{ inner: 'right' }}
-            onChange={this.selectMonth}
-            selected={month}
-            options={monthOptions}
-            classes={{
-              wrapper: 'calendar__months-dropdown-wrapper',
-              dropdown: 'calendar__months-dropdown',
-              button: 'calendar__btn--months-dropdown',
-              option: 'calendar__radio',
-              label: 'calendar__radio-label',
-              menu: 'calendar__months-list',
-              item: 'calendar__months-item'
-            }}
-          />
-          <div className="calendar__month--prev-next">
-            <IconButton
-              className="calendar__btn--month calendar__btn--prev-month"
-              size="sm"
-              onClick={this.goToPrevMonth}
-              icon="chevron-left"
-              label="Select previous month"
-            />
-            <IconButton
-              type="button"
-              className="calendar__btn--month calendar__btn--next-month"
-              size="sm"
-              icon="chevron-right"
-              onClick={this.goToNextMonth}
-              label="Select next month"
-            />
-          </div>
-        </div>
-        <div className="calendar__week-days">
-          {WEEK_DAYS.map(day => (
-            <div key={day.long} className={`calendar__week-day ${classes.weekday}`}>
-              {day.narrow}
+          >
+            <div className="calendar__year">
+              <SelectDropdown
+                name="year"
+                align={{ inner: 'right' }}
+                onChange={this.selectYear}
+                selected={year}
+                options={yearOptions}
+                classes={{
+                  wrapper: 'calendar__years-dropdown-wrapper',
+                  dropdown: 'calendar__years-dropdown',
+                  button: 'calendar__btn--years-dropdown',
+                  option: 'calendar__radio',
+                  label: 'calendar__radio-label',
+                  menu: 'calendar__years-list',
+                  item: 'calendar__years-item'
+                }}
+              />
             </div>
-          ))}
-        </div>
-        <div className="calendar__days">
-          {dates.map(date => {
-            const isToday =
-              date.day === today.day &&
-              date.month === today.month &&
-              date.year === today.year;
-            const isSelectedDate =
-              selectedDate &&
-              date.day === selectedDate.day &&
-              date.month === selectedDate.month &&
-              date.year === selectedDate.year;
-            return (
-              <div
-                key={`${date.month}--${date.day}`}
-                className={`calendar__day ${
-                  date.month !== month ? 'calendar__day--prev-next' : ''
-                } ${isToday ? 'is-today' : ''} ${isSelectedDate ? 'is-selected' : ''} ${
-                  classes.day
-                }`}
-              >
-                <Button
-                  type="button"
-                  className="calendar__btn--day"
+            <div className="calendar__month">
+              <SelectDropdown
+                name="month"
+                align={{ inner: 'right' }}
+                onChange={this.selectMonth}
+                selected={month}
+                options={monthOptions}
+                classes={{
+                  wrapper: 'calendar__months-dropdown-wrapper',
+                  dropdown: 'calendar__months-dropdown',
+                  button: 'calendar__btn--months-dropdown',
+                  option: 'calendar__radio',
+                  label: 'calendar__radio-label',
+                  menu: 'calendar__months-list',
+                  item: 'calendar__months-item'
+                }}
+              />
+              <div className="calendar__month--prev-next">
+                <IconButton
+                  className="calendar__btn--month calendar__btn--prev-month"
                   size="sm"
-                  onClick={() => onSelectDay(date)}
-                >
-                  {date.day}
-                </Button>
+                  onClick={this.goToPrevMonth}
+                  icon="chevron-left"
+                  label="Select previous month"
+                />
+                <IconButton
+                  type="button"
+                  className="calendar__btn--month calendar__btn--next-month"
+                  size="sm"
+                  icon="chevron-right"
+                  onClick={this.goToNextMonth}
+                  label="Select next month"
+                />
               </div>
-            );
-          })}
-        </div>
+            </div>
+            <div className="calendar__week-days">
+              {WEEK_DAYS.map(day => (
+                <div key={day.long} className={`calendar__week-day ${classes.weekday}`}>
+                  {day.narrow}
+                </div>
+              ))}
+            </div>
+            <div className="calendar__days">
+              {dates.map(date => {
+                const isToday =
+                  date.day === today.day &&
+                  date.month === today.month &&
+                  date.year === today.year;
+                const isSelectedDate =
+                  selectedDate &&
+                  date.day === selectedDate.day &&
+                  date.month === selectedDate.month &&
+                  date.year === selectedDate.year;
+                return (
+                  <div
+                    key={`${date.month}--${date.day}`}
+                    className={`calendar__day ${
+                      date.month !== month ? 'calendar__day--prev-next' : ''
+                    } ${isToday ? 'is-today' : ''} ${
+                      isSelectedDate ? 'is-selected' : ''
+                    } ${classes.day}`}
+                  >
+                    <Button
+                      type="button"
+                      className="calendar__btn--day"
+                      size="sm"
+                      onClick={() => onSelectDay(date)}
+                    >
+                      {date.day}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </Swipeable>
     );
   }
