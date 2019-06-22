@@ -304,12 +304,12 @@ class Project extends Component {
                         key: 'view',
                         type: 'radio',
                         options: {
-                          active: { value: 'active', name: 'Active Tasks' },
+                          active: { value: 'active', label: 'Active Tasks' },
                           completed: {
                             value: 'completed',
-                            name: 'Completed Tasks'
+                            label: 'Completed Tasks'
                           },
-                          all: { value: 'all', name: 'All Tasks' }
+                          all: { value: 'all', label: 'All Tasks' }
                         },
                         value: view,
                         onChange: this.setTempProjectSettings
@@ -319,10 +319,10 @@ class Project extends Component {
                         key: 'sortBy',
                         type: 'select',
                         options: {
-                          none: { value: 'none', name: 'None' },
-                          dueDate: { value: 'dueDate', name: 'Due Date' }
+                          none: { value: 'none', label: 'None' },
+                          dueDate: { value: 'dueDate', label: 'Due Date' }
                         },
-                        value: sortBy,
+                        selected: sortBy,
                         onChange: this.setTempProjectSettings
                       },
                       {
@@ -330,10 +330,10 @@ class Project extends Component {
                         key: 'layout',
                         type: 'select',
                         options: {
-                          board: { value: 'board', name: 'Board' },
-                          list: { value: 'list', name: 'List' }
+                          board: { value: 'board', label: 'Board' },
+                          list: { value: 'list', label: 'List' }
                         },
-                        value: layout,
+                        selected: layout,
                         onChange: this.setTempProjectSettings
                       }
                     ]}

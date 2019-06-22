@@ -23,6 +23,7 @@ class Popover extends Component {
 
   onOutsideClick = e => {
     const { onOutsideClick, onClose } = this.props;
+    if (this.buttonRef && e.target === this.buttonRef) return;
 
     if (onOutsideClick) {
       onOutsideClick(e);
@@ -57,6 +58,10 @@ class Popover extends Component {
     }
   };
 
+  setButtonRef = el => {
+    this.buttonRef = el;
+  };
+
   render() {
     const { children, align, onWrapperClick, buttonProps, classes, anchorEl } = this.props;
     const isActive = 'isActive' in this.props ? this.props.isActive : this.state.isActive;
@@ -78,7 +83,12 @@ class Popover extends Component {
         style={popoverWrapperStyle}
         onClick={onWrapperClick}
       >
-        <Button type="button" onClick={this.toggleOpen} {...buttonProps} />
+        <Button
+          innerRef={this.setButtonRef}
+          type="button"
+          onClick={this.toggleOpen}
+          {...buttonProps}
+        />
         {isActive && (
           <PopoverContent
             onOutsideClick={this.onOutsideClick}

@@ -200,12 +200,12 @@ class MyTasks extends Component {
                         key: 'view',
                         type: 'radio',
                         options: {
-                          active: { value: 'active', name: 'Active Tasks' },
+                          active: { value: 'active', label: 'Active Tasks' },
                           completed: {
                             value: 'completed',
-                            name: 'Completed Tasks'
+                            label: 'Completed Tasks'
                           },
-                          all: { value: 'all', name: 'All Tasks' }
+                          all: { value: 'all', label: 'All Tasks' }
                         },
                         value: view,
                         onChange: this.setTempTaskSettings
@@ -215,11 +215,11 @@ class MyTasks extends Component {
                         key: 'sortBy',
                         type: 'select',
                         options: {
-                          folder: { value: 'folder', name: 'Folder' },
-                          dueDate: { value: 'dueDate', name: 'Due Date' },
-                          project: { value: 'project', name: 'Project' }
+                          folder: { value: 'folder', label: 'Folder' },
+                          dueDate: { value: 'dueDate', label: 'Due Date' },
+                          project: { value: 'project', label: 'Project' }
                         },
-                        value: sortBy,
+                        selected: sortBy,
                         onChange: this.setTempTaskSettings
                       }
                     ]}

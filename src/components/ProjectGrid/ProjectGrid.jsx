@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ProjectTile from './ProjectTile';
 import './ProjectGrid.scss';
@@ -6,12 +7,7 @@ import { projectSelectors } from '../../ducks/projects';
 import { selectProject as selectProjectAction } from '../../ducks/selectedProject';
 import { Icon } from '../Icon';
 
-const ProjectGrid = ({
-  projects,
-  selectProject,
-  className,
-  openProjectComposer
-}) => (
+const ProjectGrid = ({ projects, selectProject, className, openProjectComposer }) => (
   <ul className={`project-grid ${className}`}>
     {projects.map(project => (
       <ProjectTile
@@ -35,7 +31,24 @@ const ProjectGrid = ({
 );
 
 ProjectGrid.defaultProps = {
-  className: ''
+  className: '',
+  selectProject: () => {},
+  projects: []
+};
+
+ProjectGrid.propTypes = {
+  className: PropTypes.string,
+  selectProject: PropTypes.func,
+  projects: PropTypes.arrayOf(
+    PropTypes.shape({
+      projectId: PropTypes.string,
+      name: PropTypes.string,
+      color: PropTypes.string,
+      settings: PropTypes.shape({
+        layout: PropTypes.oneOf(['list', 'board'])
+      })
+    })
+  )
 };
 
 const mapStateToProps = (state, ownProps) => {

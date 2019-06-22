@@ -22,7 +22,7 @@ export default class SelectDropdown extends Component {
       button: ''
     },
     options: {},
-    value: null,
+    selected: null,
     align: {
       outer: 'left',
       inner: 'left'
@@ -32,7 +32,26 @@ export default class SelectDropdown extends Component {
 
   static propTypes = {
     onChange: PropTypes.func,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    options: PropTypes.objectOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
+      })
+    ),
+    classes: PropTypes.shape({
+      wrapper: PropTypes.string,
+      dropdown: PropTypes.string,
+      menu: PropTypes.string,
+      item: PropTypes.string,
+      option: PropTypes.string,
+      label: PropTypes.string,
+      button: PropTypes.string
+    }),
+    align: PropTypes.shape({
+      outer: PropTypes.oneOf(['left', 'right']),
+      inner: PropTypes.oneOf(['left', 'right'])
+    })
   };
 
   state = {
@@ -59,7 +78,7 @@ export default class SelectDropdown extends Component {
 
   render() {
     const { isActive } = this.state;
-    const { classes, options, name, value, align } = this.props;
+    const { classes, options, name, selected, align } = this.props;
 
     return (
       <Popover
@@ -76,7 +95,7 @@ export default class SelectDropdown extends Component {
           className: `select-dropdown__btn--toggle ${classes.button || ''}`,
           children: (
             <>
-              {value && options[value].name}
+              {selected && options[selected].label}
               <Icon name="chevron-down" />
             </>
           )
@@ -94,15 +113,15 @@ export default class SelectDropdown extends Component {
                   name={name}
                   id={option.value}
                   value={option.value}
-                  isChecked={option.value === value}
+                  isChecked={option.value === selected}
                   label={
-                    option.value === value ? (
+                    option.value === selected ? (
                       <>
                         <Icon name="check" />
-                        {option.name}
+                        {option.label}
                       </>
                     ) : (
-                      option.name
+                      option.label
                     )
                   }
                   onChange={this.onChange}
@@ -110,7 +129,7 @@ export default class SelectDropdown extends Component {
                     radio: `select-dropdown__option ${classes.option || ''}`,
                     label: `select-dropdown__label ${classes.label || ''}`
                   }}
-                  data-label={option.name}
+                  data-label={option.label}
                 />
               </MenuItem>
             );

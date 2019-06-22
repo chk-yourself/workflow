@@ -18,10 +18,10 @@ const RadioGroup = ({ name, value, options, classes, onChange }) => (
             option.value === value ? (
               <>
                 <Icon name="check" />
-                {option.name}
+                {option.label}
               </>
             ) : (
-              option.name
+              option.label
             )
           }
           onChange={onChange}
@@ -29,7 +29,7 @@ const RadioGroup = ({ name, value, options, classes, onChange }) => (
             radio: `radio-group__radio ${classes.radio || ''}`,
             label: `radio-group__label ${classes.label || ''}`
           }}
-          data-label={option.name}
+          data-label={option.label}
         />
       </MenuItem>
     ))}
@@ -49,15 +49,17 @@ RadioGroup.defaultProps = {
 RadioGroup.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
+      label: PropTypes.string,
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    })
+    }).isRequired
   ),
   classes: PropTypes.shape({
     list: PropTypes.string,
     item: PropTypes.string,
     radio: PropTypes.string,
     label: PropTypes.string
-  })
+  }),
+  name: PropTypes.string.isRequired
 };
 
 export default RadioGroup;

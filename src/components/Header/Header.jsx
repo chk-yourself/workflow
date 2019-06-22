@@ -135,10 +135,7 @@ class Header extends Component {
               isWorkspaceSettingsActive={isWorkspaceSettingsActive}
               openWorkspaceSettings={this.openWorkspaceSettings}
             >
-              <NavLinksAuth
-                onClick={this.collapseNav}
-                userId={currentUser.userId}
-              />
+              <NavLinksAuth onClick={this.collapseNav} userId={currentUser.userId} />
             </Sidebar>
             <Topbar
               openWorkspaceComposer={this.toggleWorkspaceComposer}
@@ -151,9 +148,7 @@ class Header extends Component {
             {isWorkspaceSettingsActive && (
               <WorkspaceSettings onClose={this.closeWorkspaceSettings} />
             )}
-            {isAccountSettingsActive && (
-              <AccountSettings onClose={this.closeAccountSettings} />
-            )}
+            {isAccountSettingsActive && <AccountSettings onClose={this.closeAccountSettings} />}
           </>
         ) : (
           <Navbar>

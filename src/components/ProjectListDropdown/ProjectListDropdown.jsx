@@ -35,12 +35,12 @@ class ProjectListDropdown extends Component {
             ...listsById,
             [list.listId]: {
               value: list.listId,
-              name: list.name
+              label: list.name
             }
           }),
           {}
         )}
-        value={selectedList}
+        selected={selectedList}
         name="list"
         align={{ inner: 'right' }}
         onChange={onChange}

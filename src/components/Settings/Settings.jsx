@@ -43,7 +43,7 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
                       id={option.value}
                       value={option.value}
                       isChecked={setting.value === option.value}
-                      label={option.name}
+                      label={option.label}
                       onChange={setting.onChange}
                       classes={{
                         radio: `settings__radio ${classes.radio || ''}`,
@@ -58,7 +58,7 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
               <SelectDropdown
                 name={setting.key}
                 onChange={setting.onChange}
-                value={setting.value}
+                selected={setting.selected}
                 options={setting.options}
                 classes={{
                   wrapper: `settings__dropdown-wrapper ${classes.dropdownWrapper || ''}`,

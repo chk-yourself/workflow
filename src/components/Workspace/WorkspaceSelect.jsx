@@ -19,7 +19,7 @@ class WorkspaceSelect extends Component {
     const { workspaces } = currentUser;
     const options = Object.keys(workspaces).map(workspaceId => ({
       value: workspaceId,
-      name: workspaces[workspaceId].name
+      label: workspaces[workspaceId].name
     }));
     return (
       <RadioGroup
@@ -36,7 +36,6 @@ class WorkspaceSelect extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(WorkspaceSelect);
