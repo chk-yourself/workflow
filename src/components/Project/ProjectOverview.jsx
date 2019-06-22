@@ -69,6 +69,7 @@ class ProjectOverview extends Component {
             <Icon name="chevron-down" />
           </Button>
           <ColorPicker
+            selected={color}
             onOutsideClick={this.hideColorPicker}
             isActive={isColorPickerActive}
             selectColor={this.setColor}

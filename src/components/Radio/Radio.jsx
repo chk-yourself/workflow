@@ -11,6 +11,7 @@ const Radio = ({
   hideLabel,
   label,
   isChecked,
+  labelProps,
   ...rest
 }) => {
   return (
@@ -27,7 +28,7 @@ const Radio = ({
         {...rest}
       />
       {!hideLabel && (
-        <label htmlFor={id} className={`radio__label ${classes.label}`}>
+        <label htmlFor={id} className={`radio__label ${classes.label}`} {...labelProps}>
           {label}
         </label>
       )}
@@ -39,7 +40,8 @@ Radio.defaultProps = {
   classes: {
     radio: '',
     label: ''
-  }
+  },
+  labelProps: {}
 };
 
 Radio.propTypes = {
@@ -47,7 +49,8 @@ Radio.propTypes = {
     radio: PropTypes.string,
     label: PropTypes.string
   }),
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  labelProps: PropTypes.objectOf(PropTypes.oneOf([PropTypes.string, PropTypes.number]))
 };
 
 export default Radio;

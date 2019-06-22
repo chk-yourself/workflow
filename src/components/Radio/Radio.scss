@@ -35,3 +35,8 @@
     color: $primary;
   }
 }
+
+.radio,
+.radio__label {
+  cursor: pointer;
+}
