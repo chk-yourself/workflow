@@ -27,7 +27,7 @@ const ProfileSetup = ({ name, displayName, email, about, onChange }) => (
       className="account-setup__input"
       labelClass="account-setup__label"
       data-section="profile"
-      helper="The name your teammates will use to @mention you in Workflow. If ommitted, your full name will be used."
+      hint="The name your teammates will use to @mention you in Workflow. If ommitted, your full name will be used."
     />
     <Input
       name="email"

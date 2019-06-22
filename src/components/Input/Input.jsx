@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { ErrorMessage } from '../Error';
 import './Input.scss';
 
+let idCounter = 0;
+
 class Input extends Component {
   static defaultProps = {
     className: '',
@@ -18,7 +20,8 @@ class Input extends Component {
   };
 
   state = {
-    isFocused: false
+    isFocused: false,
+    id: (this.props.id || ++idCounter).toString()
   };
 
   onFocus = e => {
@@ -56,32 +59,34 @@ class Input extends Component {
       innerRef,
       label,
       labelClass,
-      helper,
-      helperClass,
+      hint,
+      hintClass,
       onKeyDown,
       maxLength,
       minLength,
       isReadOnly,
-      id,
+      id: unusedId,
       validationMessage,
       isInvalid,
       ...rest
     } = this.props;
 
-    const { isFocused } = this.state;
+    const { isFocused, id } = this.state;
+    const hintId = hint ? `${id}__hint` : '';
+    const validationMessageId = validationMessage ? `${id}__validation` : '';
     return (
       <>
         {label && (
           <label
-            htmlFor={id || name}
+            htmlFor={id}
             className={`input__label ${labelClass} ${isFocused ? 'is-focused' : ''}`}
           >
             {label}
           </label>
         )}
         <input
-          id={label ? id || name : id}
-          className={`input ${className}`}
+          id={id}
+          className={`input ${className} ${isInvalid ? 'is-invalid' : ''}`}
           name={name}
           type={type}
           value={value}
@@ -98,12 +103,13 @@ class Input extends Component {
           readOnly={isReadOnly}
           tabIndex={isReadOnly ? -1 : 0}
           aria-invalid={isInvalid}
+          aria-describedby={`${hintId} ${validationMessageId}`.trim() || null}
           {...rest}
         />
-        {validationMessage && <ErrorMessage text={validationMessage} />}
-        {helper && (
-          <p className={`input__helper ${helperClass} ${isFocused ? 'is-focused' : ''}`}>
-            {helper}
+        {validationMessage && <ErrorMessage id={validationMessageId} text={validationMessage} />}
+        {hint && (
+          <p id={hintId} className={`input__helper ${hintClass} ${isFocused ? 'is-focused' : ''}`}>
+            {hint}
           </p>
         )}
       </>

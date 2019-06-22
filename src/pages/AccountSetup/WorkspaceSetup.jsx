@@ -12,7 +12,6 @@ const WorkspaceSetup = ({ name, invites, isOptional, onChange }) => (
       label="Workspace name"
       value={name}
       onChange={onChange}
-      type="text"
       className="account-setup__input"
       labelClass="account-setup__label"
       data-section="workspace"
