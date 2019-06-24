@@ -6,15 +6,14 @@ import * as keys from '../../constants/keys';
 import './TaskComposer.scss';
 
 const INITIAL_STATE = {
-  name: '',
-  isActive: false
+  name: ''
 };
 
 class TaskComposer extends Component {
-  state = { ...INITIAL_STATE };
+  state = { ...INITIAL_STATE, isActive: false };
 
   reset = () => {
-    this.setState({ name: '' });
+    this.setState({ ...INITIAL_STATE });
   };
 
   onSubmit = e => {

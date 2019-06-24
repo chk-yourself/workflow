@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -155,6 +156,7 @@ class Task extends Component {
         className={`task ${className || ''} ${isFocused ? 'is-focused' : ''}`}
         onClick={this.handleTaskClick}
         tabIndex={0}
+        role="button"
         ref={innerRef}
         {...provided && provided.draggableProps}
         {...provided && provided.dragHandleProps}
@@ -183,7 +185,7 @@ class Task extends Component {
                   className="task__tag"
                 />
               ))}
-              {tagIds && tagIds.length > 0 && (
+              {/*tagIds && tagIds.length > 0 && (
                 <Tag
                   name="..."
                   variant="summary"
@@ -193,7 +195,7 @@ class Task extends Component {
                   tooltip={tagIds.join(', ')}
                   isLinkDisabled
                 />
-              )}
+              )*/}
             </div>
             <TaskDueDate className="task__detail" dueDate={dueDate ? dueDate.toDate() : dueDate} />
             {members && members.length > 0 && (

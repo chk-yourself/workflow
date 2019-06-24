@@ -64,10 +64,7 @@ TaskEditorSubtasks.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    completedSubtasks: subtaskSelectors.getCompletedSubtasks(
-      state,
-      ownProps.subtaskIds
-    )
+    completedSubtasks: subtaskSelectors.getCompletedSubtasks(state, ownProps.subtaskIds)
   };
 };
 

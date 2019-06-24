@@ -27,7 +27,19 @@ class MemberSearch extends Component {
   };
 
   static propTypes = {
-    placeholder: PropTypes.string
+    style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    placeholder: PropTypes.string,
+    classes: PropTypes.shape({
+      avatar: PropTypes.string,
+      avatarPlaceholder: PropTypes.string,
+      wrapper: PropTypes.string,
+      input: PropTypes.string,
+      list: PropTypes.string,
+      item: PropTypes.string,
+      info: PropTypes.string,
+      noMatch: PropTypes.string
+    }),
+    type: PropTypes.oneOf(['text', 'hidden'])
   };
 
   state = {

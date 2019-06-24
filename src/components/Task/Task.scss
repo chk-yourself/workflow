@@ -15,8 +15,7 @@
   background-color: $white;
   cursor: pointer;
   &:last-child:not(:first-child)::before {
-    box-shadow: inset 0px -2px 1px -1px $grey-200,
-      inset 0px 2px 1px -1px $grey-200;
+    box-shadow: inset 0px -2px 1px -1px $grey-200, inset 0px 2px 1px -1px $grey-200;
   }
   &:focus,
   &.is-focused {
@@ -137,7 +136,7 @@
 
 .task__badges {
   z-index: 3;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   min-height: 20px;
   margin-left: 6px;
@@ -174,7 +173,7 @@
 }
 
 .task__wrapper {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: center;
   width: calc(100% - 34px);
@@ -182,7 +181,7 @@
 }
 
 .task__members {
-  display: flex;
+  display: inline-flex;
   padding: 0;
   align-items: center;
   width: 100%;
@@ -190,10 +189,21 @@
 
 .task__members-wrapper {
   padding: 0;
+  flex: none;
 }
 
 .task__tags {
   height: 20px;
+  overflow-x: auto;
+  display: inline-flex;
+  flex: 0 1 auto;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background-color: transparent;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .task__tag {
@@ -203,12 +213,14 @@
   line-height: 1.3;
   font-weight: 500;
   font-size: 10.5px;
+  /*
   &:not(.tag--summary) {
     display: none;
     @include md {
       display: inline-block;
     }
   }
+  */
   &.tag--summary {
     @include md {
       display: none;

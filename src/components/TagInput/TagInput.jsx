@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withAuthorization } from '../Session';
@@ -12,18 +13,23 @@ import './TagInput.scss';
 
 // TODO: accept tagProps and inputProps for reusability
 
+const INITIAL_STATE = {
+  value: '',
+  isColorPickerActive: false,
+  selectedTag: '',
+  selectedIndex: null,
+  hasExactMatch: null,
+  currentTag: null,
+  focusedTag: '',
+  filteredList: []
+};
+
 class TagInput extends Component {
-  state = {
-    value: '',
-    isActive: false,
-    isColorPickerActive: false,
-    selectedTag: '',
-    currentTag: null,
-    focusedTag: '',
-    selectedIndex: null,
-    hasExactMatch: null,
-    filteredList: []
+  static propTypes = {
+    taskId: PropTypes.string.isRequired
   };
+
+  state = { ...INITIAL_STATE, isActive: false };
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.assignedTags.indexOf(undefined) !== -1) {
@@ -47,14 +53,7 @@ class TagInput extends Component {
 
   reset = () => {
     this.setState({
-      value: '',
-      isColorPickerActive: false,
-      selectedTag: '',
-      selectedIndex: null,
-      hasExactMatch: null,
-      focusedTag: '',
-      currentTag: null,
-      filteredList: []
+      ...INITIAL_STATE
     });
   };
 
@@ -234,8 +233,6 @@ class TagInput extends Component {
     const colorPickerStyle = {};
     if (this.currentTag) {
       const { offsetLeft, offsetWidth, offsetTop, offsetHeight } = this.currentTag;
-      console.log(this.currentTag);
-      console.log(offsetLeft, offsetWidth);
       colorPickerStyle.left = offsetLeft + offsetWidth / 2 - 74; // 74 = 1/2 colorPicker width
       colorPickerStyle.top = offsetTop + offsetHeight + 9; // 9 = colorPicker arrow height
     }

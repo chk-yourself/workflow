@@ -220,8 +220,7 @@ class Project extends Component {
                     className="project__more-actions-btn"
                     onClick={onDelete}
                     disabled={
-                      ownerId !== currentUser.userId &&
-                      currentUser.role !== 'admin'
+                      ownerId !== currentUser.userId && currentUser.role !== 'admin'
                     }
                   >
                     Delete Project
@@ -236,16 +235,10 @@ class Project extends Component {
               </Menu>
             </Popover>
             <div className="project__links">
-              <NavLink
-                className="project__link"
-                to={`/0/projects/${projectId}/tasks`}
-              >
+              <NavLink className="project__link" to={`/0/projects/${projectId}/tasks`}>
                 Tasks
               </NavLink>
-              <NavLink
-                className="project__link"
-                to={`/0/projects/${projectId}/overview`}
-              >
+              <NavLink className="project__link" to={`/0/projects/${projectId}/overview`}>
                 Overview
               </NavLink>
             </div>
@@ -350,7 +343,7 @@ class Project extends Component {
                       {provided.placeholder}
                       <ListComposer
                         inputRef={this.setInputRef}
-                        toggle={this.toggleListComposer}
+                        onToggle={this.toggleListComposer}
                         isActive={isListComposerActive}
                         layout={layout}
                         projectId={projectId}
@@ -376,7 +369,6 @@ class Project extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(Project);

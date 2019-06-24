@@ -27,6 +27,13 @@ class MemberAssigner extends Component {
   };
 
   static propTypes = {
+    classes: PropTypes.shape({
+      memberAssigner: PropTypes.string,
+      avatar: PropTypes.string,
+      avatarPlaceholder: PropTypes.string,
+      popover: PropTypes.string,
+      popoverWrapper: PropTypes.string
+    }),
     placeholder: PropTypes.string,
     isMemberSearchDisabled: PropTypes.bool,
     isSelfAssignmentDisabled: PropTypes.bool,

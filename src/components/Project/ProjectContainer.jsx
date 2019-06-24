@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
@@ -21,6 +22,10 @@ import * as droppableTypes from '../../constants/droppableTypes';
 import './Project.scss';
 
 class ProjectContainer extends Component {
+  static propTypes = {
+    projectId: PropTypes.string.isRequired
+  };
+
   async componentDidMount() {
     const {
       projectId,
@@ -34,12 +39,11 @@ class ProjectContainer extends Component {
       selectProject(projectId);
     }
 
-    await Promise.all([
-      syncProjectLists(projectId),
-      syncProjectSubtasks(projectId)
-    ]).then(listeners => {
-      this.unsubscribe = listeners;
-    });
+    await Promise.all([syncProjectLists(projectId), syncProjectSubtasks(projectId)]).then(
+      listeners => {
+        this.unsubscribe = listeners;
+      }
+    );
     console.log('mounted');
   }
 
@@ -146,15 +150,7 @@ class ProjectContainer extends Component {
   };
 
   render() {
-    const {
-      selectedTask,
-      projectId,
-      isLoaded,
-      project,
-      currentUser,
-      tempSettings
-    } = this.props;
-    const { userId } = currentUser;
+    const { selectedTask, projectId, isLoaded, project, tempSettings } = this.props;
     const { name, listIds } = project;
     const { layout } = tempSettings;
     const isTaskEditorOpen = !!selectedTask;
@@ -166,10 +162,7 @@ class ProjectContainer extends Component {
         }`}
       >
         <div className="project__wrapper">
-          <DragDropContext
-            onDragEnd={this.onDragEnd}
-            onDragStart={this.onDragStart}
-          >
+          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
             <Project
               onChangeTempProjectSettings={this.setTempProjectSettings}
               onDelete={this.deleteProject}
@@ -192,9 +185,7 @@ class ProjectContainer extends Component {
               })}
             </Project>
           </DragDropContext>
-          {isTaskEditorOpen && (
-            <TaskEditor {...selectedTask} userId={userId} layout={layout} />
-          )}
+          {isTaskEditorOpen && <TaskEditor {...selectedTask} layout={layout} />}
         </div>
       </main>
     );
@@ -209,10 +200,7 @@ const mapStateToProps = (state, ownProps) => {
     listsById: listSelectors.getListsById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),
-    tempSettings: projectSelectors.getTempProjectSettings(
-      state,
-      ownProps.projectId
-    )
+    tempSettings: projectSelectors.getTempProjectSettings(state, ownProps.projectId)
   };
 };
 
@@ -220,10 +208,8 @@ const mapDispatchToProps = dispatch => {
   return {
     selectProject: projectId => dispatch(selectProjectAction(projectId)),
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
-    syncProjectLists: projectId =>
-      dispatch(listActions.syncProjectLists(projectId)),
-    syncProjectTasks: projectId =>
-      dispatch(taskActions.syncProjectTasks(projectId)),
+    syncProjectLists: projectId => dispatch(listActions.syncProjectLists(projectId)),
+    syncProjectTasks: projectId => dispatch(taskActions.syncProjectTasks(projectId)),
     syncProjectSubtasks: projectId =>
       dispatch(subtaskActions.syncProjectSubtasks(projectId)),
     syncProject: projectId => dispatch(projectActions.syncProject(projectId)),
@@ -239,8 +225,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
   connect(

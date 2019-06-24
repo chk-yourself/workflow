@@ -54,6 +54,7 @@ export default class ExpansionPanel extends Component {
         {...rest}
       >
         <ExpansionPanelHeader
+          onKeyDown={this.toggleContent}
           onClick={this.toggleContent}
           className={`${isExpanded ? 'is-expanded' : ''} ${classes.header ||
             ''}`}

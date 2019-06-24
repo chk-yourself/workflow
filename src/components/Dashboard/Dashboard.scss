@@ -94,6 +94,9 @@
   text-transform: none;
   font-size: 12px;
   font-weight: 500;
+  &:hover {
+    color: darken($primary, 20%);
+  }
 }
 
 .dashboard__tasks {

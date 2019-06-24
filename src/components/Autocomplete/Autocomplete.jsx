@@ -1,32 +1,16 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 import { Input } from '../Input';
+import { Popover } from '../Popover';
 import './Autocomplete.scss';
 
 const INITIAL_STATE = {
   value: '',
-  isActive: false,
-  isTouchEnabled: false
+  isActive: false
 };
 
 export default class Autocomplete extends Component {
   state = { ...INITIAL_STATE };
-
-  componentDidMount() {
-    document.addEventListener('touchstart', this.handleTouch);
-    document.addEventListener('click', this.handleOutsideClick, false);
-  }
-
-  componentWillUnmount() {
-    const { isTouchEnabled } = this.state;
-
-    if (isTouchEnabled) {
-      document.removeEventListener('touchstart', this.handleOutsideClick);
-    } else {
-      document.removeEventListener('click', this.handleOutsideClick);
-      document.removeEventListener('touchstart', this.handleTouch);
-    }
-  }
 
   onFocus = () => {
     this.setState({
@@ -42,26 +26,6 @@ export default class Autocomplete extends Component {
     this.setState({
       value: e.target.value
     });
-  };
-
-  handleOutsideClick = e => {
-    if (!this.el.contains(e.target)) return;
-
-    this.setState({
-      isActive: false
-    });
-  };
-
-  handleTouch = () => {
-    this.setState({
-      isTouchEnabled: true
-    });
-    // remove touch handler to prevent unnecessary refires
-    document.removeEventListener('touchstart', this.handleTouch);
-    // remove outside click handler from click events
-    document.removeEventListener('click', this.handleOutsideClick);
-    // reattach outside click handler to touchstart events
-    document.addEventListener('touchstart', this.handleOutsideClick);
   };
 
   render() {

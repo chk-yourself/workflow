@@ -45,7 +45,7 @@ const TaskEditorWrapper = ({ layout, onClose, onOutsideClick, children }) => {
 class TaskEditor extends Component {
   static propTypes = {
     taskId: PropTypes.string.isRequired,
-    layout: PropTypes.oneOf(['board', 'list'])
+    layout: PropTypes.oneOf(['board', 'list']).isRequired
   };
 
   state = {

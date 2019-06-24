@@ -48,26 +48,26 @@ const settings = {
   }
 };
 
+const INITIAL_STATE = {
+  name: '',
+  layout: 'board',
+  color: 'default',
+  privacy: 'public',
+  isColorPickerActive: false
+};
+
 class ProjectComposer extends Component {
   state = {
-    name: '',
-    layout: 'board',
-    color: 'default',
-    privacy: 'public',
-    memberIds: [this.props.currentUser.userId],
-    isColorPickerActive: false
+    ...INITIAL_STATE,
+    memberIds: [this.props.currentUser.userId]
   };
 
   reset = () => {
     const { currentUser } = this.props;
     const { userId } = currentUser;
     this.setState({
-      name: '',
-      layout: 'board',
-      color: 'default',
-      privacy: 'public',
-      memberIds: [userId],
-      isColorPickerActive: false
+      ...INITIAL_STATE,
+      memberIds: [userId]
     });
   };
 

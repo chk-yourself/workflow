@@ -51,7 +51,10 @@ class MyTasks extends Component {
   onDragEnd = ({ destination, draggableId, source, type }) => {
     if (!destination) return;
 
-    if (destination.droppableId === source.droppableId && destination.index === source.index)
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
       return;
     const { firebase, currentUser, state, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
@@ -70,14 +73,17 @@ class MyTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
-            taskIds:
-              view === 'all'
-                ? updatedTaskIds
-                : view === 'active'
-                ? [...taskIdsByView.completed, ...updatedTaskIds]
-                : [...updatedTaskIds, ...taskIdsByView.active]
-          });
+          firebase.updateDoc(
+            ['users', userId, 'workspaces', workspaceId, 'folders', newFolderId],
+            {
+              taskIds:
+                view === 'all'
+                  ? updatedTaskIds
+                  : view === 'active'
+                  ? [...taskIdsByView.completed, ...updatedTaskIds]
+                  : [...updatedTaskIds, ...taskIdsByView.active]
+            }
+          );
         } else {
           updatedTaskIds.splice(newIndex, 0, draggableId);
           firebase.moveTaskToFolder({
@@ -119,14 +125,17 @@ class MyTasks extends Component {
         if (isMovedWithinFolder) {
           updatedTaskIds.splice(origIndex, 1);
           updatedTaskIds.splice(newIndex, 0, draggableId);
-          firebase.updateDoc(['users', userId, 'workspaces', workspaceId, 'folders', newFolderId], {
-            taskIds:
-              view === 'all'
-                ? updatedTaskIds
-                : view === 'active'
-                ? [...taskIdsByView.completed, ...updatedTaskIds]
-                : [...updatedTaskIds, ...taskIdsByView.active]
-          });
+          firebase.updateDoc(
+            ['users', userId, 'workspaces', workspaceId, 'folders', newFolderId],
+            {
+              taskIds:
+                view === 'all'
+                  ? updatedTaskIds
+                  : view === 'active'
+                  ? [...taskIdsByView.completed, ...updatedTaskIds]
+                  : [...updatedTaskIds, ...taskIdsByView.active]
+            }
+          );
         }
       }
     }
@@ -183,7 +192,11 @@ class MyTasks extends Component {
           <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
             <Droppable droppableId={userId} type={droppableTypes.FOLDER}>
               {provided => (
-                <div className="user-tasks" ref={provided.innerRef} {...provided.droppableProps}>
+                <div
+                  className="user-tasks"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
                   <Settings
                     icon="sliders"
                     isActive={isTaskSettingsMenuVisible}
@@ -243,7 +256,9 @@ class MyTasks extends Component {
               )}
             </Droppable>
           </DragDropContext>
-          {isTaskEditorOpen && <TaskEditor {...selectedTask} layout="list" key={selectedTaskId} />}
+          {isTaskEditorOpen && (
+            <TaskEditor {...selectedTask} layout="list" key={selectedTaskId} />
+          )}
         </div>
       </Main>
     );

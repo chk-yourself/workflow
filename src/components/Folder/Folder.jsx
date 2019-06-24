@@ -84,14 +84,9 @@ export default class Folder extends Component {
               {...provided.dragHandleProps}
               header={
                 <>
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="folder__btn--toggle"
-                    iconOnly
-                  >
+                  <span className="folder__icon-wrapper">
                     <Icon name="chevron-right" />
-                  </Button>
+                  </span>
                   <Input
                     className="folder__input--title"
                     name="name"

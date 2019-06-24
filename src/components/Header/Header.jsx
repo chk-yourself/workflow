@@ -29,7 +29,7 @@ class Header extends Component {
     this.header = el;
   };
 
-  stickNav = e => {
+  stickNav = () => {
     const {
       history: {
         location: { pathname }
@@ -51,7 +51,7 @@ class Header extends Component {
     }
   };
 
-  toggleNav = e => {
+  toggleNav = () => {
     this.setState(prevState => ({
       isNavExpanded: !prevState.isNavExpanded
     }));
@@ -124,7 +124,7 @@ class Header extends Component {
           isLoginPage ? 'header--login' : ''
         } ${isSignUpPage || isForgotPasswordPage ? 'header--dk' : ''} ${
           isNavExpanded ? 'expand-nav' : ''
-        } ${isSticky ? 'is-sticky' : ''}`}
+        } ${isSticky ? 'is-sticky' : ''}`.trim()}
       >
         {currentUser && activeWorkspace ? (
           <>
@@ -148,7 +148,9 @@ class Header extends Component {
             {isWorkspaceSettingsActive && (
               <WorkspaceSettings onClose={this.closeWorkspaceSettings} />
             )}
-            {isAccountSettingsActive && <AccountSettings onClose={this.closeAccountSettings} />}
+            {isAccountSettingsActive && (
+              <AccountSettings onClose={this.closeAccountSettings} />
+            )}
           </>
         ) : (
           <Navbar>

@@ -20,12 +20,13 @@
 }
 
 .folder__header {
-  padding: 4px 0;
+  padding: 4px;
   position: relative;
-  margin: 0 4px;
+  margin: 0;
   height: 46px;
+  border-radius: 4px;
   @include md {
-    margin: 0 8px;
+    padding: 4px 8px;
   }
 }
 
@@ -94,13 +95,19 @@
   }
 }
 
-.folder__btn--toggle {
+.folder__icon-wrapper {
   height: 36px;
-  width: 24px;
+  width: 18px;
   padding: 0;
   vertical-align: middle;
+  pointer-events: none;
+  display: inline-block;
+  line-height: 30px;
   .feather {
+    vertical-align: middle;
     stroke-width: 3px;
+    width: 16px;
+    height: 16px;
   }
 }
 

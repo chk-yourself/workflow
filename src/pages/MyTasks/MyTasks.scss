@@ -9,6 +9,7 @@
 
 .user-tasks__container {
   position: relative;
+  width: 100vw;
   min-height: 100vh;
   &.show-task-editor {
     .user-tasks {

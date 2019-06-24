@@ -156,6 +156,7 @@ button {
 
 .text--neutral {
   color: $grey-700;
+  &:hover,
   &:focus {
     color: $primary;
   }

@@ -5,24 +5,38 @@ import { withAuthorization } from '../Session';
 import { Button, IconButton } from '../Button';
 import './ListComposer.scss';
 
+const INITIAL_STATE = {
+  name: ''
+};
+
 class ListComposer extends Component {
-  static propTypes = {
-    projectId: PropTypes.string.isRequired
+  static defaultProps = {
+    onToggle: () => {},
+    inputRef: () => null
   };
 
-  state = {
-    name: ''
+  static propTypes = {
+    projectId: PropTypes.string.isRequired,
+    onToggle: PropTypes.func,
+    inputRef: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    ]),
+    layout: PropTypes.oneOf(['board', 'list']).isRequired,
+    isActive: PropTypes.bool.isRequired
   };
+
+  state = { ...INITIAL_STATE };
 
   clear = () => {
-    this.setState({ name: '' });
+    this.setState({ ...INITIAL_STATE });
   };
 
-  reset = () => {
+  reset = e => {
     this.clear();
-    const { toggle } = this.props;
+    const { onToggle } = this.props;
     this.input.blur();
-    toggle();
+    onToggle(e);
   };
 
   onSubmit = e => {
@@ -43,8 +57,8 @@ class ListComposer extends Component {
   };
 
   onFocus = e => {
-    const { toggle } = this.props;
-    toggle(e);
+    const { onToggle } = this.props;
+    onToggle(e);
     if (e.target.matches('button')) {
       this.input.focus();
     }
@@ -53,14 +67,14 @@ class ListComposer extends Component {
   onBlur = e => {
     const { name } = this.state;
     if (name !== '') return;
-    const { toggle } = this.props;
-    toggle(e);
+    const { onToggle } = this.props;
+    onToggle(e);
   };
 
-  inputRef = ref => {
-    this.input = ref;
+  setInputRef = el => {
+    this.input = el;
     const { inputRef } = this.props;
-    inputRef(ref);
+    inputRef(el);
   };
 
   render() {
@@ -83,7 +97,7 @@ class ListComposer extends Component {
             />
           )}
           <Input
-            innerRef={this.inputRef}
+            innerRef={this.setInputRef}
             onChange={this.onChange}
             value={name}
             placeholder={isActive ? 'Enter list name...' : 'Add a list'}

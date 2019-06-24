@@ -1,4 +1,5 @@
 import React, { Component, createElement } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
@@ -18,6 +19,14 @@ import './List.scss';
 class List extends Component {
   static defaultProps = {
     isRestricted: false
+  };
+
+  static propTypes = {
+    isRestricted: PropTypes.bool,
+    listId: PropTypes.string.isRequired,
+    projectId: PropTypes.string.isRequired,
+    layout: PropTypes.oneOf(['board', 'list']).isRequired,
+    index: PropTypes.number.isRequired
   };
 
   state = {

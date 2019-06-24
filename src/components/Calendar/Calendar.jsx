@@ -100,8 +100,7 @@ export default class Calendar extends Component {
             ref={provided.innerRef}
             className={`calendar ${classes.calendar}`}
             style={{
-              transform: `translateX(${snapshot.deltaX}px)`,
-              transition: 'transform .3s ease-in-out'
+              transform: `translateX(${snapshot.deltaX}px)`
             }}
           >
             <div className="calendar__year">
