@@ -48,10 +48,13 @@ class Popover extends Component {
     if ('isActive' in this.props) {
       const { onClose } = this.props;
       if (onClose) {
-        onClose(e);
+        // Ensures event handlers on children are fired before invoking `onClose` method
+        setTimeout(() => {
+          onClose(e);
+        }, 0);
       }
     } else {
-      if (e.target.matches('input')) return;
+      //if (e.target.matches('input')) return;
       this.setState({
         isActive: false
       });

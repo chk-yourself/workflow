@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from '../Popover';
 import { Menu, MenuItem } from '../Menu';
@@ -6,11 +6,7 @@ import { Radio } from '../Radio';
 import { Icon } from '../Icon';
 import './SelectDropdown.scss';
 
-// TODO: Make more accessible
-// TODO: Enable autocomplete
-// TODO: Enable multi-select
-
-export default class SelectDropdown extends Component {
+export default class SelectDropdown extends PureComponent {
   static defaultProps = {
     classes: {
       wrapper: '',
@@ -73,7 +69,6 @@ export default class SelectDropdown extends Component {
   onChange = e => {
     const { onChange } = this.props;
     onChange(e);
-    this.closeDropdown();
   };
 
   render() {
@@ -85,6 +80,7 @@ export default class SelectDropdown extends Component {
         isActive={isActive}
         onOutsideClick={this.closeDropdown}
         align={align}
+        onClose={this.closeDropdown}
         classes={{
           wrapper: `select-dropdown__wrapper ${classes.wrapper || ''}`,
           popover: `select-dropdown ${classes.dropdown || ''}`

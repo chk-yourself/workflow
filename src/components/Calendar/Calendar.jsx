@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  MONTHS,
   WEEK_DAYS,
   getNextMonth,
   getPrevMonth,
   getMonthDates,
-  getNextYears,
   getSimpleDate
 } from '../../utils/date';
 import { Button, IconButton } from '../Button';
-import { SelectDropdown } from '../SelectDropdown';
 import { Swipeable } from '../Swipeable';
+import SelectYearDropdown from './SelectYearDropdown';
+import SelectMonthDropdown from './SelectMonthDropdown';
 import './Calendar.scss';
 
 export default class Calendar extends Component {
@@ -106,24 +105,6 @@ export default class Calendar extends Component {
       ? getSimpleDate(this.props.selectedDate)
       : null;
     const dates = getMonthDates(month, year);
-    const years = getNextYears(4, year);
-    const yearOptions = years.reduce((options, currentYear) => {
-      const label = `${currentYear}`;
-      options[label] = {
-        value: currentYear,
-        label
-      };
-      return options;
-    }, {});
-
-    const monthOptions = MONTHS.reduce((options, currentMonth, i) => {
-      const label = `${i}`;
-      options[label] = {
-        value: i,
-        label: currentMonth.long
-      };
-      return options;
-    }, {});
 
     return (
       <Swipeable onSwipeRight={this.goToNextMonth} onSwipeLeft={this.goToPrevMonth}>
@@ -137,40 +118,10 @@ export default class Calendar extends Component {
             }}
           >
             <div className="calendar__year">
-              <SelectDropdown
-                name="year"
-                align={{ inner: 'right' }}
-                onChange={this.onChangeYear}
-                selected={year}
-                options={yearOptions}
-                classes={{
-                  wrapper: 'calendar__years-dropdown-wrapper',
-                  dropdown: 'calendar__years-dropdown',
-                  button: 'calendar__btn--years-dropdown',
-                  option: 'calendar__radio',
-                  label: 'calendar__radio-label',
-                  menu: 'calendar__years-list',
-                  item: 'calendar__years-item'
-                }}
-              />
+              <SelectYearDropdown selected={year} onChange={this.onChangeYear} />
             </div>
             <div className="calendar__month">
-              <SelectDropdown
-                name="month"
-                align={{ inner: 'right' }}
-                onChange={this.onChangeMonth}
-                selected={month}
-                options={monthOptions}
-                classes={{
-                  wrapper: 'calendar__months-dropdown-wrapper',
-                  dropdown: 'calendar__months-dropdown',
-                  button: 'calendar__btn--months-dropdown',
-                  option: 'calendar__radio',
-                  label: 'calendar__radio-label',
-                  menu: 'calendar__months-list',
-                  item: 'calendar__months-item'
-                }}
-              />
+              <SelectMonthDropdown selected={month} onChange={this.onChangeMonth} />
               <div className="calendar__month--prev-next">
                 <IconButton
                   className="calendar__btn--month calendar__btn--prev-month"

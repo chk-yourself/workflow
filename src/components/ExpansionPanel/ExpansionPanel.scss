@@ -5,7 +5,7 @@
   &:hover {
     cursor: pointer;
   }
-  &:focus {
+  &:focus:not(:focus-visible) {
     outline: none;
     background-color: rgba($primary-lt, 0.5);
   }

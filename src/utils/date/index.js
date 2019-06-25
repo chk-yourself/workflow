@@ -17,17 +17,13 @@ export const isToday = date =>
 export const isYesterday = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return (
-    today.setDate(today.getDate() - 1) === new Date(+date).setHours(0, 0, 0, 0)
-  );
+  return today.setDate(today.getDate() - 1) === new Date(+date).setHours(0, 0, 0, 0);
 };
 
 export const isTomorrow = date => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return (
-    today.setDate(today.getDate() + 1) === new Date(+date).setHours(0, 0, 0, 0)
-  );
+  return today.setDate(today.getDate() + 1) === new Date(+date).setHours(0, 0, 0, 0);
 };
 
 export const isThisYear = date => {
@@ -88,12 +84,10 @@ export const getMonthDates = (month, year) => {
   return [...prevMonthDates, ...thisMonthDates, ...nextMonthDates];
 };
 
-export const isDate = date =>
-  Object.prototype.toString.call(date) === '[object Date]';
+export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
 export const getSimpleDate = date => {
-  const dateObj =
-    !isDate(date) && typeof date === 'string' ? new Date(date) : date;
+  const dateObj = !isDate(date) && typeof date === 'string' ? new Date(date) : date;
   return {
     day: dateObj.getDate(),
     month: dateObj.getMonth(),
@@ -103,16 +97,12 @@ export const getSimpleDate = date => {
 
 export const isSimpleDate = date => {
   return (
-    date &&
-    ['day', 'month', 'year'].every(prop => ({}.hasOwnProperty.call(date, prop)))
+    date && ['day', 'month', 'year'].every(prop => ({}.hasOwnProperty.call(date, prop)))
   );
 };
 
 export const isSameDate = (date, base = new Date()) => {
-  if (
-    (!isDate(date) && !isSimpleDate(date)) ||
-    (!isDate(base) && !isSimpleDate(base))
-  )
+  if ((!isDate(date) && !isSimpleDate(date)) || (!isDate(base) && !isSimpleDate(base)))
     return false;
   const dateDay = date.day || date.getDate();
   const dateMonth = date.month || date.getMonth();
@@ -120,9 +110,7 @@ export const isSameDate = (date, base = new Date()) => {
   const baseDay = base.day || base.getDate();
   const baseMonth = base.month || base.getMonth();
   const baseYear = base.year || base.getFullYear();
-  return (
-    dateDay === baseDay && dateMonth === baseMonth && dateYear === baseYear
-  );
+  return dateDay === baseDay && dateMonth === baseMonth && dateYear === baseYear;
 };
 
 /**
@@ -182,7 +170,7 @@ export const toSimpleDateObj = dateString => {
 
 /**
  * Checks if given string is formatted as mm-dd-yy
- * @param {string} dateString 
+ * @param {string} dateString
  */
 export const isSDSFormat = dateString => {
   return /^\d{2}-\d{2}-\d{2}$/.test(dateString);
@@ -311,14 +299,10 @@ export const toTimeString = (date, { format = 'h:mm:ss', hour12 = true }) => {
           return digits > 1 && h < 10 ? padZero(h, digits) : h;
         }
         if (i === 1) {
-          return digits > 1 && minutes < 10
-            ? padZero(minutes, digits)
-            : minutes;
+          return digits > 1 && minutes < 10 ? padZero(minutes, digits) : minutes;
         }
         if (i === 2) {
-          return digits > 1 && seconds < 10
-            ? padZero(seconds, digits)
-            : seconds;
+          return digits > 1 && seconds < 10 ? padZero(seconds, digits) : seconds;
         }
         return unit;
       })

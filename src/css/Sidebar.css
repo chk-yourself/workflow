@@ -68,7 +68,7 @@
 
 .sidebar__btn.active .sidebar__icon,
 .sidebar__link.active .sidebar__icon {
-  color: #fff;
+  color: inherit;
 }
 
 .sidebar__btn--workspace-settings.is-active .feather {
@@ -118,12 +118,12 @@
 .sidebar__logo {
   margin: 0;
   text-align: center;
-  padding: 64px 0 26px;
+  padding: 40px 0 16px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   border-bottom: 1px solid #dee2e6;
-  height: 140px;
+  height: 120px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-flow: column wrap;

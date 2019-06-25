@@ -4,7 +4,7 @@
   cursor: pointer;
 }
 
-.expansion-panel__header:focus {
+.expansion-panel__header:focus:not(:focus-visible) {
   outline: none;
   background-color: rgba(181, 204, 255, 0.5);
 }

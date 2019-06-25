@@ -10,15 +10,13 @@ export default class Tasks extends Component {
     isDragDisabled: false
   };
 
-  /*
-
   shouldComponentUpdate(nextProps) {
-    if (this.props.cards === nextProps.cards) {
+    if (this.props.taskIds === nextProps.taskIds) {
       return false;
     }
     return true;
   }
-*/
+
   componentDidUpdate(prevProps) {
     if (this.props.taskIds.length > prevProps.taskIds.length) {
       this.scrollToBottom();

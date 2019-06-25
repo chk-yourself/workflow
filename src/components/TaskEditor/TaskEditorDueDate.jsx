@@ -15,7 +15,6 @@ const TaskEditorDueDate = ({
     <TaskEditorSection>
       <Button
         onClick={onToggleDatePicker}
-        type="button"
         className={`task-editor__btn--due-date ${isDatePickerActive ? 'is-active' : ''}`}
       >
         <span className="task-editor__due-date-icon">
