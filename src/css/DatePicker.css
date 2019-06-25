@@ -1,22 +1,29 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
+@media (min-width: 576px) {
+  .date-picker-wrapper {
+    background-color: transparent;
+  }
+}
+
 .date-picker {
   background-color: #fff;
   border-radius: 4px;
-  padding: 12px;
+  padding: 1rem;
+  width: auto;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  position: absolute;
-  z-index: 99;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+}
+
+.date-picker__btn {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 500;
 }
 
 .date-picker__btn--set-due-date {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  font-weight: 600;
+  padding: 8px 14px;
 }
 
 .date-picker__btn--clear {
@@ -27,14 +34,9 @@
   padding-right: 0;
 }
 
-.date-picker__btn--set-due-date,
-.date-picker__btn--clear,
-.date-picker__btn--cancel {
-  font-weight: 600;
-}
-
 .date-picker__calendar {
-  width: 240px;
+  width: 248px;
+  height: 300px;
   margin: 0 auto;
 }
 
@@ -47,6 +49,8 @@
 
 .date-picker__header {
   margin-bottom: 8px;
+  width: 248px;
+  margin: 8px auto;
 }
 
 .date-picker__footer {
@@ -60,6 +64,8 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  width: 248px;
+  margin: 8px auto 0;
 }
 
 .date-picker__label--due-date {

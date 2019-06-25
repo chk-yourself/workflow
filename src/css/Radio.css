@@ -39,4 +39,9 @@
   left: 8px;
   color: #3e7aff;
 }
+
+.radio,
+.radio__label {
+  cursor: pointer;
+}
 /*# sourceMappingURL=Radio.css.map */

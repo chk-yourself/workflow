@@ -1,12 +1,4 @@
 @import url("https://rsms.me/inter/inter.css");
-.user-form {
-  max-width: 400px;
-}
-
-.user-form__input {
-  margin-bottom: 24px;
-}
-
 .admin {
   padding: 8px 16px;
 }

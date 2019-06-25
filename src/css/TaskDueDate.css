@@ -1,0 +1,23 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.task__due-date {
+  font-weight: 600;
+  color: #212529;
+}
+
+.task__due-date.is-due-today {
+  color: #fb5072;
+}
+
+.task__due-date.is-due-tmrw {
+  color: #05ad7b;
+}
+
+.task__due-date.is-due-this-week {
+  color: #3e7aff;
+}
+
+.task__due-date.is-past-due {
+  color: #f71010;
+}
+/*# sourceMappingURL=TaskDueDate.css.map */

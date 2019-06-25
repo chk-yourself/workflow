@@ -15,6 +15,7 @@ import { Popover } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
 import { Menu, MenuItem } from '../Menu';
 import ProjectDuplicator from './ProjectDuplicator';
+import ProjectCalendar from './ProjectCalendar';
 import * as ROUTES from '../../constants/routes';
 
 class Project extends Component {
@@ -241,6 +242,9 @@ class Project extends Component {
               <NavLink className="project__link" to={`/0/projects/${projectId}/overview`}>
                 Overview
               </NavLink>
+              <NavLink className="project__link" to={`/0/projects/${projectId}/calendar`}>
+                Calendar
+              </NavLink>
             </div>
           </div>
         </div>
@@ -362,6 +366,10 @@ class Project extends Component {
                 projectId={match.params.id}
               />
             )}
+          />
+          <Route
+            path={ROUTES.PROJECT_CALENDAR}
+            render={({ match }) => <ProjectCalendar projectId={match.params.id} />}
           />
         </Switch>
       </div>

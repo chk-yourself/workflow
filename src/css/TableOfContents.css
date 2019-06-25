@@ -1,0 +1,29 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.table-of-contents {
+  border: 1px solid #ced4da;
+  padding: 24px;
+}
+
+.table-of-contents__title {
+  color: #868e96;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.table-of-contents__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.table-of-contents__link {
+  text-decoration: none;
+  color: #3e7aff;
+}
+
+.table-of-contents__item {
+  margin-top: 12px;
+}
+/*# sourceMappingURL=TableOfContents.css.map */

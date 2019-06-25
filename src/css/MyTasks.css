@@ -8,6 +8,7 @@
 
 .user-tasks__container {
   position: relative;
+  width: 100vw;
   min-height: 100vh;
 }
 
@@ -15,11 +16,35 @@
   max-height: 100vh;
 }
 
+.user-tasks__container.show-task-editor .task__tag:not(.tag--summary) {
+  display: none;
+}
+
 @media (min-width: 768px) {
-  .user-tasks__container.show-task-editor .user-tasks__title {
-    margin-right: 0;
-    margin-left: 0;
+  .user-tasks__container.show-task-editor .task__tag:not(.tag--summary) {
+    display: none;
   }
+}
+
+@media (min-width: 1200px) {
+  .user-tasks__container.show-task-editor .task__tag:not(.tag--summary) {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 768px) {
+  .user-tasks__container.show-task-editor .task__tag.tag--summary {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 1200px) {
+  .user-tasks__container.show-task-editor .task__tag.tag--summary {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
   .user-tasks__container.show-task-editor .user-tasks {
     margin-right: 16px;
     max-height: 100%;
@@ -27,14 +52,16 @@
 }
 
 .user-tasks {
-  max-width: 960px;
   width: 100%;
   padding: 0;
+  border-radius: 4px;
 }
 
 @media (min-width: 768px) {
   .user-tasks {
-    padding: 0 8px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
 }
 
@@ -46,6 +73,8 @@
       -ms-flex-pack: center;
           justify-content: center;
   position: relative;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 .user-tasks__title {

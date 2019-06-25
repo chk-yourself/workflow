@@ -1,0 +1,47 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.icon-btn {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  line-height: 0;
+}
+
+.icon-btn .feather {
+  vertical-align: middle;
+}
+
+.icon-btn--sm {
+  font-size: 18px;
+  height: 36px;
+  width: 36px;
+}
+
+.icon-btn--sm .feather {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-btn--md {
+  font-size: 22px;
+  height: 40px;
+  width: 40px;
+}
+
+.icon-btn--md .feather {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-btn--lg {
+  font-size: 32px;
+  height: 50px;
+  width: 50px;
+}
+
+.icon-btn--lg .feather {
+  width: 32px;
+  height: 32px;
+}
+/*# sourceMappingURL=IconButton.css.map */

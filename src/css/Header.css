@@ -15,13 +15,13 @@
 
 @media (min-width: 768px) {
   .header {
-    padding: 4px 24px;
+    padding: 2px 24px;
   }
 }
 
 @media (min-width: 992px) {
   .header {
-    padding: 4px 32px;
+    padding: 2px 32px;
   }
 }
 
@@ -80,7 +80,7 @@
   .header.expand-nav + .main,
   .header.expand-nav + main {
     width: calc(100% - 200px);
-    left: 200px;
+    left: 100px;
   }
 }
 
@@ -90,9 +90,10 @@
   padding-left: 0;
 }
 
-.header + .main,
-.header + main {
-  position: relative;
+@media (min-width: 1440px) {
+  .header.expand-nav .sidebar__member-detail {
+    display: inline-block;
+  }
 }
 
 @media (min-width: 1440px) {
@@ -187,30 +188,36 @@
   }
 }
 
-.header--signup .navbar__link,
-.header--forgot-password .navbar__link {
+.header--dk .navbar__link {
   color: #343a40;
 }
 
 @media (min-width: 768px) {
-  .header--signup .navbar__link,
-  .header--forgot-password .navbar__link {
+  .header--dk .navbar__link {
     color: #fff;
   }
 }
 
-.header--signup .navbar__link.active,
-.header--forgot-password .navbar__link.active {
+.header--dk .navbar__link.active {
   color: #fb5072;
 }
 
-.header--signup .navbar__link:hover,
-.header--forgot-password .navbar__link:hover {
+.header--dk .navbar__link:hover {
   color: #fb5072;
 }
 
 .navbar__btn--toggle {
   width: 32px;
   height: 32px;
+}
+
+.header--landing {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.header--landing.is-sticky {
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
 }
 /*# sourceMappingURL=Header.css.map */

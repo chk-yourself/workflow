@@ -43,4 +43,13 @@
       -ms-flex-align: center;
           align-items: center;
 }
+
+.members__link {
+  text-decoration: none;
+  color: #868e96;
+}
+
+.members__link:hover {
+  color: #3e7aff;
+}
 /*# sourceMappingURL=Members.css.map */

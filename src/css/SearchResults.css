@@ -26,6 +26,34 @@
   }
 }
 
+.search-results.show-task-editor .task__tag:not(.tag--summary) {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .search-results.show-task-editor .task__tag:not(.tag--summary) {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .search-results.show-task-editor .task__tag:not(.tag--summary) {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-results.show-task-editor .task__tag.tag--summary {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 1200px) {
+  .search-results.show-task-editor .task__tag.tag--summary {
+    display: none;
+  }
+}
+
 .search-results__subheading {
   font-size: 18px;
   margin-left: 16px;
@@ -49,5 +77,15 @@
 .search-results__tasks {
   width: 100%;
   max-width: 960px;
+}
+
+.search-results__tasks .search-results__task:not(.is-focused):last-child::before {
+  -webkit-box-shadow: inset 0px 2px 1px -1px #e9ecef;
+          box-shadow: inset 0px 2px 1px -1px #e9ecef;
+}
+
+.search-results__tasks .search-results__task.is-focused + .search-results__task:last-child::before {
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 /*# sourceMappingURL=SearchResults.css.map */

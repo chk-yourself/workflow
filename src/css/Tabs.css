@@ -1,18 +1,18 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
-.tabs-container {
+.tabs {
   width: 100%;
   position: relative;
 }
 
-.tabs-container__header {
+.tabs__header {
   width: 100%;
   margin-bottom: 24px;
   -webkit-box-shadow: inset 0px -2px 1px -1px #dee2e6;
           box-shadow: inset 0px -2px 1px -1px #dee2e6;
 }
 
-.tabs {
+.tablist {
   list-style: none;
   padding: 0;
   display: -webkit-box;
@@ -28,17 +28,50 @@
   margin-right: 32px;
   font-size: 15px;
   font-weight: 500;
-  color: #495057;
+  color: #868e96;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-.tab:active, .tab.is-active {
-  color: #3e7aff;
-  -webkit-box-shadow: inset 0 -2px #3e7aff;
-          box-shadow: inset 0 -2px #3e7aff;
+.tab:active, .tab.is-selected {
   outline: none;
 }
 
 .tab:hover, .tab:focus {
   color: #3e7aff;
+}
+
+.tab--underlined {
+  position: relative;
+}
+
+.tab--underlined::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 0;
+  left: 0;
+  bottom: 0;
+  -webkit-transition: height 0.2s ease-in-out;
+  transition: height 0.2s ease-in-out;
+  background-color: #3e7aff;
+}
+
+.tab--underlined:active, .tab--underlined.is-selected {
+  color: #3e7aff;
+}
+
+.tab--underlined:active::after, .tab--underlined.is-selected::after {
+  height: 0.2em;
+}
+
+.tab--outlined {
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.tab--outlined:active, .tab--outlined.is-selected {
+  color: #3e7aff;
+  border: 1px solid #3e7aff;
 }
 /*# sourceMappingURL=Tabs.css.map */

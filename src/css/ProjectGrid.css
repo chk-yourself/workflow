@@ -94,30 +94,30 @@
 }
 
 .project-grid__tile--blue {
-  background-color: #1c7ed6;
+  background-color: #0080f2;
   color: #fff;
 }
 
 .project-grid__tile--blue:hover {
-  background: #6cafec;
+  background: #59b1ff;
 }
 
 .project-grid__tile--green {
-  background-color: #37b24d;
+  background-color: #17ab33;
   color: #fff;
 }
 
 .project-grid__tile--green:hover {
-  background: #79d68a;
+  background: #42e661;
 }
 
 .project-grid__tile--pink {
-  background-color: #d6336c;
+  background-color: #fe3179;
   color: #fff;
 }
 
 .project-grid__tile--pink:hover {
-  background: #e788a9;
+  background: #fe97bb;
 }
 
 .project-grid__tile--orange {
@@ -139,57 +139,57 @@
 }
 
 .project-grid__tile--red {
-  background-color: #f03e3e;
+  background-color: #f71010;
   color: #fff;
 }
 
 .project-grid__tile--red:hover {
-  background: #f79d9d;
+  background: #fa7373;
 }
 
 .project-grid__tile--teal {
-  background-color: #0ca678;
+  background-color: #05ad7b;
   color: #fff;
 }
 
 .project-grid__tile--teal:hover {
-  background: #29efb4;
+  background: #1ff9b8;
 }
 
 .project-grid__tile--cyan {
-  background-color: #1098ad;
+  background-color: #01a3bc;
   color: #fff;
 }
 
 .project-grid__tile--cyan:hover {
-  background: #37d4ec;
+  background: #25e1fe;
 }
 
 .project-grid__tile--grape {
-  background-color: #ae3ec9;
+  background-color: #c106ee;
   color: #fff;
 }
 
 .project-grid__tile--grape:hover {
-  background: #cf8edf;
+  background: #dd5ffb;
 }
 
 .project-grid__tile--violet {
-  background-color: #7048e8;
+  background-color: #6838f8;
   color: #fff;
 }
 
 .project-grid__tile--violet:hover {
-  background: #b7a3f3;
+  background: #b39bfb;
 }
 
 .project-grid__tile--indigo {
-  background-color: #4263eb;
+  background-color: #3259fb;
   color: #fff;
 }
 
 .project-grid__tile--indigo:hover {
-  background: #9eaff5;
+  background: #96aafd;
 }
 
 .project-grid__tile--yellow {
@@ -242,7 +242,7 @@
           align-items: center;
   width: 100%;
   height: 100%;
-  padding: 0 8px;
+  padding: 0 10px;
   text-align: center;
   color: #fff;
 }

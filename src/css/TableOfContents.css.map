@@ -1,0 +1,12 @@
+{
+    "version": 3,
+    "mappings": "ACAA,OAAO,CAAC,sCAAI;AAAZ,OAAO,CAAC,sCAAI;ADGZ,AAAA,kBAAkB,CAAC;EACjB,MAAM,EAAE,GAAG,CAAC,KAAK,CCYR,OAAO;EDXhB,OAAO,EAAE,IAAI;CACd;;AAED,AAAA,yBAAyB,CAAC;EACxB,KAAK,ECSI,OAAO;EDRhB,WAAW,EAAE,GAAG;EAChB,SAAS,EAAE,IAAI;EACf,cAAc,EAAE,SAAS;CAC1B;;AAED,AAAA,wBAAwB,CAAC;EACvB,UAAU,EAAE,IAAI;EAChB,OAAO,EAAE,CAAC;EACV,MAAM,EAAE,CAAC;CACV;;AAED,AAAA,wBAAwB,CAAC;EACvB,eAAe,EAAE,IAAI;EACrB,KAAK,ECMG,OAAO;CDLhB;;AAED,AAAA,wBAAwB,CAAC;EACvB,UAAU,EAAE,IAAI;CACjB",
+    "sources": [
+        "../components/TableOfContents/TableOfContents.scss",
+        "../styles/_variables.scss",
+        "../styles/_mixins.scss",
+        "../styles/_variables.scss"
+    ],
+    "names": [],
+    "file": "TableOfContents.css"
+}

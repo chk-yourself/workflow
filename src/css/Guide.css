@@ -5,7 +5,8 @@
   min-height: 100%;
   padding: 8px;
   overflow: visible;
-  margin-top: 44px;
+  max-width: 960px;
+  margin: 44px auto 0;
 }
 
 @media (min-width: 768px) {
@@ -87,6 +88,21 @@
   vertical-align: middle;
 }
 
+.guide__icon-wrapper--primary {
+  background-color: #3e7aff;
+  color: #b5ccff;
+}
+
+.guide__icon-wrapper--secondary {
+  background-color: #fb5072;
+  color: #fec4d0;
+}
+
+.guide__icon-wrapper--tertiary {
+  background-color: #feaf3c;
+  color: #ffe0b2;
+}
+
 .guide__tile {
   border-radius: 8px;
   position: relative;
@@ -122,27 +138,12 @@
   }
 }
 
-.guide__tile--primary .guide__icon-wrapper {
-  background-color: #3e7aff;
-  color: #b5ccff;
-}
-
 .guide__tile--primary:hover .guide__icon-wrapper {
   background: #0043d7;
 }
 
-.guide__tile--secondary .guide__icon-wrapper {
-  background-color: #fb5072;
-  color: #fec4d0;
-}
-
 .guide__tile--secondary:hover .guide__icon-wrapper {
   background: #e00531;
-}
-
-.guide__tile--tertiary .guide__icon-wrapper {
-  background-color: #feaf3c;
-  color: #ffe0b2;
 }
 
 .guide__tile--tertiary:hover .guide__icon-wrapper {
@@ -238,17 +239,27 @@
   text-align: left;
   margin-bottom: 40px;
   line-height: 1.4;
-  font-size: 14px;
-  margin-top: -8px;
+  font-size: 1rem;
+}
+
+.guide__article-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  margin: 16px 0;
 }
 
 .guide__article-title {
   font-size: 1.6rem;
   font-weight: 500;
-  margin: 24px auto;
+  margin: 0;
   color: #212529;
-  width: 100%;
   line-height: 1.3;
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -257,22 +268,46 @@
   }
 }
 
+.guide__link--guide {
+  font-size: 10px;
+  color: #868e96;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.guide__link--guide:hover {
+  color: #3e7aff;
+}
+
 .guide__panel:not(:first-child) {
   margin-top: 24px;
 }
 
-.guide__panel-header {
-  font-size: 20px;
-  font-weight: 600;
-}
-
 .guide__panel-header .feather {
-  width: 22px;
-  height: 22px;
-  vertical-align: text-top;
+  width: 16px;
+  height: 16px;
+  vertical-align: center;
+  font-size: 16px;
+  line-height: 1;
   margin-right: 4px;
 }
 
+.guide__panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: #343a40;
+}
+
+.guide__article-subsection-title,
 .guide__panel-section-title {
   font-size: 1rem;
   font-weight: 600;
@@ -283,18 +318,103 @@
   margin-left: 26px;
 }
 
-.guide__panel-section {
+.guide__article-subsection:not(:first-child),
+.guide__panel-section:not(:first-child) {
   margin-top: 24px;
 }
 
-.guide__panel-section p {
+.guide__article-subsection p,
+.guide__panel-section p,
+.guide__article-section p {
   font-size: 15px;
   line-height: 1.4;
 }
 
+.guide__article-section-intro {
+  margin-bottom: 24px;
+}
+
+.guide__article-section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .guide__article-section-title {
+    font-size: 1.3rem;
+  }
+}
+
+.guide__article-section {
+  padding: 44px 0;
+}
+
+.guide__article-section:not(:nth-of-type(1)) {
+  margin-top: 24px;
+}
+
+@media (min-width: 768px) {
+  .guide__article-section {
+    padding: 46px 0;
+  }
+}
+
+.guide__article-section-wrapper {
+  background-color: #fff;
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .guide__article-section-wrapper {
+    padding: 16px 24px;
+  }
+}
+
+.guide__list {
+  margin: 0;
+  color: #495057;
+}
+
+.guide__list strong {
+  color: #343a40;
+}
+
+.guide__list--ordered {
+  counter-reset: section;
+  padding: 0;
+}
+
+.guide__list--ordered .guide__item {
+  list-style: none;
+  margin-left: 30px;
+}
+
+.guide__list--ordered .guide__item::before {
+  counter-increment: section;
+  content: counter(section);
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  background-color: #3e7aff;
+  color: #fff;
+  top: 1.5px;
+  left: -30px;
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 18px;
+}
+
 .guide__item {
   font-size: 15px;
+  line-height: 1.4;
+  position: relative;
+}
+
+.guide__item:not(:first-child) {
   margin-top: 16px;
-  line-height: 1.3;
 }
 /*# sourceMappingURL=Guide.css.map */

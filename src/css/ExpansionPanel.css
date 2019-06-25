@@ -6,6 +6,7 @@
 
 .expansion-panel__header:focus {
   outline: none;
+  background-color: rgba(181, 204, 255, 0.5);
 }
 
 .expansion-panel__header.is-expanded .feather-chevron-right {

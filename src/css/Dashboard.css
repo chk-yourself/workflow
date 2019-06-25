@@ -1,5 +1,9 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
+.header.expand-nav + main.dashboard {
+  left: 100px;
+}
+
 .dashboard {
   width: 100%;
   -webkit-box-orient: horizontal;
@@ -18,7 +22,6 @@
 .dashboard__header {
   font-size: 1.6rem;
   font-weight: 600;
-  margin: 0 0 24px 0;
   color: #343a40;
   width: 100%;
 }
@@ -113,20 +116,29 @@
   font-weight: 500;
 }
 
-.dashboard__task {
+.dashboard-panel__link:hover {
+  color: #0043d7;
+}
+
+.dashboard__tasks .task.dashboard__task {
   border-radius: 4px;
   margin-bottom: 4px;
   -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
           box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
-.dashboard__task:focus, .dashboard__task.is-focused {
+.dashboard__tasks .task.dashboard__task:focus, .dashboard__tasks .task.dashboard__task.is-focused {
   background-color: rgba(255, 255, 255, 0.85);
   -webkit-box-shadow: none;
           box-shadow: none;
 }
 
-.dashboard__task:before {
+.dashboard__tasks .task.dashboard__task:focus + .dashboard__task::before, .dashboard__tasks .task.dashboard__task.is-focused + .dashboard__task::before {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.dashboard__tasks .task.dashboard__task:before {
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -150,5 +162,25 @@
 
 .dashboard__info--empty strong {
   font-style: normal;
+}
+
+.dashboard__task {
+  background-color: #fff;
+}
+
+.dashboard__task .task__tag:not(.tag--summary) {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .dashboard__task .task__tag:not(.tag--summary) {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard__task .task__tag.tag--summary {
+    display: inline-block;
+  }
 }
 /*# sourceMappingURL=Dashboard.css.map */

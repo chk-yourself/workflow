@@ -1,0 +1,141 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.account-settings {
+  padding: 24px;
+}
+
+@media (min-width: 768px) {
+  .account-settings {
+    padding: 24px 8px 40px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 992px) {
+  .account-settings {
+    max-width: 600px;
+  }
+}
+
+.account-settings__form {
+  max-width: 400px;
+}
+
+.account-settings__input {
+  height: 42px;
+  width: 100%;
+  border: 1px solid #868e96;
+}
+
+.account-settings__input::-webkit-input-placeholder {
+  font-size: 14px;
+}
+
+.account-settings__input:-ms-input-placeholder {
+  font-size: 14px;
+}
+
+.account-settings__input::-ms-input-placeholder {
+  font-size: 14px;
+}
+
+.account-settings__input::placeholder {
+  font-size: 14px;
+}
+
+.account-settings__input:-moz-read-only {
+  border: 1px solid #868e96;
+}
+
+.account-settings__input:read-only {
+  border: 1px solid #868e96;
+}
+
+.account-settings__section {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  border-top: 2px solid #e9ecef;
+}
+
+.account-settings__section:not(:nth-of-type(1)) {
+  margin-top: 40px;
+}
+
+@media (min-width: 576px) {
+  .account-settings__section {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .account-settings__section {
+    max-width: 500px;
+  }
+}
+
+.account-settings__title {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto 18px;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+@media (min-width: 576px) {
+  .account-settings__title {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .account-settings__title {
+    max-width: 500px;
+  }
+}
+
+.account-settings__label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+  font-size: 12px;
+}
+
+.account-settings__section-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #343a40;
+  padding-top: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 24px;
+}
+
+.account-settings__btn {
+  min-width: 80px;
+  padding: 10px 12px;
+  font-weight: 500;
+}
+
+.account-settings__btn:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  border: 1px solid #dee2e6;
+}
+
+.account-settings__info {
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  color: #495057;
+  margin-top: -10px;
+}
+/*# sourceMappingURL=AccountSettings.css.map */

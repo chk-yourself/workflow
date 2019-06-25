@@ -1,0 +1,117 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.tag-input__container {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: calc(100% - 34px);
+  margin-left: 4px;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.tag-input__container.is-active {
+  border-color: #3e7aff;
+}
+
+.tag-input__container.no-tags .tag-input {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.tag-input__container .tag__link {
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .tag-input__container .tag__link {
+    pointer-events: auto;
+  }
+}
+
+.tag-input__wrapper {
+  position: relative;
+  display: inline-block;
+  height: 30px;
+  min-width: 100px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 100px;
+          flex: 1 1 100px;
+  z-index: 2;
+}
+
+.tag-input {
+  border: 1px solid transparent;
+  height: 30px;
+  font-size: 14px;
+  display: inline-block;
+  width: 100%;
+  padding: 7px;
+}
+
+.tag-input:focus, .tag-input:active {
+  border-color: transparent;
+}
+
+.tag-input__list {
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  margin: 0;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow-x: hidden;
+  max-width: 100%;
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.tag-input__item {
+  cursor: pointer;
+  padding: 6px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+}
+
+.tag-input__item::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
+
+.tag-input__item.is-selected {
+  background-color: #b5ccff;
+}
+
+.tag-input__item span,
+.tag-input__item .tag,
+.tag-input__item a {
+  pointer-events: none;
+}
+
+.tag-input__item--heading {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin: 0 0 4px 0;
+  font-weight: 400;
+}
+
+.tag-input__item--new {
+  background-color: #f8f9fa;
+}
+
+.tag-input__item--name {
+  font-size: 12px;
+}
+/*# sourceMappingURL=TagInput.css.map */

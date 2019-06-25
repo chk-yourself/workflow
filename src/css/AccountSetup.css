@@ -5,11 +5,13 @@
   margin-right: auto;
   margin-left: auto;
   padding: 4px 24px;
+  margin-top: 44px;
 }
 
 @media (min-width: 768px) {
   .account-setup {
     padding: 8px;
+    margin-top: 46px;
   }
 }
 

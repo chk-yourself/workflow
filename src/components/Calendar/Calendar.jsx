@@ -6,7 +6,8 @@ import {
   getNextMonth,
   getPrevMonth,
   getMonthDates,
-  getNextYears
+  getNextYears,
+  getSimpleDate
 } from '../../utils/date';
 import { Button, IconButton } from '../Button';
 import { SelectDropdown } from '../SelectDropdown';
@@ -15,9 +16,8 @@ import './Calendar.scss';
 
 export default class Calendar extends Component {
   static defaultProps = {
-    onSelectDay: () => {},
-    onSelectMonth: () => {},
-    onSelectYear: () => {},
+    onSelectDate: () => {},
+    selectedDate: null,
     classes: {
       calendar: '',
       weekday: '',
@@ -26,9 +26,8 @@ export default class Calendar extends Component {
   };
 
   static propTypes = {
-    onSelectDay: PropTypes.func,
-    onSelectMonth: PropTypes.func,
-    onSelectYear: PropTypes.func,
+    onSelectDate: PropTypes.func,
+    selectedDate: PropTypes.oneOfType([() => null, PropTypes.instanceOf(Date)]),
     classes: PropTypes.shape({
       calendar: PropTypes.string,
       weekday: PropTypes.string,
@@ -41,36 +40,54 @@ export default class Calendar extends Component {
       day: new Date().getDate(),
       month: new Date().getMonth(),
       year: new Date().getFullYear()
-    }
+    },
+    month: this.props.selectedDate ? this.props.selectedDate.getMonth() : new Date().getMonth(),
+    year: this.props.selectedDate ? this.props.selectedDate.getFullYear() : new Date().getFullYear()
   };
 
   goToNextMonth = () => {
-    const { month, year, onSelectMonth } = this.props;
-    onSelectMonth(getNextMonth(month, year));
+    const { month: currentMonth, year: currentYear } = this.state;
+    const { month, year } = getNextMonth(currentMonth, currentYear);
+    this.selectMonth(month, year);
   };
 
   goToPrevMonth = () => {
-    const { month, year, onSelectMonth } = this.props;
-    onSelectMonth(getPrevMonth(month, year));
+    const { month: currentMonth, year: currentYear } = this.state;
+    const { month, year } = getPrevMonth(currentMonth, currentYear);
+    this.selectMonth(month, year);
   };
 
-  selectMonth = e => {
+  onChangeMonth = e => {
     const month = +e.target.value;
-    const { onSelectMonth, year } = this.props;
-    onSelectMonth({ month, year });
+    this.selectMonth(month);
   };
 
-  selectYear = e => {
+  selectMonth = (month, year = this.state.year) => {
+    this.setState({ month, year });
+  };
+
+  onChangeYear = e => {
     const year = +e.target.value;
-    const { onSelectYear } = this.props;
-    onSelectYear(year);
+    this.selectYear(year);
+  };
+
+  selectYear = year => {
+    this.setState({ year });
+  };
+
+  onChangeDay = e => {
+    const { day, month, year } = e.target.dataset;
+    const { onSelectDate } = this.props;
+    const date = new Date(+year, +month, +day);
+    onSelectDate(date);
   };
 
   render() {
-    const { month, year, selectedDate, onSelectDay, classes } = this.props;
-    const { today } = this.state;
+    const { classes } = this.props;
+    const { month, year, today } = this.state;
+    const selectedDate = this.props.selectedDate ? getSimpleDate(this.props.selectedDate) : null;
     const dates = getMonthDates(month, year);
-    const years = getNextYears(4);
+    const years = getNextYears(4, year);
     const yearOptions = years.reduce((options, currentYear) => {
       const label = `${currentYear}`;
       options[label] = {
@@ -107,7 +124,7 @@ export default class Calendar extends Component {
               <SelectDropdown
                 name="year"
                 align={{ inner: 'right' }}
-                onChange={this.selectYear}
+                onChange={this.onChangeYear}
                 selected={year}
                 options={yearOptions}
                 classes={{
@@ -125,7 +142,7 @@ export default class Calendar extends Component {
               <SelectDropdown
                 name="month"
                 align={{ inner: 'right' }}
-                onChange={this.selectMonth}
+                onChange={this.onChangeMonth}
                 selected={month}
                 options={monthOptions}
                 classes={{
@@ -187,7 +204,10 @@ export default class Calendar extends Component {
                       type="button"
                       className="calendar__btn--day"
                       size="sm"
-                      onClick={() => onSelectDay(date)}
+                      data-month={date.month}
+                      data-year={date.year}
+                      data-day={date.day}
+                      onClick={this.onChangeDay}
                     >
                       {date.day}
                     </Button>

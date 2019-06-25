@@ -1,7 +1,8 @@
 @import url("https://rsms.me/inter/inter.css");
 @import url("https://rsms.me/inter/inter.css");
 .task-composer {
-  padding: 0 4px;
+  padding: 0;
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -15,7 +16,7 @@
 }
 
 .task-composer__form {
-  padding: 4px;
+  padding: 4px 8px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -67,7 +68,7 @@
   line-height: 0;
   font-size: 0;
   text-align: center;
-  padding: 0;
+  padding: 0 6px;
 }
 
 .task-composer__btn--submit .feather {

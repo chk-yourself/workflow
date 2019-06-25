@@ -51,6 +51,10 @@
   height: 100%;
 }
 
+.tag__link span {
+  pointer-events: none;
+}
+
 .tag--md {
   font-size: 13px;
   line-height: 16px;
@@ -91,6 +95,10 @@
   margin-right: 4px;
 }
 
+.tag--pill .tag__name {
+  display: none;
+}
+
 .tag.bg--default {
   background-color: #f1f3f5;
   color: #343a40;
@@ -101,19 +109,35 @@
   color: #adb5bd;
 }
 
+.tag.bg--default:hover {
+  background-color: #c4cdd5;
+}
+
 .tag.bg--blue {
-  background-color: #1c7ed6;
+  background-color: #0080f2;
   color: #fff;
+}
+
+.tag.bg--blue:hover {
+  background-color: #0058a6;
 }
 
 .tag.bg--green {
-  background-color: #37b24d;
+  background-color: #17ab33;
   color: #fff;
 }
 
+.tag.bg--green:hover {
+  background-color: #0e681f;
+}
+
 .tag.bg--pink {
-  background-color: #d6336c;
+  background-color: #fe3179;
   color: #fff;
+}
+
+.tag.bg--pink:hover {
+  background-color: #e10150;
 }
 
 .tag.bg--orange {
@@ -121,44 +145,80 @@
   color: #fff;
 }
 
+.tag.bg--orange:hover {
+  background-color: #ad4805;
+}
+
 .tag.bg--purple {
   background-color: #633eff;
   color: #fff;
 }
 
+.tag.bg--purple:hover {
+  background-color: #2e00f1;
+}
+
 .tag.bg--red {
-  background-color: #f03e3e;
+  background-color: #f71010;
   color: #fff;
+}
+
+.tag.bg--red:hover {
+  background-color: #b40606;
 }
 
 .tag.bg--teal {
-  background-color: #0ca678;
+  background-color: #05ad7b;
   color: #fff;
+}
+
+.tag.bg--teal:hover {
+  background-color: #036346;
 }
 
 .tag.bg--cyan {
-  background-color: #1098ad;
+  background-color: #01a3bc;
   color: #fff;
+}
+
+.tag.bg--cyan:hover {
+  background-color: #016170;
 }
 
 .tag.bg--grape {
-  background-color: #ae3ec9;
+  background-color: #c106ee;
   color: #fff;
+}
+
+.tag.bg--grape:hover {
+  background-color: #8404a3;
 }
 
 .tag.bg--violet {
-  background-color: #7048e8;
+  background-color: #6838f8;
   color: #fff;
 }
 
+.tag.bg--violet:hover {
+  background-color: #3d08dc;
+}
+
 .tag.bg--indigo {
-  background-color: #4263eb;
+  background-color: #3259fb;
   color: #fff;
+}
+
+.tag.bg--indigo:hover {
+  background-color: #042edc;
 }
 
 .tag.bg--yellow {
   background-color: #f59f00;
   color: #fff;
+}
+
+.tag.bg--yellow:hover {
+  background-color: #a96d00;
 }
 
 .tag.is-focused {
@@ -168,5 +228,75 @@
 
 .tag.is-focused .tag__btn--delete {
   color: #fff;
+}
+
+.tag--pill,
+.tag--summary {
+  cursor: pointer;
+}
+
+.tag--pill::before, .tag--pill::after,
+.tag--summary::before,
+.tag--summary::after {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+}
+
+.tag--pill::after,
+.tag--summary::after {
+  content: attr(data-tooltip);
+  background-color: #343a40;
+  color: #fff;
+  padding: 8px;
+  top: calc(100% + 8px);
+  right: -8px;
+  text-align: center;
+  display: block;
+  border-radius: 4px;
+  width: auto;
+  min-width: 40px;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .tag--pill::after,
+  .tag--summary::after {
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    right: auto;
+  }
+}
+
+.tag--pill::before,
+.tag--summary::before {
+  content: '';
+  width: 0;
+  left: calc(50% - 8px);
+  bottom: -8px;
+  border-bottom: 8px solid #343a40;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+.tag--pill:hover, .tag--pill.show-tooltip,
+.tag--summary:hover,
+.tag--summary.show-tooltip {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.tag--pill:hover::before, .tag--pill:hover::after, .tag--pill.show-tooltip::before, .tag--pill.show-tooltip::after,
+.tag--summary:hover::before,
+.tag--summary:hover::after,
+.tag--summary.show-tooltip::before,
+.tag--summary.show-tooltip::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tag--summary {
+  padding: 0 1px;
 }
 /*# sourceMappingURL=Tag.css.map */

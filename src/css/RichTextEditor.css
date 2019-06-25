@@ -5,11 +5,29 @@
   font-size: 14px;
 }
 
-.rich-text-editor__btn .feather {
-  color: #ced4da;
+.rich-text-editor pre {
+  background-color: #212529;
+  padding: 0.5rem;
+  border-radius: 4px;
+  color: #fff;
 }
 
-.rich-text-editor__btn.is-active .feather {
+.rich-text-editor p {
+  margin: 0 0 8px 0;
+}
+
+.rich-text-editor ol,
+.rich-text-editor ul {
+  padding-left: 24px;
+  margin: 0 0 8px 0;
+}
+
+.rich-text-editor__btn .editor-icon {
+  color: #ced4da;
+  pointer-events: none;
+}
+
+.rich-text-editor__btn.is-active .editor-icon {
   color: #343a40;
 }
 
@@ -17,15 +35,6 @@
   color: #3e7aff;
   font-weight: 500;
   text-decoration: none;
-}
-
-p {
-  margin: 0 0 8px 0;
-}
-
-ul {
-  padding-left: 24px;
-  margin: 0 0 8px 0;
 }
 
 .rich-text-editor__mentions-wrapper {

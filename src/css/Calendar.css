@@ -2,6 +2,10 @@
 @import url("https://rsms.me/inter/inter.css");
 .calendar {
   width: 100%;
+  -webkit-transition: -webkit-transform .2s ease-in-out;
+  transition: -webkit-transform .2s ease-in-out;
+  transition: transform .2s ease-in-out;
+  transition: transform .2s ease-in-out, -webkit-transform .2s ease-in-out;
 }
 
 .calendar__month {
@@ -116,7 +120,7 @@
 }
 
 .calendar__years-dropdown-wrapper {
-  z-index: 4;
+  z-index: 5;
 }
 
 .calendar__btn--years-dropdown,
@@ -152,16 +156,18 @@
   min-width: 128px;
   font-weight: 600;
   color: #212529;
+  padding: 10px 12px;
 }
 
 .calendar__btn--years-dropdown {
   min-width: 80px;
   font-size: 11px;
   font-weight: 600;
+  padding: 8px 12px;
 }
 
 .calendar__btn--years-dropdown .feather {
-  top: 4px;
+  top: 6px;
 }
 
 .calendar__years-dropdown,
@@ -178,7 +184,7 @@
 .calendar__years-list,
 .calendar__months-list {
   list-style: none;
-  padding: 0;
+  padding: 8px 0;
   margin: 0;
 }
 

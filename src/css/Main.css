@@ -6,12 +6,7 @@
   padding: 8px;
   overflow: visible;
   margin-top: 36px;
-}
-
-@media (min-width: 768px) {
-  .main {
-    margin-top: 40px;
-  }
+  position: relative;
 }
 
 @media (min-width: 992px) {

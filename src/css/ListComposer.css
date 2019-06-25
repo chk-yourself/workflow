@@ -37,7 +37,7 @@
 .list-composer.is-list-layout .list-composer__input {
   border: none;
   margin-bottom: 0;
-  padding: 16px 4px;
+  padding: 8px 4px;
   background-color: transparent;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .list-composer.is-list-layout .list-composer__btn {
-  padding: 10px 6px;
+  padding: 8px 6px;
 }
 
 .list-composer.is-list-layout .list-composer__btn--icon {
@@ -108,13 +108,23 @@
   border-color: #868e96;
   -webkit-box-shadow: inset 0 1px #dee2e6;
           box-shadow: inset 0 1px #dee2e6;
-  padding: 6px;
+  padding: 4px;
 }
 
 @media (min-width: 768px) {
   .list-composer.is-list-layout {
     padding: 8px 12px;
   }
+}
+
+.list-composer.is-board-layout:after {
+  content: '';
+  background-color: transparent;
+  height: 1px;
+  width: 8px;
+  position: relative;
+  left: calc(100% + 14px);
+  top: 0;
 }
 
 .list-composer.is-board-layout .list-composer__btn--add:disabled {
@@ -125,9 +135,9 @@
 
 .list-composer__input {
   background-color: transparent;
-  height: 36px;
+  height: auto;
   border-color: transparent;
-  padding: 0 8px;
+  padding: 5px 8px;
 }
 
 .list-composer__btn--add {

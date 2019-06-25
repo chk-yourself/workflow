@@ -5,4 +5,112 @@
   margin: 0;
   list-style-type: none;
 }
+
+.notifications__info--empty {
+  font-size: 13px;
+  color: #495057;
+  padding: 8px;
+  font-style: italic;
+}
+
+.notifications__info--empty strong {
+  font-style: normal;
+}
+
+.notification {
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #495057;
+  background-color: #fff;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  margin-bottom: 4px;
+}
+
+@media (min-width: 992px) {
+  .notification {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+
+.notification__link {
+  text-decoration: none;
+  color: #3e7aff;
+  font-weight: 500;
+}
+
+.notification__link--task {
+  margin-left: 4px;
+}
+
+.notification__link--user-profile {
+  margin-right: 4px;
+}
+
+.notification__timestamp {
+  display: inline-block;
+  width: 100%;
+  font-size: 11px;
+  color: #868e96;
+  padding: 6px 0;
+}
+
+.notification__footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-top: 8px;
+}
+
+.notification__actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.notification__btn {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 6px 8px;
+}
+
+.notification__btn--archive {
+  color: #868e96;
+  padding: 6px;
+}
+
+.notification__btn--archive:hover {
+  background-color: rgba(181, 204, 255, 0.3);
+  color: #3e7aff;
+}
+
+.notification__btn--accept {
+  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.225);
+          box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.225);
+}
+
+.notification__btn--accept:hover {
+  -webkit-box-shadow: 0 4px 10px 0px rgba(0, 0, 0, 0.225);
+          box-shadow: 0 4px 10px 0px rgba(0, 0, 0, 0.225);
+  background-color: rgba(62, 122, 255, 0.8);
+}
+
+.notification__btn--decline:hover {
+  background-color: rgba(181, 204, 255, 0.3);
+}
 /*# sourceMappingURL=Notifications.css.map */

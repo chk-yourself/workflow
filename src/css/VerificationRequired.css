@@ -26,6 +26,10 @@
   font-weight: 500;
 }
 
+.verification-required__btn {
+  padding: 12px;
+}
+
 .verification-required__btn:hover, .verification-required__btn:active {
   background-color: #003ec6;
 }

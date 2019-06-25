@@ -14,23 +14,27 @@
   border: 1px solid transparent;
 }
 
+.project-badge span {
+  pointer-events: none;
+}
+
 .project-badge--default {
   background-color: #495057;
   color: #fff;
 }
 
 .project-badge--blue {
-  background-color: #1c7ed6;
+  background-color: #0080f2;
   color: #fff;
 }
 
 .project-badge--green {
-  background-color: #37b24d;
+  background-color: #17ab33;
   color: #fff;
 }
 
 .project-badge--pink {
-  background-color: #d6336c;
+  background-color: #fe3179;
   color: #fff;
 }
 
@@ -45,32 +49,32 @@
 }
 
 .project-badge--red {
-  background-color: #f03e3e;
+  background-color: #f71010;
   color: #fff;
 }
 
 .project-badge--teal {
-  background-color: #0ca678;
+  background-color: #05ad7b;
   color: #fff;
 }
 
 .project-badge--cyan {
-  background-color: #1098ad;
+  background-color: #01a3bc;
   color: #fff;
 }
 
 .project-badge--grape {
-  background-color: #ae3ec9;
+  background-color: #c106ee;
   color: #fff;
 }
 
 .project-badge--violet {
-  background-color: #7048e8;
+  background-color: #6838f8;
   color: #fff;
 }
 
 .project-badge--indigo {
-  background-color: #4263eb;
+  background-color: #3259fb;
   color: #fff;
 }
 

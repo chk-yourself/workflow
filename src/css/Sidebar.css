@@ -52,6 +52,7 @@
   width: 100%;
   font-size: 14px;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .sidebar__btn:hover:not(.active),
@@ -152,13 +153,15 @@
   width: 20px;
   height: 20px;
   vertical-align: middle;
-  position: relative;
-  top: -2px;
   color: #ced4da;
 }
 
 .sidebar__section-name {
   display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 36px);
+  vertical-align: middle;
 }
 
 .sidebar__btn {
@@ -196,6 +199,8 @@
       -ms-flex-align: center;
           align-items: center;
   border-bottom: none;
+  height: 44px;
+  position: relative;
 }
 
 .sidebar__avatar {
@@ -219,6 +224,12 @@
   margin-top: 3px;
 }
 
+@media (min-width: 1440px) {
+  .sidebar__member-detail {
+    display: none;
+  }
+}
+
 .sidebar__btn--toggle-members:not(.is-active) {
   border-bottom: none;
 }
@@ -226,5 +237,6 @@
 .sidebar__content {
   overflow-y: auto;
   max-height: calc(100vh - 140px);
+  padding-bottom: 44px;
 }
 /*# sourceMappingURL=Sidebar.css.map */

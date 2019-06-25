@@ -1,0 +1,37 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.projects__header {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.projects {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 960px;
+}
+
+.projects__tab {
+  font-weight: 600;
+  padding-bottom: 12px;
+  color: #868e96;
+}
+
+.projects__tabs-header {
+  -webkit-box-shadow: inset 0px -2px 1px -1px #ced4da;
+          box-shadow: inset 0px -2px 1px -1px #ced4da;
+  margin-bottom: 28px;
+}
+
+.projects__tabs {
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+@media (min-width: 768px) {
+  .projects__tabs {
+    padding: 0 8px;
+  }
+}
+/*# sourceMappingURL=Projects.css.map */

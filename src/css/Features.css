@@ -12,13 +12,17 @@
 }
 
 .features__section:not(:first-child) {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
-.features__item {
-  font-size: 15px;
-  margin-top: 16px;
-  line-height: 1.3;
+.features__section .guide__article-section-wrapper {
+  padding: 16px 8px;
+}
+
+@media (min-width: 768px) {
+  .features__section .guide__article-section-wrapper {
+    padding: 16px 12px;
+  }
 }
 
 .features .features__intro {

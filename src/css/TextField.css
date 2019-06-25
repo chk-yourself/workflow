@@ -1,0 +1,12 @@
+@import url("https://rsms.me/inter/inter.css");
+@import url("https://rsms.me/inter/inter.css");
+.text-field__label {
+  font-size: 12px;
+  color: #495057;
+  font-weight: 600;
+}
+
+.text-field__label:not(:nth-of-type(1)) {
+  margin-top: 24px;
+}
+/*# sourceMappingURL=TextField.css.map */

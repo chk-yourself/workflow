@@ -60,7 +60,7 @@
   border: 1px solid #868e96;
 }
 
-.workspace-settings__tabs,
+.workspace-settings__tablist,
 .workspace-settings__panel {
   max-width: 400px;
   width: 100%;
@@ -68,14 +68,14 @@
 }
 
 @media (min-width: 576px) {
-  .workspace-settings__tabs,
+  .workspace-settings__tablist,
   .workspace-settings__panel {
     max-width: 500px;
   }
 }
 
 @media (min-width: 768px) {
-  .workspace-settings__tabs,
+  .workspace-settings__tablist,
   .workspace-settings__panel {
     max-width: 500px;
   }
@@ -164,6 +164,16 @@
     width: auto;
     margin-left: 16px;
     margin-bottom: 0;
+  }
+}
+
+.workspace-settings__member-detail:last-child {
+  margin-top: 2px;
+}
+
+@media (min-width: 768px) {
+  .workspace-settings__member-detail:last-child {
+    margin-top: 0;
   }
 }
 
