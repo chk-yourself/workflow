@@ -180,8 +180,27 @@ export const toSimpleDateObj = dateString => {
   };
 };
 
+/**
+ * Checks if given string is formatted as mm-dd-yy
+ * @param {string} dateString 
+ */
 export const isSDSFormat = dateString => {
   return /^\d{2}-\d{2}-\d{2}$/.test(dateString);
+};
+
+/**
+ * Converts simple date string or simple date object to instance of Date object
+ * @param {string|object} value - Simple date string formatted as mm-dd-yy or simple date object to convert
+ */
+export const toDate = value => {
+  if (isSDSFormat(value)) {
+    const [month, day, year] = value.split('-');
+    return new Date(2000 + +year, month - 1, +day);
+  }
+  if (isSimpleDate(value)) {
+    const { day, month, year } = value;
+    return new Date(year, month, day);
+  }
 };
 
 /**

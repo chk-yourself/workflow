@@ -35,14 +35,26 @@ export default class Calendar extends Component {
     })
   };
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectedDate && props.selectedDate !== state.selectedDate) {
+      return {
+        month: props.selectedDate.getMonth(),
+        year: props.selectedDate.getFullYear(),
+        selectedDate: props.selectedDate
+      };
+    }
+    return null;
+  }
+
   state = {
-    today: {
-      day: new Date().getDate(),
-      month: new Date().getMonth(),
-      year: new Date().getFullYear()
-    },
-    month: this.props.selectedDate ? this.props.selectedDate.getMonth() : new Date().getMonth(),
-    year: this.props.selectedDate ? this.props.selectedDate.getFullYear() : new Date().getFullYear()
+    today: getSimpleDate(new Date()),
+    month: this.props.selectedDate
+      ? this.props.selectedDate.getMonth()
+      : new Date().getMonth(),
+    year: this.props.selectedDate
+      ? this.props.selectedDate.getFullYear()
+      : new Date().getFullYear(),
+    selectedDate: this.props.selectedDate
   };
 
   goToNextMonth = () => {
@@ -79,13 +91,20 @@ export default class Calendar extends Component {
     const { day, month, year } = e.target.dataset;
     const { onSelectDate } = this.props;
     const date = new Date(+year, +month, +day);
+    this.selectDate(date);
     onSelectDate(date);
+  };
+
+  selectDate = selectedDate => {
+    this.setState({ selectedDate });
   };
 
   render() {
     const { classes } = this.props;
     const { month, year, today } = this.state;
-    const selectedDate = this.props.selectedDate ? getSimpleDate(this.props.selectedDate) : null;
+    const selectedDate = this.props.selectedDate
+      ? getSimpleDate(this.props.selectedDate)
+      : null;
     const dates = getMonthDates(month, year);
     const years = getNextYears(4, year);
     const yearOptions = years.reduce((options, currentYear) => {
@@ -107,10 +126,7 @@ export default class Calendar extends Component {
     }, {});
 
     return (
-      <Swipeable
-        onSwipeRight={this.goToNextMonth}
-        onSwipeLeft={this.goToPrevMonth}
-      >
+      <Swipeable onSwipeRight={this.goToNextMonth} onSwipeLeft={this.goToPrevMonth}>
         {(provided, snapshot) => (
           <div
             {...provided.swipeableProps}

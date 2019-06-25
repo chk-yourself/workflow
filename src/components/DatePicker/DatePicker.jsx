@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { toSimpleDateString, isSDSFormat, isSameDate } from '../../utils/date';
+import { toSimpleDateString, toDate, isSDSFormat, isSameDate } from '../../utils/date';
 import { Calendar } from '../Calendar';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -17,7 +17,8 @@ export default class DatePicker extends Component {
   };
 
   state = {
-    selectedDate: this.props.selectedDate
+    selectedDate: this.props.selectedDate,
+    dateString: this.props.selectedDate ? toSimpleDateString(this.props.selectedDate) : ''
   };
 
   reset = () => {
@@ -28,13 +29,17 @@ export default class DatePicker extends Component {
   };
 
   selectDate = selectedDate => {
-    this.setState({ selectedDate });
+    const dateString = selectedDate ? toSimpleDateString(selectedDate) : '';
+    this.setState({ selectedDate, dateString });
   };
 
   updateDateString = e => {
     const { value } = e.target;
+    this.setState({
+      dateString: value
+    });
     if (isSDSFormat(value)) {
-      this.selectDate(value);
+      this.selectDate(toDate(value));
     }
   };
 
@@ -73,8 +78,7 @@ export default class DatePicker extends Component {
 
   render() {
     const { onClose } = this.props;
-    const { selectedDate } = this.state;
-    const dateString = selectedDate ? toSimpleDateString(selectedDate) : '';
+    const { selectedDate, dateString } = this.state;
     return (
       <Modal
         classes={{ modal: 'date-picker-wrapper', content: 'date-picker' }}
