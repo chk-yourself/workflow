@@ -167,62 +167,81 @@ class ProjectContainer extends Component {
   };
 
   render() {
-    const { selectedTask, projectId, isLoaded, project, tempSettings, currentUser } = this.props;
-    const { name, listIds, color, ownerId, memberIds, settings: { isPrivate } } = project;
-    const { layout, tasks: { view, sortBy } } = tempSettings;
+    const {
+      selectedTask,
+      projectId,
+      isLoaded,
+      project,
+      tempSettings,
+      currentUser
+    } = this.props;
+    const {
+      name,
+      listIds,
+      color,
+      ownerId,
+      memberIds,
+      settings: { isPrivate }
+    } = project;
+    const {
+      layout,
+      tasks: { view, sortBy }
+    } = tempSettings;
     const { isProjectDuplicatorOpen } = this.state;
     const isTaskEditorOpen = !!selectedTask;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
-      <main
-        className={`project-container project-container--${layout} ${
-          isTaskEditorOpen ? 'show-task-editor' : ''
-        }`}
-      >
-        <div className="project__wrapper">
-          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-            <Project
-              currentUser={currentUser}
-              onChangeTempSettings={this.setTempProjectSettings}
-              onDelete={this.deleteProject}
-              onDuplicate={this.toggleProjectDuplicator}
-              projectId={projectId}
-              name={name}
-              color={color}
-              ownerId={ownerId}
-              isPrivate={isPrivate}
-              layout={layout}
-              viewFilter={view}
-              sortBy={sortBy}
-              memberIds={memberIds}
-              listIds={listIds}
-            >
-              {listIds.map((listId, i) => {
-                return (
-                  <List
-                    viewFilter={tempSettings.tasks.view}
-                    sortBy={tempSettings.tasks.sortBy}
-                    listId={listId}
-                    key={listId}
-                    index={i}
-                    projectId={projectId}
-                    projectName={name}
-                    layout={layout}
-                    isRestricted={false}
-                  />
-                );
-              })}
-            </Project>
-          </DragDropContext>
-          {isTaskEditorOpen && <TaskEditor {...selectedTask} layout={layout} />}
-        </div>
+      <>
+        <main
+          className={`project-container project-container--${layout} ${
+            isTaskEditorOpen ? 'show-task-editor' : ''
+          }`}
+        >
+          <div className="project__wrapper">
+            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+              <Project
+                currentUser={currentUser}
+                onChangeTempSettings={this.setTempProjectSettings}
+                onDelete={this.deleteProject}
+                onDuplicate={this.toggleProjectDuplicator}
+                projectId={projectId}
+                name={name}
+                color={color}
+                ownerId={ownerId}
+                isPrivate={isPrivate}
+                layout={layout}
+                viewFilter={view}
+                sortBy={sortBy}
+                memberIds={memberIds}
+                listIds={listIds}
+              >
+                {listIds.map((listId, i) => {
+                  return (
+                    <List
+                      viewFilter={tempSettings.tasks.view}
+                      sortBy={tempSettings.tasks.sortBy}
+                      listId={listId}
+                      key={listId}
+                      index={i}
+                      projectId={projectId}
+                      projectName={name}
+                      layout={layout}
+                      isRestricted={false}
+                    />
+                  );
+                })}
+              </Project>
+            </DragDropContext>
+            {isTaskEditorOpen && <TaskEditor {...selectedTask} layout={layout} />}
+          </div>
+        </main>
         {isProjectDuplicatorOpen && (
           <ProjectDuplicator
             onClose={this.closeProjectDuplicator}
             projectId={projectId}
           />
         )}
-      </main>
+      </>
     );
   }
 }

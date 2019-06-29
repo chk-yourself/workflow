@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Icon } from '../Icon';
 import { Menu, MenuItem } from '../Menu';
 import { Popover } from '../Popover';
@@ -29,4 +29,4 @@ const TaskEditorMoreActions = ({ onDelete }) => (
   </Popover>
 );
 
-export default TaskEditorMoreActions;
+export default memo(TaskEditorMoreActions);

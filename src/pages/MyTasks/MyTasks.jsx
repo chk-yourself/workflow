@@ -13,8 +13,8 @@ import * as droppableTypes from '../../constants/droppableTypes';
 import { Folder } from '../../components/Folder';
 import { Main } from '../../components/Main';
 import { TaskEditor } from '../../components/TaskEditor';
-import { Settings } from '../../components/Settings';
 import { setDocTitle } from '../../utils/react';
+import TaskSettings from './TaskSettings';
 import './MyTasks.scss';
 
 class MyTasks extends Component {
@@ -202,45 +202,14 @@ class MyTasks extends Component {
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  <Settings
-                    icon="sliders"
-                    isActive={isTaskSettingsMenuVisible}
+                  <TaskSettings
+                    isVisible={isTaskSettingsMenuVisible}
+                    onChange={this.setTempTaskSettings}
                     onToggle={this.toggleTaskSettingsMenu}
-                    onClose={this.closeTaskSettingsMenu}
                     onSave={this.saveTaskSettings}
-                    classes={{
-                      wrapper: 'user-tasks__settings-wrapper',
-                      settings: 'user-tasks__settings'
-                    }}
-                    settings={[
-                      {
-                        name: 'View',
-                        key: 'view',
-                        type: 'radio',
-                        options: {
-                          active: { value: 'active', label: 'Active Tasks' },
-                          completed: {
-                            value: 'completed',
-                            label: 'Completed Tasks'
-                          },
-                          all: { value: 'all', label: 'All Tasks' }
-                        },
-                        value: view,
-                        onChange: this.setTempTaskSettings
-                      },
-                      {
-                        name: 'Sort By',
-                        key: 'sortBy',
-                        type: 'select',
-                        options: {
-                          folder: { value: 'folder', label: 'Folder' },
-                          dueDate: { value: 'dueDate', label: 'Due Date' },
-                          project: { value: 'project', label: 'Project' }
-                        },
-                        selected: sortBy,
-                        onChange: this.setTempTaskSettings
-                      }
-                    ]}
+                    onClose={this.closeTaskSettingsMenu}
+                    view={view}
+                    sortBy={sortBy}
                   />
                   {taskGroups.map((taskGroup, i) => (
                     <Folder
