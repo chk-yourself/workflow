@@ -1,31 +1,52 @@
 import React, { Component } from 'react';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withRouter, Switch, Route } from 'react-router-dom';
 import { Droppable } from 'react-beautiful-dnd';
-import { withAuthorization } from '../Session';
-import * as droppableTypes from '../../constants/droppableTypes';
+import { withFirebase } from '../Firebase';
+import { LIST } from '../../constants/droppableTypes';
 import { ListComposer } from '../ListComposer';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Toolbar } from '../Toolbar';
-import { Icon } from '../Icon';
-import { Settings } from '../Settings';
 import { ProjectIcon } from '../ProjectIcon';
 import ProjectOverview from './ProjectOverview';
-import { Popover } from '../Popover';
 import { MemberAssigner } from '../MemberAssigner';
-import { Menu, MenuItem } from '../Menu';
-import ProjectDuplicator from './ProjectDuplicator';
 import ProjectCalendar from './ProjectCalendar';
-import * as ROUTES from '../../constants/routes';
+import ProjectLinks from './ProjectLinks';
+import MoreProjectActions from './MoreProjectActions';
+import ProjectSettings from './ProjectSettings';
+import {
+  PROJECT_CALENDAR,
+  PROJECT_OVERVIEW,
+  PROJECT_TASKS
+} from '../../constants/routes';
 
 class Project extends Component {
+  static defaultProps = {
+    onDelete: () => {},
+    onChangeTempSettings: () => {},
+    onDuplicate: () => {}
+  };
+
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    projectId: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
+    layout: PropTypes.oneOf(['board', 'list']).isRequired,
+    isPrivate: PropTypes.bool.isRequired,
+    viewFilter: PropTypes.oneOf(['all', 'completed', 'active']).isRequired,
+    onDelete: PropTypes.func,
+    onDuplicate: PropTypes.func,
+    onChangeTempSettings: PropTypes.func,
+    memberIds: PropTypes.arrayOf(PropTypes.string),
+    listIds: PropTypes.arrayOf(PropTypes.string)
+  };
+
   state = {
     name: this.props.name,
     prevName: this.props.name,
     isListComposerActive: false,
-    isProjectSettingsActive: false,
-    isMoreActionsMenuVisible: false,
-    isProjectDuplicatorOpen: false
+    isProjectSettingsActive: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -48,6 +69,12 @@ class Project extends Component {
     this.listComposerInput = ref;
   };
 
+  resetName = () => {
+    this.setState({
+      name: this.props.name
+    });
+  };
+
   onNameChange = e => {
     this.setState({
       name: e.target.value
@@ -57,8 +84,10 @@ class Project extends Component {
   onNameBlur = () => {
     const { name: prevName, projectId, firebase } = this.props;
     const { name } = this.state;
-
-    if (prevName !== name) {
+    if (name === prevName) return;
+    if (name === '') {
+      this.resetName();
+    } else {
       firebase.updateProjectName({ projectId, name });
     }
   };
@@ -68,19 +97,19 @@ class Project extends Component {
   };
 
   saveProjectSettings = () => {
-    const { firebase, projectId, tempSettings } = this.props;
+    const { firebase, projectId, layout, viewFilter, sortBy } = this.props;
     firebase.updateDoc(['projects', projectId], {
-      'settings.layout': tempSettings.layout,
-      'settings.tasks.view': tempSettings.tasks.view,
-      'settings.tasks.sortBy': tempSettings.tasks.sortBy
+      'settings.layout': layout,
+      'settings.tasks.view': viewFilter,
+      'settings.tasks.sortBy': sortBy
     });
     this.closeSettingsMenu();
   };
 
   setTempProjectSettings = e => {
-    const { onChangeTempProjectSettings } = this.props;
+    const { onChangeTempSettings } = this.props;
     const { name, value } = e.target;
-    onChangeTempProjectSettings(name, value);
+    onChangeTempSettings(name, value);
   };
 
   toggleSettingsMenu = () => {
@@ -96,8 +125,7 @@ class Project extends Component {
   };
 
   handleMembership = (userId, e) => {
-    const { firebase, projectId, memberIds, activeWorkspace } = this.props;
-    const { workspaceId } = activeWorkspace;
+    const { firebase, projectId, memberIds, workspaceId } = this.props;
 
     if (memberIds.includes(userId)) {
       firebase.removeProjectMember({ projectId, userId, workspaceId });
@@ -106,53 +134,6 @@ class Project extends Component {
     }
 
     e.preventDefault();
-  };
-
-  toggleMoreActionsMenu = () => {
-    this.setState(prevState => ({
-      isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
-    }));
-  };
-
-  closeMoreActionsMenu = () => {
-    this.setState({
-      isMoreActionsMenuVisible: false
-    });
-  };
-
-  toggleProjectDuplicator = () => {
-    this.setState(prevState => ({
-      isProjectDuplicatorOpen: !prevState.isProjectDuplicatorOpen
-    }));
-  };
-
-  closeProjectDuplicator = () => {
-    this.setState({
-      isProjectDuplicatorOpen: false
-    });
-  };
-
-  deleteProject = () => {
-    const {
-      firebase,
-      currentUser,
-      selectProject,
-      history,
-      projectId,
-      workspaceId,
-      listIds,
-      memberIds
-    } = this.props;
-    const { userId } = currentUser;
-    firebase.deleteProject({
-      userId,
-      projectId,
-      workspaceId,
-      listIds,
-      memberIds
-    });
-    selectProject(null);
-    history.push(`/0/home/${userId}`);
   };
 
   render() {
@@ -164,23 +145,17 @@ class Project extends Component {
       ownerId,
       currentUser,
       onDelete,
-      settings: { isPrivate },
-      tempSettings: {
-        layout,
-        tasks: { view, sortBy }
-      },
+      onDuplicate,
+      isPrivate,
+      layout,
+      viewFilter,
+      sortBy,
       match: {
         params: { section }
       }
     } = this.props;
 
-    const {
-      name,
-      isListComposerActive,
-      isProjectSettingsActive,
-      isMoreActionsMenuVisible,
-      isProjectDuplicatorOpen
-    } = this.state;
+    const { name, isListComposerActive, isProjectSettingsActive } = this.state;
     return (
       <div className={`project project--${layout} project--${section}`}>
         <div className="project__header">
@@ -198,65 +173,17 @@ class Project extends Component {
               onBlur={this.onNameBlur}
               isRequired
             />
-            <Popover
-              isActive={isMoreActionsMenuVisible}
-              onOutsideClick={this.closeMoreActionsMenu}
-              classes={{
-                wrapper: 'project__more-actions-wrapper',
-                popover: 'project__more-actions'
-              }}
-              align={{ inner: 'right' }}
-              buttonProps={{
-                size: 'sm',
-                iconOnly: true,
-                isActive: isMoreActionsMenuVisible,
-                className: 'project__btn--more-actions',
-                children: <Icon name="more-vertical" />,
-                onClick: this.toggleMoreActionsMenu
-              }}
-            >
-              <Menu>
-                <MenuItem className="project__more-actions-item">
-                  <Button
-                    className="project__more-actions-btn"
-                    onClick={onDelete}
-                    disabled={
-                      ownerId !== currentUser.userId && currentUser.role !== 'admin'
-                    }
-                  >
-                    Delete Project
-                  </Button>
-                  <Button
-                    className="project__more-actions-btn"
-                    onClick={this.toggleProjectDuplicator}
-                  >
-                    Duplicate Project
-                  </Button>
-                </MenuItem>
-              </Menu>
-            </Popover>
-            <div className="project__links">
-              <NavLink className="project__link" to={`/0/projects/${projectId}/tasks`}>
-                Tasks
-              </NavLink>
-              <NavLink className="project__link" to={`/0/projects/${projectId}/overview`}>
-                Overview
-              </NavLink>
-              <NavLink className="project__link" to={`/0/projects/${projectId}/calendar`}>
-                Calendar
-              </NavLink>
-            </div>
+            <MoreProjectActions
+              allowDelete={ownerId === currentUser.userId || currentUser.role === 'admin'}
+              onDelete={onDelete}
+              onDuplicate={onDuplicate}
+            />
+            <ProjectLinks projectId={projectId} activeView={section} />
           </div>
         </div>
-        {isProjectDuplicatorOpen && (
-          <ProjectDuplicator
-            onClose={this.closeProjectDuplicator}
-            projectId={projectId}
-          />
-        )}
         <Switch>
           <Route
-            path={ROUTES.PROJECT_TASKS}
+            path={PROJECT_TASKS}
             render={props => (
               <>
                 <Toolbar className="project__toolbar">
@@ -284,61 +211,20 @@ class Project extends Component {
                     showOnlineStatus
                     isMemberSearchDisabled={isPrivate}
                   />
-                  <Settings
-                    icon="sliders"
+                  <ProjectSettings
                     isActive={isProjectSettingsActive}
                     onToggle={this.toggleSettingsMenu}
                     onClose={this.closeSettingsMenu}
                     onSave={this.saveProjectSettings}
-                    classes={{
-                      wrapper: 'project__settings-wrapper',
-                      settings: 'project__settings',
-                      button: 'project__settings-btn'
-                    }}
-                    settings={[
-                      {
-                        name: 'View',
-                        key: 'view',
-                        type: 'radio',
-                        options: {
-                          active: { value: 'active', label: 'Active Tasks' },
-                          completed: {
-                            value: 'completed',
-                            label: 'Completed Tasks'
-                          },
-                          all: { value: 'all', label: 'All Tasks' }
-                        },
-                        value: view,
-                        onChange: this.setTempProjectSettings
-                      },
-                      {
-                        name: 'Sort By',
-                        key: 'sortBy',
-                        type: 'select',
-                        options: {
-                          none: { value: 'none', label: 'None' },
-                          dueDate: { value: 'dueDate', label: 'Due Date' }
-                        },
-                        selected: sortBy,
-                        onChange: this.setTempProjectSettings
-                      },
-                      {
-                        name: 'Layout',
-                        key: 'layout',
-                        type: 'select',
-                        options: {
-                          board: { value: 'board', label: 'Board' },
-                          list: { value: 'list', label: 'List' }
-                        },
-                        selected: layout,
-                        onChange: this.setTempProjectSettings
-                      }
-                    ]}
+                    view={viewFilter}
+                    sortBy={sortBy}
+                    layout={layout}
+                    onChange={this.setTempProjectSettings}
                   />
                 </Toolbar>
                 <Droppable
                   droppableId={projectId}
-                  type={droppableTypes.LIST}
+                  type={LIST}
                   direction={layout === 'board' ? 'horizontal' : 'vertical'}
                 >
                   {provided => (
@@ -359,17 +245,18 @@ class Project extends Component {
             )}
           />
           <Route
-            path={ROUTES.PROJECT_OVERVIEW}
-            render={({ match }) => (
+            path={PROJECT_OVERVIEW}
+            render={props => (
               <ProjectOverview
                 onSelectMember={this.handleMembership}
-                projectId={match.params.id}
+                projectId={projectId}
+                {...props}
               />
             )}
           />
           <Route
-            path={ROUTES.PROJECT_CALENDAR}
-            render={({ match }) => <ProjectCalendar projectId={match.params.id} />}
+            path={PROJECT_CALENDAR}
+            render={props => <ProjectCalendar projectId={projectId} {...props} />}
           />
         </Switch>
       </div>
@@ -377,6 +264,4 @@ class Project extends Component {
   }
 }
 
-const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
-
-export default withAuthorization(condition)(Project);
+export default withRouter(withFirebase(Project));

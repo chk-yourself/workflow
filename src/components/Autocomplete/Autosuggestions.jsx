@@ -14,10 +14,7 @@ function getAutosuggestIndex(items, sectionIndex, itemIndex) {
   return count;
 }
 
-function getSelectedItemByIndex(items, index) {
-
-}
-
+function getSelectedItemByIndex(items, index) {}
 
 const Autosuggestions = ({
   items,
@@ -54,7 +51,7 @@ const Autosuggestions = ({
                     index={index}
                     onSelect={onSelect}
                     isSelected={selectedIndex === k}
-                    renderMatch={item.renderMatch || renderMatch}
+                    renderItem={item.renderItem || renderItem}
                     className={classes.suggestion || ''}
                   />
                 );
@@ -69,7 +66,7 @@ const Autosuggestions = ({
 
 Autosuggestions.defaultProps = {
   onSelect: () => {},
-  renderMatch: () => {},
+  renderItem: () => {},
   classes: {
     menu: '',
     title: '',
@@ -82,7 +79,7 @@ Autosuggestions.defaultProps = {
 
 Autosuggestions.propTypes = {
   onSelect: PropTypes.func,
-  renderMatch: PropTypes.func,
+  renderItem: PropTypes.func,
   classes: PropTypes.shape({
     menu: PropTypes.string,
     title: PropTypes.string,
@@ -91,17 +88,7 @@ Autosuggestions.propTypes = {
   }),
   multiSection: PropTypes.bool,
   items: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.objectOf(
-        PropTypes.oneOfType([
-          PropTypes.string,
-          PropTypes.number,
-          PropTypes.func,
-          PropTypes.bool
-        ])
-      )
-    ])
+    PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)])
   )
 };
 

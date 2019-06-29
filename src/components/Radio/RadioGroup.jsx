@@ -43,14 +43,15 @@ RadioGroup.defaultProps = {
     radio: '',
     label: ''
   },
-  options: []
+  options: [],
+  value: null
 };
 
 RadioGroup.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
     }).isRequired
   ),
   classes: PropTypes.shape({
@@ -59,7 +60,8 @@ RadioGroup.propTypes = {
     radio: PropTypes.string,
     label: PropTypes.string
   }),
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
 };
 
 export default RadioGroup;

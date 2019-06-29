@@ -66,18 +66,21 @@ class List extends Component {
 
   onBlur = () => {
     const { list, listId, firebase } = this.props;
-    const { name } = list;
-    const { name: newName } = this.state;
+    const { name: prevName } = list;
+    const { name } = this.state;
+    const newState = {
+      isFocused: false
+    };
 
-    // When field loses focus, update list title if change is detected
-
-    if (newName !== name) {
-      firebase.updateListName({ listId, name: newName });
+    if (name !== prevName) {
+      if (name === '') {
+        newState.name = prevName; // prevent nameless lists
+      } else {
+        firebase.updateListName({ listId, name });
+      }
     }
 
-    this.setState({
-      isFocused: false
-    });
+    this.setState({ ...newState });
   };
 
   onFocus = () => {
@@ -271,7 +274,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteList: ({ listId, projectId }) => dispatch(listActions.deleteList({ listId, projectId }))
+    deleteList: ({ listId, projectId }) =>
+      dispatch(listActions.deleteList({ listId, projectId }))
   };
 };
 

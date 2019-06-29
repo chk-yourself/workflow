@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withAuthorization } from '../Session';
-import { Navbar, NavLinksAuth, NavLinksNonAuth, Sidebar } from '../Nav';
+import { Navbar, NavLinksAuth, NavLinksNonAuth } from '../Nav';
+import { Sidebar } from '../Sidebar';
 import { SignOutButton } from '../SignOutButton';
 import { Topbar } from '../Topbar';
 import { WorkspaceComposer, WorkspaceSettings } from '../Workspace';

@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import { NavLink, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Logo } from '../Logo';
-import { Icon } from '../Icon';
 import { Button, IconButton } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
 import { withAuthorization } from '../Session';
 import { Members } from '../Members';
-import * as ROUTES from '../../constants/routes';
+import { GUIDE } from '../../constants/routes';
 import './Sidebar.scss';
-
-export const SidebarIcon = ({ name }) => {
-  return <Icon name={name} className="sidebar__icon" />;
-};
+import SidebarIcon from './SidebarIcon';
+import SidebarItem from './SidebarItem';
 
 class Sidebar extends Component {
   state = {
@@ -49,7 +46,6 @@ class Sidebar extends Component {
     return (
       <div ref={innerRef} className="sidebar__canvas">
         <IconButton
-          type="button"
           onClick={onToggle}
           className="sidebar__btn--toggle"
           size="sm"
@@ -68,31 +64,28 @@ class Sidebar extends Component {
                 className="sidebar__btn sidebar__btn--workspace-settings"
                 onClick={openWorkspaceSettings}
               >
-                <Icon className="sidebar__icon" name="settings" />
+                <SidebarIcon name="settings" />
                 <span className="sidebar__section-name sidebar__workspace-name">
                   {workspaceName}
                 </span>
               </Button>
               <ul className="sidebar__list sidebar__workspace-links">
-                <li className="sidebar__item">
-                  <NavLink
-                    className="sidebar__link"
-                    onClick={onClose}
-                    to={`/0/${workspaceId}/projects`}
-                  >
-                    <Icon className="sidebar__icon" name="grid" />
-                    <span className="sidebar__section-name">Projects</span>
-                  </NavLink>
-                </li>
+                <SidebarItem
+                  onClick={onClose}
+                  icon="grid"
+                  link={`/0/${workspaceId}/projects`}
+                >
+                  Projects
+                </SidebarItem>
                 <li className="sidebar__item sidebar__item--team">
                   <Button
                     isActive={isMembersListVisible}
                     className="sidebar__btn sidebar__btn--toggle-members"
                     onClick={this.toggleMembersList}
                   >
-                    <Icon className="sidebar__icon" name="users" />
+                    <SidebarIcon name="users" />
                     <span className="sidebar__section-name">Team</span>
-                    <Icon className="sidebar__icon" name="chevron-left" />
+                    <SidebarIcon name="chevron-left" />
                   </Button>
                   <Members
                     style={{ display: isMembersListVisible ? 'block' : 'none' }}
@@ -108,8 +101,8 @@ class Sidebar extends Component {
                 </li>
                 <ul className="sidebar__list">
                   <li className="sidebar__item">
-                    <Link target="_blank" className="sidebar__link" to={ROUTES.GUIDE}>
-                      <Icon className="sidebar__icon" name="help-circle" />
+                    <Link target="_blank" className="sidebar__link" to={GUIDE}>
+                      <SidebarIcon name="help-circle" />
                       <span className="sidebar__section-name">Guide</span>
                     </Link>
                   </li>

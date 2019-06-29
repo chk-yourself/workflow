@@ -105,24 +105,22 @@ class TaskEditor extends Component {
     this.closeTaskEditor();
   };
 
-  onBlur = e => {
-    const taskKey = e.target.name;
-    const { [taskKey]: currentValue, taskId, firebase } = this.props;
-    const { [taskKey]: updatedValue } = this.state;
-
-    // When field loses focus, update task if change is detected
-
-    if (updatedValue !== currentValue) {
+  updateTaskName = () => {
+    const { name: prevName, taskId, firebase } = this.props;
+    const { name } = this.state;
+    if (name === prevName) return;
+    if (name === '') {
+      this.resetName(); // prevent nameless tasks
+    } else {
       firebase.updateDoc(['tasks', taskId], {
-        [taskKey]: updatedValue
+        name
       });
-      console.log('Updated task!');
     }
   };
 
-  resetForm = key => {
+  resetName = () => {
     this.setState({
-      [key]: ''
+      name: this.props.name
     });
   };
 
@@ -274,7 +272,7 @@ class TaskEditor extends Component {
               name="name"
               value={name}
               onChange={this.onChange}
-              onBlur={this.onBlur}
+              onBlur={this.updateTaskName}
               innerRef={this.setTextareaRef}
               required
             />

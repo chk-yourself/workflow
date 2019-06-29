@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
-import { SidebarIcon } from './Sidebar';
+import { SidebarItem } from '../Sidebar';
 
 export const NavLinksNonAuth = ({ onClick }) => (
   <>
@@ -25,35 +25,14 @@ export const NavLinksNonAuth = ({ onClick }) => (
 
 export const NavLinksAuth = ({ userId, onClick }) => (
   <>
-    <li className="sidebar__item">
-      <NavLink
-        onClick={onClick}
-        className="sidebar__link"
-        to={`/0/home/${userId}`}
-      >
-        <SidebarIcon name="home" />
-        <span className="sidebar__section-name">Home</span>
-      </NavLink>
-    </li>
-    <li className="sidebar__item">
-      <NavLink
-        onClick={onClick}
-        className="sidebar__link"
-        to={`/0/inbox/${userId}`}
-      >
-        <SidebarIcon name="bell" />
-        <span className="sidebar__section-name">Inbox</span>
-      </NavLink>
-    </li>
-    <li className="sidebar__item">
-      <NavLink
-        onClick={onClick}
-        className="sidebar__link"
-        to={`/0/${userId}/tasks`}
-      >
-        <SidebarIcon name="check-circle" />
-        <span className="sidebar__section-name">My Tasks</span>
-      </NavLink>
-    </li>
+    <SidebarItem onClick={onClick} icon="home" link={`/0/home/${userId}`}>
+      Home
+    </SidebarItem>
+    <SidebarItem onClick={onClick} icon="bell" link={`/0/inbox/${userId}`}>
+      Inbox
+    </SidebarItem>
+    <SidebarItem onClick={onClick} icon="check-circle" link={`/0/${userId}/tasks`}>
+      My Tasks
+    </SidebarItem>
   </>
 );

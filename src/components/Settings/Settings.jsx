@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Popover } from '../Popover';
 import { Icon } from '../Icon';
 import { Radio } from '../Radio';
-import { Button } from '../Button';
+import { Button, IconButton } from '../Button';
 import { SelectDropdown } from '../SelectDropdown';
 import './Settings.scss';
 
@@ -24,12 +25,10 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
       onClick: onToggle
     }}
   >
-    <Button type="button" className="settings__btn--close" size="sm" onClick={onClose} iconOnly>
-      <Icon name="x" />
-    </Button>
+    <IconButton className="settings__btn--close" size="sm" onClick={onClose} label="Close settings" icon="x" />
     {settings.map(setting => (
       <div className={`settings__setting ${classes.setting || ''}`} key={setting.name}>
-        <div className={`settings__name ${classes.name || ''}`}>{setting.name}</div>
+        <div className={`settings__name ${classes.name || ''}`}>{setting.label || setting.name}</div>
         {
           {
             radio: (
@@ -39,7 +38,7 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
                   return (
                     <Radio
                       key={option.value}
-                      name={setting.key}
+                      name={setting.name}
                       id={option.value}
                       value={option.value}
                       isChecked={setting.value === option.value}
@@ -56,7 +55,7 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
             ),
             select: (
               <SelectDropdown
-                name={setting.key}
+                name={setting.name}
                 onChange={setting.onChange}
                 selected={setting.selected}
                 options={setting.options}
@@ -106,7 +105,39 @@ Settings.defaultProps = {
     menu: '',
     item: ''
   },
-  settings: {}
+  settings: []
+};
+
+Settings.propTypes = {
+  icon: PropTypes.string,
+  settings: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.shape({
+      label: PropTypes.string,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['radio', 'select']).isRequired,
+      onChange: PropTypes.func,
+      value:  PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
+      options: PropTypes.objectOf(
+        PropTypes.shape({
+          label: PropTypes.string,
+          value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
+        })
+      )
+    }),
+    PropTypes.shape({
+      label: PropTypes.string,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['radio', 'select']).isRequired,
+      onChange: PropTypes.func,
+      selected:  PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
+      options: PropTypes.objectOf(
+        PropTypes.shape({
+          label: PropTypes.string,
+          value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
+        })
+      )
+    })
+  ]))
 };
 
 export default Settings;

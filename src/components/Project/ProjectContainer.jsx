@@ -18,12 +18,17 @@ import { subtaskActions } from '../../ducks/subtasks';
 import Project from './Project';
 import { List } from '../List';
 import { TaskEditor } from '../TaskEditor';
-import * as droppableTypes from '../../constants/droppableTypes';
+import { LIST, TASK } from '../../constants/droppableTypes';
+import ProjectDuplicator from './ProjectDuplicator';
 import './Project.scss';
 
 class ProjectContainer extends Component {
   static propTypes = {
     projectId: PropTypes.string.isRequired
+  };
+
+  state = {
+    isProjectDuplicatorOpen: false
   };
 
   async componentDidMount() {
@@ -66,7 +71,7 @@ class ProjectContainer extends Component {
       return;
     const { firebase, listsById, tempSettings, state } = this.props;
     const { view, sortBy } = tempSettings.tasks;
-    if (type === droppableTypes.TASK) {
+    if (type === TASK) {
       const { droppableId: newListId, index: newIndex } = destination;
       const { droppableId: origListId, index: prevIndex } = source;
       const isMovedWithinList = origListId === newListId;
@@ -107,7 +112,7 @@ class ProjectContainer extends Component {
       }
     }
 
-    if (type === droppableTypes.LIST) {
+    if (type === LIST) {
       const { project, projectId } = this.props;
       const updatedListIds = [...project.listIds];
       updatedListIds.splice(source.index, 1);
@@ -149,10 +154,23 @@ class ProjectContainer extends Component {
     });
   };
 
+  toggleProjectDuplicator = () => {
+    this.setState(prevState => ({
+      isProjectDuplicatorOpen: !prevState.isProjectDuplicatorOpen
+    }));
+  };
+
+  closeProjectDuplicator = () => {
+    this.setState({
+      isProjectDuplicatorOpen: false
+    });
+  };
+
   render() {
-    const { selectedTask, projectId, isLoaded, project, tempSettings } = this.props;
-    const { name, listIds } = project;
-    const { layout } = tempSettings;
+    const { selectedTask, projectId, isLoaded, project, tempSettings, currentUser } = this.props;
+    const { name, listIds, color, ownerId, memberIds, settings: { isPrivate } } = project;
+    const { layout, tasks: { view, sortBy } } = tempSettings;
+    const { isProjectDuplicatorOpen } = this.state;
     const isTaskEditorOpen = !!selectedTask;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (
@@ -164,9 +182,20 @@ class ProjectContainer extends Component {
         <div className="project__wrapper">
           <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
             <Project
-              onChangeTempProjectSettings={this.setTempProjectSettings}
+              currentUser={currentUser}
+              onChangeTempSettings={this.setTempProjectSettings}
               onDelete={this.deleteProject}
-              {...project}
+              onDuplicate={this.toggleProjectDuplicator}
+              projectId={projectId}
+              name={name}
+              color={color}
+              ownerId={ownerId}
+              isPrivate={isPrivate}
+              layout={layout}
+              viewFilter={view}
+              sortBy={sortBy}
+              memberIds={memberIds}
+              listIds={listIds}
             >
               {listIds.map((listId, i) => {
                 return (
@@ -187,6 +216,12 @@ class ProjectContainer extends Component {
           </DragDropContext>
           {isTaskEditorOpen && <TaskEditor {...selectedTask} layout={layout} />}
         </div>
+        {isProjectDuplicatorOpen && (
+          <ProjectDuplicator
+            onClose={this.closeProjectDuplicator}
+            projectId={projectId}
+          />
+        )}
       </main>
     );
   }

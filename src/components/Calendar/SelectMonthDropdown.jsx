@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { SelectDropdown } from '../SelectDropdown';
-import { MONTHS, getNextYears } from '../../utils/date';
+import { MONTHS } from '../../utils/date';
 
 const monthOptions = MONTHS.reduce((options, currentMonth, i) => {
   const label = `${i}`;

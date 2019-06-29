@@ -11,7 +11,6 @@ class WorkspaceSelect extends Component {
     firebase.updateDoc(['users', userId], {
       'settings.activeWorkspace': workspaceId
     });
-    console.log(`selected workspace: ${workspaceId}`);
   };
 
   render() {

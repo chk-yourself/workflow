@@ -9,22 +9,22 @@ class Navbar extends Component {
   static defaultProps = {
     minWidth: 768, // min viewport width required for expanding nav links
     classes: {
-      navbar: '',
-      links: ''
+      nav: '',
+      menu: ''
     }
   };
 
   static propTypes = {
     minWidth: PropTypes.number,
     classes: PropTypes.shape({
-      navbar: PropTypes.string,
-      links: PropTypes.string
+      nav: PropTypes.string,
+      menu: PropTypes.string
     })
   };
 
   state = {
-    viewportWidth: window.innerWidth,
-    isMobileNavVisible: false
+    viewportWidth: window.innerWidth || document.documentElement.clientWidth,
+    isMenuVisible: false
   };
 
   componentDidMount() {
@@ -37,14 +37,20 @@ class Navbar extends Component {
 
   handleResize = () => {
     this.setState({
-      viewportWidth: window.innerWidth
+      viewportWidth: window.innerWidth || document.documentElement.clientWidth
     });
   };
 
-  toggleMobileNavVisibility = () => {
+  toggleMenu = () => {
     this.setState(prevState => ({
-      isMobileNavVisible: !prevState.isMobileNavVisible
+      isMenuVisible: !prevState.isMenuVisible
     }));
+  };
+
+  hideMenu = () => {
+    this.setState({
+      isMenuVisible: false
+    });
   };
 
   handleClick = e => {
@@ -53,7 +59,7 @@ class Navbar extends Component {
     const isMobileView = viewportWidth < minWidth;
 
     if (!isMobileView || (!e.target.matches('button') && !e.target.matches('a'))) return;
-    this.toggleMobileNavVisibility();
+    this.toggleMenu();
   };
 
   onOutsideClick = e => {
@@ -61,34 +67,32 @@ class Navbar extends Component {
     const { minWidth } = this.props;
     const isMobileView = viewportWidth < minWidth;
     if (!isMobileView || e.target.matches('button') || e.target.matches('a')) return;
-    this.setState({
-      isMobileNavVisible: false
-    });
+    this.hideMenu();
   };
 
   render() {
-    const { viewportWidth, isMobileNavVisible } = this.state;
+    const { viewportWidth, isMenuVisible } = this.state;
     const { minWidth, classes, children, innerRef } = this.props;
     const isMobileView = viewportWidth < minWidth;
 
     return (
       <nav
         className={`navbar ${isMobileView ? 'is-collapsed' : ''} ${
-          isMobileView && isMobileNavVisible ? 'show-links' : ''
-        } ${classes.navbar}`}
+          isMobileView && isMenuVisible ? 'show-links' : ''
+        } ${classes.nav || ''}`.trim()}
         ref={innerRef}
       >
-        <Logo className="navbar__logo" onClick={this.handleClick} />
+        <Logo className="navbar__logo" />
         {isMobileView && (
           <IconButton
             color="primary"
             icon="menu"
             label="Toggle menu"
-            onClick={this.toggleMobileNavVisibility}
+            onClick={this.toggleMenu}
             className="navbar__btn--toggle"
           />
         )}
-        <ul className={`navbar__links ${classes.links}`} onClick={this.handleClick}>
+        <ul className={`navbar__links ${classes.menu || ''}`} onClick={this.handleClick}>
           {children}
         </ul>
       </nav>

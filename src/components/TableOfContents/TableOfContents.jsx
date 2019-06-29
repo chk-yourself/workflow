@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './TableOfContents.scss';
 
@@ -21,6 +22,7 @@ const TableOfContents = ({ title, sections, classes }) => (
 );
 
 TableOfContents.defaultProps = {
+  title: 'Table of Contents',
   sections: [],
   classes: {
     tableOfContents: '',
@@ -29,6 +31,23 @@ TableOfContents.defaultProps = {
     link: '',
     title: ''
   }
+};
+
+TableOfContents.propTypes = {
+  title: PropTypes.string,
+  sections: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      link: PropTypes.string
+    })
+  ),
+  classes: PropTypes.shape({
+    tableOfContents: PropTypes.string,
+    list: PropTypes.string,
+    item: PropTypes.string,
+    link: PropTypes.string,
+    title: PropTypes.string
+  })
 };
 
 export default TableOfContents;

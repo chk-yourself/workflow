@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
+import { LANDING } from '../../constants/routes';
 import './Logo.scss';
 
 const Logo = ({ size, className, onClick, link }) => {
@@ -17,7 +17,7 @@ const Logo = ({ size, className, onClick, link }) => {
 Logo.defaultProps = {
   className: '',
   size: 'md',
-  link: ROUTES.LANDING
+  link: LANDING
 };
 
 Logo.propTypes = {
@@ -26,4 +26,4 @@ Logo.propTypes = {
   link: PropTypes.string
 };
 
-export default Logo;
+export default memo(Logo);

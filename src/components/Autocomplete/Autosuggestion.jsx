@@ -27,14 +27,14 @@ const Autosuggestion = ({
 
 Autosuggestion.defaultProps = {
   className: '',
-  renderMatch: () => {}
+  renderItem: () => {}
 };
 
 Autosuggestion.propTypes = {
   className: PropTypes.string,
   index: PropTypes.number.isRequired,
   selectedIndex: PropTypes.oneOfType([() => null, PropTypes.number]).isRequired,
-  renderMatch: PropTypes.func
+  renderItem: PropTypes.func
 };
 
 export default Autosuggestion;

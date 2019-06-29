@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import './Avatar.scss';
 
-export default class Avatar extends Component {
+export default class Avatar extends PureComponent {
   static defaultProps = {
     imgSrc: null,
     classes: {
@@ -27,7 +27,9 @@ export default class Avatar extends Component {
     showOnlineStatus: PropTypes.bool,
     size: PropTypes.oneOf(['sm', 'md', 'lg']),
     variant: PropTypes.oneOf(['circle', 'square', 'rounded']),
-    imgProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
+    imgProps: PropTypes.objectOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    )
   };
 
   getUserInitials = fullName => {
@@ -57,7 +59,12 @@ export default class Avatar extends Component {
         } ${classes.avatar}`}
       >
         {imgSrc !== null ? (
-          <img src={imgSrc} alt={name} className={`avatar__img ${classes.img}`} {...imgProps} />
+          <img
+            src={imgSrc}
+            alt={name}
+            className={`avatar__img ${classes.img}`}
+            {...imgProps}
+          />
         ) : (
           <span
             className={`avatar__placeholder ${classes.placeholder}`}
