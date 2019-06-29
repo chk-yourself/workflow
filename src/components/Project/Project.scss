@@ -246,11 +246,24 @@
 
 .project__input--name {
   background-color: transparent;
-  width: 100%;
+  width: auto;
   height: auto;
   z-index: 4;
   position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 18px;
+  margin: 4px 0;
+  line-height: 1.15;
+  color: $grey-900;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  text-align: center;
+  max-width: calc(100% - 68px);
   &:focus {
+    width: 100%;
     padding-left: 8px;
     text-align: left;
     background-color: $white;
@@ -260,22 +273,6 @@
       padding-left: 10px;
     }
   }
-}
-
-.project__input--name,
-.project__name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 18px;
-  margin: 4px 0;
-  line-height: 1.15;
-  color: $grey-900;
-  padding: 4px 8px 4px 22px;
-  border: 1px solid transparent;
-  font-weight: 600;
-  text-align: center;
-  max-width: calc(100vw - 68px);
   @include min-width(428px) {
     max-width: 360px;
   }
@@ -287,46 +284,36 @@
   @include xl {
     font-size: 1.4rem;
     line-height: 1.2;
-    padding: 6px 10px 6px 24px;
-  }
-}
-
-.project__input--name,
-.project__name-wrapper {
-  max-width: calc(100% - 68px);
-  @include min-width(428px) {
-    max-width: 360px;
+    padding: 6px 8px;
   }
 }
 
 .project__name-wrapper {
-  position: absolute;
-  pointer-events: none;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   height: auto;
   font-size: 0;
   span {
     pointer-events: none;
   }
-}
-
-.project__name {
-  width: auto;
-  display: inline-block;
-  visibility: hidden;
+  &.is-focused {
+    .project__icon {
+      display: none;
+    }
+    .project__more-actions-wrapper {
+      display: none;
+    }
+  }
 }
 
 .project__icon {
-  position: absolute;
-  top: calc(50% - 5px);
-  left: 8px;
   width: 10px;
   height: 10px;
-  @include xl {
-    top: calc(50% - 4px);
+  margin: 0 6px;
+  @include md {
+    margin: 0 10px;
   }
 }
 
@@ -551,9 +538,6 @@
 }
 
 .project__more-actions-wrapper {
-  position: absolute;
-  top: 4px;
-  right: 4px;
 }
 
 .project__more-actions {
@@ -567,20 +551,16 @@
 }
 
 .project__btn--more-actions {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   .feather {
     width: 16px;
     height: 16px;
   }
   @include md {
-    width: 32px;
-    height: 32px;
-  }
-  @include xl {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
   }
 }
 

@@ -46,7 +46,8 @@ class Project extends Component {
     name: this.props.name,
     prevName: this.props.name,
     isListComposerActive: false,
-    isProjectSettingsActive: false
+    isProjectSettingsActive: false,
+    isNameFocused: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -84,6 +85,9 @@ class Project extends Component {
   onNameBlur = () => {
     const { name: prevName, projectId, firebase } = this.props;
     const { name } = this.state;
+    this.setState({
+      isNameFocused: false
+    });
     if (name === prevName) return;
     if (name === '') {
       this.resetName();
@@ -136,6 +140,12 @@ class Project extends Component {
     e.preventDefault();
   };
 
+  onFocus = () => {
+    this.setState({
+      isNameFocused: true
+    });
+  };
+
   render() {
     const {
       projectId,
@@ -155,29 +165,38 @@ class Project extends Component {
       }
     } = this.props;
 
-    const { name, isListComposerActive, isProjectSettingsActive } = this.state;
+    const {
+      name,
+      isListComposerActive,
+      isProjectSettingsActive,
+      isNameFocused
+    } = this.state;
+
     return (
       <div className={`project project--${layout} project--${section}`}>
         <div className="project__header">
           <div className="project__header-content">
-            <div className="project__name-wrapper">
+            <div className={`project__name-wrapper ${isNameFocused ? 'is-focused' : ''}`}>
               <ProjectIcon className="project__icon" color={color} />
-              <span className="project__name">{name}</span>
+              <Input
+                className="project__input--name"
+                name="projectName"
+                type="text"
+                value={name}
+                onChange={this.onNameChange}
+                onFocus={this.onFocus}
+                onBlur={this.onNameBlur}
+                size={!isNameFocused ? name.length : undefined}
+                isRequired
+              />
+              <MoreProjectActions
+                allowDelete={
+                  ownerId === currentUser.userId || currentUser.role === 'admin'
+                }
+                onDelete={onDelete}
+                onDuplicate={onDuplicate}
+              />
             </div>
-            <Input
-              className="project__input--name"
-              name="projectName"
-              type="text"
-              value={name}
-              onChange={this.onNameChange}
-              onBlur={this.onNameBlur}
-              isRequired
-            />
-            <MoreProjectActions
-              allowDelete={ownerId === currentUser.userId || currentUser.role === 'admin'}
-              onDelete={onDelete}
-              onDuplicate={onDuplicate}
-            />
             <ProjectLinks projectId={projectId} activeView={section} />
           </div>
         </div>

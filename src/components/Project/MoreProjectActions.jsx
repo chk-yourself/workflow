@@ -16,7 +16,7 @@ const MoreProjectActions = ({ onDelete, onDuplicate, allowDelete }) => {
         size: 'sm',
         iconOnly: true,
         className: 'project__btn--more-actions',
-        children: <Icon name="more-vertical" />
+        children: <Icon name="chevron-down" />
       }}
     >
       <Menu>
