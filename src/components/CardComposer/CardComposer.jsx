@@ -85,7 +85,7 @@ class CardComposer extends Component {
             isRequired
             name="name"
             className="card-composer__textarea"
-            isAutoHeightResizeEnabled={false}
+            autoResize={false}
             onKeyDown={this.onSubmit}
           />
           {isActive && (

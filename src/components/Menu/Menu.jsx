@@ -1,13 +1,14 @@
 import React from 'react';
 import './Menu.scss';
 
-const Menu = ({ children, onClick, className, innerRef, role }) => {
+const Menu = ({ children, onClick, className, innerRef, role, ...props }) => {
   return (
     <ul
       className={`menu ${className}`}
       onClick={onClick}
       ref={innerRef}
       role={role}
+      {...props}
     >
       {children}
     </ul>

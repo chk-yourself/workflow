@@ -1,9 +1,9 @@
 import React from 'react';
 import './Menu.scss';
 
-const MenuItem = ({ children, className, role }) => {
+const MenuItem = ({ children, className, role, ...props }) => {
   return (
-    <li className={`menu__item ${className}`} role={role}>
+    <li className={`menu__item ${className}`} role={role} {...props}>
       {children}
     </li>
   );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '../Button';
 import PopoverContent from './PopoverContent';
 import './Popover.scss';
@@ -18,7 +19,25 @@ class Popover extends Component {
       outer: 'left',
       inner: 'left'
     },
-    anchorEl: null
+    anchorEl: null, // an element outside the Popover that may be used to position it
+    target: null // rendered inside Popover component, in place of default button
+  };
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      wrapper: PropTypes.string,
+      popover: PropTypes.string
+    }),
+    buttonProps: PropTypes.objectOf(PropTypes.any),
+    align: PropTypes.shape({
+      outer: PropTypes.oneOf(['right', 'left']),
+      inner: PropTypes.oneOf(['right', 'left'])
+    }),
+    anchorEl: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    ]),
+    target: PropTypes.oneOfType([() => null, PropTypes.node, PropTypes.element])
   };
 
   onOutsideClick = e => {
@@ -66,7 +85,15 @@ class Popover extends Component {
   };
 
   render() {
-    const { children, align, onWrapperClick, buttonProps, classes, anchorEl } = this.props;
+    const {
+      children,
+      align,
+      onWrapperClick,
+      buttonProps,
+      classes,
+      anchorEl,
+      target
+    } = this.props;
     const isActive = 'isActive' in this.props ? this.props.isActive : this.state.isActive;
 
     let popoverWrapperStyle = null;
@@ -86,12 +113,9 @@ class Popover extends Component {
         style={popoverWrapperStyle}
         onClick={onWrapperClick}
       >
-        <Button
-          innerRef={this.setButtonRef}
-          type="button"
-          onClick={this.toggleOpen}
-          {...buttonProps}
-        />
+      {target || (
+        <Button innerRef={this.setButtonRef} onClick={this.toggleOpen} {...buttonProps} />
+      )}
         {isActive && (
           <PopoverContent
             onOutsideClick={this.onOutsideClick}

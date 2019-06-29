@@ -1,17 +1,28 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Droppable } from 'react-beautiful-dnd';
-import * as droppableTypes from '../../constants/droppableTypes';
+import { TASK } from '../../constants/droppableTypes';
 import { Card } from '../Card';
 import { DraggableTask } from '../Task';
 
 export default class Tasks extends Component {
   static defaultProps = {
-    dropType: droppableTypes.TASK,
+    dropType: TASK,
     isDragDisabled: false
   };
 
+  static propTypes = {
+    dropType: PropTypes.string,
+    layout: PropTypes.oneOf(['board', 'list']).isRequired,
+    isDragDisabled: PropTypes.bool
+  };
+
   shouldComponentUpdate(nextProps) {
-    if (this.props.taskIds === nextProps.taskIds) {
+    const { taskIds, layout } = this.props;
+    if (
+      taskIds === nextProps.taskIds &&
+      layout === nextProps.layout
+    ) {
       return false;
     }
     return true;
@@ -24,8 +35,12 @@ export default class Tasks extends Component {
   }
 
   scrollToBottom = () => {
-    if (!this.listEnd) return;
-    this.listEnd.scrollIntoView({ behavior: 'smooth' });
+    if (!this.end) return;
+    this.end.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  setEndRef = el => {
+    this.end = el;
   };
 
   render() {
@@ -69,10 +84,7 @@ export default class Tasks extends Component {
             >
               {inner}
               {provided.placeholder}
-              <div
-                style={{ float: 'left', clear: 'both' }}
-                ref={el => (this.listEnd = el)}
-              />
+              <div style={{ float: 'left', clear: 'both' }} ref={this.setEndRef} />
             </div>
           ) : (
             <ul

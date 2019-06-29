@@ -1,3 +1,7 @@
+export const isObject = value => {
+  return Object.prototype.toString.call(value) === '[object Object]';
+};
+
 /**
  * Performs deep comparison two objects or arrays to determine if they are equivalent
  * @param {Array|Object} value - The value to compare

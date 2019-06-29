@@ -11,8 +11,6 @@ import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
 import './TagInput.scss';
 
-// TODO: accept tagProps and inputProps for reusability
-
 const INITIAL_STATE = {
   value: '',
   isColorPickerActive: false,
@@ -25,8 +23,20 @@ const INITIAL_STATE = {
 };
 
 class TagInput extends Component {
+  static defaultProps = {
+    inputProps: {}
+  };
+
   static propTypes = {
-    taskId: PropTypes.string.isRequired
+    taskId: PropTypes.string.isRequired,
+    inputProps: PropTypes.objectOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.bool,
+        PropTypes.func
+      ])
+    )
   };
 
   state = { ...INITIAL_STATE, isActive: false };
@@ -216,7 +226,7 @@ class TagInput extends Component {
   };
 
   render() {
-    const { assignedTags, innerRef } = this.props;
+    const { assignedTags, innerRef, inputProps } = this.props;
     const {
       value,
       isActive,
@@ -265,6 +275,7 @@ class TagInput extends Component {
             type="text"
             autoComplete="off"
             onKeyDown={this.onKeyDown}
+            {...inputProps}
           />
           {isActive && (
             <ul className="tag-input__list">

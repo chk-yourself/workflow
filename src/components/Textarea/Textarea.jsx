@@ -8,7 +8,7 @@ export default class Textarea extends Component {
     className: '',
     label: '',
     labelClass: '',
-    isAutoHeightResizeEnabled: true,
+    autoResize: true,
     minHeight: 0,
     tabIndex: 0
   };
@@ -19,7 +19,7 @@ export default class Textarea extends Component {
     labelClass: PropTypes.string,
     minHeight: PropTypes.number,
     tabIndex: PropTypes.number,
-    isAutoHeightResizeEnabled: PropTypes.bool
+    autoResize: PropTypes.bool
   };
 
   state = {
@@ -27,8 +27,8 @@ export default class Textarea extends Component {
   };
 
   componentDidMount() {
-    const { isAutoHeightResizeEnabled } = this.props;
-    if (!isAutoHeightResizeEnabled) return;
+    const { autoResize } = this.props;
+    if (!autoResize) return;
     this.autoHeightResize();
     this.handleResize = debounce(200, this.autoHeightResize);
     window.addEventListener('resize', this.handleResize);
@@ -68,10 +68,18 @@ export default class Textarea extends Component {
   };
 
   autoHeightResize = () => {
-    const { isAutoHeightResizeEnabled, minHeight } = this.props;
-    if (!isAutoHeightResizeEnabled) return;
+    const { autoResize, minHeight } = this.props;
+    if (!autoResize) return;
     this.el.style.height = `${minHeight}px`; // resets scroll height
     this.el.style.height = `${this.el.scrollHeight}px`;
+  };
+
+  onInput = e => {
+    const { onInput } = this.props;
+    this.autoHeightResize();
+    if (onInput) {
+      onInput(e);
+    }
   };
 
   render() {
@@ -87,11 +95,12 @@ export default class Textarea extends Component {
       label,
       id,
       labelClass,
-      isAutoHeightResizeEnabled,
+      autoResize,
       innerRef,
       minHeight,
       onFocus,
       onBlur,
+      onInput,
       ...rest
     } = this.props;
 
@@ -113,7 +122,7 @@ export default class Textarea extends Component {
           placeholder={placeholder}
           required={isRequired}
           onBlur={this.onBlur}
-          onInput={this.autoHeightResize}
+          onInput={this.onInput}
           ref={this.setRef}
           onFocus={this.onFocus}
           readOnly={isReadOnly}
