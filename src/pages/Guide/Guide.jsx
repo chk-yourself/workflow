@@ -5,6 +5,7 @@ import Features from './Features';
 import HowTo from './HowTo';
 import Fundamentals from './Fundamentals';
 import { Icon } from '../../components/Icon';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import './Guide.scss';
 
 const GuideTile = ({ link, title, description, color, icon }) => (
@@ -22,48 +23,51 @@ const GuideTile = ({ link, title, description, color, icon }) => (
   </li>
 );
 
-const Guide = () => (
-  <main className="guide">
-    <Switch>
-      <Route
-        exact
-        path={ROUTES.GUIDE}
-        render={() => (
-          <>
-            <h1 className="guide__title">Workflow Guide</h1>
-            <p className="guide__intro">
-              Learn the basics of using Workflow to manage your projects.
-            </p>
-            <ul className="guide__grid">
-              <GuideTile
-                color="primary"
-                title="Features"
-                link={ROUTES.FEATURES}
-                icon="triangle"
-                description="Explore Workflow's core features"
-              />
-              <GuideTile
-                color="secondary"
-                title="Fundamentals"
-                link={ROUTES.FUNDAMENTALS}
-                icon="square"
-                description="Get to know Workflow's interface"
-              />
-              <GuideTile
-                color="tertiary"
-                title="How to..."
-                link={ROUTES.HOW_TO}
-                icon="circle"
-                description="Learn how to perform common tasks"
-              />
-            </ul>
-          </>
-        )}
-      />
-      <Route path={ROUTES.HOW_TO} component={HowTo} />
-      <Route path={ROUTES.FEATURES} component={Features} />
-      <Route path={ROUTES.FUNDAMENTALS} component={Fundamentals} />
-    </Switch>
-  </main>
-);
+const Guide = () => {
+  useDocumentTitle('Workflow Guide');
+  return (
+    <main className="guide">
+      <Switch>
+        <Route
+          exact
+          path={ROUTES.GUIDE}
+          render={() => (
+            <>
+              <h1 className="guide__title">Workflow Guide</h1>
+              <p className="guide__intro">
+                Learn the basics of using Workflow to manage your projects.
+              </p>
+              <ul className="guide__grid">
+                <GuideTile
+                  color="primary"
+                  title="Features"
+                  link={ROUTES.FEATURES}
+                  icon="triangle"
+                  description="Explore Workflow's core features"
+                />
+                <GuideTile
+                  color="secondary"
+                  title="Fundamentals"
+                  link={ROUTES.FUNDAMENTALS}
+                  icon="square"
+                  description="Get to know Workflow's interface"
+                />
+                <GuideTile
+                  color="tertiary"
+                  title="How to..."
+                  link={ROUTES.HOW_TO}
+                  icon="circle"
+                  description="Learn how to perform common tasks"
+                />
+              </ul>
+            </>
+          )}
+        />
+        <Route path={ROUTES.HOW_TO} component={HowTo} />
+        <Route path={ROUTES.FEATURES} component={Features} />
+        <Route path={ROUTES.FUNDAMENTALS} component={Fundamentals} />
+      </Switch>
+    </main>
+  );
+};
 export default withRouter(Guide);

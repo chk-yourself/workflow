@@ -1,5 +1,4 @@
-/* eslint-disable func-names */
-import { isEqual } from '../utils';
+import { isEqual } from '../index';
 
 const arr1 = [0, 1, 2, 3];
 const arr2 = [0, 1, 2, 3];

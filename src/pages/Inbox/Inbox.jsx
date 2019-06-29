@@ -6,10 +6,12 @@ import { Main } from '../../components/Main';
 import { TaskEditor } from '../../components/TaskEditor';
 import { Tabs } from '../../components/Tabs';
 import { Notifications } from '../../components/Notifications';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import './Inbox.scss';
 
-const Inbox = ({ selectedTask }) => {
+const Inbox = ({ selectedTask, activeWorkspace }) => {
   const isTaskEditorOpen = !!selectedTask;
+  useDocumentTitle(`${activeWorkspace.name} Inbox - Workflow`);
   return (
     <Main
       title="Inbox"

@@ -61,7 +61,7 @@ Button.propTypes = {
   className: PropTypes.string,
   color: PropTypes.string,
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
-  variant: PropTypes.oneOf(['contained', 'underlined', 'text']),
+  variant: PropTypes.oneOf(['contained', 'outlined', 'text', 'underlined']),
   iconOnly: PropTypes.bool,
   isActive: PropTypes.bool,
   innerRef: PropTypes.oneOfType([

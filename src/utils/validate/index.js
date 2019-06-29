@@ -1,6 +1,6 @@
-export const isObject = value => {
+export function isObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]';
-};
+}
 
 /**
  * Performs deep comparison two objects or arrays to determine if they are equivalent
@@ -8,7 +8,7 @@ export const isObject = value => {
  * @param {Array|Object} other - The other value to compare
  */
 
-export const isEqual = (value, other) => {
+export function isEqual(value, other) {
   const type = Object.prototype.toString.call(value);
 
   // If both objects are not the same type, return false
@@ -49,7 +49,7 @@ export const isEqual = (value, other) => {
     });
   }
   return true;
-};
+}
 
 export function isValidEmail(email) {
   const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

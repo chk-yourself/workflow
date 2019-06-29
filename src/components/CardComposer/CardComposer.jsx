@@ -101,7 +101,12 @@ class CardComposer extends Component {
               >
                 Add Task
               </Button>
-              <Button className="card-composer__btn" type="reset" onClick={this.reset} size="sm">
+              <Button
+                className="card-composer__btn"
+                type="reset"
+                onClick={this.reset}
+                size="sm"
+              >
                 Cancel
               </Button>
             </div>

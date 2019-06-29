@@ -14,6 +14,7 @@ import { Folder } from '../../components/Folder';
 import { Main } from '../../components/Main';
 import { TaskEditor } from '../../components/TaskEditor';
 import { Settings } from '../../components/Settings';
+import { setDocTitle } from '../../utils/react';
 import './MyTasks.scss';
 
 class MyTasks extends Component {
@@ -23,6 +24,10 @@ class MyTasks extends Component {
   };
 
   async componentDidMount() {
+    const {
+      activeWorkspace: { name }
+    } = this.props;
+    setDocTitle(`My Tasks in ${name} - Workflow`);
     const { syncFolders } = this.props;
     this.unsubscribe = await syncFolders();
     this.setState({
