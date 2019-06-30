@@ -96,7 +96,7 @@ class MemberAssigner extends Component {
                 name={name}
                 size="sm"
                 variant="circle"
-                imgSrc={photoURL}
+                src={photoURL}
                 key={userId}
                 showOnlineStatus={showOnlineStatus}
                 isOnline={isOnline}

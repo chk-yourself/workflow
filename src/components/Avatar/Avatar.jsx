@@ -4,7 +4,7 @@ import './Avatar.scss';
 
 export default class Avatar extends PureComponent {
   static defaultProps = {
-    imgSrc: null,
+    src: null,
     classes: {
       avatar: '',
       img: '',
@@ -18,6 +18,7 @@ export default class Avatar extends PureComponent {
   };
 
   static propTypes = {
+    src: PropTypes.string,
     classes: PropTypes.shape({
       avatar: PropTypes.string,
       img: PropTypes.string,
@@ -32,7 +33,11 @@ export default class Avatar extends PureComponent {
     )
   };
 
-  getUserInitials = fullName => {
+  getInitials = fullName => {
+    const { getInitials } = this.props;
+    if (getInitials) {
+      return getInitials(fullName);
+    }
     return fullName
       .split(' ')
       .map(name => name.charAt(0))
@@ -42,7 +47,7 @@ export default class Avatar extends PureComponent {
 
   render() {
     const {
-      imgSrc,
+      src,
       imgProps,
       classes,
       name,
@@ -58,9 +63,9 @@ export default class Avatar extends PureComponent {
           showOnlineStatus && isOnline ? 'is-online' : ''
         } ${classes.avatar}`}
       >
-        {imgSrc !== null ? (
+        {src !== null ? (
           <img
-            src={imgSrc}
+            src={src}
             alt={name}
             className={`avatar__img ${classes.img}`}
             {...imgProps}
@@ -70,7 +75,7 @@ export default class Avatar extends PureComponent {
             className={`avatar__placeholder ${classes.placeholder}`}
             style={{ backgroundColor: color }}
           >
-            {this.getUserInitials(name)}
+            {this.getInitials(name)}
           </span>
         )}
       </span>

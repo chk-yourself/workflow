@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { IconButton } from '../Button';
@@ -18,9 +18,9 @@ const Tag = ({
   ...rest
 }) => (
   <span
-    className={`tag tag--${size} bg--${color} ${variant !== 'default' ? `tag--${variant}` : ''} ${
-      isFocused ? 'is-focused' : ''
-    } ${className}`}
+    className={`tag tag--${size} bg--${color} ${
+      variant !== 'default' ? `tag--${variant}` : ''
+    } ${isFocused ? 'is-focused' : ''} ${className}`}
     ref={innerRef}
     data-tooltip={tooltip || name}
     {...rest}
@@ -66,4 +66,4 @@ Tag.propTypes = {
   tooltip: PropTypes.string
 };
 
-export default Tag;
+export default memo(Tag);

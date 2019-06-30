@@ -67,14 +67,7 @@ class Comment extends Component {
   };
 
   render() {
-    const {
-      commentId,
-      author,
-      content,
-      createdAt,
-      likes,
-      isPinned
-    } = this.props;
+    const { commentId, author, content, createdAt, likes, isPinned } = this.props;
     const { isCommentEditorActive } = this.state;
     const { name, photoURL } = author;
     const likesCount = Object.keys(likes).length;
@@ -89,22 +82,15 @@ class Comment extends Component {
           name={name}
           size="sm"
           variant="circle"
-          imgSrc={photoURL}
+          src={photoURL}
         />
         <div className="comment">
           <div className="comment__header">
             <div className="comment__details">
               <span className="comment__name">{name}</span>
-              <Timestamp
-                className="comment__timestamp"
-                date={createdAt.toDate()}
-              />
+              <Timestamp className="comment__timestamp" date={createdAt.toDate()} />
             </div>
-            <Button
-              className="comment__likes"
-              onClick={this.handleLike}
-              size="sm"
-            >
+            <Button className="comment__likes" onClick={this.handleLike} size="sm">
               <Icon name="thumbs-up" />
               <span className="comment__likes-counter">
                 {likesCount > 0 ? likesCount : ''}

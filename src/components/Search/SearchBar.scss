@@ -28,7 +28,7 @@
   }
   &.is-expanded {
     width: calc(100% + 24px);
-    max-width: 360px;
+    max-width: 500px;
     border: 1px solid $grey-400;
     .search-form__btn {
       z-index: 11;

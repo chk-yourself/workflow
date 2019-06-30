@@ -10,7 +10,9 @@
 
 .search-suggestions {
   top: 100%;
-  width: 100%;
+  width: calc(100% + 24px);
+  max-width: 500px;
+  right: 0;
   position: absolute;
   border: 1px solid $grey-300;
   background-color: #fff;
@@ -27,8 +29,11 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   color: $grey-600;
-  padding: 16px 0 4px 16px;
+  padding: 16px 0 4px 12px;
   display: inline-block;
+  @include md {
+    padding-left: 16px;
+  }
 }
 
 .search-suggestions__item {
@@ -41,11 +46,13 @@
 }
 
 .search-suggestion {
-  padding: 12px 24px;
+  padding: 12px;
   color: $grey-800;
   font-size: 13px;
   font-weight: 500;
+  line-height: 1.4;
   cursor: pointer;
+  display: flex;
   &:focus,
   &:hover,
   &.is-selected {
@@ -67,10 +74,23 @@
     height: 15px;
     margin-right: 12px;
     pointer-events: none;
+    flex: none;
+  }
+  span {
+    pointer-events: none;
+  }
+  @include md {
+    padding: 12px 16px;
   }
 }
 
 .mark {
   color: $grey-900;
   background-color: transparent;
+}
+
+.search-suggestions__default {
+  mark {
+    margin-left: 4px;
+  }
 }

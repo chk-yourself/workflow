@@ -212,7 +212,7 @@ class Task extends Component {
                         name={memberName}
                         size="sm"
                         variant="circle"
-                        imgSrc={photoURL}
+                        src={photoURL}
                         key={userId}
                       />
                     );

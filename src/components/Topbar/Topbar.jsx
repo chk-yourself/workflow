@@ -45,7 +45,7 @@ const Topbar = ({
                 name={currentUser.name}
                 size="sm"
                 variant="circle"
-                imgSrc={currentUser.photoURL}
+                src={currentUser.photoURL}
               />
             )
           }}

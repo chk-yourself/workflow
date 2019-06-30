@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import { Link } from 'react-router-dom';
@@ -37,8 +38,50 @@ class RichTextEditor extends Component {
     inlines: [],
     isMentionsEnabled: false,
     onSubmit: () => null,
+    onBlur: () => {},
     addOns: [],
-    isReadOnly: false
+    isReadOnly: false,
+    value: null
+  };
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      container: PropTypes.string,
+      toolbar: PropTypes.string,
+      editor: PropTypes.string,
+      button: PropTypes.string,
+      addOns: PropTypes.string
+    }),
+    placeholder: PropTypes.string,
+    onSubmit: PropTypes.func,
+    onBlur: PropTypes.func,
+    isMentionsEnabled: PropTypes.bool,
+    isReadOnly: PropTypes.bool,
+    marks: PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.string,
+        icon: PropTypes.string
+      })
+    ),
+    blocks: PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.string,
+        icon: PropTypes.string
+      })
+    ),
+    inlines: PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.string,
+        icon: PropTypes.string
+      })
+    ),
+    addOns: PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.string.isRequired,
+        onClick: PropTypes.func,
+        props: PropTypes.objectOf(PropTypes.any)
+      })
+    )
   };
 
   state = {
@@ -178,12 +221,7 @@ class RichTextEditor extends Component {
         e.key === keys.ARROW_UP ||
         e.key === keys.ENTER)
     ) {
-      const {
-        userSuggestions,
-        selectedIndex,
-        selectedMember,
-        query
-      } = this.state;
+      const { userSuggestions, selectedIndex, selectedMember, query } = this.state;
       const lastIndex = userSuggestions.length - 1;
       const nextIndex = selectedIndex === lastIndex ? 0 : selectedIndex + 1;
       const prevIndex = selectedIndex === 0 ? lastIndex : selectedIndex - 1;
@@ -224,10 +262,10 @@ class RichTextEditor extends Component {
         case keys.BACKSPACE: {
           e.preventDefault();
           if (firstText.text === '' && !nextText) {
-            if (this.hasBlock('list-item' || this.hasBlock('code'))) {
+            if (this.hasBlock('list-item')) {
               const parent = document.getParent(value.focusBlock.key);
               const ancestor = document.getParent(parent.key);
-              if (ancestor.object === 'document') {
+              if (ancestor && ancestor.object === 'document') {
                 editor
                   .moveToRangeOfNode(value.focusBlock)
                   .setBlocks(DEFAULT_BLOCK)
@@ -238,13 +276,12 @@ class RichTextEditor extends Component {
                 editor.unwrapBlock(parent.type);
               }
             }
+            if (this.hasBlock('code')) {
+              editor.unwrapBlock('code').setBlocks(DEFAULT_BLOCK);
+            }
           } else {
             editor.deleteBackward();
-            if (
-              isMentionsEnabled &&
-              isMentionsListVisible &&
-              lastChar === '@'
-            ) {
+            if (isMentionsEnabled && isMentionsListVisible && lastChar === '@') {
               setTimeout(() => {
                 this.setState({
                   query: '',
@@ -361,9 +398,7 @@ class RichTextEditor extends Component {
           .unwrapBlock('ordered-list');
       } else if (isList) {
         editor
-          .unwrapBlock(
-            type === 'unordered-list' ? 'ordered-list' : 'unordered-list'
-          )
+          .unwrapBlock(type === 'unordered-list' ? 'ordered-list' : 'unordered-list')
           .wrapBlock(type);
       } else {
         editor.setBlocks('list-item').wrapBlock(type);
@@ -397,7 +432,7 @@ class RichTextEditor extends Component {
     }
   };
 
-  onFocus = e => {
+  onFocus = () => {
     setTimeout(() => {
       this.setState({
         isFocused: true
@@ -503,6 +538,23 @@ class RichTextEditor extends Component {
     this.editor.blur();
   };
 
+  getAddOnCallback = type => {
+    switch (type) {
+      case 'submit': {
+        return this.onSubmit;
+      }
+      case 'update': {
+        return this.onUpdate;
+      }
+      case 'reset': {
+        return this.reset;
+      }
+      default: {
+        return null;
+      }
+    }
+  };
+
   render() {
     const {
       id,
@@ -517,13 +569,7 @@ class RichTextEditor extends Component {
       isReadOnly,
       innerRef
     } = this.props;
-    const {
-      value,
-      isMentionsListVisible,
-      query,
-      isFocused,
-      selectedMember
-    } = this.state;
+    const { value, isMentionsListVisible, query, isFocused, selectedMember } = this.state;
     return (
       <div
         ref={innerRef}
@@ -575,15 +621,13 @@ class RichTextEditor extends Component {
             </Button>
           ))}
           {addOns.length > 0 && (
-            <div
-              className={`rich-text-editor__add-ons ${classes.addOns || ''}`}
-            >
-              {addOns.map(addOn => (
+            <div className={`rich-text-editor__add-ons ${classes.addOns || ''}`}>
+              {addOns.map((addOn, i) => (
                 <Button
-                  key={`${id}--${addOn.type}`}
+                  key={`${addOn.type}-${i}`}
                   type="button"
                   disabled={addOn.type === 'submit' ? this.isEmpty() : false}
-                  onMouseDown={this[addOn.onClick]}
+                  onMouseDown={addOn.onClick || this.getAddOnCallback(addOn.type)}
                   {...addOn.props}
                 />
               ))}

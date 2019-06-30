@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent as Component } from 'react';
 import { IconButton } from '../Button';
 import { Input } from '../Input';
 import './SearchBar.scss';
@@ -21,7 +21,15 @@ export default class SearchBar extends Component {
   };
 
   render() {
-    const { value, onClick, onChange, onKeyDown, onSubmit, isExpanded, onFocus } = this.props;
+    const {
+      value,
+      onClick,
+      onChange,
+      onKeyDown,
+      onSubmit,
+      isExpanded,
+      onFocus
+    } = this.props;
     return (
       <div className={`search-bar${isExpanded ? ' is-expanded' : ''} clearfix`}>
         <form className="search-form" onClick={onClick} onSubmit={onSubmit}>

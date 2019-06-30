@@ -19,13 +19,7 @@ class CommentComposer extends Component {
 
   addComment = (value, e) => {
     if (e.type === 'keydown' && e.key !== keys.ENTER) return;
-    const {
-      currentUser,
-      firebase,
-      taskId,
-      projectId,
-      activeWorkspace
-    } = this.props;
+    const { currentUser, firebase, taskId, projectId, activeWorkspace } = this.props;
     const { workspaceId } = activeWorkspace;
     const users = getMentionedUsers(value);
     firebase.createComment({
@@ -54,7 +48,7 @@ class CommentComposer extends Component {
           name={currentUser.name}
           size="sm"
           variant="circle"
-          imgSrc={currentUser.photoURL}
+          src={currentUser.photoURL}
         />
         <RichTextEditor
           key={`comment-composer--${id}`}
@@ -74,11 +68,8 @@ class CommentComposer extends Component {
           addOns={[
             {
               type: 'submit',
-              onClick: 'onSubmit',
-              id: 'submitComment',
               props: {
-                className: `comment-composer__btn--submit ${classes.button ||
-                  ''}`,
+                className: `comment-composer__btn--submit ${classes.button || ''}`,
                 color: 'primary',
                 variant: 'contained',
                 children: 'Send'
@@ -132,9 +123,6 @@ const mapStateToProps = state => {
   };
 };
 
-const condition = (currentUser, activeWorkspace) =>
-  !!currentUser && !!activeWorkspace;
+const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
-export default withAuthorization(condition)(
-  connect(mapStateToProps)(CommentComposer)
-);
+export default withAuthorization(condition)(connect(mapStateToProps)(CommentComposer));

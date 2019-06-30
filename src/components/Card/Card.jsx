@@ -83,7 +83,7 @@ class Card extends Component {
               />
               {subtaskIds && subtaskIds.length > 0 && (
                 <Badge className="card__detail" icon="check-circle">
-                  {completedSubtasks.length}/{subtaskIds.length}
+                  {`${completedSubtasks.length}/${subtaskIds.length}`}
                 </Badge>
               )}
               {commentIds && commentIds.length > 0 && (
@@ -107,7 +107,7 @@ class Card extends Component {
                           name={memberName}
                           size="sm"
                           variant="circle"
-                          imgSrc={photoURL}
+                          src={photoURL}
                           key={userId}
                         />
                       );

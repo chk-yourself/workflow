@@ -218,8 +218,8 @@ class ProjectContainer extends Component {
                 {listIds.map((listId, i) => {
                   return (
                     <List
-                      viewFilter={tempSettings.tasks.view}
-                      sortBy={tempSettings.tasks.sortBy}
+                      viewFilter={view}
+                      sortBy={sortBy}
                       listId={listId}
                       key={listId}
                       index={i}

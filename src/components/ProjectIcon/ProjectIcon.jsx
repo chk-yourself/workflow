@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './ProjectIcon.scss';
 
 const ProjectIcon = ({ className, color }) => (
@@ -10,4 +10,4 @@ ProjectIcon.defaultProps = {
   color: 'default'
 };
 
-export default ProjectIcon;
+export default memo(ProjectIcon);

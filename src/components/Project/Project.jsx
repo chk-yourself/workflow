@@ -20,6 +20,7 @@ import {
   PROJECT_OVERVIEW,
   PROJECT_TASKS
 } from '../../constants/routes';
+import { Confirm } from '../Confirm';
 
 class Project extends Component {
   static defaultProps = {
@@ -173,112 +174,122 @@ class Project extends Component {
     } = this.state;
 
     return (
-      <div className={`project project--${layout} project--${section}`}>
-        <div className="project__header">
-          <div className="project__header-content">
-            <div className={`project__name-wrapper ${isNameFocused ? 'is-focused' : ''}`}>
-              <ProjectIcon className="project__icon" color={color} />
-              <Input
-                className="project__input--name"
-                name="projectName"
-                type="text"
-                value={name}
-                onChange={this.onNameChange}
-                onFocus={this.onFocus}
-                onBlur={this.onNameBlur}
-                size={!isNameFocused ? name.length : undefined}
-                isRequired
-              />
-              <MoreProjectActions
-                allowDelete={
-                  ownerId === currentUser.userId || currentUser.role === 'admin'
-                }
-                onDelete={onDelete}
-                onDuplicate={onDuplicate}
-              />
-            </div>
-            <ProjectLinks projectId={projectId} activeView={section} />
-          </div>
-        </div>
-        <Switch>
-          <Route
-            path={PROJECT_TASKS}
-            render={props => (
-              <>
-                <Toolbar className="project__toolbar">
-                  {layout === 'list' && (
-                    <Button
-                      className="project__btn project__btn--add-list"
-                      onClick={this.activateListComposer}
-                      color="primary"
-                      variant="contained"
-                      size="sm"
-                    >
-                      Add List
-                    </Button>
-                  )}
-                  <MemberAssigner
-                    placeholder="Add or remove member"
-                    memberIds={memberIds}
-                    onSelectMember={this.handleMembership}
-                    classes={{
-                      memberAssigner: 'project__member-assigner',
-                      avatar: 'project__avatar',
-                      button: 'project__btn--add-member'
-                    }}
-                    align="right"
-                    showOnlineStatus
-                    isMemberSearchDisabled={isPrivate}
-                  />
-                  <ProjectSettings
-                    isActive={isProjectSettingsActive}
-                    onToggle={this.toggleSettingsMenu}
-                    onClose={this.closeSettingsMenu}
-                    onSave={this.saveProjectSettings}
-                    view={viewFilter}
-                    sortBy={sortBy}
-                    layout={layout}
-                    onChange={this.setTempProjectSettings}
-                  />
-                </Toolbar>
-                <Droppable
-                  droppableId={projectId}
-                  type={LIST}
-                  direction={layout === 'board' ? 'horizontal' : 'vertical'}
+      <Confirm>
+        {confirm => (
+          <div className={`project project--${layout} project--${section}`}>
+            <div className="project__header">
+              <div className="project__header-content">
+                <div
+                  className={`project__name-wrapper ${isNameFocused ? 'is-focused' : ''}`}
                 >
-                  {provided => (
-                    <div className="project__lists" ref={provided.innerRef}>
-                      {children}
-                      {provided.placeholder}
-                      <ListComposer
-                        inputRef={this.setInputRef}
-                        onToggle={this.toggleListComposer}
-                        isActive={isListComposerActive}
-                        layout={layout}
-                        projectId={projectId}
+                  <ProjectIcon className="project__icon" color={color} />
+                  <Input
+                    className="project__input--name"
+                    name="projectName"
+                    type="text"
+                    value={name}
+                    onChange={this.onNameChange}
+                    onFocus={this.onFocus}
+                    onBlur={this.onNameBlur}
+                    size={!isNameFocused ? name.length : undefined}
+                    isRequired
+                  />
+                  <MoreProjectActions
+                    allowDelete={
+                      ownerId === currentUser.userId || currentUser.role === 'admin'
+                    }
+                    onDelete={confirm(onDelete, {
+                      label: 'Delete Project',
+                      intent: 'danger',
+                      title: `Delete "${name}" project?`
+                    })}
+                    onDuplicate={onDuplicate}
+                  />
+                </div>
+                <ProjectLinks projectId={projectId} activeView={section} />
+              </div>
+            </div>
+            <Switch>
+              <Route
+                path={PROJECT_TASKS}
+                render={props => (
+                  <>
+                    <Toolbar className="project__toolbar">
+                      {layout === 'list' && (
+                        <Button
+                          className="project__btn project__btn--add-list"
+                          onClick={this.activateListComposer}
+                          color="primary"
+                          variant="contained"
+                          size="sm"
+                        >
+                          Add List
+                        </Button>
+                      )}
+                      <MemberAssigner
+                        placeholder="Add or remove member"
+                        memberIds={memberIds}
+                        onSelectMember={this.handleMembership}
+                        classes={{
+                          memberAssigner: 'project__member-assigner',
+                          avatar: 'project__avatar',
+                          button: 'project__btn--add-member'
+                        }}
+                        align="right"
+                        showOnlineStatus
+                        isMemberSearchDisabled={isPrivate}
                       />
-                    </div>
-                  )}
-                </Droppable>
-              </>
-            )}
-          />
-          <Route
-            path={PROJECT_OVERVIEW}
-            render={props => (
-              <ProjectOverview
-                onSelectMember={this.handleMembership}
-                projectId={projectId}
-                {...props}
+                      <ProjectSettings
+                        isActive={isProjectSettingsActive}
+                        onToggle={this.toggleSettingsMenu}
+                        onClose={this.closeSettingsMenu}
+                        onSave={this.saveProjectSettings}
+                        view={viewFilter}
+                        sortBy={sortBy}
+                        layout={layout}
+                        onChange={this.setTempProjectSettings}
+                      />
+                    </Toolbar>
+                    <Droppable
+                      droppableId={projectId}
+                      type={LIST}
+                      direction={layout === 'board' ? 'horizontal' : 'vertical'}
+                    >
+                      {provided => (
+                        <div className="project__lists" ref={provided.innerRef}>
+                          {children}
+                          {provided.placeholder}
+                          <ListComposer
+                            inputRef={this.setInputRef}
+                            onToggle={this.toggleListComposer}
+                            isActive={isListComposerActive}
+                            layout={layout}
+                            projectId={projectId}
+                          />
+                        </div>
+                      )}
+                    </Droppable>
+                  </>
+                )}
               />
-            )}
-          />
-          <Route
-            path={PROJECT_CALENDAR}
-            render={props => <ProjectCalendar projectId={projectId} {...props} />}
-          />
-        </Switch>
-      </div>
+              <Route
+                path={PROJECT_OVERVIEW}
+                render={props => (
+                  <ProjectOverview
+                    onSelectMember={this.handleMembership}
+                    projectId={projectId}
+                    {...props}
+                  />
+                )}
+              />
+              <Route
+                path={PROJECT_CALENDAR}
+                render={props => <ProjectCalendar projectId={projectId} {...props} />}
+              />
+            </Switch>
+          </div>
+        )}
+      </Confirm>
     );
   }
 }

@@ -47,8 +47,7 @@ class NotesEditor extends Component {
         classes={{
           container: `notes-editor ${classes.editor || ''}`,
           toolbar: 'notes-editor__toolbar',
-          button: 'notes-editor__toolbar-btn',
-          addOns: 'notes-editor__add-ons'
+          button: 'notes-editor__toolbar-btn'
         }}
         isMentionsEnabled={isMentionsEnabled}
         mentions={{

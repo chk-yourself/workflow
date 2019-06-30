@@ -24,14 +24,7 @@ class CommentEditor extends Component {
   };
 
   render() {
-    const {
-      isReadOnly,
-      content,
-      classes,
-      users,
-      usersById,
-      commentId
-    } = this.props;
+    const { isReadOnly, content, classes, users, usersById, commentId } = this.props;
     return (
       <RichTextEditor
         id={commentId}
@@ -52,8 +45,6 @@ class CommentEditor extends Component {
         addOns={[
           {
             type: 'update',
-            id: 'updateComment',
-            onClick: 'onUpdate',
             props: {
               className: `comment-editor__btn--submit ${classes.button || ''}`,
               color: 'primary',

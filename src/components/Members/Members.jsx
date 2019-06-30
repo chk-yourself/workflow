@@ -34,7 +34,7 @@ const Members = ({
             name={name}
             size="sm"
             variant="circle"
-            imgSrc={photoURL}
+            src={photoURL}
             showOnlineStatus={showOnlineStatus}
             isOnline={isOnline}
           />

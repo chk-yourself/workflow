@@ -12,6 +12,7 @@ import { selectTask as selectTaskAction } from '../../ducks/selectedTask';
 import { taskSelectors } from '../../ducks/tasks';
 import { generateKey } from '../../utils/react';
 import { withOutsideClick } from '../withOutsideClick';
+import { Menu, MenuItem } from '../Menu';
 import Mark from './Mark';
 import './SearchTypeahead.scss';
 
@@ -65,10 +66,8 @@ class SearchTypeahead extends Component {
     e.preventDefault();
 
     const { filteredList, selectedIndex, selectedItem } = this.state;
-    const nextIndex =
-      selectedIndex === filteredList.length - 1 ? 0 : selectedIndex + 1;
-    const prevIndex =
-      selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
+    const nextIndex = selectedIndex === filteredList.length - 1 ? 0 : selectedIndex + 1;
+    const prevIndex = selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
 
     // eslint-disable-next-line default-case
     switch (e.key) {
@@ -202,9 +201,7 @@ class SearchTypeahead extends Component {
     const regExp = new RegExp(`(\\b${value})`, 'gi');
     return name
       .split(regExp)
-      .map(text =>
-        regExp.test(text) ? <Mark key={generateKey()}>{text}</Mark> : text
-      );
+      .map(text => (regExp.test(text) ? <Mark key={generateKey()}>{text}</Mark> : text));
   };
 
   suggestionsRef = ref => {
@@ -243,17 +240,18 @@ class SearchTypeahead extends Component {
           value={query}
         />
         {query !== '' && isActive && (
-          <ul ref={this.suggestionsRef} className="search-suggestions">
-            <li
+          <Menu innerRef={this.suggestionsRef} className="search-suggestions">
+            <MenuItem
               tabIndex={0}
               onClick={this.handleSubmit}
-              className={`search-suggestions__item search-suggestion ${
+              className={`search-suggestions__item search-suggestions__default search-suggestion ${
                 selectedItem === null ? 'is-selected' : ''
               }`}
             >
               <Icon name="search" />
-              Items with <Mark>{query}</Mark>
-            </li>
+              Items with
+              <Mark>{query}</Mark>
+            </MenuItem>
             <SearchSuggestions
               onClick={this.onClickProject}
               category="Projects"
@@ -267,7 +265,9 @@ class SearchTypeahead extends Component {
                   ) : (
                     <JamIcon name="task-list" />
                   )}
-                  {this.highlightMatch(item)}
+                  <span className="search-suggestion__text">
+                    {this.highlightMatch(item)}
+                  </span>
                 </>
               )}
             />
@@ -280,7 +280,9 @@ class SearchTypeahead extends Component {
               renderMatch={item => (
                 <>
                   <Icon name="check-circle" />
-                  {this.highlightMatch(item)}
+                  <span className="search-suggestion__text">
+                    {this.highlightMatch(item)}
+                  </span>
                 </>
               )}
             />
@@ -293,11 +295,13 @@ class SearchTypeahead extends Component {
               renderMatch={item => (
                 <>
                   <Icon name="tag" />
-                  {this.highlightMatch(item)}
+                  <span className="search-suggestion__text">
+                    {this.highlightMatch(item)}
+                  </span>
                 </>
               )}
             />
-          </ul>
+          </Menu>
         )}
       </div>
     );

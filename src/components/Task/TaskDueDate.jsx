@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { toDateString, isPriorDate, isWithinDays } from '../../utils/date';
+import { toDateString, isPriorDate, isWithinDays, isSameDate } from '../../utils/date';
 import { Badge } from '../Badge';
 import './TaskDueDate.scss';
 
@@ -47,4 +47,15 @@ TaskDueDate.propTypes = {
   dueDate: PropTypes.oneOfType([() => null, PropTypes.instanceOf(Date)])
 };
 
-export default TaskDueDate;
+function areEqual(prevProps, nextProps) {
+  if (
+    prevProps.icon !== nextProps.icon ||
+    prevProps.className !== nextProps.className ||
+    (nextProps.dueDate && !isSameDate(prevProps.dueDate, nextProps.dueDate))
+  ) {
+    return false;
+  }
+  return true;
+}
+
+export default memo(TaskDueDate);

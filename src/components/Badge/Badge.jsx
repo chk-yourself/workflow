@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '../Icon';
 import './Badge.scss';
 
-const Badge = ({ icon, children, className }) => (
+const Badge = ({ icon, children, className, text }) => (
   <span className={`badge ${className}`}>
     {icon && <Icon name={icon} />}
+    {text}
     {children}
   </span>
 );
@@ -22,4 +23,4 @@ Badge.propTypes = {
   children: PropTypes.node
 };
 
-export default Badge;
+export default memo(Badge);
