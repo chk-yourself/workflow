@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import TaskEditorSection from './TaskEditorSection';
 import TaskEditorIcon from './TaskEditorIcon';
@@ -28,4 +28,4 @@ TaskEditorNotes.propTypes = {
   enableMentions: PropTypes.bool.isRequired
 };
 
-export default TaskEditorNotes;
+export default memo(TaskEditorNotes);

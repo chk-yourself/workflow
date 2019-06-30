@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent as Component } from 'react';
 import { withAuthorization } from '../Session';
 import { Button } from '../Button';
 import { Textarea } from '../Textarea';
@@ -61,9 +61,15 @@ class SubtaskComposer extends Component {
     const { name, isFocused } = this.state;
     const { classes } = this.props;
     return (
-      <div className={`subtask-composer ${isFocused ? 'is-active' : ''} ${classes.composer || ''}`}>
+      <div
+        className={`subtask-composer ${isFocused ? 'is-active' : ''} ${classes.composer ||
+          ''}`}
+      >
         <div className={`subtask-composer__icon-wrapper ${classes.iconWrapper || ''}`}>
-          <Icon name="plus-circle" className={`subtask-composer__icon ${classes.icon || ''}`} />
+          <Icon
+            name="plus-circle"
+            className={`subtask-composer__icon ${classes.icon || ''}`}
+          />
         </div>
         <form
           name="newSubtaskForm"

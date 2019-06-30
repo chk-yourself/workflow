@@ -69,8 +69,9 @@ class ProjectContainer extends Component {
       destination.index === source.index
     )
       return;
-    const { firebase, listsById, tempSettings, state } = this.props;
+    const { firebase, tasksById, listsById, tempSettings } = this.props;
     const { view, sortBy } = tempSettings.tasks;
+    const state = { tasksById, listsById };
     if (type === TASK) {
       const { droppableId: newListId, index: newIndex } = destination;
       const { droppableId: origListId, index: prevIndex } = source;
@@ -248,9 +249,9 @@ class ProjectContainer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    state,
     selectedProjectId: getSelectedProjectId(state),
     selectedTask: getSelectedTask(state),
+    tasksById: taskSelectors.getTasksById(state),
     listsById: listSelectors.getListsById(state),
     project: projectSelectors.getProject(state, ownProps.projectId),
     isLoaded: projectSelectors.getProjectLoadedState(state, ownProps.projectId),

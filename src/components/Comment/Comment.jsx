@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import { withFirebase } from '../Firebase';
 import { userSelectors } from '../../ducks/users';
 import { currentUserSelectors } from '../../ducks/currentUser';
-import { Icon } from '../Icon';
-import { Button } from '../Button';
 import { Avatar } from '../Avatar';
 import { CommentEditor } from '../CommentEditor';
 import { Timestamp } from '../Timestamp';
+import LikeButton from './LikeButton';
 import './Comment.scss';
 
 class Comment extends Component {
@@ -90,12 +89,7 @@ class Comment extends Component {
               <span className="comment__name">{name}</span>
               <Timestamp className="comment__timestamp" date={createdAt.toDate()} />
             </div>
-            <Button className="comment__likes" onClick={this.handleLike} size="sm">
-              <Icon name="thumbs-up" />
-              <span className="comment__likes-counter">
-                {likesCount > 0 ? likesCount : ''}
-              </span>
-            </Button>
+            <LikeButton onClick={this.handleLike} likesCount={likesCount} />
           </div>
           <CommentEditor
             key={commentId}

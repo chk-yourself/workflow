@@ -6,9 +6,9 @@ import { withAuthorization } from '../Session';
 import { Tag } from '../Tag';
 import { Input } from '../Input';
 import { ColorPicker } from '../ColorPicker';
-import { withOutsideClick } from '../withOutsideClick';
 import { projectSelectors } from '../../ducks/projects';
 import * as keys from '../../constants/keys';
+import TagSuggestions from './TagSuggestions';
 import './TagInput.scss';
 
 const INITIAL_STATE = {
@@ -151,11 +151,17 @@ class TagInput extends Component {
     e.preventDefault();
   };
 
-  onOutsideClick = e => {
+  onContainerBlur = e => {
     if (e.target.matches('.tag-input__item')) return;
-    this.setState({
-      isActive: false
+    this.timeoutId = setTimeout(() => {
+      this.setState({
+        isActive: false
+      });
     });
+  };
+
+  onContainerFocus = () => {
+    clearTimeout(this.timeoutId);
   };
 
   toggleColorPicker = () => {
@@ -253,6 +259,8 @@ class TagInput extends Component {
           !hasTags ? 'no-tags' : ''
         }`}
         ref={innerRef}
+        onBlur={this.onContainerBlur}
+        onFocus={this.onContainerFocus}
       >
         {assignedTags.map(tag => (
           <Tag
@@ -278,32 +286,7 @@ class TagInput extends Component {
             {...inputProps}
           />
           {isActive && (
-            <ul className="tag-input__list">
-              {filteredList.map((item, i) => {
-                return (
-                  <li
-                    key={item.name}
-                    data-tag={item.name}
-                    onClick={this.onClickSuggestion}
-                    tabIndex={0}
-                    className={`tag-input__item ${
-                      selectedTag === item.name ? 'is-selected' : ''
-                    } ${
-                      !hasExactMatch && i === filteredList.length - 1 ? 'tag-input__item--new' : ''
-                    }`}
-                  >
-                    {!hasExactMatch && i === filteredList.length - 1 ? (
-                      <>
-                        <span className="tag-input__item--heading">New Tag</span>
-                        <span className="tag-input__item--name">{item.name}</span>
-                      </>
-                    ) : (
-                      <Tag name={item.name} color={item.color} size="sm" />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            <TagSuggestions items={filteredList} selectedTag={selectedTag} hasExactMatch={hasExactMatch} onClick={this.onClickSuggestion} />
           )}
         </div>
         {isActive && (
@@ -327,6 +310,5 @@ const condition = currentUser => !!currentUser;
 
 export default compose(
   withAuthorization(condition),
-  connect(mapStateToProps),
-  withOutsideClick
+  connect(mapStateToProps)
 )(TagInput);

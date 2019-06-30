@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Icon } from '../Icon';
 
 const TaskEditorIcon = ({ name }) => (
@@ -7,4 +7,4 @@ const TaskEditorIcon = ({ name }) => (
   </div>
 );
 
-export default TaskEditorIcon;
+export default memo(TaskEditorIcon);
