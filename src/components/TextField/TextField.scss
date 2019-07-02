@@ -9,3 +9,9 @@
     margin-top: 24px;
   }
 }
+
+.text-field {
+  &.is-invalid {
+    border-color: $red;
+  }
+}

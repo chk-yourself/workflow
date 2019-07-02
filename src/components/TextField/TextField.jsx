@@ -9,11 +9,12 @@ import './TextField.scss';
  * Used for traditional forms
  */
 
-const TextField = ({ label, labelClass, id, type, ...props }) => (
+const TextField = ({ id, type, className, label, labelClass, ...props }) => (
   <Input
     type={type}
     label={label}
     labelClass={`text-field__label ${labelClass}`}
+    className={`text-field ${className}`}
     id={id}
     {...props}
   />
@@ -21,13 +22,15 @@ const TextField = ({ label, labelClass, id, type, ...props }) => (
 
 TextField.defaultProps = {
   type: 'text',
-  labelClass: ''
+  labelClass: '',
+  className: ''
 };
 
 TextField.propTypes = {
   type: PropTypes.oneOf(['text', 'password', 'email']),
   label: PropTypes.string.isRequired,
-  labelClass: PropTypes.string
+  labelClass: PropTypes.string,
+  className: PropTypes.string
 };
 
 export default TextField;
