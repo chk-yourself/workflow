@@ -99,7 +99,6 @@ class TagInput extends Component {
 
   onKeyDown = e => {
     if (
-      e.key !== keys.TAB &&
       e.key !== keys.ARROW_DOWN &&
       e.key !== keys.ARROW_UP &&
       e.key !== keys.ENTER &&
@@ -117,9 +116,7 @@ class TagInput extends Component {
 
     // eslint-disable-next-line default-case
     switch (e.key) {
-      case keys.ARROW_DOWN:
-      // eslint-disable-next-line no-fallthrough
-      case keys.TAB: {
+      case keys.ARROW_DOWN: {
         this.setState({
           selectedTag: filteredList[nextIndex].name,
           selectedIndex: nextIndex

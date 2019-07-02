@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Radio, RadioGroup } from '../Radio';
+import { Radio } from '../Radio';
 import { withOutsideClick } from '../withOutsideClick';
 import './ColorPicker.scss';
 

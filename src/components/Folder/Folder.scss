@@ -20,11 +20,14 @@
 }
 
 .folder__header {
-  padding: 4px;
   position: relative;
   margin: 0;
   height: 46px;
   border-radius: 4px;
+}
+
+.folder__header-inner {
+  padding: 4px;
   @include md {
     padding: 4px 8px;
   }

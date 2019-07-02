@@ -17,11 +17,13 @@ class Subtasks extends Component {
 
   static propTypes = {
     usePortal: PropTypes.bool,
-    taskId: PropTypes.string.isRequired
+    taskId: PropTypes.string.isRequired,
+    subtaskIds: PropTypes.arrayOf(PropTypes.string).isRequired
   };
 
   state = {
-    isLoading: !this.props.isLoaded
+    isLoading: !this.props.isLoaded,
+    subtaskIds: this.props.subtaskIds
   };
 
   async componentDidMount() {
@@ -34,6 +36,12 @@ class Subtasks extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.subtaskIds !== prevProps.subtaskIds) {
+      this.resetSubtaskOrder();
+    }
+  }
+
   componentWillUnmount() {
     if (this.unsubscribe) {
       this.unsubscribe();
@@ -41,35 +49,47 @@ class Subtasks extends Component {
   }
 
   moveSubtask = ({ destination, draggableId, source }) => {
-    if (!destination) return;
-    if (destination.index === source.index) return;
+    if (!destination || destination.index === source.index) return;
     const { firebase, subtaskIds } = this.props;
     const updatedSubtaskIds = [...subtaskIds];
     updatedSubtaskIds.splice(source.index, 1);
     updatedSubtaskIds.splice(destination.index, 0, draggableId);
-    firebase.updateDoc(['tasks', source.droppableId], {
+    this.setState({
       subtaskIds: updatedSubtaskIds
     });
+    firebase
+      .updateDoc(['tasks', source.droppableId], {
+        subtaskIds: updatedSubtaskIds
+      })
+      .catch(() => {
+        this.resetSubtaskOrder();
+      });
+  };
+
+  resetSubtaskOrder = () => {
+    const { subtaskIds } = this.props;
+    this.setState({ subtaskIds });
   };
 
   render() {
-    const { taskId, subtasks, usePortal } = this.props;
-    const { isLoading } = this.state;
+    const { taskId, subtasksById, usePortal } = this.props;
+    const { isLoading, subtaskIds } = this.state;
     return (
       <DragDropContext onDragEnd={this.moveSubtask}>
         <Droppable droppableId={taskId} type={droppableTypes.SUBTASK}>
           {provided => (
             <ul className="subtasks" ref={provided.innerRef} {...provided.droppableProps}>
               {!isLoading &&
-                subtasks.map((subtask, index) => {
+                subtaskIds.map((subtaskId, index) => {
+                  const { name, isCompleted } = subtasksById[subtaskId];
                   return (
                     <Subtask
-                      subtaskId={subtask.subtaskId}
+                      subtaskId={subtaskId}
                       taskId={taskId}
                       index={index}
-                      name={subtask.name}
-                      isCompleted={subtask.isCompleted}
-                      key={subtask.subtaskId}
+                      name={name}
+                      isCompleted={isCompleted}
+                      key={subtaskId}
                       usePortal={usePortal}
                     />
                   );
@@ -85,7 +105,6 @@ class Subtasks extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    subtasks: subtaskSelectors.getSubtasksArray(state, ownProps.subtaskIds),
     subtasksById: subtaskSelectors.getSubtasksById(state),
     selectedProjectId: getSelectedProjectId(state),
     isLoaded: taskSelectors.getTaskLoadedState(state, ownProps.taskId).subtasks

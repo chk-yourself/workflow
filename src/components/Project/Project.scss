@@ -378,6 +378,11 @@
   padding: 4px 0 8px 0;
   text-decoration: none;
   text-align: center;
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px $primary-lt;
+    border-radius: 4px;
+  }
   &:hover,
   &:focus {
     color: $primary;

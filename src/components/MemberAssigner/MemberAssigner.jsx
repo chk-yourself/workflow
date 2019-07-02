@@ -115,9 +115,8 @@ class MemberAssigner extends Component {
             buttonProps={{
               size: 'md',
               iconOnly: true,
-              className: `member-assigner__btn--toggle-member-search ${classes.button} ${
-                isMemberSearchActive ? 'is-active' : ''
-              }`,
+              className: `member-assigner__btn--toggle-member-search ${classes.button}`,
+              isActive: isMemberSearchActive,
               children: <Icon name="plus" />,
               onClick: this.toggleMemberSearch
             }}

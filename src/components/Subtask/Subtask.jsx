@@ -23,8 +23,7 @@ class Subtask extends Component {
     name: this.props.name,
     isFocused: false,
     pointX: null,
-    pointY: null,
-    isDragging: false
+    pointY: null
   };
 
   componentDidMount() {
@@ -49,15 +48,23 @@ class Subtask extends Component {
   };
 
   onBlur = () => {
-    const { name, firebase, subtaskId } = this.props;
-    const { name: newName } = this.state;
-    if (name !== newName) {
+    const { name: prevName, firebase, subtaskId } = this.props;
+    const { name } = this.state;
+    if (name && name !== prevName) {
       firebase.updateDoc(['subtasks', subtaskId], {
-        name: newName
+        name
       });
     }
-    this.setState({
+    const newState = {
       isFocused: false
+    };
+
+    // Prevent nameless subtask
+    if (name === '') {
+      newState.name = prevName;
+    }
+    this.setState({
+      ...newState
     });
   };
 

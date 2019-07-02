@@ -27,7 +27,7 @@ class MemberSearch extends Component {
   };
 
   static propTypes = {
-    style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    style: PropTypes.objectOf(PropTypes.any),
     placeholder: PropTypes.string,
     classes: PropTypes.shape({
       avatar: PropTypes.string,
@@ -39,7 +39,8 @@ class MemberSearch extends Component {
       info: PropTypes.string,
       noMatch: PropTypes.string
     }),
-    type: PropTypes.oneOf(['text', 'hidden'])
+    type: PropTypes.oneOf(['text', 'hidden']),
+    query: PropTypes.string
   };
 
   state = {

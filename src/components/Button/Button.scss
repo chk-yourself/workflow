@@ -1,7 +1,7 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-button {
+.btn {
   cursor: pointer;
   border: none;
   background-color: transparent;
@@ -13,9 +13,19 @@ button {
   font-size: 16px;
   font-weight: 500;
   margin: 0;
-  &:active,
   &:focus {
     outline: none;
+  }
+  &:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: none;
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 3px $primary-lt;
+    outline: none;
+  }
+  &:active {
+    box-shadow: none;
   }
   .feather {
     pointer-events: none;

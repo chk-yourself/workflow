@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ExpansionPanelHeader from './ExpansionPanelHeader';
 import ExpansionPanelContent from './ExpansionPanelContent';
 import * as keys from '../../constants/keys';
@@ -9,11 +10,31 @@ export default class ExpansionPanel extends Component {
     classes: {
       panel: '',
       header: '',
-      content: ''
+      content: '',
+      headerInner: ''
     },
     isExpanded: undefined,
     id: null,
-    innerRef: null
+    innerRef: () => null,
+    header: null,
+    children: null
+  };
+
+  static propTypes = {
+    isExpanded: PropTypes.bool,
+    id: PropTypes.string,
+    innerRef: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    ]),
+    classes: PropTypes.shape({
+      panel: PropTypes.string,
+      content: PropTypes.string,
+      header: PropTypes.string,
+      headerInner: PropTypes.string
+    }),
+    header: PropTypes.node,
+    children: PropTypes.node
   };
 
   state = {
@@ -46,9 +67,8 @@ export default class ExpansionPanel extends Component {
 
     return (
       <div
-        className={`expansion-panel ${
-          isExpanded ? 'is-expanded' : ''
-        } ${classes.panel || ''}`}
+        className={`expansion-panel ${isExpanded ? 'is-expanded' : ''} ${classes.panel ||
+          ''}`}
         aria-expanded={isExpanded}
         ref={innerRef}
         {...rest}
@@ -56,8 +76,10 @@ export default class ExpansionPanel extends Component {
         <ExpansionPanelHeader
           onKeyDown={this.toggleContent}
           onClick={this.toggleContent}
-          className={`${isExpanded ? 'is-expanded' : ''} ${classes.header ||
-            ''}`}
+          classes={{
+            header: `${isExpanded ? 'is-expanded' : ''} ${classes.header || ''}`,
+            inner: classes.headerInner || ''
+          }}
         >
           {header}
         </ExpansionPanelHeader>

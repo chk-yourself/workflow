@@ -26,7 +26,7 @@ const Button = ({
   ...props
 }) => (
   <button
-    className={`${className} ${variant} ${variant}--${intent || color} ${
+    className={`btn ${className} ${variant} ${variant}--${intent || color} ${
       iconOnly ? `icon-only icon-only--${size}` : `btn--${size}`
     } ${isActive ? 'is-active' : ''}`}
     type={type}

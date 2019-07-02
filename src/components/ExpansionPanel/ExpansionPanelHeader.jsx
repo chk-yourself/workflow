@@ -1,22 +1,44 @@
-import React from 'react';
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 
-const ExpansionPanelHeader = ({ children, className, onClick, onKeyDown }) => {
+const ExpansionPanelHeader = ({ children, classes, onClick, onKeyDown }) => {
   return (
     <div
-      className={`expansion-panel__header ${className}`}
+      className={`expansion-panel__header ${classes.header || ''}`}
       role="button"
       onClick={onClick}
       tabIndex={0}
       onKeyDown={onKeyDown}
       onDragOver={onClick}
     >
-      {children}
+      <div
+        tabIndex={-1}
+        className={`expansion-panel__header-inner ${classes.inner || ''}`}
+      >
+        {children}
+      </div>
     </div>
   );
 };
 
 ExpansionPanelHeader.defaultProps = {
-  className: ''
+  classes: {
+    header: '',
+    inner: ''
+  },
+  children: null,
+  onClick: () => {},
+  onKeyDown: () => {}
 };
 
-export default ExpansionPanelHeader;
+ExpansionPanelHeader.propTypes = {
+  classes: PropTypes.shape({
+    header: PropTypes.string,
+    inner: PropTypes.string
+  }),
+  children: PropTypes.node,
+  onClick: PropTypes.func,
+  onKeyDown: PropTypes.func
+};
+
+export default memo(ExpansionPanelHeader);

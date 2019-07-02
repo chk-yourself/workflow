@@ -86,21 +86,19 @@
   border: 1px dashed $grey-400;
   border-radius: 50%;
   padding: 0;
+  color: $grey-400;
   .feather {
     width: 16px;
     height: 16px;
     font-size: 16px;
     vertical-align: middle;
-    color: $grey-400;
   }
   &.is-active,
+  &:focus,
   &:hover,
   &:active {
     border-color: $primary;
-    .feather,
-    span {
-      color: $primary;
-    }
+    color: $primary;
   }
 }
 

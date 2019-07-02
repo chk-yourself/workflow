@@ -77,7 +77,8 @@ export default class Folder extends Component {
               classes={{
                 panel: 'folder',
                 content: 'folder__content',
-                header: 'folder__header'
+                header: 'folder__header',
+                headerInner: 'folder__header-inner'
               }}
               innerRef={provided.innerRef}
               {...provided.draggableProps}

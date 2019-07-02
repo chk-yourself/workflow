@@ -2,17 +2,30 @@
 @import '../../styles/mixins';
 
 .expansion-panel__header {
+  position: relative;
   &:hover {
     cursor: pointer;
   }
-  &:focus:not(:focus-visible) {
+  &:focus {
     outline: none;
-    background-color: rgba($primary-lt, 0.5);
+  }
+  &:focus > .expansion-panel__header-inner {
+    box-shadow: inset 0 0 0 3px $primary-lt;
+    outline: none;
   }
   &.is-expanded {
     .feather-chevron-right {
       transform: rotate(90deg);
       transition: all 0.2s ease-in-out;
     }
+  }
+}
+
+.expansion-panel__header-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  &:focus {
+    outline: none;
   }
 }
