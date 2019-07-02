@@ -28,7 +28,8 @@ class ProjectContainer extends Component {
   };
 
   state = {
-    isProjectDuplicatorOpen: false
+    isProjectDuplicatorOpen: false,
+    listIds: this.props.project.listIds
   };
 
   async componentDidMount() {
@@ -52,6 +53,12 @@ class ProjectContainer extends Component {
     console.log('mounted');
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.project.listIds !== prevProps.project.listIds) {
+      this.resetListOrder();
+    }
+  }
+
   componentWillUnmount() {
     const { selectProject, selectTask, selectedTask } = this.props;
     if (selectedTask) {
@@ -61,7 +68,16 @@ class ProjectContainer extends Component {
     this.unsubscribe.forEach(func => func());
   }
 
-  onDragEnd = ({ destination, draggableId, source, type }) => {
+  resetListOrder = () => {
+    const {
+      project: { listIds }
+    } = this.props;
+    this.setState({
+      listIds
+    });
+  };
+
+  onDragEnd = async ({ destination, draggableId, source, type }) => {
     if (!destination) return;
 
     if (
@@ -87,7 +103,7 @@ class ProjectContainer extends Component {
       if (isMovedWithinList) {
         updatedTaskIds.splice(prevIndex, 1);
         updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.updateDoc(['lists', origListId], {
+        await firebase.updateDoc(['lists', origListId], {
           taskIds:
             view === 'all'
               ? updatedTaskIds
@@ -98,7 +114,7 @@ class ProjectContainer extends Component {
       } else {
         const newListName = listsById[destination.droppableId].name;
         updatedTaskIds.splice(newIndex, 0, draggableId);
-        firebase.moveTaskToList({
+        await firebase.moveTaskToList({
           taskId: draggableId,
           origListId: source.droppableId,
           newListId: destination.droppableId,
@@ -115,12 +131,21 @@ class ProjectContainer extends Component {
 
     if (type === LIST) {
       const { project, projectId } = this.props;
-      const updatedListIds = [...project.listIds];
+      const { listIds } = project;
+      const updatedListIds = [...listIds];
       updatedListIds.splice(source.index, 1);
       updatedListIds.splice(destination.index, 0, draggableId);
-      firebase.updateDoc(['projects', projectId], {
+      // Update state locally to prevent drag and drop flickering
+      this.setState({
         listIds: updatedListIds
       });
+      await firebase
+        .updateDoc(['projects', projectId], {
+          listIds: updatedListIds
+        })
+        .catch(() => {
+          this.resetListOrder();
+        });
     }
   };
 
@@ -178,7 +203,7 @@ class ProjectContainer extends Component {
     } = this.props;
     const {
       name,
-      listIds,
+      // listIds,
       color,
       ownerId,
       memberIds,
@@ -188,7 +213,7 @@ class ProjectContainer extends Component {
       layout,
       tasks: { view, sortBy }
     } = tempSettings;
-    const { isProjectDuplicatorOpen } = this.state;
+    const { isProjectDuplicatorOpen, listIds } = this.state;
     const isTaskEditorOpen = !!selectedTask;
     if (!isLoaded.tasks || !isLoaded.subtasks || !isLoaded.lists) return null;
     return (

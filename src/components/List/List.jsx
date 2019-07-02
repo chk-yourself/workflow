@@ -7,13 +7,10 @@ import { taskSelectors } from '../../ducks/tasks';
 import { listActions, listSelectors } from '../../ducks/lists';
 import { TaskComposer } from '../TaskComposer';
 import { CardComposer } from '../CardComposer';
-import { Icon } from '../Icon';
-import { Menu, MenuItem } from '../Menu';
-import { Popover } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
-import { Button } from '../Button';
 import { Confirm } from '../Confirm';
+import MoreListActions from './MoreListActions';
 import './List.scss';
 
 class List extends Component {
@@ -32,7 +29,6 @@ class List extends Component {
   state = {
     name: this.props.list ? this.props.list.name : '',
     prevName: this.props.list ? this.props.list.name : '',
-    isMoreActionsMenuVisible: false,
     isFocused: false,
     pointX: null,
     pointY: null
@@ -86,18 +82,6 @@ class List extends Component {
   onFocus = () => {
     this.setState({
       isFocused: true
-    });
-  };
-
-  toggleMoreActionsMenu = () => {
-    this.setState(prevState => ({
-      isMoreActionsMenuVisible: !prevState.isMoreActionsMenuVisible
-    }));
-  };
-
-  hideMoreActionsMenu = () => {
-    this.setState({
-      isMoreActionsMenuVisible: false
     });
   };
 
@@ -163,99 +147,72 @@ class List extends Component {
     if (!list) return null;
     const { name: listName } = list;
     const isBoardView = layout === 'board';
-    const { name, isMoreActionsMenuVisible, isFocused } = this.state;
+    const { name, isFocused } = this.state;
     const taskIds = this.applySortRule(taskIdsByViewFilter[viewFilter]);
 
     return (
-      <Draggable draggableId={listId} index={index}>
-        {(provided, snapshot) => (
-          <>
-            <section
-              className={`list is-${layout}-layout ${isFocused ? 'is-focused' : ''} ${
-                snapshot.isDragging ? 'is-dragging' : ''
-              }`}
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-            >
-              <header className="list__header">
-                <div
-                  className="list__input-wrapper"
-                  onMouseDown={this.onMouseDown}
-                  onMouseUp={this.onMouseUp}
+      <Confirm>
+        {confirm => (
+          <Draggable draggableId={listId} index={index}>
+            {(provided, snapshot) => (
+              <>
+                <section
+                  className={`list is-${layout}-layout ${isFocused ? 'is-focused' : ''} ${
+                    snapshot.isDragging ? 'is-dragging' : ''
+                  }`}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
                 >
-                  <Input
-                    className="list__input--title"
-                    name="name"
-                    type="text"
-                    value={name}
-                    onChange={this.onChange}
-                    required={!isRestricted}
-                    isReadOnly={isRestricted}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}
-                    innerRef={this.setInputRef}
-                  />
-                </div>
-                <Confirm>
-                  {confirm => (
-                    <Popover
-                      isActive={isMoreActionsMenuVisible}
-                      onOutsideClick={this.hideMoreActionsMenu}
-                      classes={{
-                        wrapper: 'list__popover-wrapper',
-                        popover: 'list__popover'
-                      }}
-                      align={{ inner: 'right' }}
-                      buttonProps={{
-                        size: 'md',
-                        iconOnly: true,
-                        isActive: isMoreActionsMenuVisible,
-                        className: 'list__btn--more-actions',
-                        children: <Icon name="more-vertical" />,
-                        onClick: this.toggleMoreActionsMenu
-                      }}
-                      onClose={this.hideMoreActionsMenu}
+                  <header className="list__header">
+                    <div
+                      className="list__input-wrapper"
+                      onMouseDown={this.onMouseDown}
+                      onMouseUp={this.onMouseUp}
                     >
-                      <Menu>
-                        <MenuItem className="list__more-actions-item">
-                          {!isRestricted && (
-                            <Button
-                              className="list__btn"
-                              onClick={confirm(this.handleDelete, {
-                                label: 'Delete List',
-                                intent: 'danger',
-                                title: `Delete "${listName}" list?`
-                              })}
-                            >
-                              Delete
-                            </Button>
-                          )}
-                        </MenuItem>
-                      </Menu>
-                    </Popover>
+                      <Input
+                        className="list__input--title"
+                        name="name"
+                        type="text"
+                        value={name}
+                        onChange={this.onChange}
+                        required={!isRestricted}
+                        isReadOnly={isRestricted}
+                        onBlur={this.onBlur}
+                        onFocus={this.onFocus}
+                        innerRef={this.setInputRef}
+                      />
+                    </div>
+                    <MoreListActions
+                      isRestricted={isRestricted}
+                      onDelete={confirm(this.handleDelete, {
+                        label: 'Delete List',
+                        intent: 'danger',
+                        title: `Delete "${listName}" list?`
+                      })}
+                    />
+                  </header>
+                  <div className="list__content">
+                    <Tasks taskIds={taskIds} listId={listId} layout={layout} />
+                  </div>
+                  {provided.placeholder}
+                  {createElement(
+                    isBoardView ? CardComposer : TaskComposer,
+                    {
+                      listId,
+                      listName,
+                      projectId,
+                      projectName
+                    },
+                    null
                   )}
-                </Confirm>
-              </header>
-              <div className="list__content">
-                <Tasks taskIds={taskIds} listId={listId} layout={layout} />
-              </div>
-              {provided.placeholder}
-              {createElement(
-                isBoardView ? CardComposer : TaskComposer,
-                {
-                  listId,
-                  listName,
-                  projectId,
-                  projectName
-                },
-                null
-              )}
-            </section>
-            {provided.placeholder}
-          </>
+                </section>
+                {provided.placeholder}
+              </>
+            )}
+          </Draggable>
         )}
-      </Draggable>
+      </Confirm>
     );
   }
 }
