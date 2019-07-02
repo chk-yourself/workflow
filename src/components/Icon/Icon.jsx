@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import featherIcons from 'feather-icons/dist/feather-sprite.svg';
 
@@ -31,4 +31,4 @@ Icon.propTypes = {
   name: PropTypes.string.isRequired
 };
 
-export default Icon;
+export default memo(Icon);

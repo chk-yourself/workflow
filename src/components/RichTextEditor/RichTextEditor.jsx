@@ -41,10 +41,12 @@ class RichTextEditor extends Component {
     onBlur: () => {},
     addOns: [],
     isReadOnly: false,
-    value: null
+    value: null,
+    id: null
   };
 
   static propTypes = {
+    id: PropTypes.string,
     classes: PropTypes.shape({
       container: PropTypes.string,
       toolbar: PropTypes.string,
@@ -572,6 +574,7 @@ class RichTextEditor extends Component {
     const { value, isMentionsListVisible, query, isFocused, selectedMember } = this.state;
     return (
       <div
+        id={id}
         ref={innerRef}
         className={`rich-text-editor__container ${
           isFocused ? 'is-focused' : ''
@@ -583,7 +586,7 @@ class RichTextEditor extends Component {
         >
           {marks.map(mark => (
             <Button
-              key={`${id}--${mark.type}`}
+              key={mark.type}
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={mark.type}
@@ -596,7 +599,7 @@ class RichTextEditor extends Component {
           ))}
           {inlines.map(inline => (
             <Button
-              key={`${id}--${inline.type}`}
+              key={inline.type}
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={inline.type}
@@ -609,7 +612,7 @@ class RichTextEditor extends Component {
           ))}
           {blocks.map(block => (
             <Button
-              key={`${id}--${block.type}`}
+              key={block.type}
               size="sm"
               className={`rich-text-editor__btn ${classes.button || ''}`}
               value={block.type}
@@ -635,7 +638,6 @@ class RichTextEditor extends Component {
           )}
         </Toolbar>
         <Editor
-          key={`editor--${id}`}
           schema={schema}
           ref={this.ref}
           value={value}
@@ -652,7 +654,6 @@ class RichTextEditor extends Component {
         />
         {isMentionsEnabled && (
           <MemberSearch
-            key={`member-search--${id}`}
             query={query}
             isActive={isMentionsListVisible}
             users={mentions.users}

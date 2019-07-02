@@ -13,7 +13,7 @@ const Tag = ({
   innerRef,
   isFocused,
   variant,
-  isLinkDisabled,
+  disableLink,
   tooltip,
   ...rest
 }) => (
@@ -25,7 +25,7 @@ const Tag = ({
     data-tooltip={tooltip || name}
     {...rest}
   >
-    {!isLinkDisabled ? (
+    {!disableLink ? (
       <Link to={`/0/tasks?tag=${name}`} className="tag__link">
         <span className="tag__name">{name}</span>
       </Link>
@@ -52,7 +52,7 @@ Tag.defaultProps = {
   size: 'md',
   variant: 'default',
   isFocused: false,
-  isLinkDisabled: false,
+  disableLink: false,
   tooltip: ''
 };
 
@@ -62,8 +62,9 @@ Tag.propTypes = {
   size: PropTypes.oneOf(['sm', 'md']),
   variant: PropTypes.string,
   isFocused: PropTypes.bool,
-  isLinkDisabled: PropTypes.bool,
-  tooltip: PropTypes.string
+  disableLink: PropTypes.bool,
+  tooltip: PropTypes.string,
+  color: PropTypes.string
 };
 
 export default memo(Tag);

@@ -50,7 +50,7 @@ Radio.propTypes = {
     label: PropTypes.string
   }),
   name: PropTypes.string.isRequired,
-  labelProps: PropTypes.objectOf(PropTypes.oneOf([PropTypes.string, PropTypes.number]))
+  labelProps: PropTypes.objectOf(PropTypes.any)
 };
 
 export default Radio;

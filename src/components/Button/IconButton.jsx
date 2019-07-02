@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
 import { Icon } from '../Icon';
@@ -30,4 +30,4 @@ IconButton.propTypes = {
   type: PropTypes.oneOf(['button', 'submit', 'reset'])
 };
 
-export default IconButton;
+export default memo(IconButton);

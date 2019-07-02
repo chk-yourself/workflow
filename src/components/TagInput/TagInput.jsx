@@ -69,7 +69,7 @@ class TagInput extends Component {
 
   matchTag = (tag, value) => {
     const { name } = tag;
-    const regExp = new RegExp(value, 'i');
+    const regExp = new RegExp(`\\b${value}`, 'i');
     return regExp.test(name);
   };
 
@@ -110,7 +110,9 @@ class TagInput extends Component {
     const { filteredList, selectedIndex, selectedTag, value, focusedTag } = this.state;
     const { assignedTags } = this.props;
     const nextIndex =
-      selectedIndex === filteredList.length - 1 || selectedIndex === null ? 0 : selectedIndex + 1;
+      selectedIndex === filteredList.length - 1 || selectedIndex === null
+        ? 0
+        : selectedIndex + 1;
     const prevIndex = selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
 
     // eslint-disable-next-line default-case
@@ -151,8 +153,7 @@ class TagInput extends Component {
     e.preventDefault();
   };
 
-  onContainerBlur = e => {
-    if (e.target.matches('.tag-input__item')) return;
+  onContainerBlur = () => {
     this.timeoutId = setTimeout(() => {
       this.setState({
         isActive: false
@@ -160,6 +161,7 @@ class TagInput extends Component {
     });
   };
 
+  // Cancel blur event if next active element is a descendant of the container element
   onContainerFocus = () => {
     clearTimeout(this.timeoutId);
   };
@@ -183,7 +185,11 @@ class TagInput extends Component {
     const isUserTag = userTags && name in userTags;
     const projectTag = isProjectTag ? projectTags[name] : null;
     const userTag = isUserTag ? userTags[name] : null;
-    const tagData = isProjectTag ? { ...projectTag } : isUserTag ? { ...userTag } : { name };
+    const tagData = isProjectTag
+      ? { ...projectTag }
+      : isUserTag
+      ? { ...userTag }
+      : { name };
 
     firebase
       .addTag({
@@ -224,11 +230,18 @@ class TagInput extends Component {
     this.currentTag = ref;
   };
 
+  setInputRef = el => {
+    this.input = el;
+  };
+
   onClickSuggestion = e => {
     if (!e.target.matches('.tag-input__item')) return;
     const { tag } = e.target.dataset;
     this.reset();
     this.addTag(tag);
+    if (this.input) {
+      this.input.focus();
+    }
   };
 
   render() {
@@ -283,20 +296,25 @@ class TagInput extends Component {
             type="text"
             autoComplete="off"
             onKeyDown={this.onKeyDown}
+            innerRef={this.setInputRef}
             {...inputProps}
           />
-          {isActive && (
-            <TagSuggestions items={filteredList} selectedTag={selectedTag} hasExactMatch={hasExactMatch} onClick={this.onClickSuggestion} />
-          )}
+          {/*isActive && (
+            
+          )*/}
+          <TagSuggestions
+              items={filteredList}
+              selectedTag={selectedTag}
+              hasExactMatch={hasExactMatch}
+              onClick={this.onClickSuggestion}
+            />
         </div>
-        {isActive && (
-          <ColorPicker
-            isActive={isColorPickerActive}
-            selectColor={this.setTagColor}
-            style={colorPickerStyle}
-            onOutsideClick={this.hideColorPicker}
-          />
-        )}
+        <ColorPicker
+          isActive={isColorPickerActive}
+          selectColor={this.setTagColor}
+          style={colorPickerStyle}
+          onOutsideClick={this.hideColorPicker}
+        />
       </div>
     );
   }

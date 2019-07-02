@@ -28,12 +28,19 @@
     margin: 0 0 0 4px;
     vertical-align: middle;
     color: $white;
+    border-radius: 50%;
     .feather {
       width: 12px;
       height: 12px;
       font-size: 12px;
       vertical-align: top;
     }
+    &:hover {
+      background-color: $white;
+    }
+  }
+  span {
+    pointer-events: none;
   }
 }
 
@@ -92,11 +99,14 @@
   background-color: $grey-100;
   color: $grey-800;
   border-color: $grey-400;
-  .tag__btn--delete {
-    color: $grey-500;
-  }
   &:hover {
     background-color: darken($grey-100, 15%);
+    .tag__btn--delete {
+      color: $grey-700;
+    }
+  }
+  .tag__btn--delete {
+    color: $grey-500;
   }
 }
 
@@ -106,33 +116,62 @@
   &:hover {
     background-color: darken($blue, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $blue;
+    }
+  }
 }
+
 .tag.bg--green {
   background-color: $green;
   color: $white;
   &:hover {
     background-color: darken($green, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $green;
+    }
+  }
 }
+
 .tag.bg--pink {
   background-color: $pink;
   color: $white;
   &:hover {
     background-color: darken($pink, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $pink;
+    }
+  }
 }
+
 .tag.bg--orange {
   background-color: $orange;
   color: $white;
   &:hover {
     background-color: darken($orange, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $orange;
+    }
+  }
 }
+
 .tag.bg--purple {
   background-color: $purple;
   color: $white;
   &:hover {
     background-color: darken($purple, 15%);
+  }
+  .tag__btn--delete {
+    &:hover {
+      color: $purple;
+    }
   }
 }
 
@@ -142,6 +181,11 @@
   &:hover {
     background-color: darken($red, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $red;
+    }
+  }
 }
 
 .tag.bg--teal {
@@ -149,6 +193,11 @@
   color: $white;
   &:hover {
     background-color: darken($teal, 15%);
+  }
+  .tag__btn--delete {
+    &:hover {
+      color: $teal;
+    }
   }
 }
 
@@ -158,6 +207,11 @@
   &:hover {
     background-color: darken($cyan, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $cyan;
+    }
+  }
 }
 
 .tag.bg--grape {
@@ -165,6 +219,11 @@
   color: $white;
   &:hover {
     background-color: darken($grape, 15%);
+  }
+  .tag__btn--delete {
+    &:hover {
+      color: $grape;
+    }
   }
 }
 
@@ -174,6 +233,11 @@
   &:hover {
     background-color: darken($violet, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $violet;
+    }
+  }
 }
 
 .tag.bg--indigo {
@@ -182,6 +246,11 @@
   &:hover {
     background-color: darken($indigo, 15%);
   }
+  .tag__btn--delete {
+    &:hover {
+      color: $indigo;
+    }
+  }
 }
 
 .tag.bg--yellow {
@@ -189,6 +258,11 @@
   color: $white;
   &:hover {
     background-color: darken($yellow, 15%);
+  }
+  .tag__btn--delete {
+    &:hover {
+      color: $yellow;
+    }
   }
 }
 

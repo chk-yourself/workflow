@@ -42,7 +42,17 @@ class Modal extends Component {
   };
 
   render() {
-    const { children, onClose, onClick, size, classes, id, innerRef } = this.props;
+    const {
+      children,
+      onClose,
+      onClick,
+      size,
+      classes,
+      id,
+      innerRef,
+      onOutsideClick,
+      ...rest
+    } = this.props;
     return (
       <div
         className={`modal modal--${size} ${classes.modal || ''}`}
@@ -50,6 +60,7 @@ class Modal extends Component {
         role="dialog"
         aria-modal
         tabIndex="-1"
+        {...rest}
       >
         <div
           id={id}

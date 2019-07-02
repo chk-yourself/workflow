@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import './Button.scss';
 
@@ -73,4 +73,4 @@ Button.propTypes = {
   style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
 };
 
-export default Button;
+export default memo(Button);

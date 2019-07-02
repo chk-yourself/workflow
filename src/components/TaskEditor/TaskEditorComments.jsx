@@ -13,9 +13,7 @@ const TaskEditorComments = ({ taskId, projectId, commentIds }) => {
         <TaskEditorIcon name="message-circle" />
         <h3 className="task-editor__section-title">
           {hasComments && (
-            <span className="task-editor__section-detail">
-              {commentIds.length}
-            </span>
+            <span className="task-editor__section-detail">{commentIds.length}</span>
           )}
           {hasComments && commentIds.length === 1 ? 'Comment' : 'Comments'}
         </h3>
@@ -28,7 +26,6 @@ const TaskEditorComments = ({ taskId, projectId, commentIds }) => {
         </div>
       )}
       <CommentComposer
-        key={`comment-composer--${taskId}`}
         id={`comment-composer--${taskId}`}
         taskId={taskId}
         projectId={projectId}

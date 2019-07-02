@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import OrderedList from '@material-ui/icons/FormatListNumberedRounded';
 import UnorderedList from '@material-ui/icons/FormatListBulletedRounded';
@@ -47,4 +47,4 @@ EditorIcon.propTypes = {
   size: PropTypes.number
 };
 
-export default EditorIcon;
+export default memo(EditorIcon);

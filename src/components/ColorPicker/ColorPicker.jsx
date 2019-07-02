@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Radio } from '../Radio';
+import { Radio, RadioGroup } from '../Radio';
 import { withOutsideClick } from '../withOutsideClick';
 import './ColorPicker.scss';
 
@@ -76,6 +76,7 @@ class ColorPicker extends Component {
             onChange={this.handleColorChange}
             isChecked={selectedColor === color}
             label={<span className="sr-only">{color}</span>}
+            labelProps={{ tabIndex: 0 }}
           />
         ))}
       </div>

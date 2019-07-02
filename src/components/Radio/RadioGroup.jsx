@@ -44,7 +44,8 @@ RadioGroup.defaultProps = {
     label: ''
   },
   options: [],
-  value: null
+  value: null,
+  onChange: () => {}
 };
 
 RadioGroup.propTypes = {
@@ -61,7 +62,8 @@ RadioGroup.propTypes = {
     label: PropTypes.string
   }),
   name: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
+  onChange: PropTypes.func
 };
 
 export default RadioGroup;

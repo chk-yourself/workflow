@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { Avatar } from '../Avatar';
@@ -14,7 +15,20 @@ class CommentComposer extends Component {
       avatarPlaceholder: '',
       composer: '',
       button: ''
-    }
+    },
+    id: null
+  };
+
+  static propTypes = {
+    taskId: PropTypes.string.isRequired,
+    projectId: PropTypes.string.isRequired,
+    classes: PropTypes.shape({
+      avatar: PropTypes.string,
+      avatarPlaceholder: PropTypes.string,
+      composer: PropTypes.string,
+      button: PropTypes.string
+    }),
+    id: PropTypes.string
   };
 
   addComment = (value, e) => {
@@ -51,8 +65,7 @@ class CommentComposer extends Component {
           src={currentUser.photoURL}
         />
         <RichTextEditor
-          key={`comment-composer--${id}`}
-          id={`comment-composer--${id}`}
+          id={id}
           onSubmit={this.addComment}
           classes={{
             container: `comment-composer ${classes.composer || ''}`,

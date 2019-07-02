@@ -114,7 +114,8 @@ class ProjectComposer extends Component {
     const { isColorPickerActive } = this.state;
     if (
       !isColorPickerActive ||
-      (isColorPickerActive && e.target.matches('.project-composer__btn--toggle-color-picker'))
+      (isColorPickerActive &&
+        e.target.matches('.project-composer__btn--toggle-color-picker'))
     )
       return;
     this.setState({

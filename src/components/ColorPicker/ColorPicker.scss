@@ -49,6 +49,9 @@
   &.bg--default {
     border: 1px solid rgba($grey-800, 0.3);
   }
+  &:focus {
+    outline: none;
+  }
 }
 
 .color-picker__radio {

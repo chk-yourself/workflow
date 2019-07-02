@@ -7,7 +7,7 @@ const TagSuggestions = ({ items, selectedTag, hasExactMatch, onClick }) => {
       {items.map((item, i) => {
         return (
           <li
-            key={item.name}
+            key={`${item.name}-${item.color}`}
             data-tag={item.name}
             onClick={onClick}
             tabIndex={0}
@@ -21,7 +21,7 @@ const TagSuggestions = ({ items, selectedTag, hasExactMatch, onClick }) => {
                 <span className="tag-input__item--name">{item.name}</span>
               </>
             ) : (
-              <Tag name={item.name} color={item.color} size="sm" />
+              <Tag name={item.name} color={item.color} size="sm" disableLink />
             )}
           </li>
         );
