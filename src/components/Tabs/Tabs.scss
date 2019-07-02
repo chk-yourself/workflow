@@ -18,13 +18,14 @@
   display: flex;
   border-bottom: 1px solid transparent;
   width: 100%;
+  margin: 0;
 }
 
 .tab {
   cursor: pointer;
   padding: 0 0 8px 0;
   margin-right: 32px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: $grey-600;
   transition: all 0.3s ease-in-out;

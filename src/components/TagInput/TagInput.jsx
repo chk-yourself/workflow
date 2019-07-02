@@ -299,15 +299,14 @@ class TagInput extends Component {
             innerRef={this.setInputRef}
             {...inputProps}
           />
-          {/*isActive && (
-            
-          )*/}
-          <TagSuggestions
+          {isActive && (
+            <TagSuggestions
               items={filteredList}
               selectedTag={selectedTag}
               hasExactMatch={hasExactMatch}
               onClick={this.onClickSuggestion}
             />
+          )}
         </div>
         <ColorPicker
           isActive={isColorPickerActive}

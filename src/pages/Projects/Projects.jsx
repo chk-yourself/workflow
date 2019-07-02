@@ -18,7 +18,7 @@ const Projects = ({
       title={`Projects in ${activeWorkspace.name}`}
       classes={{
         main: 'projects',
-        title: 'projects__header'
+        title: 'projects__title'
       }}
     >
       <Tabs
@@ -28,7 +28,7 @@ const Projects = ({
           tablist: 'projects__tablist',
           tab: 'projects__tab',
           header: 'projects__tabs-header',
-          tabs: 'project__tabs'
+          tabs: 'projects__tabs'
         }}
         tabs={[
           {

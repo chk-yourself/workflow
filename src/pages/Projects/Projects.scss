@@ -1,16 +1,18 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.projects__header {
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
-}
-
 .projects {
   margin-right: auto;
   margin-left: auto;
   max-width: 960px;
+  @include md {
+    padding: 8px 12px;
+  }
+}
+
+.projects__title {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .projects__tab {

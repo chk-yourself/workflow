@@ -7,6 +7,9 @@
   margin-left: auto;
   margin-right: auto;
   min-height: 0;
+  @include md {
+    padding: 8px 12px;
+  }
 }
 
 .inbox__wrapper {
