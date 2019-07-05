@@ -2,16 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { IconButton } from '../Button';
 import { withOutsideClick } from '../withOutsideClick';
+import { lockBodyScroll } from '../../utils/dom';
 import './Modal.scss';
 
 class Modal extends Component {
-  static propTypes = {
-    onClick: PropTypes.func,
-    onClose: PropTypes.func,
-    size: PropTypes.string,
-    classes: PropTypes.objectOf(PropTypes.string)
-  };
-
   static defaultProps = {
     onClick: () => null,
     onClose: () => null,
@@ -20,17 +14,44 @@ class Modal extends Component {
       modal: '',
       content: '',
       button: ''
-    }
+    },
+    disableBodyScroll: true,
+    hasClose: true,
+    focusCloseOnMount: true
+  };
+
+  static propTypes = {
+    onClick: PropTypes.func,
+    onClose: PropTypes.func,
+    size: PropTypes.string,
+    classes: PropTypes.objectOf(PropTypes.string),
+    disableBodyScroll: PropTypes.bool,
+    // If true, close button will be included
+    hasClose: PropTypes.bool,
+    // If true, close button will receive focus on mount
+    focusCloseOnMount: PropTypes.bool
   };
 
   componentDidMount() {
-    this.bodyOverflow = window.getComputedStyle(document.body).overflow; // store current value of body overflow
-    document.body.style.overflow = 'hidden'; // locks body scroll
+    const { disableBodyScroll, focusCloseOnMount } = this.props;
+    if (disableBodyScroll) {
+      this.unlockBodyScroll = lockBodyScroll();
+    }
+    if (focusCloseOnMount) {
+      this.setFocusToClose();
+    }
   }
 
   componentWillUnmount() {
-    document.body.style.overflow = this.bodyOverflow; // reset body overflow to original value
+    if (this.unlockBodyScroll) {
+      this.unlockBodyScroll();
+    }
   }
+
+  setFocusToClose = () => {
+    if (!this.close) return;
+    this.close.focus();
+  };
 
   onOutsideClick = e => {
     const { onOutsideClick, onClose } = this.props;
@@ -39,6 +60,10 @@ class Modal extends Component {
     } else {
       onClose(e);
     }
+  };
+
+  setCloseRef = el => {
+    this.close = el;
   };
 
   render() {
@@ -51,6 +76,9 @@ class Modal extends Component {
       id,
       innerRef,
       onOutsideClick,
+      disableBodyScroll,
+      hasClose,
+      focusCloseOnMount,
       ...rest
     } = this.props;
     return (
@@ -67,13 +95,16 @@ class Modal extends Component {
           ref={innerRef}
           className={`modal__content ${classes.content || ''} modal__content--${size}`}
         >
-          <IconButton
-            type="button"
-            className={`modal__btn--close ${classes.button || ''}`}
-            onClick={onClose}
-            icon="x"
-            label="Close modal"
-          />
+          {hasClose && (
+            <IconButton
+              type="button"
+              className={`modal__btn--close ${classes.button || ''}`}
+              onClick={onClose}
+              icon="x"
+              label="Close modal"
+              innerRef={this.setCloseRef}
+            />
+          )}
           {children}
         </div>
       </div>

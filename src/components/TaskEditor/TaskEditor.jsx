@@ -62,11 +62,8 @@ class TaskEditor extends Component {
     const { layout } = this.props;
     if (layout !== 'board') return;
     this.setViewportWidth();
-    this.handleResize = debounce(this.setViewportWidth, 200);
+    this.handleResize = debounce(this.setViewportWidth, 250);
     window.addEventListener('resize', this.handleResize);
-    if (this.textarea) {
-      this.textarea.focus();
-    }
   }
 
   componentWillUnmount() {
@@ -216,17 +213,14 @@ class TaskEditor extends Component {
   };
 
   onOutsideClick = e => {
-    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item')) return;
+    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item'))
+      return;
     this.closeTaskEditor();
   };
 
   closeTaskEditor = () => {
     const { selectTask } = this.props;
     selectTask(null);
-  };
-
-  setTextareaRef = el => {
-    this.textarea = el;
   };
 
   render() {
@@ -258,7 +252,9 @@ class TaskEditor extends Component {
             variant="text"
             color="neutral"
             label="Toggle completion status"
-            className={`task-editor__btn--toggle-completed ${isCompleted ? 'is-completed' : ''}`}
+            className={`task-editor__btn--toggle-completed ${
+              isCompleted ? 'is-completed' : ''
+            }`}
           >
             <Icon name="check" />
             <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
@@ -273,8 +269,6 @@ class TaskEditor extends Component {
               value={name}
               onChange={this.onChange}
               onBlur={this.updateTaskName}
-              innerRef={this.setTextareaRef}
-              required
             />
             <TaskEditorProjectDetails
               isPrivate={isPrivate}
@@ -303,7 +297,11 @@ class TaskEditor extends Component {
             usePortal={layout === 'board' && viewportWidth >= 576}
           />
           {!isPrivate && (
-            <TaskEditorComments taskId={taskId} projectId={projectId} commentIds={commentIds} />
+            <TaskEditorComments
+              taskId={taskId}
+              projectId={projectId}
+              commentIds={commentIds}
+            />
           )}
         </div>
       </TaskEditorWrapper>
@@ -319,7 +317,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId })),
+    deleteTask: ({ taskId, listId }) =>
+      dispatch(taskActions.deleteTask({ taskId, listId })),
     selectTask: taskId => dispatch(selectTaskAction(taskId))
   };
 };
