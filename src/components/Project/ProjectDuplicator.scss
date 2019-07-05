@@ -1,22 +1,11 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.project-duplicator {
-  padding: 24px;
-
-  @include md {
-    padding: 24px 8px;
-  }
-}
-
 .project-duplicator__heading {
   max-width: 340px;
   width: 100%;
   margin: 0 auto 24px;
   font-weight: 600;
-  @include md {
-    max-width: 85%;
-  }
 }
 
 .project-duplicator__legend {
@@ -33,9 +22,6 @@
   max-width: 340px;
   width: 100%;
   margin: 0 auto;
-  @include md {
-    max-width: 85%;
-  }
 }
 
 .project-duplicator__input {

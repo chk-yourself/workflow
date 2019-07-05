@@ -51,7 +51,7 @@ export default class SearchBar extends Component {
             name="toggle"
             title="Search"
             icon="search"
-            label="Toggle searchbar"
+            ariaLabel="Toggle searchbar"
           />
         </form>
       </div>

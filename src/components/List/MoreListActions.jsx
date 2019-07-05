@@ -15,6 +15,7 @@ const MoreListActions = ({ isRestricted, onDelete }) => {
       buttonProps={{
         size: 'md',
         iconOnly: true,
+        ariaLabel: 'Toggle more list actions',
         className: 'list__btn--more-actions',
         children: <Icon name="more-vertical" />
       }}

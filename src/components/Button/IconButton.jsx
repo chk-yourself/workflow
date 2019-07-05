@@ -4,13 +4,13 @@ import Button from './Button';
 import { Icon } from '../Icon';
 import './IconButton.scss';
 
-const IconButton = ({ icon, type, size, className, innerRef, label, ...props }) => (
+const IconButton = ({ icon, type, size, className, innerRef, ariaLabel, ...props }) => (
   <Button
     type={type}
     size={size}
     innerRef={innerRef}
     className={`icon-btn icon-btn--${size} ${className}`}
-    aria-label={label}
+    aria-label={ariaLabel}
     {...props}
   >
     <Icon name={icon} />
@@ -26,7 +26,7 @@ IconButton.defaultProps = {
 IconButton.propTypes = {
   className: PropTypes.string,
   size: PropTypes.string,
-  label: PropTypes.string.isRequired,
+  ariaLabel: PropTypes.string.isRequired,
   type: PropTypes.oneOf(['button', 'submit', 'reset'])
 };
 

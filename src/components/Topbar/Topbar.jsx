@@ -35,6 +35,7 @@ const Topbar = ({
             onClick: toggleUserActions,
             size: 'sm',
             iconOnly: true,
+            ariaLabel: 'Toggle more user actions',
             className: 'topbar__btn--user-actions',
             children: (
               <Avatar

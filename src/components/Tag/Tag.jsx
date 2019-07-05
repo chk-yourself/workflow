@@ -39,7 +39,7 @@ const Tag = ({
         onClick={onDelete}
         icon="x"
         data-name={name}
-        label="Remove tag"
+        ariaLabel="Remove tag"
       />
     )}
   </span>

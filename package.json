@@ -56,8 +56,11 @@
   ],
   "devDependencies": {
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+    "@storybook/addon-a11y": "^5.1.9",
     "@storybook/addon-actions": "^5.1.9",
     "@storybook/addon-links": "^5.1.9",
+    "@storybook/addon-storysource": "^5.1.9",
+    "@storybook/addon-viewport": "^5.1.9",
     "@storybook/addons": "^5.1.9",
     "@storybook/react": "^5.1.9",
     "enzyme": "^3.10.0",

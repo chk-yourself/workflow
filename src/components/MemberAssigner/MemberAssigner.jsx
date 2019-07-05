@@ -118,6 +118,7 @@ class MemberAssigner extends Component {
               className: `member-assigner__btn--toggle-member-search ${classes.button}`,
               isActive: isMemberSearchActive,
               children: <Icon name="plus" />,
+              ariaLabel: 'Toggle member search',
               onClick: this.toggleMemberSearch
             }}
             align={{

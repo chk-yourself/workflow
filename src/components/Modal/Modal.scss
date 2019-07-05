@@ -111,12 +111,14 @@
 }
 
 .modal__content--md {
+  padding: 24px;
   @include xs {
     width: 400px;
     height: auto;
   }
   @include lg {
     width: 440px;
+    padding: 32px;
   }
 }
 

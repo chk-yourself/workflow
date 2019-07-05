@@ -12,6 +12,7 @@ const TaskSettings = ({
 }) => {
   return (
     <Settings
+      ariaLabel="Toggle task settings menu"
       icon="sliders"
       isActive={isVisible}
       onToggle={onToggle}

@@ -14,6 +14,7 @@ const ProjectSettings = ({
   return (
     <Settings
       icon="sliders"
+      ariaLabel="Toggle project settings menu"
       isActive={isActive}
       onToggle={onToggle}
       onClose={onClose}

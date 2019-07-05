@@ -8,7 +8,7 @@ const PRIMARY = 'Primary';
 const SECONDARY = 'Secondary';
 const NEUTRAL = 'Neutral';
 
-storiesOf('Inputs|Buttons/Base', module)
+storiesOf('Components|Buttons/Base', module)
   .addDecorator(storyFn => (
     <div
       style={{
@@ -36,7 +36,7 @@ storiesOf('Inputs|Buttons/Base', module)
     </>
   ));
 
-storiesOf('Inputs|Buttons/Variants', module)
+storiesOf('Components|Buttons/Variants', module)
   .addDecorator(storyFn => (
     <div
       style={{

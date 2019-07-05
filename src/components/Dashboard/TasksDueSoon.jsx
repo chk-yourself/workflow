@@ -9,7 +9,7 @@ import { IconButton } from '../Button';
 
 const InfoTooltip = () => (
   <Tooltip portalId={'WORKFLOW_PORTAL'} content="Your most urgent tasks due within the next 7 days.">
-  <IconButton className="tasks-due-soon__btn--info" color="neutral" size="sm" icon="info" label="Info" />
+  <IconButton className="tasks-due-soon__btn--info" color="neutral" size="sm" icon="info" ariaLabel="Info" />
   </Tooltip>
 );
 

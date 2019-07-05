@@ -251,7 +251,7 @@ class TaskEditor extends Component {
             size="md"
             variant="text"
             color="neutral"
-            label="Toggle completion status"
+            ariaLabel="Toggle completion status"
             className={`task-editor__btn--toggle-completed ${
               isCompleted ? 'is-completed' : ''
             }`}

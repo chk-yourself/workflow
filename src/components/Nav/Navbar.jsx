@@ -87,7 +87,7 @@ class Navbar extends Component {
           <IconButton
             color="primary"
             icon="menu"
-            label="Toggle menu"
+            ariaLabel="Toggle menu"
             onClick={this.toggleMenu}
             className="navbar__btn--toggle"
           />

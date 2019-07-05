@@ -1,31 +1,17 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-.project-composer {
-  padding: 24px;
-
-  @include md {
-    padding: 24px 8px;
-  }
-}
-
 .project-composer__heading {
   max-width: 340px;
   width: 100%;
   margin: 0 auto 24px;
   font-weight: 600;
-  @include md {
-    max-width: 85%;
-  }
 }
 
 .project-composer__subheading {
   font-size: 12px;
   font-weight: 500;
   margin: 16px 0 8px;
-}
-
-.project-composer__settings {
 }
 
 .project-composer__control-group {
@@ -49,9 +35,6 @@
   max-width: 340px;
   width: 100%;
   margin: 0 auto;
-  @include md {
-    max-width: 85%;
-  }
 }
 
 .project-composer__input--name {

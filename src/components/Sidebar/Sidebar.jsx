@@ -50,7 +50,7 @@ class Sidebar extends Component {
           className="sidebar__btn--toggle"
           size="sm"
           icon="bar-chart-2"
-          label="Toggle menu"
+          ariaLabel="Toggle menu"
         />
         <div className="sidebar">
           <nav className="sidebar__nav">

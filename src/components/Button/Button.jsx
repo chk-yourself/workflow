@@ -18,6 +18,7 @@ const Button = ({
   isActive,
   intent,
   label,
+  ariaLabel,
   marginTop,
   marginBottom,
   marginLeft,
@@ -34,7 +35,7 @@ const Button = ({
     onMouseDown={onMouseDown}
     disabled={disabled}
     ref={innerRef}
-    aria-label={label}
+    aria-label={ariaLabel}
     style={{ ...style, marginTop, marginBottom, marginRight, marginLeft }}
     {...props}
   >

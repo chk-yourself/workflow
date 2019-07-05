@@ -15,6 +15,7 @@ const MoreProjectActions = ({ onDelete, onDuplicate, allowDelete }) => {
       buttonProps={{
         size: 'sm',
         iconOnly: true,
+        ariaLabel: 'Toggle more project actions',
         className: 'project__btn--more-actions',
         children: <Icon name="chevron-down" />
       }}

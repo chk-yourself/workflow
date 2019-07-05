@@ -15,7 +15,7 @@ const TaskEditorMoreActions = ({ onDelete }) => (
       size: 'md',
       iconOnly: true,
       className: 'task-editor__toolbar-btn',
-      label: 'Show more task actions',
+      ariaLabel: 'Show more task actions',
       children: <Icon name="more-horizontal" />
     }}
   >

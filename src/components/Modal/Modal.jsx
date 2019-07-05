@@ -101,7 +101,7 @@ class Modal extends Component {
               className={`modal__btn--close ${classes.button || ''}`}
               onClick={onClose}
               icon="x"
-              label="Close modal"
+              ariaLabel="Close modal"
               innerRef={this.setCloseRef}
             />
           )}

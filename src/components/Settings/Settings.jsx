@@ -7,7 +7,16 @@ import { Button, IconButton } from '../Button';
 import { SelectDropdown } from '../SelectDropdown';
 import './Settings.scss';
 
-const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes }) => (
+const Settings = ({
+  icon,
+  onToggle,
+  onClose,
+  onSave,
+  isActive,
+  settings,
+  classes,
+  ariaLabel
+}) => (
   <Popover
     isActive={isActive}
     onOutsideClick={onClose}
@@ -22,13 +31,22 @@ const Settings = ({ icon, onToggle, onClose, onSave, isActive, settings, classes
       iconOnly: true,
       className: `settings__btn ${classes.button || ''}`,
       children: <Icon name={icon} />,
-      onClick: onToggle
+      onClick: onToggle,
+      ariaLabel
     }}
   >
-    <IconButton className="settings__btn--close" size="sm" onClick={onClose} label="Close settings" icon="x" />
+    <IconButton
+      className="settings__btn--close"
+      size="sm"
+      onClick={onClose}
+      ariaLabel="Close"
+      icon="x"
+    />
     {settings.map(setting => (
       <div className={`settings__setting ${classes.setting || ''}`} key={setting.name}>
-        <div className={`settings__name ${classes.name || ''}`}>{setting.label || setting.name}</div>
+        <div className={`settings__name ${classes.name || ''}`}>
+          {setting.label || setting.name}
+        </div>
         {
           {
             radio: (
@@ -105,39 +123,71 @@ Settings.defaultProps = {
     menu: '',
     item: ''
   },
-  settings: []
+  settings: [],
+  ariaLabel: 'Toggle settings menu'
 };
 
 Settings.propTypes = {
   icon: PropTypes.string,
-  settings: PropTypes.arrayOf(PropTypes.oneOfType([
-    PropTypes.shape({
-      label: PropTypes.string,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['radio', 'select']).isRequired,
-      onChange: PropTypes.func,
-      value:  PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-      options: PropTypes.objectOf(
-        PropTypes.shape({
-          label: PropTypes.string,
-          value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
-        })
-      )
-    }),
-    PropTypes.shape({
-      label: PropTypes.string,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['radio', 'select']).isRequired,
-      onChange: PropTypes.func,
-      selected:  PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-      options: PropTypes.objectOf(
-        PropTypes.shape({
-          label: PropTypes.string,
-          value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
-        })
-      )
-    })
-  ]))
+  ariaLabel: PropTypes.string,
+  classes: PropTypes.shape({
+    name: PropTypes.string,
+    wrapper: PropTypes.string,
+    settings: PropTypes.string,
+    setting: PropTypes.string,
+    radio: PropTypes.string,
+    radioLabel: PropTypes.string,
+    selectOption: PropTypes.string,
+    selectLabel: PropTypes.string,
+    dropdown: PropTypes.string,
+    dropdownWrapper: PropTypes.string,
+    dropdownButton: PropTypes.string,
+    button: PropTypes.string,
+    menu: PropTypes.string,
+    item: PropTypes.string
+  }),
+  settings: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.shape({
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['radio', 'select']).isRequired,
+        onChange: PropTypes.func,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
+        options: PropTypes.objectOf(
+          PropTypes.shape({
+            label: PropTypes.string,
+            value: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+              PropTypes.bool
+            ])
+          })
+        )
+      }),
+      PropTypes.shape({
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['radio', 'select']).isRequired,
+        onChange: PropTypes.func,
+        selected: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number,
+          PropTypes.bool
+        ]),
+        options: PropTypes.objectOf(
+          PropTypes.shape({
+            label: PropTypes.string,
+            value: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+              PropTypes.bool
+            ])
+          })
+        )
+      })
+    ])
+  )
 };
 
 export default Settings;
