@@ -11,6 +11,7 @@ import * as keys from '../../constants/keys';
 import { MemberSearch } from '../MemberSearch';
 import { withOutsideClick } from '../withOutsideClick';
 import EditorIcon from './EditorIcon';
+import IconButton from './EditorIconButton';
 import './RichTextEditor.scss';
 
 const DEFAULT_BLOCK = 'paragraph';
@@ -585,43 +586,34 @@ class RichTextEditor extends Component {
           isActive={isFocused}
         >
           {marks.map(mark => (
-            <Button
+            <IconButton
               key={mark.type}
-              size="sm"
-              className={`rich-text-editor__btn ${classes.button || ''}`}
-              value={mark.type}
+              className={classes.button}
+              type={mark.type}
               onMouseDown={this.onClickMark}
-              iconOnly
               isActive={this.hasMark(mark.type)}
-            >
-              <EditorIcon name={mark.icon} />
-            </Button>
+              icon={mark.icon}
+            />
           ))}
           {inlines.map(inline => (
-            <Button
+            <IconButton
               key={inline.type}
-              size="sm"
-              className={`rich-text-editor__btn ${classes.button || ''}`}
-              value={inline.type}
+              className={classes.button}
+              type={inline.type}
               onMouseDown={this.onClickInline}
-              iconOnly
               isActive={this.hasInline(inline.type)}
-            >
-              <EditorIcon name={inline.icon} />
-            </Button>
+              icon={inline.icon}
+            />
           ))}
           {blocks.map(block => (
-            <Button
+            <IconButton
               key={block.type}
-              size="sm"
-              className={`rich-text-editor__btn ${classes.button || ''}`}
-              value={block.type}
+              className={classes.button}
+              type={block.type}
               onMouseDown={this.onClickBlock}
-              iconOnly
               isActive={this.hasBlock(block.type)}
-            >
-              <EditorIcon name={block.icon} />
-            </Button>
+              icon={block.icon}
+            />
           ))}
           {addOns.length > 0 && (
             <div className={`rich-text-editor__add-ons ${classes.addOns || ''}`}>
