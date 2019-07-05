@@ -651,6 +651,7 @@ class RichTextEditor extends Component {
           renderMark={this.renderMark}
           renderNode={this.renderNode}
           readOnly={isReadOnly}
+          tabIndex={0}
         />
         {isMentionsEnabled && (
           <MemberSearch

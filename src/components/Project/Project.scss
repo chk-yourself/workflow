@@ -379,9 +379,7 @@
   text-decoration: none;
   text-align: center;
   &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px $primary-lt;
-    border-radius: 4px;
+    outline-color: $primary-lt;
   }
   &:hover,
   &:focus {

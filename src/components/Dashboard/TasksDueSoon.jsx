@@ -4,12 +4,23 @@ import { withAuthorization } from '../Session';
 import DashboardPanel from './DashboardPanel';
 import { Task } from '../Task';
 import { currentUserSelectors } from '../../ducks/currentUser';
+import { Tooltip } from '../Tooltip';
+import { IconButton } from '../Button';
+
+const InfoTooltip = () => (
+  <Tooltip portalId={'WORKFLOW_PORTAL'} content="Your most urgent tasks due within the next 7 days.">
+  <IconButton className="tasks-due-soon__btn--info" color="neutral" size="sm" icon="info" label="Info" />
+  </Tooltip>
+);
 
 const TasksDueSoon = ({ tasksDueSoon, currentUser }) => (
   <DashboardPanel
     className="tasks-due-soon"
     size="md"
-    name="Tasks Due Soon"
+    name={<>
+    Tasks Due Soon
+    <InfoTooltip />
+    </>}
     link={{ to: `/0/${currentUser.userId}/tasks`, text: 'View all tasks' }}
   >
     {tasksDueSoon.length > 0 ? (

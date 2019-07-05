@@ -30,7 +30,7 @@ export default class Textarea extends Component {
     const { autoResize } = this.props;
     if (!autoResize) return;
     this.autoHeightResize();
-    this.handleResize = debounce(200, this.autoHeightResize);
+    this.handleResize = debounce(this.autoHeightResize, 200);
     window.addEventListener('resize', this.handleResize);
   }
 

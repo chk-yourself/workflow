@@ -38,7 +38,7 @@ const Button = ({
     style={{ ...style, marginTop, marginBottom, marginRight, marginLeft }}
     {...props}
   >
-    {children}
+    {iconOnly ? children : label || children}
   </button>
 );
 

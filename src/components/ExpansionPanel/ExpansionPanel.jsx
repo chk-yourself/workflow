@@ -42,7 +42,7 @@ export default class ExpansionPanel extends Component {
   };
 
   toggleContent = e => {
-    if (e.type === 'keydown' && e.key !== keys.ENTER) return;
+    if (e.type === 'keydown' && (e.key !== keys.ENTER && e.key !== keys.SPACE)) return;
     const { onToggle, id } = this.props;
     if (!onToggle) {
       this.setState(prevState => ({

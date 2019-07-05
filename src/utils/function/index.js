@@ -1,37 +1,47 @@
+/* eslint-disable func-names */
 /**
  * Delays callback execution until next browser repaint
  * Best used for `scroll` and `resize` window events
  * @param {Function} callback - The function to debounce
  */
 
-export const windowDebouncer = callback => {
+export function windowDebounce(callback) {
   let request;
 
-  return (...args) => {
+  return function(...args) {
     const context = this;
 
+    // If the function tries to fire again before the
+    // next frame animation, cancel the existing request
     if (request) {
       window.cancelAnimationFrame(request);
     }
 
+    // requestAnimationFrame() fires a callback the next time the browser does a frame animation
     request = window.requestAnimationFrame(() => {
       callback.apply(context, args);
     });
   };
-};
+}
 
-export const debounce = (delay, fn) => {
+/**
+ * Returns a function that can only be executed after a certain amount of time since it was last invoked
+ * @param {Function} fn - The callback function to execute
+ * @param {Number} delay - Time, in milliseconds, since the last invocation, the function must wait before firing again
+ */
+export function debounce(fn, delay) {
   let timerId;
-  return (...args) => {
+  return function(...args) {
+    const context = this;
     if (timerId) {
       clearTimeout(timerId);
     }
     timerId = setTimeout(() => {
-      fn(...args);
+      fn.apply(context, args);
       timerId = null;
     }, delay);
   };
-};
+}
 
 /**
  * Returns a function that executes the first callback on its initial call

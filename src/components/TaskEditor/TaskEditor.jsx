@@ -62,7 +62,7 @@ class TaskEditor extends Component {
     const { layout } = this.props;
     if (layout !== 'board') return;
     this.setViewportWidth();
-    this.handleResize = debounce(200, this.setViewportWidth);
+    this.handleResize = debounce(this.setViewportWidth, 200);
     window.addEventListener('resize', this.handleResize);
     if (this.textarea) {
       this.textarea.focus();

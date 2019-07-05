@@ -11,16 +11,11 @@ import { withAuthentication } from '../../components/Session';
 import { Header } from '../../components/Header';
 import { AccountSetup } from '../AccountSetup';
 import { VerificationRequired } from '../VerificationRequired';
-import { Tooltip } from '../../components/Tooltip';
 import { Guide } from '../Guide';
+import { Portal } from '../../components/Portal';
 import './App.scss';
 
 class App extends Component {
-  state = {
-    tooltipAnchor: null,
-    tooltipProps: {}
-  };
-
   componentDidMount() {
     console.log('app mounted');
     const { history } = this.props;
@@ -48,73 +43,29 @@ class App extends Component {
     }
   };
 
-  onMouseOver = e => {
-    const { target } = e;
-    const { tooltipAnchor } = this.state;
-    if (
-      target.matches('.tag') ||
-      !target.matches('[data-tooltip]') ||
-      tooltipAnchor === target
-    )
-      return;
-    const { dataset } = target;
-    const { tooltip, tooltipAlignY, tooltipAlignX, tooltipArrow } = dataset;
-    this.setState({
-      tooltipAnchor: target,
-      tooltipProps: {
-        text: tooltip,
-        alignY: tooltipAlignY,
-        alignX: tooltipAlignX,
-        arrow: tooltipArrow
-      }
-    });
-  };
-
-  onMouseOut = e => {
-    const { tooltipAnchor } = this.state;
-    if (!tooltipAnchor) return;
-    console.log('mouse out');
-    this.setState({
-      tooltipAnchor: null,
-      tooltipProps: {}
-    });
-  };
-
   render() {
     const { firebase } = this.props;
-    const { tooltipAnchor, tooltipProps } = this.state;
     return (
-      <div
-        onMouseOver={this.onMouseOver}
-        onMouseOut={this.onMouseOut}
-        className="app"
-      >
+      <div className="app">
         <Header />
         <Switch>
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route
             path={ROUTES.SET_UP}
-            render={props =>
-              firebase.currentUser ? <AccountSetup {...props} /> : null
-            }
+            render={props => (firebase.currentUser ? <AccountSetup {...props} /> : null)}
           />
           <Route path={ROUTES.LOG_IN} component={LoginPage} />
           <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
           <Route
             path={ROUTES.BASE}
-            render={props =>
-              <HomePage {...props} /> || <Redirect to={ROUTES.SET_UP} />
-            }
+            render={props => <HomePage {...props} /> || <Redirect to={ROUTES.SET_UP} />}
           />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
-          <Route
-            path={ROUTES.VERIFICATION_REQUIRED}
-            component={VerificationRequired}
-          />
+          <Route path={ROUTES.VERIFICATION_REQUIRED} component={VerificationRequired} />
           <Route path={ROUTES.GUIDE} component={Guide} />
         </Switch>
-        <Tooltip anchorEl={tooltipAnchor} {...tooltipProps} />
+        <Portal id="WORKFLOW_PORTAL" />
       </div>
     );
   }

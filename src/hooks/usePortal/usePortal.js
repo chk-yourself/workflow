@@ -10,6 +10,10 @@ function addRootElement(rootElem) {
   document.body.appendChild(rootElem);
 }
 
+/**
+ *
+ * @param {*} id - The id of an existing DOM element or the id for your portal
+ */
 function usePortal(id) {
   const rootRef = useRef(null);
 

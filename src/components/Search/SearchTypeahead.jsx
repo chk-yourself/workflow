@@ -57,6 +57,7 @@ class SearchTypeahead extends Component {
 
   onKeyDown = e => {
     if (
+      e.key !== keys.TAB &&
       e.key !== keys.ARROW_DOWN &&
       e.key !== keys.ARROW_UP &&
       e.key !== keys.ENTER
@@ -64,7 +65,7 @@ class SearchTypeahead extends Component {
       return;
     e.preventDefault();
 
-    const { filteredList, selectedIndex, selectedItem } = this.state;
+    const { filteredList, selectedIndex, selectedItem, query } = this.state;
     const nextIndex = selectedIndex === filteredList.length - 1 ? 0 : selectedIndex + 1;
     const prevIndex = selectedIndex === 0 ? filteredList.length - 1 : selectedIndex - 1;
 
@@ -84,8 +85,10 @@ class SearchTypeahead extends Component {
         });
         break;
       }
-      case keys.ENTER: {
-        if (selectedItem === null) {
+      default: {
+        if (e.key === keys.TAB && query === '') {
+          this.toggleSearchBar();
+        } else if (selectedItem === null) {
           this.handleSubmit(e);
           this.input.blur();
         } else {
