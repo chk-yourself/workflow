@@ -34,7 +34,7 @@ export default class Tooltip extends Component {
     const targetProps = {
       onMouseEnter: this.show,
       onMouseLeave: this.hide,
-      onBlur: this.hide
+      onMouseDown: this.toggle
     };
     return cloneElement(children, {
       ...targetProps,
@@ -53,9 +53,20 @@ export default class Tooltip extends Component {
 
   show = () => {
     if (this.state.isVisible) return;
-    this.setState({
-      isVisible: true
+    this.timer = setTimeout(() => {
+      this.setState({
+        isVisible: true
+      });
     });
+  };
+
+  toggle = () => {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.setState(prevState => ({
+      isVisible: !prevState.isVisible
+    }));
   };
 
   render() {

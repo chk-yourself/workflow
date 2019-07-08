@@ -93,7 +93,7 @@ class ListComposer extends Component {
               color="primary"
               className="list-composer__btn--icon"
               icon="plus-circle"
-              label="Add list"
+              ariaLabel="Add list"
             />
           )}
           <Input

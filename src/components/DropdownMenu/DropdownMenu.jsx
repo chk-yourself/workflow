@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import { PopoverWrapper } from '../Popover';
+import { Popover } from '../Popover';
 import { Menu, MenuItem } from '../Menu';
 import { Icon } from '../Icon';
 import './DropdownMenu.scss';
@@ -45,7 +45,7 @@ export default class DropdownMenu extends Component {
     const { classes, links, align, activeLink, icon } = this.props;
 
     return (
-      <PopoverWrapper
+      <Popover
         isActive={isActive}
         onOutsideClick={this.closeDropdown}
         align={align}
@@ -86,7 +86,7 @@ export default class DropdownMenu extends Component {
             );
           })}
         </Menu>
-      </PopoverWrapper>
+      </Popover>
     );
   }
 }

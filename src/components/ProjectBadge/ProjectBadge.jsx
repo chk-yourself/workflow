@@ -15,6 +15,7 @@ const ProjectBadge = memo(({ projectId, size, variant, name, color, classes }) =
   >
     {variant === 'icon' && (
       <ProjectIcon
+        colorOnly
         color={color}
         className={`project-badge__icon ${classes.icon || ''}`}
       />

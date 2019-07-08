@@ -10,7 +10,6 @@ import initialValue from './value.json';
 import * as keys from '../../constants/keys';
 import { MemberSearch } from '../MemberSearch';
 import { withOutsideClick } from '../withOutsideClick';
-import EditorIcon from './EditorIcon';
 import IconButton from './EditorIconButton';
 import './RichTextEditor.scss';
 

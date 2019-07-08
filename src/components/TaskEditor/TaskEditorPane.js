@@ -10,7 +10,7 @@ const TaskEditorPane = ({ onClose, children }) => {
         className="task-editor-pane__btn--close"
         onClick={onClose}
         icon="x"
-        label="Close task editor"
+        ariaLabel="Close task editor"
       />
       {children}
     </div>

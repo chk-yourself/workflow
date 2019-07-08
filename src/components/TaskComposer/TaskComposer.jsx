@@ -82,7 +82,7 @@ class TaskComposer extends Component {
             type="submit"
             onClick={this.onSubmit}
             icon="plus-circle"
-            label="Add task"
+            ariaLabel="Add task"
           />
           <Input
             onChange={this.onChange}

@@ -10,6 +10,7 @@ import Code from '@material-ui/icons/CodeRounded';
 import Link from '@material-ui/icons/InsertLinkRounded';
 import IncreaseIndent from '@material-ui/icons/FormatIndentIncreaseRounded';
 import DecreaseIndent from '@material-ui/icons/FormatIndentDecreaseRounded';
+import { blocks, inlines, marks } from './constants';
 
 const icons = {
   'ordered-list': OrderedList,
@@ -42,7 +43,17 @@ EditorIcon.defaultProps = {
 };
 
 EditorIcon.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.oneOf([
+    blocks.CODE,
+    blocks.ORDERED_LIST,
+    blocks.UNORDERED_LIST,
+    blocks.INCREASE_INDENT,
+    blocks.DECREASE_INDENT,
+    marks.BOLD,
+    marks.ITALIC,
+    marks.UNDERLINED,
+    inlines.MENTION
+  ]).isRequired,
   className: PropTypes.string,
   size: PropTypes.number
 };

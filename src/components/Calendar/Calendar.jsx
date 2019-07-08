@@ -128,7 +128,7 @@ export default class Calendar extends Component {
                   size="sm"
                   onClick={this.goToPrevMonth}
                   icon="chevron-left"
-                  label="Select previous month"
+                  ariaLabel="Select previous month"
                 />
                 <IconButton
                   type="button"
@@ -136,7 +136,7 @@ export default class Calendar extends Component {
                   size="sm"
                   icon="chevron-right"
                   onClick={this.goToNextMonth}
-                  label="Select next month"
+                  ariaLabel="Select next month"
                 />
               </div>
             </div>
