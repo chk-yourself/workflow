@@ -5,14 +5,6 @@ import getPosition from './utils';
 import { Portal } from '../Portal';
 import { windowDebounce as debounce } from '../../utils/function';
 
-const INITIAL_STATE = {
-  left: null,
-  top: null,
-  transformOrigin: null,
-  viewport: null,
-  dimensions: null
-};
-
 export default class Positioner extends Component {
   static propTypes = {
     target: PropTypes.func.isRequired,
@@ -44,7 +36,14 @@ export default class Positioner extends Component {
     isVisible: false
   };
 
-  state = { ...INITIAL_STATE };
+  state = {
+    left: null,
+    top: null,
+    transformOrigin: null,
+    viewport: null,
+    dimensions: null,
+    position: this.props.position
+  };
 
   componentDidMount() {
     this.updatePosition();
@@ -115,7 +114,7 @@ export default class Positioner extends Component {
       isScrollEvent && prevDimensions ? prevDimensions : this.getDimensions();
     const viewport = isScrollEvent && prevViewport ? prevViewport : this.getViewport();
     const targetRect = this.targetRef.getBoundingClientRect();
-    const { rect, transformOrigin } = getPosition({
+    const { rect, position: finalPosition, transformOrigin } = getPosition({
       position,
       targetRect,
       targetOffset,
@@ -129,13 +128,14 @@ export default class Positioner extends Component {
       top: rect.top,
       transformOrigin,
       dimensions: this.getDimensions(),
-      viewport: this.getViewport()
+      viewport: this.getViewport(),
+      position: finalPosition
     });
   };
 
   render() {
     const { target, children, isVisible, portalId } = this.props;
-    const { top, left, transformOrigin } = this.state;
+    const { top, left, transformOrigin, position } = this.state;
     return (
       <>
         {target({ getRef: this.getTargetRef })}
@@ -144,6 +144,7 @@ export default class Positioner extends Component {
             {children({
               top,
               left,
+              position,
               style: {
                 top,
                 left,

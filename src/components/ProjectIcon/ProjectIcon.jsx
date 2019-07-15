@@ -6,7 +6,7 @@ import './ProjectIcon.scss';
 
 const icons = {
   board: <Icon name="trello" />,
-  list: <JamIcon name="tasks-list" />
+  list: <JamIcon name="task-list" />
 };
 
 const ProjectIcon = ({ className, color, layout, colorOnly, size }) => (

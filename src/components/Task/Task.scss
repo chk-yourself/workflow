@@ -205,6 +205,14 @@
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
+  &.show-task-summary {
+    .task__tag:not(.tag--summary) {
+      display: none;
+      @include md {
+        display: inline-block;
+      }
+    }
+  }
 }
 
 .task__tag {
@@ -219,14 +227,6 @@
     font-size: 10px;
     height: 20px;
   }
-  /*
-  &:not(.tag--summary) {
-    display: none;
-    @include md {
-      display: inline-block;
-    }
-  }
-  */
   &.tag--summary {
     @include md {
       display: none;

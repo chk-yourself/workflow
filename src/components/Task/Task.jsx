@@ -17,12 +17,14 @@ import './Task.scss';
 
 class Task extends Component {
   static defaultProps = {
-    className: ''
+    className: '',
+    showTagSummary: false
   };
 
   static propTypes = {
     className: PropTypes.string,
-    taskId: PropTypes.string.isRequired
+    taskId: PropTypes.string.isRequired,
+    showTagSummary: PropTypes.bool
   };
 
   state = {
@@ -144,6 +146,7 @@ class Task extends Component {
       selectedProjectId,
       members,
       className,
+      showTagSummary,
       task
     } = this.props;
     if (!task) return null;
@@ -175,7 +178,7 @@ class Task extends Component {
         />
         <div className="task__wrapper">
           <div className="task__badges task__badges--top">
-            <div className="task__tags">
+            <div className={`task__tags ${showTagSummary ? 'show-tag-summary' : ''}`}>
               {tags.map(tag => (
                 <Tag
                   name={tag.name}
@@ -185,7 +188,7 @@ class Task extends Component {
                   className="task__tag"
                 />
               ))}
-              {/*tagIds && tagIds.length > 0 && (
+              {showTagSummary && tagIds && tagIds.length > 0 && (
                 <Tag
                   name="..."
                   variant="summary"
@@ -193,11 +196,14 @@ class Task extends Component {
                   color="default"
                   className="task__tag"
                   tooltip={tagIds.join(', ')}
-                  isLinkDisabled
+                  disableLink
                 />
-              )*/}
+              )}
             </div>
-            <TaskDueDate className="task__detail" dueDate={dueDate ? dueDate.toDate() : dueDate} />
+            <TaskDueDate
+              className="task__detail"
+              dueDate={dueDate ? dueDate.toDate() : dueDate}
+            />
             {members && members.length > 0 && (
               <div className="task__detail task__members-wrapper">
                 <div className="task__members">

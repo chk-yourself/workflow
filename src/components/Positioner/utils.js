@@ -11,8 +11,8 @@ const makeRect = ({ width, height }, { left, top }) => {
   };
 };
 
-// Flips position upside down
-const flipHorizontal = position => {
+// Flips position over x-axis
+export const flipHorizontal = position => {
   switch (position) {
     case Position.TOP_LEFT:
       return Position.BOTTOM_LEFT;
@@ -25,8 +25,20 @@ const flipHorizontal = position => {
     case Position.BOTTOM_RIGHT:
       return Position.TOP_RIGHT;
     case Position.TOP:
-    default:
       return Position.BOTTOM;
+    default:
+      return '';
+  }
+};
+
+// Flips position over y-axis
+export const flipVertical = position => {
+  switch (position) {
+    case Position.LEFT:
+      return Position.RIGHT;
+    case Position.RIGHT:
+    default:
+      return Position.LEFT;
   }
 };
 
@@ -51,7 +63,7 @@ const canFitOnLeft = (rect, viewportOffset) => {
 };
 
 // Returns true if position is vertically centered on the x-axis
-const isAlignedHorizontal = position => {
+export const isAlignedHorizontal = position => {
   return position === Position.LEFT || position === Position.RIGHT;
 };
 

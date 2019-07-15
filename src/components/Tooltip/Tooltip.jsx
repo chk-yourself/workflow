@@ -17,12 +17,14 @@ export default class Tooltip extends Component {
       Position.RIGHT
     ]),
     isVisible: PropTypes.bool,
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
+    hasArrow: PropTypes.bool
   };
 
   static defaultProps = {
     position: Position.BOTTOM,
-    isVisible: false
+    isVisible: false,
+    hasArrow: false
   };
 
   state = {
@@ -70,7 +72,7 @@ export default class Tooltip extends Component {
   };
 
   render() {
-    const { position, content, portalId } = this.props;
+    const { position, content, portalId, hasArrow } = this.props;
     const { isVisible } = this.state;
     return (
       <Positioner
@@ -81,8 +83,13 @@ export default class Tooltip extends Component {
         isVisible={isVisible}
         portalId={portalId}
       >
-        {({ style, getRef }) => (
-          <TooltipView style={style} innerRef={getRef}>
+        {({ style, position: finalPosition, getRef }) => (
+          <TooltipView
+            style={style}
+            innerRef={getRef}
+            hasArrow={hasArrow}
+            position={finalPosition}
+          >
             {content}
           </TooltipView>
         )}

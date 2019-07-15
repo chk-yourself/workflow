@@ -312,8 +312,33 @@
   width: 10px;
   height: 10px;
   margin: 0 6px;
+  color: #fff;
+  .jam,
+  .feather {
+    display: none;
+  }
   @include md {
     margin: 0 10px;
+    width: 18px;
+    height: 18px;
+    position: relative;
+    top: -1px;
+    .jam,
+    .feather {
+      display: inline;
+      width: 16px;
+      height: 16px;
+    }
+  }
+  @include xl {
+    width: 20px;
+    height: 20px;
+    top: 0;
+    .jam,
+    .feather {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 

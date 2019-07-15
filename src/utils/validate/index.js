@@ -1,3 +1,7 @@
+export function isFunction(value) {
+  return value && {}.toString.call(value) === '[object Function]';
+}
+
 export function isObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }

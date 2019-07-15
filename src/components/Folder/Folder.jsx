@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { TaskComposer } from '../TaskComposer';
-import { Button } from '../Button';
 import { Icon } from '../Icon';
-import { Menu, MenuItem } from '../Menu';
-import { Popover } from '../Popover';
 import { Input } from '../Input';
 import { Tasks } from '../Tasks';
 import { ExpansionPanel } from '../ExpansionPanel';
@@ -99,25 +96,6 @@ export default class Folder extends Component {
                     onBlur={this.onBlur}
                     onClick={this.toggleFolder}
                   />
-                  {/*
-                    <Popover
-                      classes={{
-                        wrapper: 'folder__popover-wrapper',
-                        popover: 'folder__popover'
-                      }}
-                      align={{ inner: 'right' }}
-                      buttonProps={{
-                        size: 'md',
-                        iconOnly: true,
-                        className: 'folder__btn--more-actions',
-                        children: <Icon name="more-vertical" />
-                      }}
-                    >
-                      <Menu>
-                        <MenuItem />
-                      </Menu>
-                    </Popover>
-                    */}
                 </>
               }
             >

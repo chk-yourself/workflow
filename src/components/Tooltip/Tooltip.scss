@@ -2,7 +2,7 @@
 @import '../../styles/mixins';
 
 .tooltip {
-  position: absolute;
+  position: relative;
   pointer-events: none;
   display: inline-block;
   z-index: 99;
