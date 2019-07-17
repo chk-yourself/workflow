@@ -3,10 +3,7 @@ import { connect } from 'react-redux';
 import { withAuthorization } from '../Session';
 import { Task } from '../Task';
 import { taskSelectors } from '../../ducks/tasks';
-import {
-  selectTask as selectTaskAction,
-  getSelectedTaskId
-} from '../../ducks/selectedTask';
+import { selectTask as selectTaskAction, getSelectedTaskId } from '../../ducks/selectedTask';
 import { TaskEditor } from '../TaskEditor';
 import { Main } from '../Main';
 import { Icon } from '../Icon';
@@ -31,15 +28,7 @@ class SearchResults extends Component {
   };
 
   render() {
-    const {
-      currentUser,
-      selectedTaskId,
-      tasksById,
-      tasks,
-      query,
-      title,
-      icon
-    } = this.props;
+    const { currentUser, selectedTaskId, tasksById, tasks, query, title, icon } = this.props;
     const { userId } = currentUser;
     const isTaskEditorOpen = !!selectedTaskId;
     return (
@@ -50,10 +39,10 @@ class SearchResults extends Component {
           title: 'search-results__title'
         }}
       >
-        <h2 className="search-results__subheading">
+        <div className="search-results__query">
           <Icon name={icon} />
           {query}
-        </h2>
+        </div>
         <div className="search-results__tasks-wrapper">
           <div className="search-results__tasks">
             {tasks.map((task, i) => (

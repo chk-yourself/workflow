@@ -80,6 +80,7 @@ class Subtasks extends Component {
           {provided => (
             <ul className="subtasks" ref={provided.innerRef} {...provided.droppableProps}>
               {!isLoading &&
+                subtasksById &&
                 subtaskIds.map((subtaskId, index) => {
                   const { name, isCompleted } = subtasksById[subtaskId];
                   return (
