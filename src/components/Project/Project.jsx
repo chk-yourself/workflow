@@ -179,9 +179,7 @@ class Project extends Component {
           <div className={`project project--${layout} project--${section}`}>
             <div className="project__header">
               <div className="project__header-content">
-                <div
-                  className={`project__name-wrapper ${isNameFocused ? 'is-focused' : ''}`}
-                >
+                <div className={`project__name-wrapper ${isNameFocused ? 'is-focused' : ''}`}>
                   <ProjectIcon className="project__icon" color={color} layout={layout} />
                   <Input
                     className="project__input--name"

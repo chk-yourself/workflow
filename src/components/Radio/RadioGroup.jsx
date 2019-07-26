@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, MenuItem } from '../Menu';
+import { Menu } from '../Menu';
 import Radio from './Radio';
 import { Icon } from '../Icon';
 import './Radio.scss';
@@ -8,7 +8,7 @@ import './Radio.scss';
 const RadioGroup = ({ name, value, options, classes, onChange }) => (
   <Menu className={`radio-group ${classes.list || ''}`}>
     {options.map(option => (
-      <MenuItem className={`radio-group__item ${classes.item || ''}`} key={option.value}>
+      <Menu.Item className={`radio-group__item ${classes.item || ''}`} key={option.value}>
         <Radio
           name={name}
           id={option.value}
@@ -31,7 +31,7 @@ const RadioGroup = ({ name, value, options, classes, onChange }) => (
           }}
           data-label={option.label}
         />
-      </MenuItem>
+      </Menu.Item>
     ))}
   </Menu>
 );

@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { getDisplayName } from '../../utils/react';
 
+/**
+ * Adds functionality to execute `onOutsideClick` method or property of Component
+ * when a click is detected outside it
+ * @param {React Element} WrappedComponent - Component to receive outside click detection
+ */
 const withOutsideClick = WrappedComponent => {
   class WithOutsideClick extends Component {
     constructor(props) {
@@ -64,7 +69,6 @@ const withOutsideClick = WrappedComponent => {
           onOutsideClick(e);
         }
       }
-      e.stopPropagation();
     };
 
     render() {

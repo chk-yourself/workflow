@@ -5,10 +5,7 @@ import { compose } from 'recompose';
 import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import {
-  currentUserActions,
-  currentUserSelectors
-} from '../../ducks/currentUser';
+import { currentUserActions, currentUserSelectors } from '../../ducks/currentUser';
 import { userActions } from '../../ducks/users';
 import { activeWorkspaceActions } from '../../ducks/activeWorkspace';
 import { getDisplayName } from '../../utils/react';
@@ -35,11 +32,7 @@ const withAuthentication = WrappedComponent => {
       } = this.props;
       const { pathname } = location;
       const { pathname: prevPathname } = prevProps.location;
-      if (
-        pathname === ROUTES.LOG_IN &&
-        !this.authListener &&
-        prevPathname !== pathname
-      ) {
+      if (pathname === ROUTES.LOG_IN && !this.authListener && prevPathname !== pathname) {
         this.authListener = this.setAuthListener();
       }
       if (!currentUser) return;
@@ -47,10 +40,7 @@ const withAuthentication = WrappedComponent => {
       const { activeWorkspace } = settings;
       if (!prevProps.currentUser) {
         console.log('current user detected');
-        await Promise.all([
-          syncActiveWorkspace(activeWorkspace),
-          syncUserTags(userId)
-        ])
+        await Promise.all([syncActiveWorkspace(activeWorkspace), syncUserTags(userId)])
           .then(listeners => {
             this.workspaceListener = listeners[0];
             this.tagListener = listeners[1];
@@ -60,9 +50,7 @@ const withAuthentication = WrappedComponent => {
           });
       }
       if (prevProps.currentUser) {
-        const {
-          activeWorkspace: prevWorkspace
-        } = prevProps.currentUser.settings;
+        const { activeWorkspace: prevWorkspace } = prevProps.currentUser.settings;
         if (prevWorkspace !== activeWorkspace) {
           history.push(`/0/home/${userId}`);
           resetActiveWorkspace();
@@ -160,9 +148,7 @@ const withAuthentication = WrappedComponent => {
     }
   }
 
-  WithAuthentication.displayName = `WithAuthentication(${getDisplayName(
-    WrappedComponent
-  )})`;
+  WithAuthentication.displayName = `WithAuthentication(${getDisplayName(WrappedComponent)})`;
 
   const mapStateToProps = state => {
     return {
@@ -173,16 +159,12 @@ const withAuthentication = WrappedComponent => {
   const mapDispatchToProps = dispatch => ({
     syncCurrentUser: (userId, history) =>
       dispatch(currentUserActions.syncCurrentUser(userId, history)),
-    setCurrentUser: currentUser =>
-      dispatch(currentUserActions.setCurrentUser(currentUser)),
-    updateUser: ({ userId, userData }) =>
-      dispatch(userActions.updateUser({ userId, userData })),
+    setCurrentUser: currentUser => dispatch(currentUserActions.setCurrentUser(currentUser)),
+    updateUser: ({ userId, userData }) => dispatch(userActions.updateUser({ userId, userData })),
     syncActiveWorkspace: workspaceId =>
       dispatch(activeWorkspaceActions.syncActiveWorkspace(workspaceId)),
-    setActiveWorkspace: workspace =>
-      dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
-    resetActiveWorkspace: () =>
-      dispatch(activeWorkspaceActions.resetActiveWorkspace()),
+    setActiveWorkspace: workspace => dispatch(activeWorkspaceActions.setActiveWorkspace(workspace)),
+    resetActiveWorkspace: () => dispatch(activeWorkspaceActions.resetActiveWorkspace()),
     syncUserTags: userId => dispatch(currentUserActions.syncUserTags(userId))
   });
 

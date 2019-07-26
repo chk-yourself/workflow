@@ -4,6 +4,7 @@ import './Navbar.scss';
 import { withOutsideClick } from '../withOutsideClick';
 import { Logo } from '../Logo';
 import { IconButton } from '../Button';
+import { Menu } from '../Menu';
 
 class Navbar extends Component {
   static defaultProps = {
@@ -23,22 +24,7 @@ class Navbar extends Component {
   };
 
   state = {
-    viewportWidth: window.innerWidth || document.documentElement.clientWidth,
     isMenuVisible: false
-  };
-
-  componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  }
-
-  handleResize = () => {
-    this.setState({
-      viewportWidth: window.innerWidth || document.documentElement.clientWidth
-    });
   };
 
   toggleMenu = () => {
@@ -54,47 +40,35 @@ class Navbar extends Component {
   };
 
   handleClick = e => {
-    const { viewportWidth } = this.state;
-    const { minWidth } = this.props;
-    const isMobileView = viewportWidth < minWidth;
-
-    if (!isMobileView || (!e.target.matches('button') && !e.target.matches('a'))) return;
+    if (!e.target.matches('button') && !e.target.matches('a')) return;
     this.toggleMenu();
   };
 
   onOutsideClick = e => {
-    const { viewportWidth } = this.state;
-    const { minWidth } = this.props;
-    const isMobileView = viewportWidth < minWidth;
-    if (!isMobileView || e.target.matches('button') || e.target.matches('a')) return;
+    if (e.target.matches('button') || e.target.matches('a')) return;
     this.hideMenu();
   };
 
   render() {
-    const { viewportWidth, isMenuVisible } = this.state;
-    const { minWidth, classes, children, innerRef } = this.props;
-    const isMobileView = viewportWidth < minWidth;
+    const { isMenuVisible } = this.state;
+    const { classes, children, innerRef } = this.props;
 
     return (
       <nav
-        className={`navbar ${isMobileView ? 'is-collapsed' : ''} ${
-          isMobileView && isMenuVisible ? 'show-links' : ''
-        } ${classes.nav || ''}`.trim()}
+        className={`navbar ${isMenuVisible ? 'show-links' : ''} ${classes.nav || ''}`.trim()}
         ref={innerRef}
       >
         <Logo className="navbar__logo" />
-        {isMobileView && (
-          <IconButton
-            color="primary"
-            icon="menu"
-            ariaLabel="Toggle menu"
-            onClick={this.toggleMenu}
-            className="navbar__btn--toggle"
-          />
-        )}
-        <ul className={`navbar__links ${classes.menu || ''}`} onClick={this.handleClick}>
+        <IconButton
+          color="primary"
+          icon="menu"
+          ariaLabel="Toggle menu"
+          onClick={this.toggleMenu}
+          className="navbar__btn--toggle"
+        />
+        <Menu className={`navbar__links ${classes.menu || ''}`} onClick={this.handleClick}>
           {children}
-        </ul>
+        </Menu>
       </nav>
     );
   }

@@ -1,2 +1,13 @@
 @import '../../styles/variables.scss';
 @import '../../styles/mixins.scss';
+
+.signup__btn {
+  margin: 32px auto 16px;
+  min-width: 160px;
+  display: block;
+  &:disabled {
+    background-color: $grey-200;
+    color: $grey-500;
+    border: 1px solid $grey-300;
+  }
+}

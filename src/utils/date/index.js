@@ -5,12 +5,20 @@ import { MONTHS, WEEK_DAYS } from './constants';
 
 export { MONTHS, WEEK_DAYS };
 
-export const isLeapYear = year =>
-  (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+export const isLeapYear = year => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 
-export const getMonthFirstDay = (monthIndex, year) =>
-  new Date(year, monthIndex, 1).getDay();
+/**
+ * @param {number} monthIndex - a month represented as a zero-based value (where zero indicates the first month of the year)
+ * @param {number} year - the year of the month
+ * @returns {number} an integer, between 0 and 6, corresponding to the day of the week for the first day of the given month
+ */
+export const getMonthFirstDay = (monthIndex, year) => new Date(year, monthIndex, 1).getDay();
 
+/**
+ * Checks if given date is today's date
+ * @param {Date} date
+ * @returns {boolean} true if date is today's date; false otherwise
+ */
 export const isToday = date =>
   new Date().setHours(0, 0, 0, 0) === new Date(+date).setHours(0, 0, 0, 0);
 
@@ -30,6 +38,13 @@ export const isThisYear = date => {
   return date.getFullYear() === new Date().getFullYear();
 };
 
+// TODO: Memoize
+/**
+ * Gets total number of days in the specified month
+ * @param {number} monthIndex - a month represented as a zero-based value (where zero indicates the first month of the year)
+ * @param {number} year - the year of the month
+ * @returns {number} total number of days in given month
+ */
 export const getMonthDays = (monthIndex, year) => {
   if (monthIndex === 1) {
     return isLeapYear(year) ? 29 : 28;
@@ -37,6 +52,12 @@ export const getMonthDays = (monthIndex, year) => {
   return MONTHS[monthIndex].daysTotal;
 };
 
+/**
+ * 
+ * @param {number} monthIndex - a month represented as a zero-based value (where zero indicates the first month of the year)
+ * @param {number} year - the year of the month
+ * @returns {Object} { month: previous month index, year: year of previous month }
+ */
 export const getPrevMonth = (monthIndex, year) => {
   return {
     month: monthIndex > 0 ? monthIndex - 1 : 11,
@@ -51,6 +72,12 @@ export const getNextMonth = (monthIndex, year) => {
   };
 };
 
+/**
+ *
+ * @param {number} month - represented as a zero-based value (where zero indicates the first month of the year)
+ * @param {number} year - the year of the month
+ * @returns {Array} array of objects representing a calendar month; each object contains the day, month, and year
+ */
 export const getMonthDates = (month, year) => {
   const monthDays = getMonthDays(month, year);
   const monthFirstDay = getMonthFirstDay(month, year);
@@ -58,6 +85,8 @@ export const getMonthDates = (month, year) => {
   const prevMonthDays = getMonthDays(prevMonth, prevMonthYear);
   const daysFromPrevMonth = monthFirstDay;
   const daysFromNextMonth = 7 - ((monthFirstDay + monthDays) % 7);
+
+  // Dates from previous month visible on calendar
   const prevMonthDates = [...new Array(daysFromPrevMonth)].map((n, i) => {
     return {
       day: prevMonthDays - daysFromPrevMonth + i + 1,
@@ -66,6 +95,7 @@ export const getMonthDates = (month, year) => {
     };
   });
 
+  // Dates for given month
   const thisMonthDates = [...new Array(monthDays)].map((n, i) => {
     return {
       day: i + 1,
@@ -74,6 +104,7 @@ export const getMonthDates = (month, year) => {
     };
   });
 
+  // Dates from previous month visible on calendar
   const nextMonthDates = [...new Array(daysFromNextMonth)].map((n, i) => {
     return {
       day: i + 1,
@@ -96,9 +127,7 @@ export const getSimpleDate = date => {
 };
 
 export const isSimpleDate = date => {
-  return (
-    date && ['day', 'month', 'year'].every(prop => ({}.hasOwnProperty.call(date, prop)))
-  );
+  return date && ['day', 'month', 'year'].every(prop => ({}.hasOwnProperty.call(date, prop)));
 };
 
 export const isSameDate = (date, base = new Date()) => {
@@ -117,6 +146,7 @@ export const isSameDate = (date, base = new Date()) => {
  * Returns array of next consecutive years, starting with the given year
  * @param {number} num - Total number of years to return
  * @param {number} startingYear - First year at which to begin count
+ * @returns {Array} returns an array of numbers representing the next consecutive years, starting with the given year
  */
 export const getNextYears = (num, startingYear = new Date().getFullYear()) => {
   return [...new Array(num)].map((item, i) => {
@@ -126,11 +156,10 @@ export const getNextYears = (num, startingYear = new Date().getFullYear()) => {
 
 /**
  * Pads the start of given value with zero until it reaches the given length
- * @param {Number|String} value - The string to pad
- * @param {Number} length - The target length
+ * @param {number|string} value - The number to pad
+ * @param {number} [length=2] - The target length
  */
-
-export const padZero = (value, length) => {
+export const padZero = (value, length = 2) => {
   return `${value}`.padStart(length, '0');
 };
 
@@ -139,11 +168,7 @@ export const padZero = (value, length) => {
  * @param {Object} date - simple date object
  */
 export const toSimpleDateString = date => {
-  const simpleDate = isSimpleDate(date)
-    ? date
-    : isDate(date)
-    ? getSimpleDate(date)
-    : undefined;
+  const simpleDate = isSimpleDate(date) ? date : isDate(date) ? getSimpleDate(date) : undefined;
   if (!simpleDate) return '';
   const { day, month, year } = simpleDate;
   return `${padZero(month + 1, 2)}-${padZero(day, 2)}-${year - 2000}`;

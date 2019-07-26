@@ -47,9 +47,7 @@ export default class Calendar extends Component {
 
   state = {
     today: getSimpleDate(new Date()),
-    month: this.props.selectedDate
-      ? this.props.selectedDate.getMonth()
-      : new Date().getMonth(),
+    month: this.props.selectedDate ? this.props.selectedDate.getMonth() : new Date().getMonth(),
     year: this.props.selectedDate
       ? this.props.selectedDate.getFullYear()
       : new Date().getFullYear(),
@@ -101,9 +99,7 @@ export default class Calendar extends Component {
   render() {
     const { classes } = this.props;
     const { month, year, today } = this.state;
-    const selectedDate = this.props.selectedDate
-      ? getSimpleDate(this.props.selectedDate)
-      : null;
+    const selectedDate = this.props.selectedDate ? getSimpleDate(this.props.selectedDate) : null;
     const dates = getMonthDates(month, year);
 
     return (
@@ -150,9 +146,7 @@ export default class Calendar extends Component {
             <div className="calendar__days">
               {dates.map(date => {
                 const isToday =
-                  date.day === today.day &&
-                  date.month === today.month &&
-                  date.year === today.year;
+                  date.day === today.day && date.month === today.month && date.year === today.year;
                 const isSelectedDate =
                   selectedDate &&
                   date.day === selectedDate.day &&
@@ -163,9 +157,9 @@ export default class Calendar extends Component {
                     key={`${date.month}--${date.day}`}
                     className={`calendar__day ${
                       date.month !== month ? 'calendar__day--prev-next' : ''
-                    } ${isToday ? 'is-today' : ''} ${
-                      isSelectedDate ? 'is-selected' : ''
-                    } ${classes.day}`}
+                    } ${isToday ? 'is-today' : ''} ${isSelectedDate ? 'is-selected' : ''} ${
+                      classes.day
+                    }`}
                   >
                     <Button
                       type="button"

@@ -11,69 +11,74 @@
   a {
     text-decoration: none;
   }
-  &.is-collapsed {
-    .navbar__links {
-      flex-direction: column;
-      position: absolute;
-      top: 40px;
-      right: 0;
-      display: none;
-      background-color: $white;
-      border-radius: 4px;
-      padding: 8px 0;
-      width: auto;
-      min-width: 200px;
-      z-index: 3;
-      @include box-shadow(2);
-      li {
-        width: 100%;
-        padding: 0;
-        margin-left: 0;
-      }
-      .navbar__link,
-      .navbar__btn {
-        width: 100%;
-        display: inline-block;
-        height: 100%;
-        text-align: left;
-      }
-      .navbar__link,
-      .navbar__btn,
-      button {
-        padding: 12px 16px;
-        &:hover {
-          background-color: $primary;
-          color: $white;
-        }
-      }
-    }
-    &.show-links {
-      .navbar__links {
-        display: flex;
-      }
-    }
-  }
   @include md {
     padding: 8px 0;
+  }
+  &.show-links {
+    .navbar__links {
+      display: flex;
+    }
   }
 }
 
 .navbar__links {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  -webkit-transform: translate3d(0, 0, 0);
-  list-style: none;
-  padding: 0;
+  flex-direction: column;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  display: none;
+  background-color: $white;
+  border-radius: 4px;
+  padding: 8px 0;
+  width: auto;
   margin: 0;
+  min-width: 200px;
+  z-index: 3;
+  list-style: none;
   color: $primary;
+  @include box-shadow(2);
   li {
-    margin-left: 24px;
-    color: inherit;
+    width: 100%;
+    padding: 0;
+    margin-left: 0;
+  }
+  .navbar__link,
+  .navbar__btn {
+    width: 100%;
+    display: inline-block;
+    height: 100%;
+    text-align: left;
+  }
+  .navbar__link,
+  .navbar__btn,
+  button {
+    padding: 12px 16px;
+    &:hover {
+      background-color: $primary;
+      color: $white;
+    }
+    @include md {
+      &:hover {
+        background-color: transparent;
+        color: $secondary;
+      }
+    }
   }
   @include md {
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    box-shadow: none;
+    top: 0;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
     padding: 0;
+    li {
+      color: inherit;
+      width: auto;
+    }
   }
   a,
   button {
@@ -105,4 +110,12 @@
   border-radius: 0;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.navbar__btn--toggle {
+  width: 32px;
+  height: 32px;
+  @include md {
+    display: none;
+  }
 }

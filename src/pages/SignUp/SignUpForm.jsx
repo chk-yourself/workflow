@@ -133,7 +133,7 @@ class SignUpForm extends Component {
           variant="contained"
           color="secondary"
           onClick={this.onSubmit}
-          className="form-page__btn"
+          className="form-page__btn signup__btn"
         >
           Create Account
         </Button>

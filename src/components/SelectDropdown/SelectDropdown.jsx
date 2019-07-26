@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from '../Popover';
-import { Menu, MenuItem } from '../Menu';
+import { Menu } from '../Menu';
 import { Radio } from '../Radio';
 import { Icon } from '../Icon';
 import './SelectDropdown.scss';
@@ -101,7 +101,7 @@ export default class SelectDropdown extends PureComponent {
           {Object.keys(options).map(key => {
             const option = options[key];
             return (
-              <MenuItem
+              <Menu.Item
                 className={`select-dropdown__item ${classes.item || ''}`}
                 key={option.value}
               >
@@ -127,7 +127,7 @@ export default class SelectDropdown extends PureComponent {
                   }}
                   data-label={option.label}
                 />
-              </MenuItem>
+              </Menu.Item>
             );
           })}
         </Menu>

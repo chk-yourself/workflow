@@ -70,3 +70,15 @@ export const count = (fn, invokeBeforeExecution) => {
     return fn(args, count);
   };
 };
+
+// Returns memoized version of given function
+export const memoize = fn => {
+  const cache = {};
+  return function(...args) {
+    if (cache[args]) {
+      return cache[args];
+    }
+    cache[args] = fn[args];
+    return cache[args];
+  };
+};
