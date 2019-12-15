@@ -50,9 +50,6 @@ export default class Swipeable extends Component {
 
   state = { ...INITIAL_STATE };
 
-  componentDidMount() {
-  }
-
   componentWillUnmount() {
     if (this.mouseDown) {
       this.cleanUpMouseListeners();
