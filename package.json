@@ -4,7 +4,6 @@
   "private": true,
   "author": "Christina Kim",
   "homepage": "https://wrkflw.tk",
-  "license": "MIT",
   "dependencies": {
     "@material-ui/core": "^4.1.1",
     "@material-ui/icons": "^4.2.0",
