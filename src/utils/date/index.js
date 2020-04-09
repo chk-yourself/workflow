@@ -53,7 +53,7 @@ export const getMonthDays = (monthIndex, year) => {
 };
 
 /**
- * 
+ *
  * @param {number} monthIndex - a month represented as a zero-based value (where zero indicates the first month of the year)
  * @param {number} year - the year of the month
  * @returns {Object} { month: previous month index, year: year of previous month }
@@ -294,7 +294,7 @@ export const toDateString = (
             return null;
           }
           if (value === '2-digit') {
-            return `'${+year.slice(2)}`;
+            return `'${`${year}`.slice(2)}`;
           }
           return year;
         }

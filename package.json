@@ -24,7 +24,7 @@
     "react-dom": "^16.8.6",
     "react-redux": "^6.0.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.8",
+    "react-scripts": "^3.4.1",
     "react-transition-group": "^4.2.1",
     "recompose": "^0.30.0",
     "redux": "^4.0.1",
@@ -32,8 +32,7 @@
     "slate": "^0.44.13",
     "slate-react": "^0.21.20",
     "tar": "^4.4.8",
-    "typescript": "^3.4.4",
-    "why-did-you-update": "^1.0.6"
+    "typescript": "^3.4.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -65,12 +64,13 @@
     "@storybook/react": "^5.1.9",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
+    "eslint": "^6.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react": "^7.18.3",
     "gh-pages": "^2.0.1",
     "prettier": "^1.17.0",
     "react-test-renderer": "^16.8.6",

@@ -14,16 +14,6 @@ import SelectMonthDropdown from './SelectMonthDropdown';
 import './Calendar.scss';
 
 export default class Calendar extends Component {
-  static defaultProps = {
-    onSelectDate: () => {},
-    selectedDate: null,
-    classes: {
-      calendar: '',
-      weekday: '',
-      day: ''
-    }
-  };
-
   static propTypes = {
     onSelectDate: PropTypes.func,
     selectedDate: PropTypes.oneOfType([() => null, PropTypes.instanceOf(Date)]),
@@ -32,6 +22,16 @@ export default class Calendar extends Component {
       weekday: PropTypes.string,
       day: PropTypes.string
     })
+  };
+
+  static defaultProps = {
+    onSelectDate: () => {},
+    selectedDate: null,
+    classes: {
+      calendar: '',
+      weekday: '',
+      day: ''
+    }
   };
 
   static getDerivedStateFromProps(props, state) {

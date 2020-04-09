@@ -17,20 +17,6 @@ const INITIAL_STATE = {
 };
 
 export default class Swipeable extends Component {
-  static defaultProps = {
-    tolerance: 0,
-    allowMouseEvents: false,
-    isSwipeDisabled: false,
-    innerRef: () => null,
-    onSwipeStart: () => {},
-    onSwipeEnd: () => {},
-    onSwipeMove: () => {},
-    onSwipeUp: () => {},
-    onSwipeDown: () => {},
-    onSwipeLeft: () => {},
-    onSwipeRight: () => {}
-  };
-
   static propTypes = {
     tolerance: PropTypes.number,
     isSwipeDisabled: PropTypes.bool,
@@ -46,6 +32,20 @@ export default class Swipeable extends Component {
     onSwipeDown: PropTypes.func,
     onSwipeLeft: PropTypes.func,
     onSwipeRight: PropTypes.func
+  };
+
+  static defaultProps = {
+    tolerance: 0,
+    allowMouseEvents: false,
+    isSwipeDisabled: false,
+    innerRef: () => null,
+    onSwipeStart: () => {},
+    onSwipeEnd: () => {},
+    onSwipeMove: () => {},
+    onSwipeUp: () => {},
+    onSwipeDown: () => {},
+    onSwipeLeft: () => {},
+    onSwipeRight: () => {}
   };
 
   state = { ...INITIAL_STATE };
@@ -119,14 +119,7 @@ export default class Swipeable extends Component {
   };
 
   handleSwipeEnd = e => {
-    const {
-      tolerance,
-      onSwipeEnd,
-      onSwipeLeft,
-      onSwipeRight,
-      onSwipeUp,
-      onSwipeDown
-    } = this.props;
+    const { tolerance, onSwipeEnd, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown } = this.props;
     const { movePosition, isSwiping } = this.state;
     if (!movePosition || !isSwiping) return;
     const { deltaX, deltaY } = movePosition;
