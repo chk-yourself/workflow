@@ -1,7 +1,6 @@
 import React from 'react';
 import GuideArticle, { GuideArticleSection, GuideArticleSubsection } from './GuideArticle';
 import { TableOfContents } from '../../components/TableOfContents';
-// import './Fundamentals.scss';
 import * as ROUTES from '../../constants/routes';
 
 const Fundamentals = () => (
