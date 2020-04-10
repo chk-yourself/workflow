@@ -1,20 +1,30 @@
 {
-  "main.css": "/static/css/main.2fb0db99.chunk.css",
-  "main.js": "/static/js/main.4ee7f81d.chunk.js",
-  "main.js.map": "/static/js/main.4ee7f81d.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
-  "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
-  "static/css/2.e64e4d6c.chunk.css": "/static/css/2.e64e4d6c.chunk.css",
-  "static/js/2.6bbe8f61.chunk.js": "/static/js/2.6bbe8f61.chunk.js",
-  "static/js/2.6bbe8f61.chunk.js.map": "/static/js/2.6bbe8f61.chunk.js.map",
-  "index.html": "/index.html",
-  "precache-manifest.f3966f78bf7f2caa7ec2cbd5ef72b08a.js": "/precache-manifest.f3966f78bf7f2caa7ec2cbd5ef72b08a.js",
-  "service-worker.js": "/service-worker.js",
-  "static/css/2.e64e4d6c.chunk.css.map": "/static/css/2.e64e4d6c.chunk.css.map",
-  "static/css/main.2fb0db99.chunk.css.map": "/static/css/main.2fb0db99.chunk.css.map",
-  "static/media/feather-sprite.svg": "/static/media/feather-sprite.0ff2fb5a.svg",
-  "static/media/jam-sprite.svg": "/static/media/jam-sprite.15d6dad8.svg",
-  "static/media/scrum-board.f93f6a45.svg": "/static/media/scrum-board.f93f6a45.svg",
-  "static/media/todo-list.3703df9c.svg": "/static/media/todo-list.3703df9c.svg",
-  "static/media/work-chat.0d8ad8d8.svg": "/static/media/work-chat.0d8ad8d8.svg"
+  "files": {
+    "main.css": "/static/css/main.2a8f5534.chunk.css",
+    "main.js": "/static/js/main.94ce0da1.chunk.js",
+    "main.js.map": "/static/js/main.94ce0da1.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.33c4be8b.js",
+    "runtime-main.js.map": "/static/js/runtime-main.33c4be8b.js.map",
+    "static/css/2.764ccc25.chunk.css": "/static/css/2.764ccc25.chunk.css",
+    "static/js/2.2db3e232.chunk.js": "/static/js/2.2db3e232.chunk.js",
+    "static/js/2.2db3e232.chunk.js.map": "/static/js/2.2db3e232.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.d119ad01f002b0ed6cb515e08d2da86d.js": "/precache-manifest.d119ad01f002b0ed6cb515e08d2da86d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.764ccc25.chunk.css.map": "/static/css/2.764ccc25.chunk.css.map",
+    "static/css/main.2a8f5534.chunk.css.map": "/static/css/main.2a8f5534.chunk.css.map",
+    "static/js/2.2db3e232.chunk.js.LICENSE.txt": "/static/js/2.2db3e232.chunk.js.LICENSE.txt",
+    "static/media/feather-sprite.svg": "/static/media/feather-sprite.8bf209bf.svg",
+    "static/media/jam-sprite.svg": "/static/media/jam-sprite.15d6dad8.svg",
+    "static/media/scrum-board.f93f6a45.svg": "/static/media/scrum-board.f93f6a45.svg",
+    "static/media/todo-list.3703df9c.svg": "/static/media/todo-list.3703df9c.svg",
+    "static/media/work-chat.0d8ad8d8.svg": "/static/media/work-chat.0d8ad8d8.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.33c4be8b.js",
+    "static/css/2.764ccc25.chunk.css",
+    "static/js/2.2db3e232.chunk.js",
+    "static/css/main.2a8f5534.chunk.css",
+    "static/js/main.94ce0da1.chunk.js"
+  ]
 }
