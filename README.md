@@ -1,7 +1,5 @@
 # Workflow
 
-Copyright © Christina Kim
-
 Workflow is a project management app, inspired by Asana and Trello, where users can create shared projects as mobile-friendly, drag-and-drop Kanban boards or todo lists and collaborate with their team in real-time.
 
 ## Features

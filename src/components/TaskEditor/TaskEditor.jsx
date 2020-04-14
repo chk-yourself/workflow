@@ -67,9 +67,7 @@ class TaskEditor extends Component {
   }
 
   componentWillUnmount() {
-    if (this.handleResize) {
-      window.removeEventListener('resize', this.handleResize);
-    }
+    this.handleResize && window.removeEventListener('resize', this.handleResize);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -213,8 +211,7 @@ class TaskEditor extends Component {
   };
 
   onOutsideClick = e => {
-    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item'))
-      return;
+    if (e.target.matches('.member-search__item') || e.target.matches('.tags-input__item')) return;
     this.closeTaskEditor();
   };
 
@@ -252,9 +249,7 @@ class TaskEditor extends Component {
             variant="text"
             color="neutral"
             ariaLabel="Toggle completion status"
-            className={`task-editor__btn--toggle-completed ${
-              isCompleted ? 'is-completed' : ''
-            }`}
+            className={`task-editor__btn--toggle-completed ${isCompleted ? 'is-completed' : ''}`}
           >
             <Icon name="check" />
             <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
@@ -297,11 +292,7 @@ class TaskEditor extends Component {
             usePortal={layout === 'board' && viewportWidth >= 576}
           />
           {!isPrivate && (
-            <TaskEditorComments
-              taskId={taskId}
-              projectId={projectId}
-              commentIds={commentIds}
-            />
+            <TaskEditorComments taskId={taskId} projectId={projectId} commentIds={commentIds} />
           )}
         </div>
       </TaskEditorWrapper>
@@ -317,8 +308,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteTask: ({ taskId, listId }) =>
-      dispatch(taskActions.deleteTask({ taskId, listId })),
+    deleteTask: ({ taskId, listId }) => dispatch(taskActions.deleteTask({ taskId, listId })),
     selectTask: taskId => dispatch(selectTaskAction(taskId))
   };
 };
@@ -326,8 +316,5 @@ const mapDispatchToProps = dispatch => {
 const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(TaskEditor)
+  connect(mapStateToProps, mapDispatchToProps)(TaskEditor)
 );

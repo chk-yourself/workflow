@@ -4,10 +4,7 @@ import { connect } from 'react-redux';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { withAuthorization } from '../Session';
 import { projectActions, projectSelectors } from '../../ducks/projects';
-import {
-  selectTask as selectTaskAction,
-  getSelectedTask
-} from '../../ducks/selectedTask';
+import { selectTask as selectTaskAction, getSelectedTask } from '../../ducks/selectedTask';
 import {
   selectProject as selectProjectAction,
   getSelectedProjectId
@@ -50,7 +47,6 @@ class ProjectContainer extends Component {
         this.unsubscribe = listeners;
       }
     );
-    console.log('mounted');
   }
 
   componentDidUpdate(prevProps) {
@@ -80,10 +76,7 @@ class ProjectContainer extends Component {
   onDragEnd = async ({ destination, draggableId, source, type }) => {
     if (!destination) return;
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
+    if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
     const { firebase, tasksById, listsById, tempSettings } = this.props;
     const { view, sortBy } = tempSettings.tasks;
@@ -150,14 +143,7 @@ class ProjectContainer extends Component {
   };
 
   deleteProject = () => {
-    const {
-      firebase,
-      currentUser,
-      selectProject,
-      history,
-      projectId,
-      project
-    } = this.props;
+    const { firebase, currentUser, selectProject, history, projectId, project } = this.props;
     const { workspaceId, listIds, memberIds } = project;
     const { userId } = currentUser;
     firebase.deleteProject({
@@ -193,14 +179,7 @@ class ProjectContainer extends Component {
   };
 
   render() {
-    const {
-      selectedTask,
-      projectId,
-      isLoaded,
-      project,
-      tempSettings,
-      currentUser
-    } = this.props;
+    const { selectedTask, projectId, isLoaded, project, tempSettings, currentUser } = this.props;
     const {
       name,
       // listIds,
@@ -262,10 +241,7 @@ class ProjectContainer extends Component {
           </div>
         </main>
         {isProjectDuplicatorOpen && (
-          <ProjectDuplicator
-            onClose={this.closeProjectDuplicator}
-            projectId={projectId}
-          />
+          <ProjectDuplicator onClose={this.closeProjectDuplicator} projectId={projectId} />
         )}
       </>
     );
@@ -290,8 +266,7 @@ const mapDispatchToProps = dispatch => {
     selectTask: taskId => dispatch(selectTaskAction(taskId)),
     syncProjectLists: projectId => dispatch(listActions.syncProjectLists(projectId)),
     syncProjectTasks: projectId => dispatch(taskActions.syncProjectTasks(projectId)),
-    syncProjectSubtasks: projectId =>
-      dispatch(subtaskActions.syncProjectSubtasks(projectId)),
+    syncProjectSubtasks: projectId => dispatch(subtaskActions.syncProjectSubtasks(projectId)),
     syncProject: projectId => dispatch(projectActions.syncProject(projectId)),
     setTempProjectSettings: ({ projectId, view, sortBy, layout }) =>
       dispatch(
@@ -308,8 +283,5 @@ const mapDispatchToProps = dispatch => {
 const condition = (currentUser, activeWorkspace) => !!currentUser && !!activeWorkspace;
 
 export default withAuthorization(condition)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ProjectContainer)
+  connect(mapStateToProps, mapDispatchToProps)(ProjectContainer)
 );

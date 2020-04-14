@@ -31,12 +31,7 @@ const withSubscription = ({
 
     componentDidMount() {
       const { firebase } = this.props;
-      const [
-        collection,
-        doc = null,
-        subcollection = null,
-        subdoc = null
-      ] = this.path.split('/');
+      const [collection, doc = null, subcollection = null, subdoc = null] = this.path.split('/');
       const ref = this.query
         ? firebase.queryCollection(this.path, this.query)
         : doc || subdoc
@@ -74,7 +69,7 @@ const withSubscription = ({
     }
 
     componentWillUnmount() {
-      this.listener();
+      this.listener && this.listener();
     }
 
     render() {
@@ -83,9 +78,7 @@ const withSubscription = ({
     }
   }
 
-  WithSubscription.displayName = `WithSubscription(${getDisplayName(
-    WrappedComponent
-  )})`;
+  WithSubscription.displayName = `WithSubscription(${getDisplayName(WrappedComponent)})`;
   return compose(withFirebase)(WithSubscription);
 };
 

@@ -43,9 +43,7 @@ class Modal extends Component {
   }
 
   componentWillUnmount() {
-    if (this.unlockBodyScroll) {
-      this.unlockBodyScroll();
-    }
+    this.unlockBodyScroll && this.unlockBodyScroll();
   }
 
   setFocusToClose = () => {

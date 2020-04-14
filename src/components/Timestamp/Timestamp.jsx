@@ -62,9 +62,7 @@ export default class Timestamp extends Component {
   }
 
   componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
+    this.interval && clearInterval(this.interval);
   }
 
   tick = () => {

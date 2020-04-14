@@ -30,14 +30,12 @@ class HomePage extends Component {
     const { userId } = currentUser;
     this.setListeners();
     initPresenceDetection(userId);
-    console.log('mounted home');
   }
 
   componentWillUnmount() {
     if (this.listeners) {
       this.listeners.forEach(unsubscribe => unsubscribe());
     }
-    console.log('home unmounted');
   }
 
   setListeners = async () => {

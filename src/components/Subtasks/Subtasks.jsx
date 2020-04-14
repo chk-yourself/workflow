@@ -43,9 +43,7 @@ class Subtasks extends Component {
   }
 
   componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+    this.unsubscribe && this.unsubscribe();
   }
 
   moveSubtask = ({ destination, draggableId, source }) => {
@@ -118,9 +116,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withFirebase(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Subtasks)
-);
+export default withFirebase(connect(mapStateToProps, mapDispatchToProps)(Subtasks));
