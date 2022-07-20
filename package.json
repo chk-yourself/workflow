@@ -74,6 +74,6 @@
     "gh-pages": "^2.0.1",
     "prettier": "^1.17.0",
     "react-test-renderer": "^16.8.6",
-    "terser": "^3.17.0"
+    "terser": "^4.8.1"
   }
 }
